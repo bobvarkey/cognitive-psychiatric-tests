@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { DelusionResults } from '@/types/delusions';
-import { AlertCircle, Brain, CheckCircle2, FileText } from 'lucide-react';
+import { AlertCircle, Brain, CheckCircle2, FileText, FileDown } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ClinicalContextTable } from './ClinicalContextTable';
 import { delusionsScale } from '@/data/delusionsScale';
+import { generatePdfReport } from '@/utils/reportGenerator';
 
 interface DelusionsResultsProps {
   results: DelusionResults;
@@ -268,9 +269,45 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
 
       <ClinicalContextTable />
 
-      <div className="flex justify-center">
+      <div className="flex justify-center gap-4">
         <Button onClick={onReset} size="lg">
           Start New Assessment
+        </Button>
+        <Button
+          variant="outline"
+          size="lg"
+          onClick={() => {
+            const positiveFindings: string[] = [];
+            const negativeFindings: string[] = [];
+            const notAssessed: string[] = [];
+            const getSevLabel = (s?: number) => s === 1 ? 'Mild' : s === 2 ? 'Moderate' : s === 3 ? 'Severe' : '';
+            delusionsScale.forEach(item => {
+              const response = results.responses.find(r => r.itemId === item.id);
+              if (!response) {
+                notAssessed.push(`${item.type} (${item.section} — ${item.category})`);
+              } else if (response.present) {
+                positiveFindings.push(`${item.type} — ${getSevLabel(response.severity)} (${item.section}, ${item.category})`);
+              } else {
+                negativeFindings.push(`${item.type} (${item.section} — ${item.category})`);
+              }
+            });
+            generatePdfReport({
+              assessmentName: 'Delusional Syndromes & Hallucinations Assessment',
+              date: new Date().toLocaleDateString(),
+              totalScore: `${results.totalPresent} symptoms present`,
+              severity: getSeverityLevel(),
+              interpretation: getClinicalInterpretation(),
+              sections: [
+                { title: 'Positive Findings (Symptoms Present)', items: positiveFindings, type: 'positive' },
+                { title: 'Negative Findings (Symptoms Absent)', items: negativeFindings, type: 'negative' },
+                { title: 'Items Not Assessed / Not Entered', items: notAssessed, type: 'not-assessed' },
+              ],
+              disclaimer: 'This assessment is a screening tool only. Comprehensive psychiatric evaluation is essential for accurate diagnosis and treatment planning.',
+            });
+          }}
+        >
+          <FileDown className="mr-2 h-4 w-4" />
+          Export PDF
         </Button>
       </div>
     </div>

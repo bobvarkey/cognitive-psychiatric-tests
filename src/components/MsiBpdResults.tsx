@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MsiBpdResult } from '@/types/msibpd';
+import { MSI_BPD_ITEMS } from '@/data/msiBpdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { AlertCircle, CheckCircle, ArrowLeft, RotateCcw } from 'lucide-react';
+import { AlertCircle, CheckCircle, ArrowLeft, RotateCcw, FileDown } from 'lucide-react';
+import { generatePdfReport } from '@/utils/reportGenerator';
 
 interface MsiBpdResultsProps {
   result: MsiBpdResult;
@@ -88,6 +90,41 @@ export const MsiBpdResults = ({ result, onReset, onBack }: MsiBpdResultsProps) =
               <Button onClick={onReset} variant="outline" className="flex-1">
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {t('retakeAssessment')}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  const positiveFindings: string[] = [];
+                  const negativeFindings: string[] = [];
+                  result.responses.forEach(r => {
+                    const item = MSI_BPD_ITEMS.find(i => i.id === r.itemId);
+                    if (!item) return;
+                    if (r.score === 1) {
+                      positiveFindings.push(item.question);
+                    } else {
+                      negativeFindings.push(item.question);
+                    }
+                  });
+                  const answeredIds = result.responses.map(r => r.itemId);
+                  const notAssessed = MSI_BPD_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
+                  generatePdfReport({
+                    assessmentName: 'McLean Screening Instrument for BPD (MSI-BPD)',
+                    date: new Date().toLocaleDateString(),
+                    totalScore: `${result.totalScore}/10`,
+                    severity: result.severity === 'not-consistent' ? 'Not Consistent with BPD' : result.severity === 'further-evaluation' ? 'Further Evaluation Recommended' : 'Above Clinical Cutoff',
+                    interpretation: result.interpretation,
+                    sections: [
+                      { title: 'Positive Findings (Endorsed Items)', items: positiveFindings, type: 'positive' },
+                      { title: 'Negative Findings (Denied Items)', items: negativeFindings, type: 'negative' },
+                      { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
+                    ],
+                    disclaimer: 'This is a screening tool only. A positive result does not confirm a diagnosis and should be followed by comprehensive clinical evaluation.',
+                  });
+                }}
+              >
+                <FileDown className="mr-2 h-4 w-4" />
+                Export PDF
               </Button>
               {onBack && (
                 <Button onClick={onBack} variant="default" className="flex-1">

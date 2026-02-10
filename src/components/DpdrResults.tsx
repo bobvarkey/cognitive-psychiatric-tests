@@ -2,8 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { DpdrResult } from "@/types/dpdr";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ArrowLeft, RotateCcw, AlertCircle, Info } from "lucide-react";
+import { ArrowLeft, RotateCcw, AlertCircle, Info, FileDown } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { generatePdfReport } from '@/utils/reportGenerator';
 
 interface DpdrResultsProps {
   results: DpdrResult;
@@ -235,6 +236,33 @@ export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
       </Card>
 
       <div className="flex gap-4 justify-end">
+        <Button
+          variant="outline"
+          onClick={() => {
+            const findings: string[] = [
+              `Depersonalization: ${results.depersonalizationScore}/32`,
+              `Derealization: ${results.derealizationScore}/28`,
+              `Impact & Distress: ${results.distressScore}/20`,
+            ];
+            const positive = findings.filter((_, i) => [results.depersonalizationScore, results.derealizationScore, results.distressScore][i] > 0);
+            const negative = findings.filter((_, i) => [results.depersonalizationScore, results.derealizationScore, results.distressScore][i] === 0);
+            generatePdfReport({
+              assessmentName: 'Depersonalization-Derealization Disorder Screening',
+              date: new Date().toLocaleDateString(),
+              totalScore: `${results.totalScore}/80`,
+              severity: getSeverityLabel(results.severity),
+              interpretation: language === 'en' ? results.interpretation : results.interpretationMl,
+              sections: [
+                { title: 'Positive Findings (Elevated Domains)', items: positive, type: 'positive' },
+                { title: 'Negative Findings (Normal Domains)', items: negative, type: 'negative' },
+              ],
+              disclaimer: 'This is a screening tool, not a diagnostic instrument. Only a qualified mental health professional can provide a formal diagnosis.',
+            });
+          }}
+        >
+          <FileDown className="h-4 w-4 mr-2" />
+          Export PDF
+        </Button>
         <Button variant="outline" onClick={onReset}>
           <RotateCcw className="h-4 w-4 mr-2" />
           {language === 'en' ? 'Retake Assessment' : 'വീണ്ടും വിലയിരുത്തുക'}
