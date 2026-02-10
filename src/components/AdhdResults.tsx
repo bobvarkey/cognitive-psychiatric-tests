@@ -4,7 +4,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AdhdResults as AdhdResultsType } from '@/types/adhd';
 import { getPresentationLabel, DOMAIN_THRESHOLDS } from '@/data/adhdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, XCircle } from 'lucide-react';
+import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, XCircle, FileDown } from 'lucide-react';
+import { generatePdfReport } from '@/utils/reportGenerator';
+import { ADHD_INATTENTION_SYMPTOMS, ADHD_HYPERACTIVITY_SYMPTOMS } from '@/data/adhdScale';
 
 interface AdhdResultsProps {
   results: AdhdResultsType;
@@ -249,6 +251,36 @@ export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
               >
                 <Printer className="h-4 w-4" />
                 {t('printResults')}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+                onClick={() => {
+                  const positive = results.symptomResponses.filter(r => r.present).map(r => {
+                    const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
+                    return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
+                  });
+                  const negative = results.symptomResponses.filter(r => !r.present).map(r => {
+                    const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
+                    return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
+                  });
+                  generatePdfReport({
+                    assessmentName: 'DSM-5-TR ADHD Diagnostic Criteria Assessment',
+                    date: new Date().toLocaleDateString(),
+                    totalScore: `Inattention: ${results.inattentionCount}/9, Hyperactivity: ${results.hyperactivityCount}/9`,
+                    severity: interpretation.title,
+                    interpretation: interpretation.description,
+                    sections: [
+                      { title: 'Positive Findings (Endorsed Symptoms)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
+                      { title: 'Negative Findings (Not Endorsed)', items: negative, type: 'negative' },
+                      { title: 'Criteria B-E Status', items: results.criterionResponses.map(cr => `Criterion ${cr.criterionId}: ${cr.met ? 'Met' : 'Not Met'}`), type: 'info' },
+                    ],
+                    disclaimer: 'This is a screening tool only, not a diagnostic instrument.',
+                  });
+                }}
+              >
+                <FileDown className="h-4 w-4" />
+                Export PDF
               </Button>
               <Button
                 onClick={onReset}

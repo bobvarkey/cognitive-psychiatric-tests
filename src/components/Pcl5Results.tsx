@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Pcl5Result } from '@/types/pcl5';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, FileDown } from 'lucide-react';
+import { generatePdfReport } from '@/utils/reportGenerator';
 
 interface Pcl5ResultsProps {
   results: Pcl5Result;
@@ -25,9 +26,34 @@ export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
         <h1 className="text-3xl font-bold">
           {language === 'en' ? 'PCL-5 Results' : 'PCL-5 ഫലങ്ങൾ'}
         </h1>
-        <Button onClick={onReset} variant="outline">
-          {language === 'en' ? 'New Assessment' : 'പുതിയ വിലയിരുത്തൽ'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              generatePdfReport({
+                assessmentName: 'PCL-5 PTSD Screening',
+                date: new Date().toLocaleDateString(),
+                totalScore: `${results.totalScore}/5`,
+                severity: results.probablePTSD ? 'Probable PTSD' : 'Below Clinical Threshold',
+                interpretation: language === 'en' ? results.interpretation : results.interpretationMl,
+                sections: [
+                  { title: 'Screening Result', items: [
+                    `Trauma Exposure: ${results.hasTraumaExposure ? 'Yes' : 'No'}`,
+                    `Score: ${results.totalScore}/5 (cutoff: 3)`,
+                    results.probablePTSD ? 'Screen positive for PTSD — further assessment recommended' : 'Below clinical threshold',
+                  ], type: results.probablePTSD ? 'positive' : 'negative' },
+                ],
+                disclaimer: 'This is a screening tool, not a diagnostic instrument. Positive screens should be followed by a structured clinical interview.',
+              });
+            }}
+          >
+            <FileDown className="mr-2 h-4 w-4" />
+            Export PDF
+          </Button>
+          <Button onClick={onReset} variant="outline">
+            {language === 'en' ? 'New Assessment' : 'പുതിയ വിലയിരുത്തൽ'}
+          </Button>
+        </div>
       </div>
 
 

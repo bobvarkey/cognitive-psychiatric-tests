@@ -3,8 +3,9 @@ import { Button } from '@/components/ui/button';
 import { StressScreeningResult } from '@/types/stressScreening';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
-import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw } from 'lucide-react';
+import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, FileDown } from 'lucide-react';
 import { CATEGORY_LABELS } from '@/data/stressScreeningScale';
+import { generatePdfReport } from '@/utils/reportGenerator';
 
 interface StressScreeningResultsProps {
   result: StressScreeningResult;
@@ -158,6 +159,32 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
               <Button onClick={onReset} variant="outline" className="flex-1">
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {t('retakeAssessment')}
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  const positiveFindings: string[] = [];
+                  Object.entries(result.redFlagsByCategory).forEach(([cat, flags]) => {
+                    const label = CATEGORY_LABELS[cat];
+                    flags.forEach(f => positiveFindings.push(`[${language === 'ml' ? label.ml : label.en}] ${f}`));
+                  });
+                  generatePdfReport({
+                    assessmentName: 'Stress vs Mental Disorder Screening',
+                    date: new Date().toLocaleDateString(),
+                    totalScore: `${result.totalRedFlags} Red Flags`,
+                    severity: result.likelihood === 'low' ? 'Low Likelihood' : result.likelihood === 'moderate' ? 'Moderate Likelihood' : 'High Likelihood',
+                    interpretation: language === 'ml' ? result.interpretationMl : result.interpretation,
+                    sections: [
+                      { title: 'Positive Findings (Red Flags Identified)', items: positiveFindings, type: 'positive' },
+                      { title: 'Recommendations', items: language === 'ml' ? result.recommendationsMl : result.recommendations, type: 'info' },
+                    ],
+                    disclaimer: 'This is a screening tool, not a diagnostic instrument. Clinical judgment and comprehensive evaluation are essential for diagnosis.',
+                  });
+                }}
+              >
+                <FileDown className="mr-2 h-4 w-4" />
+                Export PDF
               </Button>
               {onBack && (
                 <Button onClick={onBack} variant="default" className="flex-1">
