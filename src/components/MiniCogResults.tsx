@@ -1,0 +1,237 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { MiniCogResults as MiniCogResultsType, MINI_COG_WORD_LISTS } from '@/types/minicog';
+import { Brain, FileText, RotateCcw, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+interface MiniCogResultsProps {
+  results: MiniCogResultsType;
+  patientInfo: {
+    name: string;
+    age: string;
+    date: string;
+  };
+  onRestart: () => void;
+}
+
+export const MiniCogResults = ({ results, patientInfo, onRestart }: MiniCogResultsProps) => {
+  const { language } = useLanguage();
+  
+  const getSeverityColor = () => {
+    if (results.totalScore >= 4) return 'text-green-600';
+    if (results.totalScore === 3) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  const getSeverityBadge = () => {
+    if (results.totalScore >= 4) {
+      return <Badge className="bg-green-100 text-green-800 border-green-300">
+        {language === 'en' ? 'Low Risk' : 'കുറഞ്ഞ അപകടസാധ്യത'}
+      </Badge>;
+    }
+    if (results.totalScore === 3) {
+      return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+        {language === 'en' ? 'Borderline - Consider Further Evaluation' : 'അതിർത്തി - കൂടുതൽ വിലയിരുത്തൽ പരിഗണിക്കുക'}
+      </Badge>;
+    }
+    return <Badge className="bg-red-100 text-red-800 border-red-300">
+      {language === 'en' ? 'Positive Screen - Further Evaluation Recommended' : 'പോസിറ്റീവ് സ്ക്രീൻ - കൂടുതൽ വിലയിരുത്തൽ ശുപാർശ ചെയ്യുന്നു'}
+    </Badge>;
+  };
+
+  const wordList = MINI_COG_WORD_LISTS.find(list => list.version === results.wordListVersion);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Brain className="h-10 w-10 text-blue-600" />
+            <h1 className="text-4xl font-bold text-slate-800">
+              {language === 'en' ? 'Mini-Cog™ Results' : 'Mini-Cog™ ഫലങ്ങൾ'}
+            </h1>
+          </div>
+          <p className="text-slate-600">
+            {language === 'en' ? 'Cognitive Screening Assessment Results' : 'വൈജ്ഞാനിക സ്ക്രീനിംഗ് വിലയിരുത്തൽ ഫലങ്ങൾ'}
+          </p>
+        </div>
+
+        {/* Patient Information */}
+        {(patientInfo.name || patientInfo.age || patientInfo.date) && (
+          <Card className="shadow-lg border-0">
+            <CardHeader className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white">
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                {language === 'en' ? 'Patient Information' : 'രോഗിയുടെ വിവരങ്ങൾ'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                {patientInfo.name && (
+                  <div>
+                    <span className="font-semibold text-slate-700">
+                      {language === 'en' ? 'Name:' : 'പേര്:'}
+                    </span>
+                    <p className="text-slate-900">{patientInfo.name}</p>
+                  </div>
+                )}
+                {patientInfo.age && (
+                  <div>
+                    <span className="font-semibold text-slate-700">
+                      {language === 'en' ? 'Age:' : 'പ്രായം:'}
+                    </span>
+                    <p className="text-slate-900">{patientInfo.age}</p>
+                  </div>
+                )}
+                {patientInfo.date && (
+                  <div>
+                    <span className="font-semibold text-slate-700">
+                      {language === 'en' ? 'Date:' : 'തീയതി:'}
+                    </span>
+                    <p className="text-slate-900">{patientInfo.date}</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Overall Score */}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-600 text-white">
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="h-5 w-5" />
+              {language === 'en' ? 'Total Score' : 'മൊത്തം സ്കോർ'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="text-center space-y-4">
+              <div className={`text-6xl font-bold ${getSeverityColor()}`}>
+                {results.totalScore}<span className="text-2xl text-slate-600">/5</span>
+              </div>
+              <Progress value={(results.totalScore / 5) * 100} className="h-3" />
+              <div className="flex justify-center">
+                {getSeverityBadge()}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Score Breakdown */}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+            <CardTitle>{language === 'en' ? 'Score Breakdown' : 'സ്കോർ വിശദാംശങ്ങൾ'}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold text-blue-900">
+                    {language === 'en' ? 'Word Recall' : 'വാക്ക് തിരിച്ചുവിളിക്കൽ'}
+                  </h4>
+                  <span className="text-2xl font-bold text-blue-700">
+                    {results.wordRecallScore}/3
+                  </span>
+                </div>
+                {wordList && (
+                  <div className="text-sm text-blue-800">
+                    <p className="font-medium mb-1">
+                      {language === 'en' ? 'Word List Version' : 'വാക്ക് പട്ടിക പതിപ്പ്'} {results.wordListVersion}:
+                    </p>
+                    <ul className="list-disc list-inside">
+                      {(language === 'en' ? wordList.words : wordList.wordsMl || wordList.words).map((word, idx) => (
+                        <li key={idx}>{word}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-semibold text-green-900">
+                    {language === 'en' ? 'Clock Drawing' : 'ക്ലോക്ക് വരയൽ'}
+                  </h4>
+                  <span className="text-2xl font-bold text-green-700">
+                    {results.clockDrawScore}/2
+                  </span>
+                </div>
+                <p className="text-sm text-green-800">
+                  {results.clockDrawScore === 2 
+                    ? (language === 'en' ? 'Normal clock drawing' : 'സാധാരണ ക്ലോക്ക് വരയൽ')
+                    : (language === 'en' ? 'Abnormal clock drawing' : 'അസാധാരണ ക്ലോക്ക് വരയൽ')}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Interpretation */}
+        <Card className="shadow-lg border-0">
+          <CardHeader className="bg-gradient-to-r from-orange-500 to-red-600 text-white">
+            <CardTitle className="flex items-center gap-2">
+              {results.totalScore >= 3 ? (
+                <CheckCircle2 className="h-5 w-5" />
+              ) : (
+                <AlertTriangle className="h-5 w-5" />
+              )}
+              {language === 'en' ? 'Clinical Interpretation' : 'ക്ലിനിക്കൽ വ്യാഖ്യാനം'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="prose max-w-none">
+              <p className="text-slate-700 mb-4">{results.interpretation}</p>
+              
+              <div className="bg-amber-50 p-4 rounded-lg border border-amber-200 mt-4">
+                <h4 className="font-semibold text-amber-900 mb-2 flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  {language === 'en' ? 'Important Notes:' : 'പ്രധാന കുറിപ്പുകൾ:'}
+                </h4>
+                <ul className="space-y-2 text-sm text-amber-800">
+                  {language === 'en' ? (
+                    <>
+                      <li>• A cut point of &lt;3 has been validated for dementia screening</li>
+                      <li>• A cut point of &lt;4 is recommended when greater sensitivity is desired</li>
+                      <li>• This is a screening tool - positive screens require comprehensive evaluation</li>
+                      <li>• Many individuals with clinically meaningful cognitive impairment may score ≥3</li>
+                      <li>• Consider patient's baseline, education, and other clinical factors</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>• ഡിമെൻഷ്യ സ്ക്രീനിംഗിനായി &lt;3 എന്ന കട്ട് പോയിന്റ് സാധൂകരിച്ചിട്ടുണ്ട്</li>
+                      <li>• കൂടുതൽ സംവേദനക്ഷമത ആവശ്യമുള്ളപ്പോൾ &lt;4 എന്ന കട്ട് പോയിന്റ് ശുപാർശ ചെയ്യുന്നു</li>
+                      <li>• ഇത് ഒരു സ്ക്രീനിംഗ് ഉപകരണമാണ് - പോസിറ്റീവ് സ്ക്രീനുകൾക്ക് സമഗ്ര വിലയിരുത്തൽ ആവശ്യമാണ്</li>
+                      <li>• ക്ലിനിക്കലായി അർത്ഥവത്തായ വൈജ്ഞാനിക വൈകല്യമുള്ള പല വ്യക്തികളും ≥3 സ്കോർ നേടിയേക്കാം</li>
+                      <li>• രോഗിയുടെ അടിസ്ഥാനം, വിദ്യാഭ്യാസം, മറ്റ് ക്ലിനിക്കൽ ഘടകങ്ങൾ എന്നിവ പരിഗണിക്കുക</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center gap-4 print:hidden">
+          <Button
+            onClick={() => window.print()}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            {language === 'en' ? 'Print Results' : 'ഫലങ്ങൾ പ്രിന്റ് ചെയ്യുക'}
+          </Button>
+          <Button
+            onClick={onRestart}
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700"
+          >
+            <RotateCcw className="h-4 w-4" />
+            {language === 'en' ? 'New Assessment' : 'പുതിയ വിലയിരുത്തൽ'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
