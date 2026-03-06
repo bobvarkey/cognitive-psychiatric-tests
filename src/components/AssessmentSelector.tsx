@@ -22,13 +22,14 @@ import { StressScreeningAssessment } from '@/components/StressScreeningAssessmen
 import { FallRiskAssessment } from '@/components/FallRiskAssessment';
 import { MiniAceAssessment } from '@/components/MiniAceAssessment';
 import { NmsAssessment } from '@/components/NmsAssessment';
-import { Brain, Calculator, ArrowRight, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap, Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck, ThermometerSun } from 'lucide-react';
+import { MmpiAssessment } from '@/components/MmpiAssessment';
+import { Brain, Calculator, ArrowRight, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap, Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck, ThermometerSun, ClipboardList } from 'lucide-react';
 import { LanguageToggle } from './LanguageToggle';
 import delusionsMirrorImage from '@/assets/delusions-mirror.png';
 
 export const AssessmentSelector = () => {
   const { t, language } = useLanguage();
-  const [selectedAssessment, setSelectedAssessment] = useState<'daphne' | 'moca' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'hamd' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss' | 'physical' | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace' | 'nms' | null>(null);
+  const [selectedAssessment, setSelectedAssessment] = useState<'daphne' | 'moca' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'hamd' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss' | 'physical' | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace' | 'nms' | 'mmpi' | null>(null);
 
   const handleBackToMenu = () => {
     setSelectedAssessment(null);
@@ -224,6 +225,10 @@ export const AssessmentSelector = () => {
 
   if (selectedAssessment === 'nms') {
     return <NmsAssessment onBack={handleBackToMenu} />;
+  }
+
+  if (selectedAssessment === 'mmpi') {
+    return <MmpiAssessment onBack={handleBackToMenu} />;
   }
 
   return (
@@ -712,6 +717,32 @@ export const AssessmentSelector = () => {
                 className="w-full bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800"
               >
                 Start Assessment
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* MMPI Ultra-Short OPD Screener Card */}
+          <Card className="shadow-lg border-0 hover:shadow-xl transition-all duration-300 group cursor-pointer" onClick={() => setSelectedAssessment('mmpi')}>
+            <CardHeader className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white pb-4">
+              <div className="flex items-center gap-3">
+                <ClipboardList className="h-7 w-7" />
+                <div>
+                  <CardTitle className="text-xl">MMPI Screener</CardTitle>
+                  <p className="text-violet-100 text-xs">Ultra-Short OPD Screener</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <p className="text-sm text-slate-600 mb-3">
+                {language === 'en'
+                  ? '10-item True/False screening based on MMPI clinical scales. Score ≥4 flags for full MMPI-2-RF referral.'
+                  : '10 ശരി/തെറ്റ് ഇനങ്ങൾ MMPI ക്ലിനിക്കൽ സ്കെയിലുകളെ അടിസ്ഥാനമാക്കി. ≥4 സ്കോർ MMPI-2-RF റഫറലിന്.'}
+              </p>
+              <Button
+                onClick={(e) => { e.stopPropagation(); setSelectedAssessment('mmpi'); }}
+                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700"
+              >
+                Start Screening
               </Button>
             </CardContent>
           </Card>
