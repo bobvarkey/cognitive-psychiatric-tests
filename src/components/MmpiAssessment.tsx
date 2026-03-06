@@ -72,6 +72,7 @@ export const MmpiAssessment = ({ onBack }: MmpiAssessmentProps) => {
               <Brain className="h-10 w-10" />
               <div>
                 <CardTitle className="text-2xl">MMPI Ultra-Short OPD Screener</CardTitle>
+                <p className="text-violet-200 text-xs mt-1">Minnesota Multiphasic Personality Inventory</p>
                 <p className="text-violet-100 mt-1 text-sm">
                   {language === 'ml' ? '10 ശരി/തെറ്റ് ഇനങ്ങൾ (~5 മിനിറ്റ്) • കഴിഞ്ഞ 2 ആഴ്ചകളെ അടിസ്ഥാനമാക്കി' : '10 True/False items (~5 min) • Based on past 2 weeks'}
                 </p>

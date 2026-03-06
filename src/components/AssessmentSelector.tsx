@@ -728,7 +728,7 @@ export const AssessmentSelector = () => {
                 <ClipboardList className="h-7 w-7" />
                 <div>
                   <CardTitle className="text-xl">MMPI Screener</CardTitle>
-                  <p className="text-violet-100 text-xs">Ultra-Short OPD Screener</p>
+                  <p className="text-violet-100 text-xs">Minnesota Multiphasic Personality Inventory — Ultra-Short OPD Screener</p>
                 </div>
               </div>
             </CardHeader>

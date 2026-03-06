@@ -76,6 +76,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
               <Brain className="h-10 w-10" />
               <div>
                 <CardTitle className="text-2xl">MMPI Ultra-Short OPD Screener</CardTitle>
+                <p className="text-violet-200 text-xs">Minnesota Multiphasic Personality Inventory</p>
                 <p className="text-violet-100 mt-1">{language === 'ml' ? 'ഫലങ്ങൾ' : 'Results'}</p>
               </div>
             </div>
