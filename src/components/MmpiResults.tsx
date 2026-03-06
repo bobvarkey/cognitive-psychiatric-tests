@@ -116,7 +116,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
             <CardContent className="space-y-2">
               {trueItems.map(item => (
                 <div key={item.id} className="flex items-start gap-3 p-2 bg-red-50 rounded-lg">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 flex-shrink-0">{item.scaleAbbr}</span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 flex-shrink-0">{item.scaleAbbr}—{item.scale}</span>
                   <span className="text-sm">{language === 'ml' ? item.statementMl : item.statement}</span>
                 </div>
               ))}
@@ -135,7 +135,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
             <CardContent className="space-y-2">
               {falseItems.map(item => (
                 <div key={item.id} className="flex items-start gap-3 p-2 bg-green-50 rounded-lg">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-green-100 text-green-700 flex-shrink-0">{item.scaleAbbr}</span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-green-100 text-green-700 flex-shrink-0">{item.scaleAbbr}—{item.scale}</span>
                   <span className="text-sm">{language === 'ml' ? item.statementMl : item.statement}</span>
                 </div>
               ))}
@@ -154,7 +154,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
             <CardContent className="space-y-2">
               {notAnswered.map(item => (
                 <div key={item.id} className="flex items-start gap-3 p-2 bg-amber-50 rounded-lg">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-700 flex-shrink-0">{item.scaleAbbr}</span>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-700 flex-shrink-0">{item.scaleAbbr}—{item.scale}</span>
                   <span className="text-sm">{language === 'ml' ? item.statementMl : item.statement}</span>
                 </div>
               ))}
