@@ -40,9 +40,9 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
   const riskBg = risk.level === 'high' ? 'bg-red-50 border-red-200' : risk.level === 'mild' ? 'bg-orange-50 border-orange-200' : 'bg-green-50 border-green-200';
 
   const handleExportPdf = () => {
-    const positive = trueItems.map(i => `[${i.scaleAbbr}] ${language === 'ml' ? i.statementMl : i.statement}`);
-    const negative = falseItems.map(i => `[${i.scaleAbbr}] ${language === 'ml' ? i.statementMl : i.statement}`);
-    const notAssessed = notAnswered.map(i => `[${i.scaleAbbr}] ${language === 'ml' ? i.statementMl : i.statement}`);
+    const positive = trueItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+    const negative = falseItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+    const notAssessed = notAnswered.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
 
     generatePdfReport({
       assessmentName: 'MMPI Ultra-Short OPD Screener',
