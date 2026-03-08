@@ -6,6 +6,7 @@ import { getPresentationLabel, DOMAIN_THRESHOLDS } from '@/data/adhdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, XCircle, FileDown } from 'lucide-react';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { ADHD_INATTENTION_SYMPTOMS, ADHD_HYPERACTIVITY_SYMPTOMS } from '@/data/adhdScale';
 
 interface AdhdResultsProps {
@@ -16,6 +17,7 @@ interface AdhdResultsProps {
 
 export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
   const { t, language } = useLanguage();
+  const { getPatientInfoForReport } = usePatientInfo();
   
   const threshold = results.age17Plus ? DOMAIN_THRESHOLDS.adult : DOMAIN_THRESHOLDS.childAdolescent;
   const meetsInattention = results.inattentionCount >= threshold;
@@ -276,6 +278,7 @@ export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
                       { title: 'Criteria B-E Status', items: results.criterionResponses.map(cr => `Criterion ${cr.criterionId}: ${cr.met ? 'Met' : 'Not Met'}`), type: 'info' },
                     ],
                     disclaimer: 'This is a screening tool only, not a diagnostic instrument.',
+                    patientInfo: getPatientInfoForReport(),
                   });
                 }}
               >

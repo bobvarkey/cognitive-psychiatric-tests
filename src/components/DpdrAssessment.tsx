@@ -7,6 +7,7 @@ import { dpdrScale } from "@/data/dpdrScale";
 import { DpdrResponse, DpdrResult } from "@/types/dpdr";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft } from "lucide-react";
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface DpdrAssessmentProps {
   onBack: () => void;
@@ -122,6 +123,8 @@ export const DpdrAssessment = ({ onBack }: DpdrAssessmentProps) => {
           </p>
         </div>
       </div>
+
+      <PatientInfoForm />
 
       <Card>
         <CardHeader>

@@ -10,6 +10,7 @@ import { CatatoniaItemCard } from './CatatoniaItemCard';
 import { CatatoniaResults } from './CatatoniaResults';
 import { Activity, ClipboardCheck, RotateCcw, Home, AlertCircle } from 'lucide-react';
 import { LanguageToggle } from './LanguageToggle';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface CatatoniaAssessmentProps {
   onBack?: () => void;
@@ -190,6 +191,7 @@ export const CatatoniaAssessment = ({ onBack }: CatatoniaAssessmentProps) => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-cyan-50 p-4">
       <LanguageToggle />
       <div className="max-w-4xl mx-auto">
+        <PatientInfoForm />
         <Card className="shadow-xl border-0 mb-6">
           <CardHeader className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white">
             <div className="flex items-center justify-between">

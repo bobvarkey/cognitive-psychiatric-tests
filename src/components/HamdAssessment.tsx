@@ -8,6 +8,7 @@ import { HAMD_ITEMS } from '@/data/hamdScale';
 import { HamdResponse, HamdResult } from '@/types/hamd';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface HamdAssessmentProps {
   onBack?: () => void;
@@ -80,6 +81,8 @@ export const HamdAssessment = ({ onBack }: HamdAssessmentProps) => {
             {t('backToMenu')}
           </Button>
         )}
+
+        <PatientInfoForm />
 
         <Card className="shadow-xl">
           <CardContent className="p-6 md:p-8">

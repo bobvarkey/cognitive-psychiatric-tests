@@ -5,6 +5,7 @@ import { HAMD_ITEMS } from '@/data/hamdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, FileDown } from 'lucide-react';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface HamdResultsProps {
   result: HamdResult;
@@ -14,6 +15,7 @@ interface HamdResultsProps {
 
 export const HamdResults = ({ result, onReset, onBack }: HamdResultsProps) => {
   const { t } = useLanguage();
+  const { getPatientInfoForReport } = usePatientInfo();
 
   const getSeverityIcon = () => {
     switch (result.severity) {
@@ -136,6 +138,7 @@ export const HamdResults = ({ result, onReset, onBack }: HamdResultsProps) => {
                       { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
                     ],
                     disclaimer: 'The HAM-D is a clinician-rated scale. Scores should be interpreted in the context of a comprehensive clinical assessment.',
+                    patientInfo: getPatientInfoForReport(),
                   });
                 }}
               >

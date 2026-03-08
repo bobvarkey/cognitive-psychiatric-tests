@@ -7,6 +7,7 @@ import { MMPI_ITEMS, getRiskLevel, SOMATIZATION_SCALES } from '@/data/mmpiScale'
 import { MmpiResponse, MmpiResults } from '@/types/mmpi';
 import { MmpiResults as MmpiResultsComponent } from '@/components/MmpiResults';
 import { Brain, ArrowLeft, ArrowRight, Info, CheckCircle2, XCircle } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface MmpiAssessmentProps {
   onBack?: () => void;
@@ -80,6 +81,8 @@ export const MmpiAssessment = ({ onBack }: MmpiAssessmentProps) => {
             </div>
           </CardHeader>
         </Card>
+
+        <PatientInfoForm />
 
         <Alert className="border-blue-200 bg-blue-50">
           <Info className="h-4 w-4 text-blue-600" />

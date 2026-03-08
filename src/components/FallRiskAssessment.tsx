@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface FallRiskAssessmentProps {
   onBack: () => void;
@@ -223,6 +224,7 @@ export function FallRiskAssessment({ onBack }: FallRiskAssessmentProps) {
 
   return (
     <div className="space-y-4">
+      <PatientInfoForm />
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">

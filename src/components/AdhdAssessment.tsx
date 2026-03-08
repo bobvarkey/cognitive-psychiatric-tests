@@ -16,6 +16,7 @@ import {
 import { AdhdSymptomResponse, AdhdCriterionResponse, AdhdResults as AdhdResultsType } from '@/types/adhd';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Brain, ArrowRight, RotateCcw, ArrowLeft } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface AdhdAssessmentProps {
   onBack?: () => void;
@@ -104,6 +105,8 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
             {t('backToMenu')}
           </Button>
         )}
+
+        <PatientInfoForm />
 
         <Card className="mb-8 shadow-xl border-0">
           <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">

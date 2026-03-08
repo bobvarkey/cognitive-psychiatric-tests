@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, FileDown } from 'lucide-react';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface PssResultsProps {
   result: PssResult;
@@ -15,6 +16,7 @@ interface PssResultsProps {
 
 export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
   const { t } = useLanguage();
+  const { getPatientInfoForReport } = usePatientInfo();
 
   const getSeverityIcon = () => {
     switch (result.severity) {
@@ -125,6 +127,7 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
                       { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
                     ],
                     disclaimer: 'The PSS is a self-report measure of perceived stress. It is not a diagnostic instrument. Clinical judgment is essential for interpretation.',
+                    patientInfo: getPatientInfoForReport(),
                   });
                 }}
               >

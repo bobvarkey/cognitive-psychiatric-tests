@@ -10,6 +10,7 @@ import { LanguageToggle } from './LanguageToggle';
 import { MINI_ACE_VERSIONS, MINI_ACE_ITEMS, getInterpretation, CLINICAL_NOTES } from '@/data/miniAceScale';
 import { MiniAceResponse, MiniAceResults } from '@/types/miniace';
 import { ArrowLeft, Brain, Clock, MessageSquare, ListChecks, RotateCcw, AlertCircle, CheckCircle2, Info, FileText, Cat } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface MiniAceAssessmentProps {
   onBack?: () => void;
@@ -198,6 +199,8 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
             {language === 'ml' ? 'തിരികെ' : 'Back'}
           </Button>
         )}
+
+        <PatientInfoForm />
 
         <Card className="border-0 shadow-xl bg-white/90 backdrop-blur">
           <CardHeader className="text-center pb-2">

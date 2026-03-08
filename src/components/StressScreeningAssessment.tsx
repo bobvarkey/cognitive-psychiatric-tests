@@ -10,6 +10,7 @@ import { StressScreeningResults } from './StressScreeningResults';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { ArrowLeft, Info, CheckCircle, AlertCircle, Stethoscope } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface StressScreeningAssessmentProps {
   onBack?: () => void;
@@ -152,6 +153,8 @@ export const StressScreeningAssessment = ({ onBack }: StressScreeningAssessmentP
             {t('backToMenu')}
           </Button>
         )}
+
+        <PatientInfoForm />
 
         <Card className="shadow-xl">
           <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-500 text-white">

@@ -12,6 +12,7 @@ import { NmsItemCard } from '@/components/NmsItemCard';
 import { NmsResultsComponent } from '@/components/NmsResults';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface NmsAssessmentProps {
   onBack: () => void;
@@ -134,6 +135,8 @@ export const NmsAssessment: React.FC<NmsAssessmentProps> = ({ onBack }) => {
           </Button>
           <LanguageToggle />
         </div>
+
+        <PatientInfoForm />
 
         <Card className="mb-6">
           <CardHeader>

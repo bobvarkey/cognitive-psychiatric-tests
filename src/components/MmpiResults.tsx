@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { MmpiResults as MmpiResultsType } from '@/types/mmpi';
 import { MMPI_ITEMS, getRiskLevel, SOMATIZATION_SCALES } from '@/data/mmpiScale';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, FileDown } from 'lucide-react';
 
 interface MmpiResultsProps {
@@ -15,6 +16,7 @@ interface MmpiResultsProps {
 
 export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
   const { language } = useLanguage();
+  const { getPatientInfoForReport } = usePatientInfo();
   const risk = getRiskLevel(results.trueCount);
 
   const trueItems = results.responses.filter(r => r.answer === true).map(r => {
@@ -57,6 +59,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
         ...(somatizationFlag ? [{ title: 'Targeted Flag: Somatization Pattern', items: [`Hs + D + Hy somatization cluster: ${somatizationCount}/3 scales endorsed`], type: 'info' as const }] : []),
       ],
       disclaimer: 'Clinician use only; not diagnostic. Tally per scale for targeted flags (e.g., Hs+D+Hy = somatization).',
+      patientInfo: getPatientInfoForReport(),
     });
   };
 

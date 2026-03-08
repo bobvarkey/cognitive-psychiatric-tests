@@ -12,6 +12,7 @@ import { DementiaResults } from './DementiaResults';
 import { BEHAV5_ITEMS, SOFT_SIGN_ITEMS, VAT_ITEMS, CLINICAL_EXAM_ITEMS, HISTORY_ITEMS, TEST_ITEMS, VITAMINS_MNEMONIC, IQCODE_ITEMS, IQCODE_RESPONSE_OPTIONS, CDR_DOMAINS, CDR_GLOBAL_INTERPRETATIONS } from '@/data/dementiaScale';
 import { DementiaResponse, DementiaResults as DementiaResultsType } from '@/types/dementia';
 import { ArrowLeft, Brain, AlertTriangle, Stethoscope, ClipboardList, FlaskConical, Eye, Activity, ChevronDown, Users, Gauge } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 import neurosyphilisFlowchart from '@/assets/neurosyphilis-flowchart.png';
 
 interface DementiaAssessmentProps {
@@ -352,6 +353,8 @@ export const DementiaAssessment: React.FC<DementiaAssessmentProps> = ({ onBack }
             {language === 'ml' ? 'തിരികെ' : 'Back'}
           </Button>
         )}
+
+        <PatientInfoForm />
 
         <Card className="border-0 shadow-xl bg-white/90 backdrop-blur">
           <CardHeader className="text-center pb-2">
