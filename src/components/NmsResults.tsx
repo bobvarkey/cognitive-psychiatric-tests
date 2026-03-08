@@ -6,6 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { NmsResults as NmsResultsType } from '@/types/nms';
 import { NMS_CATEGORIES, NMS_RECOMMENDATIONS, NMS_DIAGNOSTIC_CRITERIA, NMS_CLINICAL_NOTES } from '@/data/nmsScale';
 import { AlertTriangle, ThermometerSun, Activity, Brain, FlaskConical, Stethoscope, Move, CheckCircle2, XCircle, HelpCircle, TrendingUp, Info } from 'lucide-react';
+import { DomainRadarChart } from './DomainRadarChart';
 
 interface NmsResultsProps {
   results: NmsResultsType;
@@ -146,6 +147,20 @@ export const NmsResultsComponent: React.FC<NmsResultsProps> = ({ results, isMala
           {isMalayalam ? NMS_CLINICAL_NOTES.serialMonitoring.ml : NMS_CLINICAL_NOTES.serialMonitoring.en}
         </AlertDescription>
       </Alert>
+
+      {/* Category Radar Chart */}
+      <DomainRadarChart
+        title={isMalayalam ? 'വിഭാഗ സ്കോർ പ്രൊഫൈൽ' : 'Category Score Profile'}
+        data={Object.entries(results.categoryScores).map(([category, score]) => {
+          const categoryInfo = NMS_CATEGORIES[category as keyof typeof NMS_CATEGORIES];
+          return {
+            domain: isMalayalam ? categoryInfo.nameMl : categoryInfo.name,
+            score: score as number,
+            maxScore: categoryInfo.maxScore,
+            fullMark: 100,
+          };
+        })}
+      />
 
       {/* Category Scores */}
       <Card>

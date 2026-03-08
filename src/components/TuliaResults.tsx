@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { TuliaResponse, TuliaResults as TuliaResultsType } from '@/types/tulia';
 import { tuliaItems } from '@/data/tuliaScale';
 import { Hand, AlertCircle, CheckCircle, XCircle, Printer, RotateCcw } from 'lucide-react';
+import { DomainRadarChart } from './DomainRadarChart';
 
 interface TuliaResultsProps {
   responses: TuliaResponse[];
@@ -154,6 +155,18 @@ export const TuliaResults = ({ responses }: TuliaResultsProps) => {
                 </div>
               </div>
             </div>
+
+            {/* Radar Chart */}
+            <DomainRadarChart
+              title={language === 'en' ? 'Score Profile' : 'സ്കോർ പ്രൊഫൈൽ'}
+              data={[
+                { domain: language === 'en' ? 'Imitation' : 'അനുകരണം', score: results.imitationScore, maxScore: 7, fullMark: 100 },
+                { domain: language === 'en' ? 'Pantomime' : 'പാന്റോമൈം', score: results.pantomimeScore, maxScore: 5, fullMark: 100 },
+                { domain: language === 'en' ? 'Meaningless' : 'അർത്ഥരഹിതം', score: results.meaninglessScore, maxScore: 1, fullMark: 100 },
+                { domain: language === 'en' ? 'Intransitive' : 'ഇൻട്രാൻസിറ്റീവ്', score: results.intransitiveScore, maxScore: 3, fullMark: 100 },
+                { domain: language === 'en' ? 'Transitive' : 'ട്രാൻസിറ്റീവ്', score: results.transitiveScore, maxScore: 8, fullMark: 100 },
+              ]}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="shadow-md">

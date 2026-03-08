@@ -5,6 +5,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { MocaResults as MocaResultsType } from '@/types/moca';
 import { MOCA_DOMAIN_MAX_SCORES } from '@/types/moca';
 import { RotateCcw, Download, Calculator } from 'lucide-react';
+import { DomainRadarChart } from './DomainRadarChart';
 
 interface MocaResultsProps {
   results: MocaResultsType;
@@ -101,6 +102,17 @@ export const MocaResults = ({ results, patientInfo, onRestart }: MocaResultsProp
             </div>
           </CardContent>
         </Card>
+
+        {/* Domain Radar Chart */}
+        <DomainRadarChart
+          title={t('domainScores') + ' — Overview'}
+          data={Object.entries(results.domainScores).map(([domain, score]) => ({
+            domain: t(domain),
+            score,
+            maxScore: MOCA_DOMAIN_MAX_SCORES[domain as keyof typeof MOCA_DOMAIN_MAX_SCORES],
+            fullMark: 100,
+          }))}
+        />
 
         {/* Domain Scores */}
         <Card className="shadow-lg border-0 print:shadow-none print:border">
