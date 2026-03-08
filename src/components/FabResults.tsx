@@ -6,6 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { FileDown } from 'lucide-react';
 import { generatePdfReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { DomainRadarChart } from './DomainRadarChart';
 
 interface FabResultsProps {
   responses: FabResponse[];
@@ -104,6 +105,19 @@ export const FabResults = ({ responses, onReset }: FabResultsProps) => {
                 : 'FAB-യിൽ 12 എന്ന കട്ട്-ഓഫ് സ്കോർ ഫ്രണ്ടൽ ഡിസെക്സിക്യൂട്ടീവ് തരം ഡിമെൻഷ്യകളെയും അൽഷിമേഴ്സ് തരം ഡിമെൻഷ്യയെയും വേർതിരിക്കുന്നതിൽ 77% സെൻസിറ്റിവിറ്റിയും 87% സ്പെസിഫിസിറ്റിയും ഉണ്ട്.'}
             </p>
           </div>
+
+          <DomainRadarChart
+            title={language === 'en' ? 'Domain Score Profile' : 'ഡൊമെയ്ൻ സ്കോർ പ്രൊഫൈൽ'}
+            data={responses.map((r) => {
+              const item = fabItems.find((i) => i.id === r.itemId);
+              return {
+                domain: item ? (language === 'en' ? item.domain : item.domainMl) : `Item ${r.itemId}`,
+                score: r.score,
+                maxScore: 3,
+                fullMark: 100,
+              };
+            })}
+          />
 
           <div>
             <h3 className="font-semibold mb-3">

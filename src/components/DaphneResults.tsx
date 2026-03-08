@@ -17,6 +17,7 @@ import { DaphneResults as DaphneResultsType } from '@/types/daphne';
 import { getDaphneScaleItems } from '@/data/daphneScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
+import { DomainRadarChart } from './DomainRadarChart';
 
 interface DaphneResultsProps {
   results: DaphneResultsType;
@@ -183,6 +184,24 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
               </CardContent>
             </Card>
           </div>
+
+          {/* Domain Radar Chart */}
+          <DomainRadarChart
+            title={t('results.domain.analysis') + ' — Overview'}
+            data={domainDetails.map((domain) => {
+              const domainResponses = results.responses.filter(r => {
+                const item = getDaphneScaleItems('en').find(i => i.id === r.itemId);
+                return item?.domain === domain.key;
+              });
+              const domainScore = domainResponses.reduce((sum, r) => sum + r.score, 0);
+              return {
+                domain: domain.name,
+                score: domainScore,
+                maxScore: domain.items * 4,
+                fullMark: 100,
+              };
+            })}
+          />
 
           {/* Domain Breakdown */}
           <Card className="shadow-card">
