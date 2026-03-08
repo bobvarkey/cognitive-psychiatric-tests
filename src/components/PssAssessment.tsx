@@ -9,6 +9,7 @@ import { PssResponse, PssResult, PssScore } from '@/types/pss';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { ArrowLeft } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface PssAssessmentProps {
   onBack?: () => void;
@@ -85,6 +86,8 @@ export const PssAssessment = ({ onBack }: PssAssessmentProps) => {
             {t('backToMenu')}
           </Button>
         )}
+
+        <PatientInfoForm />
 
         <Card className="shadow-xl">
           <CardContent className="p-6 md:p-8">

@@ -24,14 +24,17 @@ import { MiniAceAssessment } from '@/components/MiniAceAssessment';
 import { NmsAssessment } from '@/components/NmsAssessment';
 import { MmpiAssessment } from '@/components/MmpiAssessment';
 import { Brain, Calculator, ArrowRight, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap, Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck, ThermometerSun, ClipboardList } from 'lucide-react';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { LanguageToggle } from './LanguageToggle';
 import delusionsMirrorImage from '@/assets/delusions-mirror.png';
 
 export const AssessmentSelector = () => {
   const { t, language } = useLanguage();
+  const { clearPatientInfo } = usePatientInfo();
   const [selectedAssessment, setSelectedAssessment] = useState<'daphne' | 'moca' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'hamd' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss' | 'physical' | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace' | 'nms' | 'mmpi' | null>(null);
 
   const handleBackToMenu = () => {
+    clearPatientInfo();
     setSelectedAssessment(null);
   };
 

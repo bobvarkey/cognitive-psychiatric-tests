@@ -5,6 +5,7 @@ import { Pcl5Result } from '@/types/pcl5';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AlertCircle, CheckCircle2, FileDown } from 'lucide-react';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface Pcl5ResultsProps {
   results: Pcl5Result;
@@ -13,6 +14,7 @@ interface Pcl5ResultsProps {
 
 export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
   const { language } = useLanguage();
+  const { getPatientInfoForReport } = usePatientInfo();
 
   const getScoreColor = (score: number) => {
     if (score >= 3) return 'text-red-600';
@@ -44,6 +46,7 @@ export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
                   ], type: results.probablePTSD ? 'positive' : 'negative' },
                 ],
                 disclaimer: 'This is a screening tool, not a diagnostic instrument. Positive screens should be followed by a structured clinical interview.',
+                patientInfo: getPatientInfoForReport(),
               });
             }}
           >

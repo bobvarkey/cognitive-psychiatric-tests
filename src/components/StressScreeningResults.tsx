@@ -6,6 +6,7 @@ import { LanguageToggle } from './LanguageToggle';
 import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, FileDown } from 'lucide-react';
 import { CATEGORY_LABELS } from '@/data/stressScreeningScale';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface StressScreeningResultsProps {
   result: StressScreeningResult;
@@ -15,6 +16,7 @@ interface StressScreeningResultsProps {
 
 export const StressScreeningResults = ({ result, onReset, onBack }: StressScreeningResultsProps) => {
   const { language, t } = useLanguage();
+  const { getPatientInfoForReport } = usePatientInfo();
 
   const getLikelihoodIcon = () => {
     switch (result.likelihood) {
@@ -180,6 +182,7 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
                       { title: 'Recommendations', items: language === 'ml' ? result.recommendationsMl : result.recommendations, type: 'info' },
                     ],
                     disclaimer: 'This is a screening tool, not a diagnostic instrument. Clinical judgment and comprehensive evaluation are essential for diagnosis.',
+                    patientInfo: getPatientInfoForReport(),
                   });
                 }}
               >

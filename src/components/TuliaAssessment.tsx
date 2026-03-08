@@ -8,6 +8,7 @@ import { TuliaResults as TuliaResultsComponent } from '@/components/TuliaResults
 import { tuliaItems } from '@/data/tuliaScale';
 import { TuliaResponse, TuliaScore } from '@/types/tulia';
 import { Hand, ArrowRight } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 export const TuliaAssessment = () => {
   const { t, language } = useLanguage();
@@ -41,6 +42,7 @@ export const TuliaAssessment = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-4 print:bg-white">
       <div className="max-w-4xl mx-auto">
+        <PatientInfoForm />
         <Card className="shadow-2xl border-0 mb-8">
           <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-t-lg">
             <div className="flex items-center gap-3">

@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { PhysicalFindingsData, PhysicalFindingsResult, Sex } from '@/types/physicalFindings';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, AlertCircle, CheckCircle, AlertTriangle, RotateCcw, Ruler, Activity } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface PhysicalFindingsAssessmentProps {
   onBack?: () => void;
@@ -204,6 +205,8 @@ export const PhysicalFindingsAssessment = ({ onBack }: PhysicalFindingsAssessmen
             {t('backToMenu')}
           </Button>
         )}
+
+        <PatientInfoForm />
 
         <Card className="shadow-xl">
           <CardHeader className="bg-gradient-to-r from-orange-500 to-amber-500 text-white">

@@ -8,6 +8,7 @@ import { MSI_BPD_ITEMS } from '@/data/msiBpdScale';
 import { MsiBpdResponse, MsiBpdResult } from '@/types/msibpd';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft } from 'lucide-react';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 interface MsiBpdAssessmentProps {
   onBack?: () => void;
@@ -74,6 +75,8 @@ export const MsiBpdAssessment = ({ onBack }: MsiBpdAssessmentProps) => {
             {t('backToMenu')}
           </Button>
         )}
+
+        <PatientInfoForm />
 
         <Card className="shadow-xl">
           <CardContent className="p-6 md:p-8">

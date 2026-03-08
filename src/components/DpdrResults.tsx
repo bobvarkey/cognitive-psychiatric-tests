@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft, RotateCcw, AlertCircle, Info, FileDown } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface DpdrResultsProps {
   results: DpdrResult;
@@ -13,6 +14,7 @@ interface DpdrResultsProps {
 }
 
 export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
+  const { getPatientInfoForReport } = usePatientInfo();
   const { language } = useLanguage();
 
   const getSeverityColor = (severity: string) => {
@@ -257,6 +259,7 @@ export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
                 { title: 'Negative Findings (Normal Domains)', items: negative, type: 'negative' },
               ],
               disclaimer: 'This is a screening tool, not a diagnostic instrument. Only a qualified mental health professional can provide a formal diagnosis.',
+              patientInfo: getPatientInfoForReport(),
             });
           }}
         >

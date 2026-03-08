@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { fabItems } from '@/data/fabScale';
 import { FabResponse, FabScore } from '@/types/fab';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 export const FabAssessment = () => {
   const [responses, setResponses] = useState<Map<number, FabScore>>(new Map());
@@ -55,6 +56,8 @@ export const FabAssessment = () => {
           </p>
         </div>
       </div>
+
+      <PatientInfoForm />
 
       {fabItems.map((item) => (
         <FabItemCard

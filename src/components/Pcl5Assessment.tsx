@@ -6,6 +6,7 @@ import { Pcl5Results } from './Pcl5Results';
 import { pcl5Items } from '@/data/pcl5Scale';
 import { Pcl5Result } from '@/types/pcl5';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 export const Pcl5Assessment = () => {
   const [responses, setResponses] = useState<Map<number, number>>(new Map());
@@ -85,6 +86,7 @@ export const Pcl5Assessment = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <PatientInfoForm />
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold">

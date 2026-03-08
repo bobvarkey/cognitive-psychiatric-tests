@@ -8,6 +8,7 @@ import { DelusionChecklistSelector } from './DelusionChecklistSelector';
 import { delusionsScale } from '@/data/delusionsScale';
 import { DelusionResponse, DelusionResults } from '@/types/delusions';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 type AssessmentStep = 'selection' | 'detailed' | 'results';
 
@@ -118,6 +119,7 @@ export const DelusionsAssessment = () => {
             </CardDescription>
           </CardHeader>
         </Card>
+        <PatientInfoForm />
 
         <DelusionChecklistSelector
           selectedIds={selectedIds}

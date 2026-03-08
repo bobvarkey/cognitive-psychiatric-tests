@@ -9,6 +9,7 @@ import { HareResponse, HareResults as HareResultsType } from '@/types/hare';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from '@/components/LanguageToggle';
+import { PatientInfoForm } from '@/components/PatientInfoForm';
 
 export const HareAssessment = () => {
   const { t } = useLanguage();
@@ -78,6 +79,8 @@ export const HareAssessment = () => {
         <div className="flex justify-end mb-4 print:hidden">
           <LanguageToggle />
         </div>
+
+        <PatientInfoForm />
 
         <Card className="mb-8 shadow-2xl border-0 bg-white/95 backdrop-blur">
           <CardHeader className="bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-t-lg">

@@ -5,6 +5,7 @@ import { MSI_BPD_ITEMS } from '@/data/msiBpdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AlertCircle, CheckCircle, ArrowLeft, RotateCcw, FileDown } from 'lucide-react';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface MsiBpdResultsProps {
   result: MsiBpdResult;
@@ -14,6 +15,7 @@ interface MsiBpdResultsProps {
 
 export const MsiBpdResults = ({ result, onReset, onBack }: MsiBpdResultsProps) => {
   const { t } = useLanguage();
+  const { getPatientInfoForReport } = usePatientInfo();
 
   const getSeverityIcon = () => {
     switch (result.severity) {
@@ -120,6 +122,7 @@ export const MsiBpdResults = ({ result, onReset, onBack }: MsiBpdResultsProps) =
                       { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
                     ],
                     disclaimer: 'This is a screening tool only. A positive result does not confirm a diagnosis and should be followed by comprehensive clinical evaluation.',
+                    patientInfo: getPatientInfoForReport(),
                   });
                 }}
               >

@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ClinicalContextTable } from './ClinicalContextTable';
 import { delusionsScale } from '@/data/delusionsScale';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface DelusionsResultsProps {
   results: DelusionResults;
@@ -15,6 +16,7 @@ interface DelusionsResultsProps {
 }
 
 export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) => {
+  const { getPatientInfoForReport } = usePatientInfo();
   const getSeverityLevel = () => {
     if (results.totalPresent === 0) return 'None';
     if (results.totalPresent <= 2) return 'Minimal';
@@ -303,6 +305,7 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
                 { title: 'Items Not Assessed / Not Entered', items: notAssessed, type: 'not-assessed' },
               ],
               disclaimer: 'This assessment is a screening tool only. Comprehensive psychiatric evaluation is essential for accurate diagnosis and treatment planning.',
+              patientInfo: getPatientInfoForReport(),
             });
           }}
         >

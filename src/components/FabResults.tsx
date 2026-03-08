@@ -5,6 +5,7 @@ import { fabItems } from '@/data/fabScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FileDown } from 'lucide-react';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface FabResultsProps {
   responses: FabResponse[];
@@ -42,6 +43,7 @@ const calculateResults = (responses: FabResponse[]): FabResult => {
 export const FabResults = ({ responses, onReset }: FabResultsProps) => {
   const results = calculateResults(responses);
   const { language } = useLanguage();
+  const { getPatientInfoForReport } = usePatientInfo();
 
   const getSeverityColor = (severity: FabResult['severity']) => {
     switch (severity) {
@@ -157,6 +159,7 @@ export const FabResults = ({ responses, onReset }: FabResultsProps) => {
                     { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
                   ],
                   disclaimer: 'A cut-off score of 12 on the FAB differentiates frontal dysexecutive dementias from Alzheimer\'s type. This is a screening tool.',
+                  patientInfo: getPatientInfoForReport(),
                 });
               }}
             >
