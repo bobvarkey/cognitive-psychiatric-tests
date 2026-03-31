@@ -130,7 +130,7 @@ export const AssessmentSelector = () => {
     const withOnBack: Record<string, boolean> = {
       adhd: true, msibpd: true, hamd: true, dpdr: true, pss: true,
       physical: true, dementia: true, catatonia: true, stressScreening: true,
-      fallRisk: true, miniace: true, nms: true, mmpi: true,
+      fallRisk: true, miniace: true, nms: true, mmpi: true, adam: true,
     };
 
     if (withOnBack[selectedAssessment]) {
