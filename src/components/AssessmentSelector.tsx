@@ -35,7 +35,7 @@ type AssessmentKey =
   | 'daphne' | 'moca' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
   | 'hamd' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss' | 'physical'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
-  | 'nms' | 'mmpi';
+  | 'nms' | 'mmpi' | 'adam';
 
 type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'medical';
 
