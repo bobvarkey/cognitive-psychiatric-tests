@@ -148,6 +148,7 @@ export const AssessmentSelector = () => {
         miniace: MiniAceAssessment,
         nms: NmsAssessment,
         mmpi: MmpiAssessment,
+        adam: AdamAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;
