@@ -60,6 +60,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'pcl5', name: 'PC-PTSD-5', subtitle: 'PTSD Screen', icon: Shield, gradient: 'from-red-500 to-rose-600', category: ['mood'] },
   { key: 'dpdr', name: 'DPDR', subtitle: 'Depersonalization', icon: Eye, gradient: 'from-cyan-500 to-blue-600', category: ['mood'] },
   { key: 'stressScreening', name: 'Stress vs Disorder', subtitle: 'Differentiation', icon: Scale, gradient: 'from-violet-500 to-purple-600', category: ['mood'] },
+  { key: 'adam', name: 'ADAM', subtitle: 'Apathy-Depression', icon: ClipboardList, gradient: 'from-teal-500 to-blue-600', category: ['mood'] },
   { key: 'hare', name: 'Hare PCL-R', subtitle: 'Psychopathy', icon: AlertTriangle, gradient: 'from-orange-500 to-red-600', category: ['personality'] },
   { key: 'adhd', name: 'ADHD ASRS', subtitle: 'DSM-5-TR', icon: Focus, gradient: 'from-indigo-500 to-blue-600', category: ['personality'] },
   { key: 'msibpd', name: 'MSI-BPD', subtitle: 'BPD Screening', icon: Heart, gradient: 'from-rose-500 to-pink-600', category: ['personality'] },
