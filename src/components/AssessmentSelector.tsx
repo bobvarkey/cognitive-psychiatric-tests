@@ -152,6 +152,7 @@ export const AssessmentSelector = () => {
         nms: NmsAssessment,
         mmpi: MmpiAssessment,
         adam: AdamAssessment,
+        cognitiveSyndromes: CognitiveSyndromesAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;
