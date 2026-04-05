@@ -133,6 +133,7 @@ export const AssessmentSelector = () => {
       adhd: true, msibpd: true, hamd: true, dpdr: true, pss: true,
       physical: true, dementia: true, catatonia: true, stressScreening: true,
       fallRisk: true, miniace: true, nms: true, mmpi: true, adam: true,
+      cognitiveSyndromes: true,
     };
 
     if (withOnBack[selectedAssessment]) {
