@@ -55,6 +55,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'minicog', name: 'Mini-Cog™', subtitle: 'Brief Screening', icon: Brain, gradient: 'from-blue-500 to-cyan-600', category: ['cognitive'] },
   { key: 'miniace', name: 'Mini-ACE', subtitle: "Addenbrooke's", icon: ClipboardCheck, gradient: 'from-emerald-500 to-green-600', category: ['cognitive'] },
   { key: 'fab', name: 'FAB', subtitle: 'Frontal Battery', icon: Zap, gradient: 'from-amber-500 to-yellow-600', category: ['cognitive'] },
+  { key: 'cognitiveSyndromes', name: 'Cog Syndromes', subtitle: 'Frontal & Neuro', icon: BookOpen, gradient: 'from-sky-500 to-indigo-600', category: ['cognitive'] },
   { key: 'tulia', name: 'TULIA', subtitle: 'Apraxia Screen', icon: Hand, gradient: 'from-teal-500 to-cyan-600', category: ['cognitive'] },
   { key: 'hamd', name: 'HAM-D', subtitle: 'Depression Scale', icon: Frown, gradient: 'from-blue-500 to-indigo-600', category: ['mood'] },
   { key: 'pss', name: 'PSS-10', subtitle: 'Perceived Stress', icon: Gauge, gradient: 'from-emerald-500 to-teal-600', category: ['mood'] },
