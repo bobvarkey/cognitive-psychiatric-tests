@@ -27,7 +27,7 @@ import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAss
 import {
   Brain, Calculator, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap,
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
-  ThermometerSun, ClipboardList, Search, X,
+  ThermometerSun, ClipboardList, Search, X, BookOpen,
 } from 'lucide-react';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { LanguageToggle } from './LanguageToggle';
