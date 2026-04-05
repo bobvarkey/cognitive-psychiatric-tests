@@ -23,10 +23,11 @@ import { MiniAceAssessment } from '@/components/MiniAceAssessment';
 import { NmsAssessment } from '@/components/NmsAssessment';
 import { MmpiAssessment } from '@/components/MmpiAssessment';
 import { AdamAssessment } from '@/components/AdamAssessment';
+import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
 import {
   Brain, Calculator, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap,
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
-  ThermometerSun, ClipboardList, Search, X,
+  ThermometerSun, ClipboardList, Search, X, BookOpen,
 } from 'lucide-react';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { LanguageToggle } from './LanguageToggle';
@@ -35,7 +36,7 @@ type AssessmentKey =
   | 'daphne' | 'moca' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
   | 'hamd' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss' | 'physical'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
-  | 'nms' | 'mmpi' | 'adam';
+  | 'nms' | 'mmpi' | 'adam' | 'cognitiveSyndromes';
 
 type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'medical';
 
@@ -54,6 +55,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'minicog', name: 'Mini-Cog™', subtitle: 'Brief Screening', icon: Brain, gradient: 'from-blue-500 to-cyan-600', category: ['cognitive'] },
   { key: 'miniace', name: 'Mini-ACE', subtitle: "Addenbrooke's", icon: ClipboardCheck, gradient: 'from-emerald-500 to-green-600', category: ['cognitive'] },
   { key: 'fab', name: 'FAB', subtitle: 'Frontal Battery', icon: Zap, gradient: 'from-amber-500 to-yellow-600', category: ['cognitive'] },
+  { key: 'cognitiveSyndromes', name: 'Cog Syndromes', subtitle: 'Frontal & Neuro', icon: BookOpen, gradient: 'from-sky-500 to-indigo-600', category: ['cognitive'] },
   { key: 'tulia', name: 'TULIA', subtitle: 'Apraxia Screen', icon: Hand, gradient: 'from-teal-500 to-cyan-600', category: ['cognitive'] },
   { key: 'hamd', name: 'HAM-D', subtitle: 'Depression Scale', icon: Frown, gradient: 'from-blue-500 to-indigo-600', category: ['mood'] },
   { key: 'pss', name: 'PSS-10', subtitle: 'Perceived Stress', icon: Gauge, gradient: 'from-emerald-500 to-teal-600', category: ['mood'] },
@@ -131,6 +133,7 @@ export const AssessmentSelector = () => {
       adhd: true, msibpd: true, hamd: true, dpdr: true, pss: true,
       physical: true, dementia: true, catatonia: true, stressScreening: true,
       fallRisk: true, miniace: true, nms: true, mmpi: true, adam: true,
+      cognitiveSyndromes: true,
     };
 
     if (withOnBack[selectedAssessment]) {
@@ -149,6 +152,7 @@ export const AssessmentSelector = () => {
         nms: NmsAssessment,
         mmpi: MmpiAssessment,
         adam: AdamAssessment,
+        cognitiveSyndromes: CognitiveSyndromesAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;
