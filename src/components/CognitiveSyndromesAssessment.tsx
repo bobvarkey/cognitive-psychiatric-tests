@@ -64,38 +64,37 @@ export const CognitiveSyndromesAssessment = ({ onBack }: CognitiveSyndromesAsses
     const presentSyndromes = cognitiveSyndromes.filter(s => selectedSyndromes.has(s.id));
     const presentTests = frontalLobeTests.filter(t => selectedTests.has(t.id));
 
-    const sections = [
+    const sections: { title: string; items: string[]; type?: 'positive' | 'negative' | 'info' }[] = [
       {
         title: 'Cognitive Syndromes Identified',
-        items: presentSyndromes.map(s => ({
-          label: s.name,
-          value: language === 'en' ? s.description : s.descriptionMl,
-        })),
+        items: presentSyndromes.map(s => `${s.name}: ${language === 'en' ? s.description : s.descriptionMl}`),
+        type: 'positive',
       },
       {
         title: 'Frontal Lobe Tests — Abnormal',
-        items: presentTests.map(t => ({
-          label: t.name,
-          value: language === 'en' ? t.description : t.descriptionMl,
-        })),
+        items: presentTests.map(t => `${t.name} (${t.domain}): ${language === 'en' ? t.description : t.descriptionMl}`),
+        type: 'positive',
       },
     ];
 
     if (notes.trim()) {
       sections.push({
         title: 'Clinical Notes',
-        items: [{ label: 'Notes', value: notes }],
+        items: [notes],
+        type: 'info',
       });
     }
 
+    const pi = patientInfo ? Object.fromEntries(
+      Object.entries(patientInfo).map(([k, v]) => [k, String(v)])
+    ) as Record<string, string> : undefined;
+
     generatePdfReport({
-      title: 'Cognitive Syndromes & Frontal Lobe Assessment',
-      patientInfo: patientInfo || undefined,
+      assessmentName: 'Cognitive Syndromes & Frontal Lobe Assessment',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${presentSyndromes.length} syndromes, ${presentTests.length} frontal tests`,
+      patientInfo: pi,
       sections,
-      scores: {
-        'Syndromes Present': presentSyndromes.length,
-        'Frontal Tests Abnormal': presentTests.length,
-      },
     });
   };
 
