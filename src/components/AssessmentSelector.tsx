@@ -23,6 +23,7 @@ import { MiniAceAssessment } from '@/components/MiniAceAssessment';
 import { NmsAssessment } from '@/components/NmsAssessment';
 import { MmpiAssessment } from '@/components/MmpiAssessment';
 import { AdamAssessment } from '@/components/AdamAssessment';
+import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
 import {
   Brain, Calculator, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap,
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
