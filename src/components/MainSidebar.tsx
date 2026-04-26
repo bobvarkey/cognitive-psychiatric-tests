@@ -19,7 +19,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { ChevronDown } from 'lucide-react';
 
 export type Section = 'assessments' | 'results' | 'settings' | 'suggestions';
-export type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'medical' | 'psychosis';
+export type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'adverse' | 'movement' | 'epilepsy' | 'substance' | 'sleep' | 'psychosis';
 
 export interface CategoryDef {
   key: Category;

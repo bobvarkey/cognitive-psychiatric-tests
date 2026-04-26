@@ -111,7 +111,7 @@ const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
   'twstrs', 'epworth', 'ilae-seizure-classification', 'engel', 'sudep-7'
 ];
 
-type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'medical' | 'psychosis';
+type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'adverse' | 'movement' | 'epilepsy' | 'substance' | 'sleep' | 'psychosis';
 
 interface AssessmentInfo {
   key: AssessmentKey;
@@ -150,15 +150,15 @@ const assessments: AssessmentInfo[] = [
   { key: 'msibpd', name: 'MSI-BPD', subtitle: 'BPD Screening', icon: Heart, gradient: 'from-rose-500 to-pink-600', category: ['personality'], description: 'MSI-BPD — McLean Screening Instrument for Borderline Personality Disorder; 10 yes/no items.' },
   { key: 'mmpi', name: 'MMPI', subtitle: 'OPD Screener', icon: ClipboardList, gradient: 'from-violet-600 to-indigo-600', category: ['personality'], description: 'MMPI — Minnesota Multiphasic Personality Inventory; ultra-short OPD somatization screener.' },
   { key: 'delusions', name: 'Delusions', subtitle: 'Hallucinations', icon: Eye, gradient: 'from-violet-500 to-purple-700', category: ['personality'], description: 'Structured checklist for delusion themes and hallucination modalities with clinical context.' },
-  { key: 'dementia', name: 'Dementia', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['medical'], description: 'BEHAV5+ behavioural screen plus localising neurological signs in dementia.' },
-  { key: 'catatonia', name: 'Catatonia', subtitle: 'BFCRS + DSM-5', icon: Pause, gradient: 'from-cyan-500 to-teal-600', category: ['medical'], description: 'BFCRS — Bush-Francis Catatonia Rating Scale plus DSM-5 catatonia criteria.' },
-  { key: 'nms', name: 'NMS', subtitle: 'Malignant Syndrome', icon: ThermometerSun, gradient: 'from-red-600 to-rose-700', category: ['medical'], description: 'NMS — Neuroleptic Malignant Syndrome assessment (rigidity, hyperthermia, autonomic instability, altered mental state).' },
-  { key: 'hunter', name: 'Hunter Criteria', subtitle: 'Serotonin Syndrome', icon: FlaskConical, gradient: 'from-rose-500 to-pink-600', category: ['medical'], description: 'Hunter Serotonin Toxicity Criteria — diagnostic decision rule for serotonin syndrome.' },
-  { key: 'smarts', name: 'SMARTS', subtitle: 'Treatment Side Effects', icon: ClipboardList, gradient: 'from-orange-500 to-amber-500', category: ['medical'], description: 'SMARTS — Systematic Monitoring of Adverse events Related to TreatmentS; patient-reported side-effect checklist.' },
-  { key: 'adverseEffects', name: 'Adverse Effects', subtitle: 'Drug-Class Checklist', icon: Pill, gradient: 'from-fuchsia-500 to-purple-600', category: ['medical'], description: 'Drug-class adverse-effect checklist for psychotropic medications.' },
-  { key: 'fallRisk', name: 'Fall Risk', subtitle: 'STEADI, Morse & FRAT', icon: Footprints, gradient: 'from-orange-500 to-red-600', category: ['medical'], description: 'Fall risk assessment combining CDC STEADI, Morse Fall Scale and FRAT (Falls Risk Assessment Tool).' },
-  { key: 'consciousness', name: 'Coma & Consciousness', subtitle: 'GCS · FOUR · RASS · ABS', icon: Activity, gradient: 'from-slate-600 to-zinc-700', category: ['medical'], description: 'Bedside scales of consciousness, sedation and agitation: Glasgow Coma Scale (GCS), FOUR Score for intubated patients, Richmond Agitation–Sedation Scale (RASS), and Agitated Behavior Scale (ABS) for traumatic brain injury.' },
-  { key: 'substance', name: 'Withdrawal & Dependence', subtitle: 'CIWA-Ar · SDS', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'Substance-specific scales: CIWA-Ar quantifies severity of alcohol withdrawal (10 items, 0–67); SDS — Severity of Dependence Scale, 5 items measuring psychological dependence and compulsive use.' },
+  { key: 'dementia', name: 'Dementia', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['cognitive'], description: 'BEHAV5+ behavioural screen plus localising neurological signs in dementia.' },
+  { key: 'catatonia', name: 'Catatonia', subtitle: 'BFCRS + DSM-5', icon: Pause, gradient: 'from-cyan-500 to-teal-600', category: ['movement'], description: 'BFCRS — Bush-Francis Catatonia Rating Scale plus DSM-5 catatonia criteria.' },
+  { key: 'nms', name: 'NMS', subtitle: 'Malignant Syndrome', icon: ThermometerSun, gradient: 'from-red-600 to-rose-700', category: ['adverse'], description: 'NMS — Neuroleptic Malignant Syndrome assessment (rigidity, hyperthermia, autonomic instability, altered mental state).' },
+  { key: 'hunter', name: 'Hunter Criteria', subtitle: 'Serotonin Syndrome', icon: FlaskConical, gradient: 'from-rose-500 to-pink-600', category: ['adverse'], description: 'Hunter Serotonin Toxicity Criteria — diagnostic decision rule for serotonin syndrome.' },
+  { key: 'smarts', name: 'SMARTS', subtitle: 'Treatment Side Effects', icon: ClipboardList, gradient: 'from-orange-500 to-amber-500', category: ['adverse'], description: 'SMARTS — Systematic Monitoring of Adverse events Related to TreatmentS; patient-reported side-effect checklist.' },
+  { key: 'adverseEffects', name: 'Adverse Effects', subtitle: 'Drug-Class Checklist', icon: Pill, gradient: 'from-fuchsia-500 to-purple-600', category: ['adverse'], description: 'Drug-class adverse-effect checklist for psychotropic medications.' },
+  { key: 'fallRisk', name: 'Fall Risk', subtitle: 'STEADI, Morse & FRAT', icon: Footprints, gradient: 'from-orange-500 to-red-600', category: ['adverse'], description: 'Fall risk assessment combining CDC STEADI, Morse Fall Scale and FRAT (Falls Risk Assessment Tool).' },
+  { key: 'consciousness', name: 'Coma & Consciousness', subtitle: 'GCS · FOUR · RASS · ABS', icon: Activity, gradient: 'from-slate-600 to-zinc-700', category: ['cognitive'], description: 'Bedside scales of consciousness, sedation and agitation: Glasgow Coma Scale (GCS), FOUR Score for intubated patients, Richmond Agitation–Sedation Scale (RASS), and Agitated Behavior Scale (ABS) for traumatic brain injury.' },
+  { key: 'substance', name: 'Withdrawal & Dependence', subtitle: 'CIWA-Ar · SDS', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'Substance-specific scales: CIWA-Ar quantifies severity of alcohol withdrawal (10 items, 0–67); SDS — Severity of Dependence Scale, 5 items measuring psychological dependence and compulsive use.' },
 
   // ─── Psychosis scales ───
   { key: 'bprs', name: 'BPRS', subtitle: 'Brief Psychiatric', icon: ClipboardList, gradient: 'from-indigo-500 to-violet-600', category: ['psychosis'], description: 'BPRS — 18-item Brief Psychiatric Rating Scale (1–7); tracks acute psychiatric symptom severity and treatment response.' },
@@ -173,35 +173,35 @@ const assessments: AssessmentInfo[] = [
   { key: 'bdi', name: 'BDI-II', subtitle: 'Depression', icon: Frown, gradient: 'from-blue-600 to-indigo-700', category: ['mood'], description: 'BDI-II — Beck Depression Inventory–II; 21-item self-report rating depressive symptoms over the past two weeks. Score 0–63 with severity bands.' },
   { key: 'ybocs', name: 'Y-BOCS', subtitle: 'OCD Severity', icon: Activity, gradient: 'from-violet-500 to-purple-600', category: ['mood'], description: 'Y-BOCS — Yale-Brown Obsessive Compulsive Scale; 10 clinician-rated items (5 obsessions + 5 compulsions, 0–4 each). Total 0–40 with severity bands.' },
   { key: 'ipde', name: 'IPDE-SQ', subtitle: 'Personality Disorders', icon: Heart, gradient: 'from-rose-500 to-pink-600', category: ['personality'], description: 'IPDE Screening Questionnaire — DSM-IV self-report grouped by candidate PD across all 10 personality disorders; flags dimensions for structured interview.' },
-  { key: 'cage', name: 'CAGE', subtitle: 'Alcohol Screen', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'CAGE — 4-item alcohol use screen (Cut-down, Annoyed, Guilty, Eye-opener). Score ≥ 2 = clinically significant.' },
-  { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['medical'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
-  { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['medical'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
-  { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['medical'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
+  { key: 'cage', name: 'CAGE', subtitle: 'Alcohol Screen', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'CAGE — 4-item alcohol use screen (Cut-down, Annoyed, Guilty, Eye-opener). Score ≥ 2 = clinically significant.' },
+  { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['substance'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
+  { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
+  { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['movement'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
 
   // ─── Movement Disorders ───
-  { key: 'mds-updrs', name: 'MDS-UPDRS', subtitle: 'Parkinson\'s Assessment', icon: Activity, gradient: 'from-blue-500 to-cyan-600', category: ['medical'], description: 'MDS-UPDRS — Gold-standard comprehensive assessment for motor and non-motor symptoms in Parkinson\'s disease. 27 items across three parts.' },
-  { key: 'hoehn-yahr', name: 'Hoehn & Yahr', subtitle: 'Parkinson\'s Staging', icon: Gauge, gradient: 'from-indigo-500 to-purple-600', category: ['medical'], description: 'Hoehn and Yahr Scale — Stages Parkinson\'s disease severity from 0 (no signs) to 5 (confined to bed/wheelchair).' },
-  { key: 'aims', name: 'AIMS', subtitle: 'Dyskinesia Assessment', icon: Activity, gradient: 'from-orange-500 to-red-600', category: ['medical'], description: 'AIMS — Abnormal Involuntary Movement Scale; evaluates dyskinesia severity and involuntary movements across body regions.' },
-  { key: 'twstrs', name: 'TWSTRS', subtitle: 'Cervical Dystonia', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['medical'], description: 'TWSTRS — Toronto Western Spasmodic Torticollis Rating Scale; assesses cervical dystonia severity and disability.' },
+  { key: 'mds-updrs', name: 'MDS-UPDRS', subtitle: 'Parkinson\'s Assessment', icon: Activity, gradient: 'from-blue-500 to-cyan-600', category: ['movement'], description: 'MDS-UPDRS — Gold-standard comprehensive assessment for motor and non-motor symptoms in Parkinson\'s disease. 27 items across three parts.' },
+  { key: 'hoehn-yahr', name: 'Hoehn & Yahr', subtitle: 'Parkinson\'s Staging', icon: Gauge, gradient: 'from-indigo-500 to-purple-600', category: ['movement'], description: 'Hoehn and Yahr Scale — Stages Parkinson\'s disease severity from 0 (no signs) to 5 (confined to bed/wheelchair).' },
+  { key: 'aims', name: 'AIMS', subtitle: 'Dyskinesia Assessment', icon: Activity, gradient: 'from-orange-500 to-red-600', category: ['movement'], description: 'AIMS — Abnormal Involuntary Movement Scale; evaluates dyskinesia severity and involuntary movements across body regions.' },
+  { key: 'twstrs', name: 'TWSTRS', subtitle: 'Cervical Dystonia', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['movement'], description: 'TWSTRS — Toronto Western Spasmodic Torticollis Rating Scale; assesses cervical dystonia severity and disability.' },
 
   // ─── Sleep Disorders ───
-  { key: 'epworth', name: 'Epworth Scale', subtitle: 'Daytime Sleepiness', icon: Pause, gradient: 'from-indigo-500 to-blue-600', category: ['medical'], description: 'ESS — Epworth Sleepiness Scale; 8-item self-report of daytime sleepiness likelihood in various situations.' },
-  { key: 'stop-bang', name: 'STOP-BANG', subtitle: 'Sleep Apnea Screening', icon: AlertTriangle, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'STOP-BANG — Obstructive sleep apnea risk screening tool; 8 yes/no questions for rapid OSA risk assessment.' },
+  { key: 'epworth', name: 'Epworth Scale', subtitle: 'Daytime Sleepiness', icon: Pause, gradient: 'from-indigo-500 to-blue-600', category: ['sleep'], description: 'ESS — Epworth Sleepiness Scale; 8-item self-report of daytime sleepiness likelihood in various situations.' },
+  { key: 'stop-bang', name: 'STOP-BANG', subtitle: 'Sleep Apnea Screening', icon: AlertTriangle, gradient: 'from-amber-500 to-orange-600', category: ['sleep'], description: 'STOP-BANG — Obstructive sleep apnea risk screening tool; 8 yes/no questions for rapid OSA risk assessment.' },
 
   // ─── Epilepsy & Seizures ───
-  { key: 'ilae-seizure-classification', name: 'ILAE Seizure Classification', subtitle: '2025 Updated Guidelines', icon: Zap, gradient: 'from-fuchsia-500 to-cyan-500', category: ['medical'], description: 'ILAE 2025 — Interactive guide to the updated classification of epileptic seizures with full taxonomic hierarchy, clinical descriptors, and diagnostic guidelines.' },
-  { key: 'laep', name: 'LAEP', subtitle: 'Medication Side Effects', icon: Pill, gradient: 'from-cyan-500 to-blue-600', category: ['medical'], description: 'LAEP — Likelihood of Adverse Effects Profile; self-report tool measuring side effects of antiseizure medications.' },
-  { key: 'esgs', name: 'ESGS', subtitle: 'Surgery Outcome Prediction', icon: TrendingUp, gradient: 'from-emerald-500 to-teal-600', category: ['medical'], description: 'ESGS — Epilepsy Surgery Grading Scale; predicts likelihood of seizure freedom after resective surgery for drug-resistant focal epilepsy.' },
-  { key: 'cases', name: 'CASES Tool', subtitle: 'Surgery Appropriateness', icon: Search, gradient: 'from-purple-500 to-pink-600', category: ['medical'], description: 'CASES — Clinical Appropriateness Scores; screening instrument to identify patients for specialized epilepsy surgery evaluation.' },
-  { key: 'engel', name: 'Engel Scale', subtitle: 'Post-Surgical Outcome', icon: Activity, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'Engel Scale — Standard classification for assessing seizure outcomes after epilepsy surgery.' },
-  { key: 'sudep-7', name: 'SUDEP-7 Inventory', subtitle: 'SUDEP Risk Assessment', icon: AlertTriangle, gradient: 'from-red-500 to-orange-600', category: ['medical'], description: 'SUDEP-7 Inventory — Risk stratification tool for Sudden Unexpected Death in Epilepsy based on 7 evidence-based factors.' },
-  { key: 'sudep-safety', name: 'SUDEP Safety Checklist', subtitle: 'Risk Reduction Measures', icon: CheckCircle, gradient: 'from-orange-500 to-amber-600', category: ['medical'], description: 'SUDEP Safety Checklist — Comprehensive implementation guide for evidence-based SUDEP risk reduction across 6 clinical domains.' },
+  { key: 'ilae-seizure-classification', name: 'ILAE Seizure Classification', subtitle: '2025 Updated Guidelines', icon: Zap, gradient: 'from-fuchsia-500 to-cyan-500', category: ['epilepsy'], description: 'ILAE 2025 — Interactive guide to the updated classification of epileptic seizures with full taxonomic hierarchy, clinical descriptors, and diagnostic guidelines.' },
+  { key: 'laep', name: 'LAEP', subtitle: 'Medication Side Effects', icon: Pill, gradient: 'from-cyan-500 to-blue-600', category: ['epilepsy'], description: 'LAEP — Likelihood of Adverse Effects Profile; self-report tool measuring side effects of antiseizure medications.' },
+  { key: 'esgs', name: 'ESGS', subtitle: 'Surgery Outcome Prediction', icon: TrendingUp, gradient: 'from-emerald-500 to-teal-600', category: ['epilepsy'], description: 'ESGS — Epilepsy Surgery Grading Scale; predicts likelihood of seizure freedom after resective surgery for drug-resistant focal epilepsy.' },
+  { key: 'cases', name: 'CASES Tool', subtitle: 'Surgery Appropriateness', icon: Search, gradient: 'from-purple-500 to-pink-600', category: ['epilepsy'], description: 'CASES — Clinical Appropriateness Scores; screening instrument to identify patients for specialized epilepsy surgery evaluation.' },
+  { key: 'engel', name: 'Engel Scale', subtitle: 'Post-Surgical Outcome', icon: Activity, gradient: 'from-amber-500 to-orange-600', category: ['epilepsy'], description: 'Engel Scale — Standard classification for assessing seizure outcomes after epilepsy surgery.' },
+  { key: 'sudep-7', name: 'SUDEP-7 Inventory', subtitle: 'SUDEP Risk Assessment', icon: AlertTriangle, gradient: 'from-red-500 to-orange-600', category: ['epilepsy'], description: 'SUDEP-7 Inventory — Risk stratification tool for Sudden Unexpected Death in Epilepsy based on 7 evidence-based factors.' },
+  { key: 'sudep-safety', name: 'SUDEP Safety Checklist', subtitle: 'Risk Reduction Measures', icon: CheckCircle, gradient: 'from-orange-500 to-amber-600', category: ['epilepsy'], description: 'SUDEP Safety Checklist — Comprehensive implementation guide for evidence-based SUDEP risk reduction across 6 clinical domains.' },
 
   // ─── Parkinson's Disease - Advanced ───
-  { key: 'five-two-one', name: '5-2-1 Criteria', subtitle: 'Advanced PD Identification', icon: AlertTriangle, gradient: 'from-purple-500 to-pink-500', category: ['medical'], description: '5-2-1 Criteria — Rule of thumb for identifying advanced PD: ≥5 levodopa doses, ≥2h off-time, or ≥1h dyskinesia daily.' },
-  { key: 'anage-pd', name: 'ANAGE-PD', subtitle: 'Advanced PD Management', icon: Stethoscope, gradient: 'from-cyan-500 to-blue-600', category: ['medical'], description: 'ANAGE-PD — Clinician-based tool for timely identification and treatment of advanced PD with suboptimal symptom control.' },
-  { key: 'd-dats', name: 'D-DATS', subtitle: 'DAT Eligibility Screening', icon: Gauge, gradient: 'from-emerald-500 to-green-600', category: ['medical'], description: 'D-DATS — Dutch DAT Screening Tool; identifies PD patients eligible for Device-Aided Therapy (DBS, LCIG, CSAI, LECIG).' },
-  { key: 'stimulus-dbs', name: 'Stimulus DBS', subtitle: 'DBS Appropriateness', icon: Brain, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'Stimulus 2 — Evidence-based decision support for assessing appropriateness of Deep Brain Stimulation referral in PD.' },
+  { key: 'five-two-one', name: '5-2-1 Criteria', subtitle: 'Advanced PD Identification', icon: AlertTriangle, gradient: 'from-purple-500 to-pink-500', category: ['movement'], description: '5-2-1 Criteria — Rule of thumb for identifying advanced PD: ≥5 levodopa doses, ≥2h off-time, or ≥1h dyskinesia daily.' },
+  { key: 'anage-pd', name: 'ANAGE-PD', subtitle: 'Advanced PD Management', icon: Stethoscope, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'ANAGE-PD — Clinician-based tool for timely identification and treatment of advanced PD with suboptimal symptom control.' },
+  { key: 'd-dats', name: 'D-DATS', subtitle: 'DAT Eligibility Screening', icon: Gauge, gradient: 'from-emerald-500 to-green-600', category: ['movement'], description: 'D-DATS — Dutch DAT Screening Tool; identifies PD patients eligible for Device-Aided Therapy (DBS, LCIG, CSAI, LECIG).' },
+  { key: 'stimulus-dbs', name: 'Stimulus DBS', subtitle: 'DBS Appropriateness', icon: Brain, gradient: 'from-amber-500 to-orange-600', category: ['movement'], description: 'Stimulus 2 — Evidence-based decision support for assessing appropriateness of Deep Brain Stimulation referral in PD.' },
 ];
 
 const categoryLabels: Record<Category, { en: string; ml: string; icon: React.ElementType }> = {
@@ -210,24 +210,36 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   mood: { en: 'Mood', ml: 'മൂഡ്', icon: Frown },
   personality: { en: 'Personality', ml: 'വ്യക്തിത്വം', icon: Heart },
   psychosis: { en: 'Psychosis', ml: 'സൈക്കോസിസ്', icon: Sparkles },
-  medical: { en: 'Medical', ml: 'മെഡിക്കൽ', icon: Stethoscope },
+  adverse: { en: 'Adverse reactions', ml: 'പ്രതികൂല പ്രതികരണങ്ങൾ', icon: Pill },
+  movement: { en: 'Movement disorders', ml: 'ചലന വൈകല്യങ്ങൾ', icon: Activity },
+  epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
+  substance: { en: 'Substance abuse', ml: 'ലഹരി ഉപയോഗം', icon: FlaskConical },
+  sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
 };
 
 const categoryImages: Partial<Record<Category, string>> = {
   cognitive: categoryCognitiveImg,
   mood: categoryMoodImg,
   personality: categoryPersonalityImg,
-  medical: categoryMedicalImg,
+  adverse: categoryMedicalImg,
+  movement: categoryMedicalImg,
+  epilepsy: categoryMedicalImg,
+  substance: categoryMedicalImg,
+  sleep: categoryMedicalImg,
   psychosis: categoryPsychosisImg,
 };
 
-const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'medical', 'psychosis'];
+const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis'];
 
 const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
   cognitive: 'from-sky-400/10 to-indigo-400/5',
   mood: 'from-rose-300/10 to-amber-300/5',
   personality: 'from-pink-300/10 to-violet-300/5',
-  medical: 'from-emerald-300/10 to-teal-300/5',
+  adverse: 'from-rose-300/10 to-amber-300/5',
+  movement: 'from-cyan-300/10 to-blue-300/5',
+  epilepsy: 'from-fuchsia-300/10 to-cyan-300/5',
+  substance: 'from-amber-300/10 to-orange-300/5',
+  sleep: 'from-indigo-300/10 to-blue-300/5',
   psychosis: 'from-amber-300/10 to-fuchsia-300/5',
 };
 
@@ -485,6 +497,7 @@ export const AssessmentSelector = () => {
     assessments: { en: 'Assessments', ml: 'വിലയിരുത്തലുകൾ' },
     results: { en: 'Results', ml: 'ഫലങ്ങൾ' },
     settings: { en: 'Settings', ml: 'ക്രമീകരണങ്ങൾ' },
+    suggestions: { en: 'Suggestions', ml: 'നിർദ്ദേശങ്ങൾ' },
   };
 
   // Read results count for sidebar badge (cheap localStorage read on render)
@@ -713,7 +726,11 @@ export const AssessmentSelector = () => {
                                     cognitive: 'Memory, attention, executive function and dementia screens.',
                                     mood: 'Depression, anxiety, stress, trauma and related affective scales.',
                                     personality: 'Personality structure and disorder screening tools.',
-                                    medical: 'Withdrawal, side-effects, neurology and bedside medical scales.',
+                                    adverse: 'Adverse drug reactions, side-effect monitoring and safety risk tools.',
+                                    movement: 'Parkinsonism, dyskinesia, dystonia and catatonia movement assessments.',
+                                    epilepsy: 'Seizure classification, epilepsy surgery, medication effects and SUDEP tools.',
+                                    substance: 'Alcohol, opioid, withdrawal and dependence screening scales.',
+                                    sleep: 'Daytime sleepiness and obstructive sleep apnea screening.',
                                     psychosis: 'Positive, negative and prodromal symptom assessments.',
                                   }[cat]
                                 : ''}
