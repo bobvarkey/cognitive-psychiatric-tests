@@ -72,7 +72,6 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
-import { getSubscription } from '@/services/subscriptionService';
 import { PaywallModal } from './PaywallModal';
 import { AdBanner } from './AdBanner';
 import { SuggestionsView } from './SuggestionsView';
@@ -246,7 +245,7 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
 export const AssessmentSelector = () => {
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { showPaywall, setShowPaywall, initiatePurchase } = useSubscription();
+  const { showPaywall, setShowPaywall, initiatePurchase, subscription } = useSubscription();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -288,7 +287,6 @@ export const AssessmentSelector = () => {
     let filtered = assessments;
 
     // Filter based on subscription tier
-    const subscription = getSubscription();
     const isProSubscriber = subscription?.priceId?.includes('_pro_') === true;
 
     if (!isProSubscriber) {
@@ -307,7 +305,7 @@ export const AssessmentSelector = () => {
       );
     }
     return filtered;
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, subscription?.priceId]);
 
   // Search the cognitive syndromes & frontal-lobe-tests reference library
   const syndromeMatches = useMemo(() => {
@@ -649,7 +647,7 @@ export const AssessmentSelector = () => {
                       { glow: '', bg: 'from-yellow-500 to-black', icon: 'rgba(255,255,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,255,0,0.5), 0_0_20px_rgba(255,255,0,0.3)' }, // Yellow
                     ];
 
-                    const isProSubscriber = getSubscription()?.priceId?.includes('_pro_') === true;
+                    const isProSubscriber = subscription?.priceId?.includes('_pro_') === true;
 
                     const renderTile = (a: AssessmentInfo, index: number, locked = false) => {
                       const Icon = a.icon;
