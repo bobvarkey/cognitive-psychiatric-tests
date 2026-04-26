@@ -8,6 +8,7 @@ import { DpdrResponse, DpdrResult } from "@/types/dpdr";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft } from "lucide-react";
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface DpdrAssessmentProps {
   onBack: () => void;
@@ -157,7 +158,7 @@ export const DpdrAssessment = ({ onBack }: DpdrAssessmentProps) => {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 colorful-questions">
         {dpdrScale.map((item) => (
           <DpdrItemCard
             key={item.id}
@@ -176,6 +177,8 @@ export const DpdrAssessment = ({ onBack }: DpdrAssessmentProps) => {
           {language === 'en' ? 'Calculate Results' : 'ഫലങ്ങൾ കണക്കാക്കുക'}
         </Button>
       </div>
+      <AssessmentReference assessmentKey="dpdr" />
+
     </div>
   );
 };

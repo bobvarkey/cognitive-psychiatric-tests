@@ -182,29 +182,31 @@ export const MiniCogResults = ({ results, patientInfo, onRestart }: MiniCogResul
           </CardHeader>
           <CardContent className="p-6">
             <div className="prose max-w-none">
-              <p className="text-slate-700 mb-4">{results.interpretation}</p>
+              <p className="text-base font-bold text-slate-900 mb-4 p-4 rounded-lg bg-gradient-to-r from-orange-100 via-red-50 to-pink-100 border-l-4 border-red-500 shadow-sm">
+                {results.interpretation}
+              </p>
               
-              <div className="bg-amber-50 p-4 rounded-lg border border-amber-200 mt-4">
-                <h4 className="font-semibold text-amber-900 mb-2 flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5" />
+              <div className="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 p-5 rounded-lg border-2 border-amber-300 mt-4 shadow-md">
+                <h4 className="font-extrabold text-amber-900 mb-3 flex items-center gap-2 text-lg uppercase tracking-wide">
+                  <AlertTriangle className="h-6 w-6 text-red-600" />
                   {language === 'en' ? 'Important Notes:' : 'പ്രധാന കുറിപ്പുകൾ:'}
                 </h4>
-                <ul className="space-y-2 text-sm text-amber-800">
+                <ul className="space-y-2.5 text-sm font-semibold">
                   {language === 'en' ? (
                     <>
-                      <li>• A cut point of &lt;3 has been validated for dementia screening</li>
-                      <li>• A cut point of &lt;4 is recommended when greater sensitivity is desired</li>
-                      <li>• This is a screening tool - positive screens require comprehensive evaluation</li>
-                      <li>• Many individuals with clinically meaningful cognitive impairment may score ≥3</li>
-                      <li>• Consider patient's baseline, education, and other clinical factors</li>
+                      <li className="flex gap-2 text-blue-900"><span className="text-blue-600 font-bold">▸</span><span>A cut point of <span className="font-extrabold text-red-600">&lt;3</span> has been validated for dementia screening</span></li>
+                      <li className="flex gap-2 text-purple-900"><span className="text-purple-600 font-bold">▸</span><span>A cut point of <span className="font-extrabold text-red-600">&lt;4</span> is recommended when greater sensitivity is desired</span></li>
+                      <li className="flex gap-2 text-emerald-900"><span className="text-emerald-600 font-bold">▸</span><span>This is a <span className="font-extrabold text-emerald-700">screening tool</span> - positive screens require comprehensive evaluation</span></li>
+                      <li className="flex gap-2 text-orange-900"><span className="text-orange-600 font-bold">▸</span><span>Many individuals with clinically meaningful cognitive impairment may score <span className="font-extrabold text-red-600">≥3</span></span></li>
+                      <li className="flex gap-2 text-pink-900"><span className="text-pink-600 font-bold">▸</span><span>Consider patient's <span className="font-extrabold">baseline, education, and other clinical factors</span></span></li>
                     </>
                   ) : (
                     <>
-                      <li>• ഡിമെൻഷ്യ സ്ക്രീനിംഗിനായി &lt;3 എന്ന കട്ട് പോയിന്റ് സാധൂകരിച്ചിട്ടുണ്ട്</li>
-                      <li>• കൂടുതൽ സംവേദനക്ഷമത ആവശ്യമുള്ളപ്പോൾ &lt;4 എന്ന കട്ട് പോയിന്റ് ശുപാർശ ചെയ്യുന്നു</li>
-                      <li>• ഇത് ഒരു സ്ക്രീനിംഗ് ഉപകരണമാണ് - പോസിറ്റീവ് സ്ക്രീനുകൾക്ക് സമഗ്ര വിലയിരുത്തൽ ആവശ്യമാണ്</li>
-                      <li>• ക്ലിനിക്കലായി അർത്ഥവത്തായ വൈജ്ഞാനിക വൈകല്യമുള്ള പല വ്യക്തികളും ≥3 സ്കോർ നേടിയേക്കാം</li>
-                      <li>• രോഗിയുടെ അടിസ്ഥാനം, വിദ്യാഭ്യാസം, മറ്റ് ക്ലിനിക്കൽ ഘടകങ്ങൾ എന്നിവ പരിഗണിക്കുക</li>
+                      <li className="flex gap-2 text-blue-900"><span className="text-blue-600 font-bold">▸</span><span>ഡിമെൻഷ്യ സ്ക്രീനിംഗിനായി <span className="font-extrabold text-red-600">&lt;3</span> എന്ന കട്ട് പോയിന്റ് സാധൂകരിച്ചിട്ടുണ്ട്</span></li>
+                      <li className="flex gap-2 text-purple-900"><span className="text-purple-600 font-bold">▸</span><span>കൂടുതൽ സംവേദനക്ഷമത ആവശ്യമുള്ളപ്പോൾ <span className="font-extrabold text-red-600">&lt;4</span> എന്ന കട്ട് പോയിന്റ് ശുപാർശ ചെയ്യുന്നു</span></li>
+                      <li className="flex gap-2 text-emerald-900"><span className="text-emerald-600 font-bold">▸</span><span>ഇത് ഒരു <span className="font-extrabold text-emerald-700">സ്ക്രീനിംഗ് ഉപകരണമാണ്</span> - പോസിറ്റീവ് സ്ക്രീനുകൾക്ക് സമഗ്ര വിലയിരുത്തൽ ആവശ്യമാണ്</span></li>
+                      <li className="flex gap-2 text-orange-900"><span className="text-orange-600 font-bold">▸</span><span>ക്ലിനിക്കലായി അർത്ഥവത്തായ വൈജ്ഞാനിക വൈകല്യമുള്ള പല വ്യക്തികളും <span className="font-extrabold text-red-600">≥3</span> സ്കോർ നേടിയേക്കാം</span></li>
+                      <li className="flex gap-2 text-pink-900"><span className="text-pink-600 font-bold">▸</span><span>രോഗിയുടെ <span className="font-extrabold">അടിസ്ഥാനം, വിദ്യാഭ്യാസം, മറ്റ് ക്ലിനിക്കൽ ഘടകങ്ങൾ</span> പരിഗണിക്കുക</span></li>
                     </>
                   )}
                 </ul>

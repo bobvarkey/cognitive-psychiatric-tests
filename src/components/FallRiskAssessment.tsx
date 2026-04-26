@@ -7,12 +7,14 @@ import { FallRiskResponse, FallRiskResult } from "@/types/fallRisk";
 import { STEADI_ITEMS, MORSE_ITEMS, PHYSICAL_ASSESSMENTS, CATEGORY_LABELS, THREE_KEY_QUESTIONS } from "@/data/fallRiskScale";
 import { SteadiItemCard, MorseItemCard, PhysicalAssessmentInput, BalanceTestCard } from "@/components/FallRiskItemCard";
 import { FallRiskResults } from "@/components/FallRiskResults";
-import { RotateCcw, Activity, Footprints, Stethoscope, HelpCircle } from "lucide-react";
+import { RotateCcw, Activity, Footprints, Stethoscope, HelpCircle, ClipboardList } from "lucide-react";
+import { FratTab, emptyFratResponses, type FratResponses } from "@/components/FratTab";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface FallRiskAssessmentProps {
   onBack: () => void;
@@ -33,6 +35,7 @@ export function FallRiskAssessment({ onBack }: FallRiskAssessmentProps) {
   
   const [showResults, setShowResults] = useState(false);
   const [result, setResult] = useState<FallRiskResult | null>(null);
+  const [fratResponses, setFratResponses] = useState<FratResponses>(emptyFratResponses());
 
   const handleSteadiChange = (id: string, value: boolean) => {
     setResponses(prev => ({
@@ -203,6 +206,7 @@ export function FallRiskAssessment({ onBack }: FallRiskAssessmentProps) {
     });
     setShowResults(false);
     setResult(null);
+    setFratResponses(emptyFratResponses());
   };
 
   if (showResults && result) {
@@ -232,9 +236,9 @@ export function FallRiskAssessment({ onBack }: FallRiskAssessmentProps) {
             {language === 'ml' ? 'വീഴ്ച അപകട വിലയിരുത്തൽ' : 'Fall Risk Assessment'}
           </CardTitle>
           <CardDescription>
-            {language === 'ml' 
-              ? 'CDC STEADI അൽഗോരിതവും മോഴ്സ് ഫാൾ സ്കെയിലും ഉപയോഗിച്ചുള്ള സമഗ്ര വീഴ്ച അപകട വിലയിരുത്തൽ'
-              : 'Comprehensive fall risk evaluation using CDC STEADI Algorithm and Morse Fall Scale'}
+            {language === 'ml'
+              ? 'CDC STEADI, മോഴ്സ് ഫാൾ സ്കെയിൽ, FRAT എന്നിവ ഉപയോഗിച്ചുള്ള സമഗ്ര വീഴ്ച അപകട വിലയിരുത്തൽ'
+              : 'Comprehensive fall risk evaluation: CDC STEADI Algorithm, Morse Fall Scale, and FRAT (Peninsula Health)'}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -277,7 +281,7 @@ export function FallRiskAssessment({ onBack }: FallRiskAssessmentProps) {
       </Accordion>
 
       <Tabs defaultValue="steadi" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="steadi" className="flex items-center gap-1">
             <Activity className="h-4 w-4" />
             <span className="hidden sm:inline">STEADI</span>
@@ -286,11 +290,19 @@ export function FallRiskAssessment({ onBack }: FallRiskAssessmentProps) {
             <Footprints className="h-4 w-4" />
             <span className="hidden sm:inline">Morse</span>
           </TabsTrigger>
+          <TabsTrigger value="frat" className="flex items-center gap-1">
+            <ClipboardList className="h-4 w-4" />
+            <span className="hidden sm:inline">FRAT</span>
+          </TabsTrigger>
           <TabsTrigger value="physical" className="flex items-center gap-1">
             <Stethoscope className="h-4 w-4" />
             <span className="hidden sm:inline">{language === 'ml' ? 'ശാരീരിക' : 'Physical'}</span>
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="frat" className="mt-4">
+          <FratTab responses={fratResponses} onChange={setFratResponses} />
+        </TabsContent>
 
         <TabsContent value="steadi" className="mt-4">
           <Card className="mb-4">
@@ -391,6 +403,8 @@ export function FallRiskAssessment({ onBack }: FallRiskAssessmentProps) {
           {language === 'ml' ? 'ഫലങ്ങൾ കണക്കാക്കുക' : 'Calculate Results'}
         </Button>
       </div>
+
+      <AssessmentReference assessmentKey="fallRisk" />
     </div>
   );
 }

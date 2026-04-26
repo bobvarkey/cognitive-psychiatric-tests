@@ -2,7 +2,13 @@ import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DaphneAssessment } from '@/components/DaphneAssessment';
-import { MocaAssessment } from '@/components/MocaAssessment';
+import { HoehnYahrAssessment } from '@/components/HoehnYahrAssessment';
+import { EpworthAssessment } from '@/components/EpworthAssessment';
+import { StopBangAssessment } from '@/components/StopBangAssessment';
+import { AimsAssessment } from '@/components/AimsAssessment';
+import { TwstrsAssessment } from '@/components/TwstrsAssessment';
+import { MdsUpdrsAssessment } from '@/components/MdsUpdrsAssessment';
+
 import { HareAssessment } from '@/components/HareAssessment';
 import { AdhdAssessment } from '@/components/AdhdAssessment';
 import { TuliaAssessment } from '@/components/TuliaAssessment';
@@ -11,10 +17,12 @@ import { HamdAssessment } from '@/components/HamdAssessment';
 import { DelusionsAssessment } from '@/components/DelusionsAssessment';
 import { FabAssessment } from '@/components/FabAssessment';
 import { DpdrAssessment } from '@/components/DpdrAssessment';
+import { DpdrLanding } from '@/components/DpdrLanding';
 import { MiniCogAssessment } from '@/components/MiniCogAssessment';
+import { IqcodeAssessment } from '@/components/IqcodeAssessment';
 import { Pcl5Assessment } from '@/components/Pcl5Assessment';
 import { PssAssessment } from '@/components/PssAssessment';
-import { PhysicalFindingsAssessment } from '@/components/PhysicalFindingsAssessment';
+import { SmartsAssessment } from '@/components/SmartsAssessment';
 import { DementiaAssessment } from '@/components/DementiaAssessment';
 import { CatatoniaAssessment } from '@/components/CatatoniaAssessment';
 import { StressScreeningAssessment } from '@/components/StressScreeningAssessment';
@@ -23,22 +31,87 @@ import { MiniAceAssessment } from '@/components/MiniAceAssessment';
 import { NmsAssessment } from '@/components/NmsAssessment';
 import { MmpiAssessment } from '@/components/MmpiAssessment';
 import { AdamAssessment } from '@/components/AdamAssessment';
+import { HunterAssessment } from '@/components/HunterAssessment';
+import { AdverseEffectsAssessment } from '@/components/AdverseEffectsAssessment';
 import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
+import { CallosalAssessment } from '@/components/CallosalAssessment';
+import { MseAssessment } from '@/components/MseAssessment';
+import { MocaAssessment } from '@/components/MocaAssessment';
+import { ConsciousnessAssessment } from '@/components/ConsciousnessAssessment';
+import { SubstanceAssessment } from '@/components/SubstanceAssessment';
+import { PsychosisScaleAssessment } from '@/components/PsychosisScaleAssessment';
+import { BdiAssessment } from '@/components/BdiAssessment';
+import { YbocsAssessment } from '@/components/YbocsAssessment';
+import { IpdeAssessment } from '@/components/IpdeAssessment';
+import { CageAssessment } from '@/components/CageAssessment';
+import { CowsAssessment } from '@/components/CowsAssessment';
+import { SimpsonAngusAssessment } from '@/components/SimpsonAngusAssessment';
+import { EprsAssessment } from '@/components/EprsAssessment';
+import { PanssAssessment } from '@/components/PanssAssessment';
+import { IlaeSeizureClassificationAssessment } from '@/components/IlaeSeizureClassificationAssessment';
+import { LaepAssessment } from '@/components/LaepAssessment';
+import { EsgsAssessment } from '@/components/EsgsAssessment';
+import { CasesToolAssessment } from '@/components/CasesToolAssessment';
+import { EngelScaleAssessment } from '@/components/EngelScaleAssessment';
+import { FiveTwoOneCriteriaAssessment } from '@/components/FiveTwoOneCriteriaAssessment';
+import { AnagePdAssessment } from '@/components/AnagePdAssessment';
+import { DDatsAssessment } from '@/components/DDatsAssessment';
+import { StimulusDbsAssessment } from '@/components/StimulusDbsAssessment';
+import { Sudep7InventoryAssessment } from '@/components/Sudep7InventoryAssessment';
+import { SudepSafetyChecklistAssessment } from '@/components/SudepSafetyChecklistAssessment';
+import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
+import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
+import { AdhdScreenerLanding } from '@/components/AdhdScreenerLanding';
+import { cognitiveSyndromes, frontalLobeTests } from '@/data/cognitiveSyndromesData';
 import {
-  Brain, Calculator, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap,
+  Brain, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap,
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
-  ThermometerSun, ClipboardList, Search, X, BookOpen,
+  ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
+  Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, Lock, TrendingUp, CheckCircle,
 } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
+import { getSubscription } from '@/services/subscriptionService';
+import { PaywallModal } from './PaywallModal';
+import { AdBanner } from './AdBanner';
+import { SuggestionsView } from './SuggestionsView';
 import { LanguageToggle } from './LanguageToggle';
+import { MainSidebar, type Section } from './MainSidebar';
+import { ResultsView } from './ResultsView';
+import { SettingsView } from './SettingsView';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import cognitoHero from '@/assets/cognito-hero.png';
+import categoryCognitiveImg from '@/assets/category-cognitive.jpg';
+import categoryMoodImg from '@/assets/category-mood.jpg';
+import categoryPersonalityImg from '@/assets/category-personality.jpg';
+import categoryMedicalImg from '@/assets/category-medical.jpg';
+import categoryPsychosisImg from '@/assets/category-psychosis.jpg';
 
 type AssessmentKey =
-  | 'daphne' | 'moca' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
-  | 'hamd' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss' | 'physical'
+  | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
+  | 'hamd' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
-  | 'nms' | 'mmpi' | 'adam' | 'cognitiveSyndromes';
+  | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
+  | 'bprs' | 'sapsSans' | 'crdpss' | 'sops' | 'psyrats' | 'vagus'
+  | 'asrs6' | 'asrs18' | 'vanderbilt' | 'adhdScreener'
+  | 'bdi' | 'ybocs' | 'ipde' | 'cage' | 'cows' | 'simpsonAngus' | 'eprs' | 'panss'
+  | 'mds-updrs' | 'hoehn-yahr' | 'aims' | 'twstrs' | 'epworth' | 'stop-bang'
+  | 'ilae-seizure-classification' | 'laep' | 'esgs' | 'cases' | 'engel'
+  | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
+  | 'sudep-7' | 'sudep-safety';
 
-type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'medical';
+// Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
+const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
+  'miniace', 'mse', 'adhd', 'daphne', 'fab', 'tulia', 'cognitiveSyndromes',
+  'callosal', 'hare', 'dpdr', 'hamd', 'mmpi', 'bprs', 'crdpss', 'dementia',
+  'catatonia', 'hunter', 'consciousness', 'mds-updrs', 'eprs', 'aims',
+  'asrs6', 'asrs18', 'vanderbilt', 'adhdScreener', 'substance', 'sops',
+  'psyrats', 'vagus', 'sapsSans', 'panss', 'ipde', 'ybocs', 'moca',
+  'twstrs', 'epworth', 'ilae-seizure-classification', 'engel', 'sudep-7'
+];
+
+type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'medical' | 'psychosis';
 
 interface AssessmentInfo {
   key: AssessmentKey;
@@ -47,32 +120,88 @@ interface AssessmentInfo {
   icon: React.ElementType;
   gradient: string;
   category: Category[];
+  description: string;
 }
 
 const assessments: AssessmentInfo[] = [
-  { key: 'daphne', name: 'DAPHNE', subtitle: 'bvFTD Assessment', icon: Brain, gradient: 'from-purple-500 to-pink-600', category: ['cognitive'] },
-  { key: 'moca', name: 'MoCA', subtitle: 'Cognitive Assessment', icon: Calculator, gradient: 'from-green-500 to-teal-600', category: ['cognitive'] },
-  { key: 'minicog', name: 'Mini-Cog™', subtitle: 'Brief Screening', icon: Brain, gradient: 'from-blue-500 to-cyan-600', category: ['cognitive'] },
-  { key: 'miniace', name: 'Mini-ACE', subtitle: "Addenbrooke's", icon: ClipboardCheck, gradient: 'from-emerald-500 to-green-600', category: ['cognitive'] },
-  { key: 'fab', name: 'FAB', subtitle: 'Frontal Battery', icon: Zap, gradient: 'from-amber-500 to-yellow-600', category: ['cognitive'] },
-  { key: 'cognitiveSyndromes', name: 'Cog Syndromes', subtitle: 'Frontal & Neuro', icon: BookOpen, gradient: 'from-sky-500 to-indigo-600', category: ['cognitive'] },
-  { key: 'tulia', name: 'TULIA', subtitle: 'Apraxia Screen', icon: Hand, gradient: 'from-teal-500 to-cyan-600', category: ['cognitive'] },
-  { key: 'hamd', name: 'HAM-D', subtitle: 'Depression Scale', icon: Frown, gradient: 'from-blue-500 to-indigo-600', category: ['mood'] },
-  { key: 'pss', name: 'PSS-10', subtitle: 'Perceived Stress', icon: Gauge, gradient: 'from-emerald-500 to-teal-600', category: ['mood'] },
-  { key: 'pcl5', name: 'PC-PTSD-5', subtitle: 'PTSD Screen', icon: Shield, gradient: 'from-red-500 to-rose-600', category: ['mood'] },
-  { key: 'dpdr', name: 'DPDR', subtitle: 'Depersonalization', icon: Eye, gradient: 'from-cyan-500 to-blue-600', category: ['mood'] },
-  { key: 'stressScreening', name: 'Stress vs Disorder', subtitle: 'Differentiation', icon: Scale, gradient: 'from-violet-500 to-purple-600', category: ['mood'] },
-  { key: 'adam', name: 'ADAM', subtitle: 'Apathy-Depression', icon: ClipboardList, gradient: 'from-teal-500 to-blue-600', category: ['mood'] },
-  { key: 'hare', name: 'Hare PCL-R', subtitle: 'Psychopathy', icon: AlertTriangle, gradient: 'from-orange-500 to-red-600', category: ['personality'] },
-  { key: 'adhd', name: 'ADHD ASRS', subtitle: 'DSM-5-TR', icon: Focus, gradient: 'from-indigo-500 to-blue-600', category: ['personality'] },
-  { key: 'msibpd', name: 'MSI-BPD', subtitle: 'BPD Screening', icon: Heart, gradient: 'from-rose-500 to-pink-600', category: ['personality'] },
-  { key: 'mmpi', name: 'MMPI', subtitle: 'OPD Screener', icon: ClipboardList, gradient: 'from-violet-600 to-indigo-600', category: ['personality'] },
-  { key: 'delusions', name: 'Delusions', subtitle: 'Hallucinations', icon: Eye, gradient: 'from-violet-500 to-purple-700', category: ['personality'] },
-  { key: 'dementia', name: 'Dementia', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['medical'] },
-  { key: 'catatonia', name: 'BFCRS', subtitle: 'Catatonia Scale', icon: Pause, gradient: 'from-cyan-500 to-teal-600', category: ['medical'] },
-  { key: 'nms', name: 'NMS', subtitle: 'Malignant Syndrome', icon: ThermometerSun, gradient: 'from-red-600 to-rose-700', category: ['medical'] },
-  { key: 'physical', name: 'Physical', subtitle: 'Metabolic Risk', icon: Activity, gradient: 'from-orange-500 to-amber-500', category: ['medical'] },
-  { key: 'fallRisk', name: 'Fall Risk', subtitle: 'STEADI & Morse', icon: Footprints, gradient: 'from-orange-500 to-red-600', category: ['medical'] },
+  { key: 'daphne', name: 'DAPHNE', subtitle: 'bvFTD Assessment', icon: Brain, gradient: 'from-purple-500 to-pink-600', category: ['cognitive'], description: 'DAPHNE — Behavioural variant Frontotemporal Dementia screening across disinhibition, apathy, perseveration, hyperorality, neglect and loss of empathy.' },
+
+  { key: 'minicog', name: 'Mini-Cog™', subtitle: 'Brief Screening', icon: Brain, gradient: 'from-blue-500 to-cyan-600', category: ['cognitive'], description: 'Mini-Cog — 3-item recall plus clock-drawing; rapid bedside dementia screen (~3 min).' },
+  { key: 'iqcode', name: 'Short IQCODE', subtitle: 'Informant — Cognitive Decline', icon: ClipboardCheck, gradient: 'from-blue-600 to-indigo-700', category: ['cognitive'], description: 'Short IQCODE (Jorm) — 16-item informant questionnaire comparing the person now vs. ~10 years ago across memory, learning, and everyday function. Cutoff ≥3.31 suggests cognitive decline.' },
+  { key: 'miniace', name: 'Mini-ACE', subtitle: "Addenbrooke's", icon: ClipboardCheck, gradient: 'from-emerald-500 to-green-600', category: ['cognitive'], description: "Mini-ACE — Mini Addenbrooke's Cognitive Examination; brief multidomain cognitive screen (attention, memory, fluency, visuospatial)." },
+  { key: 'fab', name: 'FAB', subtitle: 'Frontal Battery', icon: Zap, gradient: 'from-amber-500 to-yellow-600', category: ['cognitive'], description: 'FAB — Frontal Assessment Battery; 6 subtests for executive/frontal lobe dysfunction.' },
+  { key: 'cognitiveSyndromes', name: 'Cog Syndromes', subtitle: 'Frontal & Neuro', icon: BookOpen, gradient: 'from-sky-500 to-indigo-600', category: ['cognitive'], description: 'Reference library of 30+ neuropsychiatric syndromes and 11 frontal-lobe bedside tests.' },
+  { key: 'mse', name: 'MSE', subtitle: 'Mental Status Exam', icon: ClipboardList, gradient: 'from-slate-500 to-zinc-600', category: ['cognitive'], description: 'Comprehensive Mental Status Examination — consciousness, orientation, attention, memory, language, frontal-lobe, parietal, occipital and temporal-lobe bedside testing.' },
+  { key: 'moca', name: 'MoCA', subtitle: 'Montreal Cognitive Assessment', icon: BookOpen, gradient: 'from-fuchsia-500 to-purple-600', category: ['cognitive'], description: 'MoCA — 30-point multidomain cognitive screen for mild cognitive impairment; reference card with domains, cut-offs and link to the official test.' },
+  { key: 'callosal', name: 'CDS', subtitle: 'Callosal Disconnection', icon: Brain, gradient: 'from-indigo-500 to-purple-600', category: ['cognitive'], description: 'CDS — Callosal Disconnection Syndrome ("split-brain") bedside tests: left-hand tactile anomia, agraphia, apraxia, alien-hand sign and left-visual-field anomia.' },
+  { key: 'tulia', name: 'TULIA', subtitle: 'Apraxia Screen', icon: Hand, gradient: 'from-teal-500 to-cyan-600', category: ['cognitive'], description: 'TULIA — Test of Upper Limb Apraxia; 48-item gesture battery covering meaningless, intransitive and transitive movements.' },
+  { key: 'hamd', name: 'HAM-D', subtitle: 'Depression Scale', icon: Frown, gradient: 'from-blue-500 to-indigo-600', category: ['mood'], description: 'HAM-D — Hamilton Depression Rating Scale; clinician-rated severity of depressive symptoms.' },
+  { key: 'pss', name: 'PSS-10', subtitle: 'Perceived Stress', icon: Gauge, gradient: 'from-emerald-500 to-teal-600', category: ['mood'], description: 'PSS-10 — Perceived Stress Scale; 10 items measuring how unpredictable and overloaded life feels.' },
+  { key: 'pcl5', name: 'PC-PTSD-5', subtitle: 'PTSD Screen', icon: Shield, gradient: 'from-red-500 to-rose-600', category: ['mood'], description: 'PC-PTSD-5 — Primary Care PTSD Screen for DSM-5; 5-item trauma screen.' },
+  { key: 'dpdr', name: 'DPDR Scales', subtitle: 'DPDR · CDS · DES-II · DSS', icon: Eye, gradient: 'from-cyan-500 to-blue-600', category: ['mood'], description: 'Depersonalisation, derealisation and dissociation scales: brief DPDR screen, Cambridge Depersonalisation Scale (CDS-29), Dissociative Experiences Scale (DES-II), and Dissociative Symptoms Scale (DSS, past-week brief). Choose by clinical question.' },
+  { key: 'stressScreening', name: 'Stress vs Disorder', subtitle: 'Differentiation', icon: Scale, gradient: 'from-violet-500 to-purple-600', category: ['mood'], description: 'Differentiates normal stress reaction from an emerging stress-related disorder.' },
+  { key: 'adam', name: 'ADAM', subtitle: 'Apathy-Depression', icon: ClipboardList, gradient: 'from-teal-500 to-blue-600', category: ['mood'], description: 'ADAM — Androgen Deficiency in Aging Males / apathy-depression-anhedonia screener (10 items).' },
+  { key: 'hare', name: 'Hare PCL-R', subtitle: 'Psychopathy', icon: AlertTriangle, gradient: 'from-orange-500 to-red-600', category: ['personality'], description: 'Hare PCL-R — Psychopathy Checklist–Revised; 20-item interpersonal/affective and antisocial trait rating.' },
+  { key: 'adhdScreener', name: 'ADHD Screener', subtitle: 'Age-aware: ASRS / Vanderbilt', icon: Focus, gradient: 'from-blue-600 to-indigo-600', category: ['cognitive'], description: 'Pick patient age range (child / adolescent / adult) and route to the appropriate ADHD screener (Vanderbilt or ASRS-v1.1) with adjusted interpretation and a SOAP-style clinician report.' },
+  { key: 'adhd', name: 'ADHD DSM-5-TR', subtitle: 'Diagnostic Criteria', icon: Focus, gradient: 'from-indigo-500 to-blue-600', category: ['cognitive'], description: 'DSM-5-TR ADHD diagnostic criteria checklist (inattention + hyperactivity-impulsivity, criteria B–E).' },
+  { key: 'asrs6', name: 'ASRS-v1.1 (6)', subtitle: 'Adult ADHD Screener', icon: Focus, gradient: 'from-blue-500 to-indigo-600', category: ['cognitive'], description: 'WHO/Harvard 6-item adult ADHD screener (Part A). Validated cutoff: ≥4 shaded responses = positive screen.' },
+  { key: 'asrs18', name: 'ASRS-v1.1 (18)', subtitle: 'Full Symptom Checklist', icon: ClipboardList, gradient: 'from-indigo-500 to-purple-600', category: ['cognitive'], description: 'Full 18-item ASRS — 9 inattention + 9 hyperactivity-impulsivity items, mapped to DSM-5-TR symptom domains.' },
+  { key: 'vanderbilt', name: 'Vanderbilt', subtitle: 'Parent (child 6–12)', icon: ClipboardCheck, gradient: 'from-cyan-500 to-blue-600', category: ['cognitive'], description: 'NICHQ Vanderbilt parent rating scale: inattention, hyperactivity, ODD/conduct, anxiety/depression, performance.' },
+  { key: 'msibpd', name: 'MSI-BPD', subtitle: 'BPD Screening', icon: Heart, gradient: 'from-rose-500 to-pink-600', category: ['personality'], description: 'MSI-BPD — McLean Screening Instrument for Borderline Personality Disorder; 10 yes/no items.' },
+  { key: 'mmpi', name: 'MMPI', subtitle: 'OPD Screener', icon: ClipboardList, gradient: 'from-violet-600 to-indigo-600', category: ['personality'], description: 'MMPI — Minnesota Multiphasic Personality Inventory; ultra-short OPD somatization screener.' },
+  { key: 'delusions', name: 'Delusions', subtitle: 'Hallucinations', icon: Eye, gradient: 'from-violet-500 to-purple-700', category: ['personality'], description: 'Structured checklist for delusion themes and hallucination modalities with clinical context.' },
+  { key: 'dementia', name: 'Dementia', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['medical'], description: 'BEHAV5+ behavioural screen plus localising neurological signs in dementia.' },
+  { key: 'catatonia', name: 'Catatonia', subtitle: 'BFCRS + DSM-5', icon: Pause, gradient: 'from-cyan-500 to-teal-600', category: ['medical'], description: 'BFCRS — Bush-Francis Catatonia Rating Scale plus DSM-5 catatonia criteria.' },
+  { key: 'nms', name: 'NMS', subtitle: 'Malignant Syndrome', icon: ThermometerSun, gradient: 'from-red-600 to-rose-700', category: ['medical'], description: 'NMS — Neuroleptic Malignant Syndrome assessment (rigidity, hyperthermia, autonomic instability, altered mental state).' },
+  { key: 'hunter', name: 'Hunter Criteria', subtitle: 'Serotonin Syndrome', icon: FlaskConical, gradient: 'from-rose-500 to-pink-600', category: ['medical'], description: 'Hunter Serotonin Toxicity Criteria — diagnostic decision rule for serotonin syndrome.' },
+  { key: 'smarts', name: 'SMARTS', subtitle: 'Treatment Side Effects', icon: ClipboardList, gradient: 'from-orange-500 to-amber-500', category: ['medical'], description: 'SMARTS — Systematic Monitoring of Adverse events Related to TreatmentS; patient-reported side-effect checklist.' },
+  { key: 'adverseEffects', name: 'Adverse Effects', subtitle: 'Drug-Class Checklist', icon: Pill, gradient: 'from-fuchsia-500 to-purple-600', category: ['medical'], description: 'Drug-class adverse-effect checklist for psychotropic medications.' },
+  { key: 'fallRisk', name: 'Fall Risk', subtitle: 'STEADI, Morse & FRAT', icon: Footprints, gradient: 'from-orange-500 to-red-600', category: ['medical'], description: 'Fall risk assessment combining CDC STEADI, Morse Fall Scale and FRAT (Falls Risk Assessment Tool).' },
+  { key: 'consciousness', name: 'Coma & Consciousness', subtitle: 'GCS · FOUR · RASS · ABS', icon: Activity, gradient: 'from-slate-600 to-zinc-700', category: ['medical'], description: 'Bedside scales of consciousness, sedation and agitation: Glasgow Coma Scale (GCS), FOUR Score for intubated patients, Richmond Agitation–Sedation Scale (RASS), and Agitated Behavior Scale (ABS) for traumatic brain injury.' },
+  { key: 'substance', name: 'Withdrawal & Dependence', subtitle: 'CIWA-Ar · SDS', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'Substance-specific scales: CIWA-Ar quantifies severity of alcohol withdrawal (10 items, 0–67); SDS — Severity of Dependence Scale, 5 items measuring psychological dependence and compulsive use.' },
+
+  // ─── Psychosis scales ───
+  { key: 'bprs', name: 'BPRS', subtitle: 'Brief Psychiatric', icon: ClipboardList, gradient: 'from-indigo-500 to-violet-600', category: ['psychosis'], description: 'BPRS — 18-item Brief Psychiatric Rating Scale (1–7); tracks acute psychiatric symptom severity and treatment response.' },
+  { key: 'sapsSans', name: 'SAPS / SANS', subtitle: 'Pos & Neg Symptoms', icon: Sparkles, gradient: 'from-purple-500 to-fuchsia-600', category: ['psychosis'], description: 'SAPS / SANS — Andreasen global ratings (0–5) of positive and negative schizophrenia symptoms; public-domain alternative to PANSS.' },
+  { key: 'crdpss', name: 'CRDPSS', subtitle: 'DSM-5 Dimensions', icon: Gauge, gradient: 'from-sky-500 to-indigo-600', category: ['psychosis'], description: 'CRDPSS — DSM-5 Clinician-Rated Dimensions of Psychosis Symptom Severity; 8 items, past 7 days.' },
+  { key: 'sops', name: 'SOPS', subtitle: 'Prodromal (SIPS)', icon: Lightbulb, gradient: 'from-amber-500 to-orange-600', category: ['psychosis'], description: 'SOPS — Scale of Prodromal Symptoms within SIPS; identifies attenuated / clinical-high-risk states for psychosis.' },
+  { key: 'psyrats', name: 'PSYRATS', subtitle: 'AH & Delusions', icon: Ear, gradient: 'from-rose-500 to-red-600', category: ['psychosis'], description: 'PSYRATS — Psychotic Symptom Rating Scales for auditory hallucinations (11 items) and delusions (6 items), 0–4 each.' },
+  { key: 'vagus', name: 'VAGUS-SR', subtitle: 'Insight Self-Report', icon: HelpCircle, gradient: 'from-teal-500 to-emerald-600', category: ['psychosis'], description: 'VAGUS-SR — 10-item self-report measure of insight into psychotic illness; higher = better insight.' },
+  { key: 'panss', name: 'PANSS', subtitle: 'Pos & Neg Syndrome', icon: Sparkles, gradient: 'from-purple-500 to-fuchsia-600', category: ['psychosis'], description: 'PANSS — 30-item Positive and Negative Syndrome Scale (1–7); subscales for positive, negative and general psychopathology with composite (P−N) score.' },
+
+  // ─── New scales ───
+  { key: 'bdi', name: 'BDI-II', subtitle: 'Depression', icon: Frown, gradient: 'from-blue-600 to-indigo-700', category: ['mood'], description: 'BDI-II — Beck Depression Inventory–II; 21-item self-report rating depressive symptoms over the past two weeks. Score 0–63 with severity bands.' },
+  { key: 'ybocs', name: 'Y-BOCS', subtitle: 'OCD Severity', icon: Activity, gradient: 'from-violet-500 to-purple-600', category: ['mood'], description: 'Y-BOCS — Yale-Brown Obsessive Compulsive Scale; 10 clinician-rated items (5 obsessions + 5 compulsions, 0–4 each). Total 0–40 with severity bands.' },
+  { key: 'ipde', name: 'IPDE-SQ', subtitle: 'Personality Disorders', icon: Heart, gradient: 'from-rose-500 to-pink-600', category: ['personality'], description: 'IPDE Screening Questionnaire — DSM-IV self-report grouped by candidate PD across all 10 personality disorders; flags dimensions for structured interview.' },
+  { key: 'cage', name: 'CAGE', subtitle: 'Alcohol Screen', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'CAGE — 4-item alcohol use screen (Cut-down, Annoyed, Guilty, Eye-opener). Score ≥ 2 = clinically significant.' },
+  { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['medical'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
+  { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['medical'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
+  { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['medical'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
+
+  // ─── Movement Disorders ───
+  { key: 'mds-updrs', name: 'MDS-UPDRS', subtitle: 'Parkinson\'s Assessment', icon: Activity, gradient: 'from-blue-500 to-cyan-600', category: ['medical'], description: 'MDS-UPDRS — Gold-standard comprehensive assessment for motor and non-motor symptoms in Parkinson\'s disease. 27 items across three parts.' },
+  { key: 'hoehn-yahr', name: 'Hoehn & Yahr', subtitle: 'Parkinson\'s Staging', icon: Gauge, gradient: 'from-indigo-500 to-purple-600', category: ['medical'], description: 'Hoehn and Yahr Scale — Stages Parkinson\'s disease severity from 0 (no signs) to 5 (confined to bed/wheelchair).' },
+  { key: 'aims', name: 'AIMS', subtitle: 'Dyskinesia Assessment', icon: Activity, gradient: 'from-orange-500 to-red-600', category: ['medical'], description: 'AIMS — Abnormal Involuntary Movement Scale; evaluates dyskinesia severity and involuntary movements across body regions.' },
+  { key: 'twstrs', name: 'TWSTRS', subtitle: 'Cervical Dystonia', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['medical'], description: 'TWSTRS — Toronto Western Spasmodic Torticollis Rating Scale; assesses cervical dystonia severity and disability.' },
+
+  // ─── Sleep Disorders ───
+  { key: 'epworth', name: 'Epworth Scale', subtitle: 'Daytime Sleepiness', icon: Pause, gradient: 'from-indigo-500 to-blue-600', category: ['medical'], description: 'ESS — Epworth Sleepiness Scale; 8-item self-report of daytime sleepiness likelihood in various situations.' },
+  { key: 'stop-bang', name: 'STOP-BANG', subtitle: 'Sleep Apnea Screening', icon: AlertTriangle, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'STOP-BANG — Obstructive sleep apnea risk screening tool; 8 yes/no questions for rapid OSA risk assessment.' },
+
+  // ─── Epilepsy & Seizures ───
+  { key: 'ilae-seizure-classification', name: 'ILAE Seizure Classification', subtitle: '2025 Updated Guidelines', icon: Zap, gradient: 'from-fuchsia-500 to-cyan-500', category: ['medical'], description: 'ILAE 2025 — Interactive guide to the updated classification of epileptic seizures with full taxonomic hierarchy, clinical descriptors, and diagnostic guidelines.' },
+  { key: 'laep', name: 'LAEP', subtitle: 'Medication Side Effects', icon: Pill, gradient: 'from-cyan-500 to-blue-600', category: ['medical'], description: 'LAEP — Likelihood of Adverse Effects Profile; self-report tool measuring side effects of antiseizure medications.' },
+  { key: 'esgs', name: 'ESGS', subtitle: 'Surgery Outcome Prediction', icon: TrendingUp, gradient: 'from-emerald-500 to-teal-600', category: ['medical'], description: 'ESGS — Epilepsy Surgery Grading Scale; predicts likelihood of seizure freedom after resective surgery for drug-resistant focal epilepsy.' },
+  { key: 'cases', name: 'CASES Tool', subtitle: 'Surgery Appropriateness', icon: Search, gradient: 'from-purple-500 to-pink-600', category: ['medical'], description: 'CASES — Clinical Appropriateness Scores; screening instrument to identify patients for specialized epilepsy surgery evaluation.' },
+  { key: 'engel', name: 'Engel Scale', subtitle: 'Post-Surgical Outcome', icon: Activity, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'Engel Scale — Standard classification for assessing seizure outcomes after epilepsy surgery.' },
+  { key: 'sudep-7', name: 'SUDEP-7 Inventory', subtitle: 'SUDEP Risk Assessment', icon: AlertTriangle, gradient: 'from-red-500 to-orange-600', category: ['medical'], description: 'SUDEP-7 Inventory — Risk stratification tool for Sudden Unexpected Death in Epilepsy based on 7 evidence-based factors.' },
+  { key: 'sudep-safety', name: 'SUDEP Safety Checklist', subtitle: 'Risk Reduction Measures', icon: CheckCircle, gradient: 'from-orange-500 to-amber-600', category: ['medical'], description: 'SUDEP Safety Checklist — Comprehensive implementation guide for evidence-based SUDEP risk reduction across 6 clinical domains.' },
+
+  // ─── Parkinson's Disease - Advanced ───
+  { key: 'five-two-one', name: '5-2-1 Criteria', subtitle: 'Advanced PD Identification', icon: AlertTriangle, gradient: 'from-purple-500 to-pink-500', category: ['medical'], description: '5-2-1 Criteria — Rule of thumb for identifying advanced PD: ≥5 levodopa doses, ≥2h off-time, or ≥1h dyskinesia daily.' },
+  { key: 'anage-pd', name: 'ANAGE-PD', subtitle: 'Advanced PD Management', icon: Stethoscope, gradient: 'from-cyan-500 to-blue-600', category: ['medical'], description: 'ANAGE-PD — Clinician-based tool for timely identification and treatment of advanced PD with suboptimal symptom control.' },
+  { key: 'd-dats', name: 'D-DATS', subtitle: 'DAT Eligibility Screening', icon: Gauge, gradient: 'from-emerald-500 to-green-600', category: ['medical'], description: 'D-DATS — Dutch DAT Screening Tool; identifies PD patients eligible for Device-Aided Therapy (DBS, LCIG, CSAI, LECIG).' },
+  { key: 'stimulus-dbs', name: 'Stimulus DBS', subtitle: 'DBS Appropriateness', icon: Brain, gradient: 'from-amber-500 to-orange-600', category: ['medical'], description: 'Stimulus 2 — Evidence-based decision support for assessing appropriateness of Deep Brain Stimulation referral in PD.' },
 ];
 
 const categoryLabels: Record<Category, { en: string; ml: string; icon: React.ElementType }> = {
@@ -80,23 +209,81 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   cognitive: { en: 'Cognitive', ml: 'കോഗ്നിറ്റീവ്', icon: Brain },
   mood: { en: 'Mood', ml: 'മൂഡ്', icon: Frown },
   personality: { en: 'Personality', ml: 'വ്യക്തിത്വം', icon: Heart },
+  psychosis: { en: 'Psychosis', ml: 'സൈക്കോസിസ്', icon: Sparkles },
   medical: { en: 'Medical', ml: 'മെഡിക്കൽ', icon: Stethoscope },
 };
 
+const categoryImages: Partial<Record<Category, string>> = {
+  cognitive: categoryCognitiveImg,
+  mood: categoryMoodImg,
+  personality: categoryPersonalityImg,
+  medical: categoryMedicalImg,
+  psychosis: categoryPsychosisImg,
+};
+
+const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'medical', 'psychosis'];
+
+const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
+  cognitive: 'from-sky-400/10 to-indigo-400/5',
+  mood: 'from-rose-300/10 to-amber-300/5',
+  personality: 'from-pink-300/10 to-violet-300/5',
+  medical: 'from-emerald-300/10 to-teal-300/5',
+  psychosis: 'from-amber-300/10 to-fuchsia-300/5',
+};
+
 export const AssessmentSelector = () => {
-  const { t, language } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
+  const { showPaywall, setShowPaywall, initiatePurchase } = useSubscription();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [deepLinkQuery, setDeepLinkQuery] = useState('');
+  const [section, setSection] = useState<Section>('assessments');
+  const [pulseSections, setPulseSections] = useState<Set<Section>>(new Set());
+
+  // Pulse a sidebar item briefly when its area is focused / receives input.
+  const pulse = (s: Section) => {
+    setPulseSections((prev) => {
+      if (prev.has(s)) return prev;
+      const next = new Set(prev);
+      next.add(s);
+      return next;
+    });
+    window.setTimeout(() => {
+      setPulseSections((prev) => {
+        const next = new Set(prev);
+        next.delete(s);
+        return next;
+      });
+    }, 1600);
+  };
+
+  // Each questionnaire should default to English; user can toggle per-assessment.
+  const openAssessment = (key: AssessmentKey) => {
+    setLanguage('en');
+    setSelectedAssessment(key);
+  };
 
   const handleBackToMenu = () => {
     clearPatientInfo();
+    setLanguage('en');
     setSelectedAssessment(null);
+    setDeepLinkQuery('');
   };
 
   const filteredAssessments = useMemo(() => {
     let filtered = assessments;
+
+    // Filter based on subscription tier
+    const subscription = getSubscription();
+    const isProSubscriber = subscription?.priceId?.includes('_pro_') === true;
+
+    if (!isProSubscriber) {
+      // Lite tier: exclude Pro-only assessments
+      filtered = filtered.filter(a => !PRO_ONLY_ASSESSMENTS.includes(a.key));
+    }
+
     if (activeCategory !== 'all') {
       filtered = filtered.filter(a => a.category.includes(activeCategory));
     }
@@ -109,6 +296,36 @@ export const AssessmentSelector = () => {
     }
     return filtered;
   }, [activeCategory, searchQuery]);
+
+  // Search the cognitive syndromes & frontal-lobe-tests reference library
+  const syndromeMatches = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    const syn = cognitiveSyndromes
+      .filter(s =>
+        s.name.toLowerCase().includes(q) ||
+        s.description.toLowerCase().includes(q) ||
+        (s.etymology?.toLowerCase().includes(q) ?? false) ||
+        (s.clinicalNote?.toLowerCase().includes(q) ?? false)
+      )
+      .slice(0, 8)
+      .map(s => ({ kind: 'syndrome' as const, id: s.id, name: s.name, hint: s.category, description: s.description }));
+    const tests = frontalLobeTests
+      .filter(t =>
+        t.name.toLowerCase().includes(q) ||
+        t.description.toLowerCase().includes(q) ||
+        t.domain.toLowerCase().includes(q)
+      )
+      .slice(0, 4)
+      .map(t => ({ kind: 'test' as const, id: t.id, name: t.name, hint: t.domain, description: t.description }));
+    return [...syn, ...tests];
+  }, [searchQuery]);
+
+  const openSyndromeReference = (term: string) => {
+    setLanguage('en');
+    setDeepLinkQuery(term);
+    setSelectedAssessment('cognitiveSyndromes');
+  };
 
   // Render selected assessment
   if (selectedAssessment) {
@@ -129,21 +346,69 @@ export const AssessmentSelector = () => {
       </div>
     );
 
+    const psychosisKeys: Record<string, keyof typeof PSYCHOSIS_SCALES> = {
+      bprs: 'bprs',
+      sapsSans: 'sapsSans',
+      crdpss: 'crdpss',
+      sops: 'sops',
+      psyrats: 'psyrats',
+      vagus: 'vagus',
+    };
+    if (selectedAssessment in psychosisKeys) {
+      return (
+        <PsychosisScaleAssessment
+          scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
+          onBack={handleBackToMenu}
+        />
+      );
+    }
+
+    if (selectedAssessment === 'adhdScreener') {
+      return <AdhdScreenerLanding onBack={handleBackToMenu} />;
+    }
+
+    if (selectedAssessment === 'dpdr') {
+      return <DpdrLanding onBack={handleBackToMenu} />;
+    }
+
+    if (selectedAssessment === 'asrs6' || selectedAssessment === 'asrs18' || selectedAssessment === 'vanderbilt') {
+      return (
+        <PsychosisScaleAssessment
+          scale={ADHD_SCREENERS[selectedAssessment]}
+          onBack={handleBackToMenu}
+        />
+      );
+    }
+
     const withOnBack: Record<string, boolean> = {
-      adhd: true, msibpd: true, hamd: true, dpdr: true, pss: true,
-      physical: true, dementia: true, catatonia: true, stressScreening: true,
+      adhd: true, msibpd: true, hamd: true, pss: true,
+      dementia: true, catatonia: true, stressScreening: true,
       fallRisk: true, miniace: true, nms: true, mmpi: true, adam: true,
-      cognitiveSyndromes: true,
+      hunter: true, smarts: true, adverseEffects: true, cognitiveSyndromes: true,
+      callosal: true,
+      mse: true,
+      moca: true,
+      consciousness: true,
+      substance: true,
+      iqcode: true,
+      bdi: true, ybocs: true, ipde: true, cage: true, cows: true,
+      simpsonAngus: true, eprs: true, panss: true,
+      'mds-updrs': true, 'hoehn-yahr': true, aims: true, twstrs: true,
+      epworth: true, 'stop-bang': true,
+      'ilae-seizure-classification': true, laep: true, esgs: true, cases: true, engel: true,
+      'five-two-one': true, 'anage-pd': true, 'd-dats': true, 'stimulus-dbs': true,
+      'sudep-7': true, 'sudep-safety': true,
     };
 
     if (withOnBack[selectedAssessment]) {
+      if (selectedAssessment === 'cognitiveSyndromes') {
+        return <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />;
+      }
       const ComponentMap: Record<string, React.ComponentType<{ onBack: () => void }>> = {
         adhd: AdhdAssessment,
         msibpd: MsiBpdAssessment,
         hamd: HamdAssessment,
-        dpdr: DpdrAssessment,
         pss: PssAssessment,
-        physical: PhysicalFindingsAssessment,
         dementia: DementiaAssessment,
         catatonia: CatatoniaAssessment,
         stressScreening: StressScreeningAssessment,
@@ -152,7 +417,40 @@ export const AssessmentSelector = () => {
         nms: NmsAssessment,
         mmpi: MmpiAssessment,
         adam: AdamAssessment,
-        cognitiveSyndromes: CognitiveSyndromesAssessment,
+        hunter: HunterAssessment,
+        smarts: SmartsAssessment,
+        adverseEffects: AdverseEffectsAssessment,
+        callosal: CallosalAssessment,
+        mse: MseAssessment,
+        moca: MocaAssessment,
+        consciousness: ConsciousnessAssessment,
+        substance: SubstanceAssessment,
+        iqcode: IqcodeAssessment,
+        bdi: BdiAssessment,
+        ybocs: YbocsAssessment,
+        ipde: IpdeAssessment,
+        cage: CageAssessment,
+        cows: CowsAssessment,
+        simpsonAngus: SimpsonAngusAssessment,
+        eprs: EprsAssessment,
+        panss: PanssAssessment,
+        'mds-updrs': MdsUpdrsAssessment,
+        'hoehn-yahr': HoehnYahrAssessment,
+        aims: AimsAssessment,
+        twstrs: TwstrsAssessment,
+        epworth: EpworthAssessment,
+        'stop-bang': StopBangAssessment,
+        'ilae-seizure-classification': IlaeSeizureClassificationAssessment,
+        laep: LaepAssessment,
+        esgs: EsgsAssessment,
+        cases: CasesToolAssessment,
+        engel: EngelScaleAssessment,
+        'five-two-one': FiveTwoOneCriteriaAssessment,
+        'anage-pd': AnagePdAssessment,
+        'd-dats': DDatsAssessment,
+        'stimulus-dbs': StimulusDbsAssessment,
+        'sudep-7': Sudep7InventoryAssessment,
+        'sudep-safety': SudepSafetyChecklistAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;
@@ -160,10 +458,10 @@ export const AssessmentSelector = () => {
 
     const wrapMap: Record<string, React.ReactNode> = {
       daphne: <DaphneAssessment />,
-      moca: <MocaAssessment />,
+      
       minicog: <MiniCogAssessment />,
       hare: <HareAssessment />,
-      tulia: <TuliaAssessment />,
+      tulia: <TuliaAssessment onBack={handleBackToMenu} />,
       fab: <FabAssessment />,
       pcl5: <Pcl5Assessment />,
       delusions: <DelusionsAssessment />,
@@ -172,130 +470,316 @@ export const AssessmentSelector = () => {
     return wrapWithBack(wrapMap[selectedAssessment]);
   }
 
-  // Main menu
+  // Build category list with live counts
+  const categoryList = (Object.keys(categoryLabels) as Category[]).map((key) => ({
+    key,
+    label: { en: categoryLabels[key].en, ml: categoryLabels[key].ml },
+    icon: categoryLabels[key].icon,
+    count: key === 'all'
+      ? assessments.length
+      : assessments.filter((a) => a.category.includes(key)).length,
+  }));
+
+  // Main shell — sticky header + three top-level sections (Assessments / Results / Settings)
+  const sectionTitles: Record<Section, { en: string; ml: string }> = {
+    assessments: { en: 'Assessments', ml: 'വിലയിരുത്തലുകൾ' },
+    results: { en: 'Results', ml: 'ഫലങ്ങൾ' },
+    settings: { en: 'Settings', ml: 'ക്രമീകരണങ്ങൾ' },
+  };
+
+  // Read results count for sidebar badge (cheap localStorage read on render)
+  let resultsCount = 0;
+  try {
+    const raw = typeof window !== 'undefined' ? localStorage.getItem('cognito.results.history.v1') : null;
+    if (raw) resultsCount = JSON.parse(raw).length ?? 0;
+  } catch { /* ignore */ }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary pb-24 md:pb-8">
-      <LanguageToggle />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary">
+        <LanguageToggle />
+        <MainSidebar
+          section={section}
+          onSectionChange={(s) => { setSection(s); pulse(s); }}
+          categories={categoryList}
+          activeCategory={activeCategory}
+          onCategorySelect={(cat) => { setActiveCategory(cat); setSection('assessments'); pulse('assessments'); }}
+          resultsCount={resultsCount}
+          pulseSections={pulseSections}
+        />
 
-      {/* Header */}
-      <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-4 pb-3">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-3">
-            <Brain className="h-6 w-6 text-primary shrink-0" />
-            <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
-              {t('cognitiveAssessments')}
-            </h1>
-          </div>
-
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={language === 'en' ? 'Search assessments…' : 'അസെസ്മെന്റുകൾ തിരയുക…'}
-              className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-
-          {/* Category Tabs — horizontal scroll on mobile */}
-          <div className="flex gap-1.5 mt-3 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
-            {(Object.keys(categoryLabels) as Category[]).map((cat) => {
-              const label = categoryLabels[cat];
-              const Icon = label.icon;
-              const isActive = activeCategory === cat;
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
-                    isActive
-                      ? 'bg-primary text-primary-foreground shadow-sm'
-                      : 'bg-secondary text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {language === 'en' ? label.en : label.ml}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* Assessment Grid */}
-      <div className="max-w-5xl mx-auto px-4 py-4">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {filteredAssessments.map((a) => {
-            const Icon = a.icon;
-            return (
-              <button
-                key={a.key}
-                onClick={() => setSelectedAssessment(a.key)}
-                className="group flex flex-col items-center text-center p-4 rounded-2xl bg-card border border-border shadow-sm hover:shadow-lg hover:border-primary/30 transition-all duration-200 active:scale-[0.97]"
-              >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${a.gradient} flex items-center justify-center mb-2.5 shadow-md group-hover:scale-110 transition-transform`}>
-                  <Icon className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-sm font-semibold text-foreground leading-tight">
-                  {a.name}
-                </span>
-                <span className="text-[11px] text-muted-foreground mt-0.5 leading-tight">
-                  {a.subtitle}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {filteredAssessments.length === 0 && (
-          <div className="text-center py-16 text-muted-foreground">
-            <Search className="h-10 w-10 mx-auto mb-3 opacity-40" />
-            <p className="text-sm">
-              {language === 'en' ? 'No assessments found' : 'അസെസ്മെന്റുകൾ കണ്ടെത്തിയില്ല'}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Bottom Navigation — mobile only */}
-      <nav className="fixed bottom-0 inset-x-0 z-30 md:hidden bg-card/95 backdrop-blur-md border-t border-border safe-area-pb">
-        <div className="flex justify-around items-center h-16 px-2">
-          {(Object.keys(categoryLabels) as Category[]).map((cat) => {
-            const label = categoryLabels[cat];
-            const Icon = label.icon;
-            const isActive = activeCategory === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => { setActiveCategory(cat); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors min-w-0 ${
-                  isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
-                }`}
-              >
-                <Icon className={`h-5 w-5 ${isActive ? 'scale-110' : ''} transition-transform`} />
-                <span className="text-[10px] font-medium truncate max-w-[56px]">
-                  {language === 'en' ? label.en : label.ml}
-                </span>
-                {isActive && (
-                  <div className="w-4 h-0.5 rounded-full bg-primary mt-0.5" />
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Sticky header */}
+          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-3 pb-3">
+            <div className="max-w-5xl mx-auto">
+              <div className="flex items-center gap-2 mb-3">
+                <SidebarTrigger className="shrink-0" />
+                <Brain className="h-6 w-6 text-primary shrink-0" />
+                <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
+                  {language === 'en' ? sectionTitles[section].en : sectionTitles[section].ml}
+                </h1>
+                {section === 'assessments' && (
+                  <span className="ml-auto text-xs text-muted-foreground hidden sm:inline">
+                    {language === 'en' ? categoryLabels[activeCategory].en : categoryLabels[activeCategory].ml}
+                  </span>
                 )}
-              </button>
-            );
-          })}
+              </div>
+
+              {/* Search — only on Assessments */}
+              {section === 'assessments' && (
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); pulse('assessments'); }}
+                    onFocus={() => pulse('assessments')}
+                    placeholder={language === 'en' ? 'Search assessments…' : 'അസെസ്മെന്റുകൾ തിരയുക…'}
+                    className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </header>
+
+          <main
+            className="flex-1 max-w-5xl w-full mx-auto px-4 py-4 space-y-4"
+            onFocusCapture={() => pulse(section)}
+            onInput={() => pulse(section)}
+          >
+            {section === 'results' && <ResultsView onOpenAssessment={(k) => openAssessment(k as AssessmentKey)} />}
+            {section === 'settings' && <SettingsView />}
+            {section === 'suggestions' && <SuggestionsView />}
+
+            {section === 'assessments' && (
+              <>
+                {/* Ad Banner for free users */}
+                <AdBanner />
+
+                {/* Hero banner — only when no search/filter */}
+                {!searchQuery.trim() && activeCategory === 'all' && (
+                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-sm">
+                    <img
+                      src={cognitoHero}
+                      alt={language === 'en' ? 'Clinician using Cognito on a tablet' : 'ടാബ്‌ലെറ്റിൽ Cognito ഉപയോഗിക്കുന്ന ക്ലിനിക്‌ഷ്യൻ'}
+                      className="w-full h-auto block"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 flex items-start justify-center pt-6 bg-gradient-to-b from-black/30 to-transparent rounded-2xl">
+                      <h2 className="text-2xl sm:text-3xl font-bold text-amber-300 text-center px-4 leading-tight max-w-sm">
+                        {language === 'en'
+                          ? 'Neuropsychiatric\nevaluation companion'
+                          : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}
+                      </h2>
+                    </div>
+                    <div className="sr-only">
+                      {language === 'en'
+                        ? 'Understand the brain and track progress. Scientifically validated neuropsychiatric assessments — confidential, multilingual, and clinician-ready.'
+                        : 'മസ്തിഷ്കം മനസ്സിലാക്കുക, പുരോഗതി രേഖപ്പെടുത്തുക. ശാസ്ത്രീയമായി സാധൂകരിച്ച ന്യൂറോസൈക്യാട്രിക് വിലയിരുത്തലുകൾ — രഹസ്യാത്മകവും ബഹുഭാഷയും ക്ലിനിക്കൽ-റെഡിയും.'}
+                    </div>
+                  </div>
+                )}
+
+                {/* Reference library matches */}
+                {searchQuery.trim() && syndromeMatches.length > 0 && (
+                  <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3">
+                    <div className="flex items-center gap-2 mb-2 px-1">
+                      <BookOpen className="h-4 w-4 text-primary" />
+                      <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+                        {language === 'en' ? 'Found in reference library' : 'റഫറൻസ് ലൈബ്രറിയിൽ കണ്ടെത്തി'}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {syndromeMatches.map((m) => (
+                        <button
+                          key={`${m.kind}-${m.id}`}
+                          onClick={() => openSyndromeReference(m.name)}
+                          className="group flex items-start gap-2 text-left p-3 rounded-xl bg-card border border-border hover:border-primary/40 hover:shadow-sm transition-all"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-sm font-semibold text-foreground">{m.name}</span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-secondary text-muted-foreground">
+                                {m.hint}
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                              {m.description}
+                            </p>
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary shrink-0 mt-0.5 transition-colors" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Assessment grid — grouped by category when browsing All; banner + grid when filtered */}
+                <TooltipProvider delayDuration={200}>
+                  {(() => {
+                    const neonColorPalette = [
+                      { glow: 'glow-neon-magenta', bg: 'from-fuchsia-600 to-black', icon: 'rgba(255,0,255,0.8)' }, // Magenta
+                      { glow: 'glow-neon-blue', bg: 'from-cyan-600 to-black', icon: 'rgba(0,255,255,0.8)' }, // Cyan
+                      { glow: 'glow-neon-pink', bg: 'from-rose-600 to-black', icon: 'rgba(255,0,110,0.8)' }, // Pink
+                      { glow: '', bg: 'from-lime-600 to-black', icon: 'rgba(0,255,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(0,255,0,0.5), 0_0_20px_rgba(0,255,0,0.3)' }, // Lime Green
+                      { glow: '', bg: 'from-orange-600 to-black', icon: 'rgba(255,165,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,165,0,0.5), 0_0_20px_rgba(255,165,0,0.3)' }, // Orange
+                      { glow: '', bg: 'from-violet-600 to-black', icon: 'rgba(139,92,246,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(139,92,246,0.5), 0_0_20px_rgba(139,92,246,0.3)' }, // Violet
+                      { glow: '', bg: 'from-red-600 to-black', icon: 'rgba(255,0,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,0,0,0.5), 0_0_20px_rgba(255,0,0,0.3)' }, // Red
+                      { glow: '', bg: 'from-yellow-500 to-black', icon: 'rgba(255,255,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,255,0,0.5), 0_0_20px_rgba(255,255,0,0.3)' }, // Yellow
+                    ];
+
+                    const isProSubscriber = getSubscription()?.priceId?.includes('_pro_') === true;
+
+                    const renderTile = (a: AssessmentInfo, index: number, locked = false) => {
+                      const Icon = a.icon;
+                      const color = neonColorPalette[index % neonColorPalette.length];
+                      const customGlowStyle = color.customGlow ? { style: { boxShadow: color.customGlow } } : {};
+
+                      return (
+                        <Tooltip key={a.key}>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => locked ? setShowPaywall(true) : openAssessment(a.key)}
+                              className={`group relative flex flex-col items-center text-center p-4 rounded-2xl border shadow-sm transition-all duration-200 active:scale-[0.97] overflow-hidden ${
+                                locked
+                                  ? 'bg-card/50 border-border/50 opacity-60 cursor-pointer'
+                                  : 'bg-card border-border hover:shadow-lg hover:border-primary/30'
+                              }`}
+                            >
+                              {/* Lock overlay for pro tiles */}
+                              {locked && (
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl backdrop-blur-[1px] z-10">
+                                  <div className="flex flex-col items-center gap-1">
+                                    <Lock className="w-5 h-5 text-fuchsia-400 drop-shadow-[0_0_6px_rgba(255,0,255,0.7)]" />
+                                    <span className="text-[9px] font-bold text-fuchsia-300 uppercase tracking-wide">Pro</span>
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className={`absolute inset-0 bg-gradient-to-br ${a.gradient} opacity-0 group-hover:opacity-[0.06] transition-opacity`} aria-hidden />
+                              <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${color.bg} flex items-center justify-center mb-2.5 border group-hover:scale-110 transition-all ${color.glow}`} style={{ borderColor: color.icon, ...customGlowStyle.style }}>
+                                <Icon className="h-6 w-6 text-white" style={{ filter: `drop-shadow(0 0 8px ${color.icon})` }} />
+                              </div>
+                              <span className="relative text-sm font-semibold text-foreground leading-tight">
+                                {a.name}
+                              </span>
+                              <span className="relative text-[11px] text-muted-foreground mt-0.5 leading-tight">
+                                {a.subtitle}
+                              </span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
+                            {locked ? `Pro feature — ${a.description}` : a.description}
+                          </TooltipContent>
+                        </Tooltip>
+                      );
+                    };
+
+                    const renderCategoryBanner = (cat: Exclude<Category, 'all'>, count: number) => {
+                      const CatIcon = categoryLabels[cat].icon;
+                      return (
+                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-6 h-56 sm:h-64`}>
+                          <img
+                            src={categoryImages[cat]!}
+                            alt=""
+                            aria-hidden
+                            loading="lazy"
+                            width={1024}
+                            height={512}
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+                          <div className="relative h-full flex flex-col justify-end p-6 sm:p-8">
+                            <div className="flex items-center gap-2 mb-2">
+                              <CatIcon className="h-6 w-6 text-primary shrink-0" />
+                              <h3 className="text-2xl sm:text-3xl font-bold text-white">
+                                {language === 'en' ? categoryLabels[cat].en : categoryLabels[cat].ml}
+                              </h3>
+                              <span className="ml-auto text-sm font-semibold px-3 py-1 rounded-full bg-primary/90 text-white tabular-nums">
+                                {count} assessments
+                              </span>
+                            </div>
+                            <p className="text-sm sm:text-base text-gray-200 max-w-2xl">
+                              {language === 'en'
+                                ? {
+                                    cognitive: 'Memory, attention, executive function and dementia screens.',
+                                    mood: 'Depression, anxiety, stress, trauma and related affective scales.',
+                                    personality: 'Personality structure and disorder screening tools.',
+                                    medical: 'Withdrawal, side-effects, neurology and bedside medical scales.',
+                                    psychosis: 'Positive, negative and prodromal symptom assessments.',
+                                  }[cat]
+                                : ''}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    };
+
+                    // Filtered or searching → flat grid (with optional single banner)
+                    if (searchQuery.trim() || activeCategory !== 'all') {
+                      return (
+                        <>
+                          {activeCategory !== 'all' && !searchQuery.trim() &&
+                            renderCategoryBanner(
+                              activeCategory as Exclude<Category, 'all'>,
+                              filteredAssessments.length,
+                            )}
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                            {filteredAssessments.map((a, idx) => renderTile(a, idx, !isProSubscriber && PRO_ONLY_ASSESSMENTS.includes(a.key)))}
+                          </div>
+                        </>
+                      );
+                    }
+
+                    // Browsing all → grouped by category with banners
+                    return (
+                      <div className="space-y-6">
+                        {categoryOrder.map((cat) => {
+                          const items = assessments.filter((a) => a.category.includes(cat));
+                          if (items.length === 0) return null;
+                          return (
+                            <section key={cat} aria-labelledby={`cat-${cat}`}>
+                              {renderCategoryBanner(cat, items.length)}
+                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                                {items.map((a, idx) => renderTile(a, idx, !isProSubscriber && PRO_ONLY_ASSESSMENTS.includes(a.key)))}
+                              </div>
+                            </section>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </TooltipProvider>
+
+
+                {filteredAssessments.length === 0 && syndromeMatches.length === 0 && (
+                  <div className="text-center py-16 text-muted-foreground">
+                    <Search className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                    <p className="text-sm">
+                      {language === 'en' ? 'No matches found' : 'പൊരുത്തങ്ങളൊന്നും കണ്ടെത്തിയില്ല'}
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </main>
         </div>
-      </nav>
-    </div>
+      </div>
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        onSelectPlan={initiatePurchase}
+      />
+    </SidebarProvider>
   );
 };

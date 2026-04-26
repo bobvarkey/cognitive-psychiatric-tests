@@ -13,9 +13,11 @@ import { CognitiveSyndromeCategory } from '@/types/cognitiveSyndromes';
 import { Brain, Search, X, FileText, RotateCcw, AlertTriangle, Info } from 'lucide-react';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface CognitiveSyndromesAssessmentProps {
   onBack?: () => void;
+  initialSearchQuery?: string;
 }
 
 const categoryColors: Record<CognitiveSyndromeCategory, string> = {
@@ -28,19 +30,23 @@ const categoryColors: Record<CognitiveSyndromeCategory, string> = {
   'Movement & Behaviour': 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
 };
 
-export const CognitiveSyndromesAssessment = ({ onBack }: CognitiveSyndromesAssessmentProps) => {
+export const CognitiveSyndromesAssessment = ({ onBack, initialSearchQuery = '' }: CognitiveSyndromesAssessmentProps) => {
   const { language, t } = useLanguage();
   const { patientInfo } = usePatientInfo();
   const [selectedSyndromes, setSelectedSyndromes] = useState<Set<string>>(new Set());
   const [selectedTests, setSelectedTests] = useState<Set<string>>(new Set());
   const [notes, setNotes] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [showResults, setShowResults] = useState(false);
 
   const toggleSyndrome = (id: string) => {
     setSelectedSyndromes(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
@@ -48,7 +54,11 @@ export const CognitiveSyndromesAssessment = ({ onBack }: CognitiveSyndromesAsses
   const toggleTest = (id: string) => {
     setSelectedTests(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
@@ -386,6 +396,8 @@ export const CognitiveSyndromesAssessment = ({ onBack }: CognitiveSyndromesAsses
           <RotateCcw className="h-4 w-4" />
         </Button>
       </div>
+      <AssessmentReference assessmentKey="cognitiveSyndromes" />
+
     </div>
   );
 };

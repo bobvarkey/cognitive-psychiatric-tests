@@ -209,7 +209,9 @@ export const getPresentation = (
   return 'subthreshold';
 };
 
-export const getPresentationLabel = (presentation: string, language: 'en' | 'ml'): { title: string; description: string } => {
+import type { Language } from '@/contexts/LanguageContext';
+
+export const getPresentationLabel = (presentation: string, language: Language): { title: string; description: string } => {
   const labels = {
     'combined': {
       en: { 

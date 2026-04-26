@@ -11,6 +11,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { ArrowLeft, Info, CheckCircle, AlertCircle, Stethoscope } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface StressScreeningAssessmentProps {
   onBack?: () => void;
@@ -246,14 +247,16 @@ export const StressScreeningAssessment = ({ onBack }: StressScreeningAssessmentP
                   <h3 className="font-bold text-lg text-violet-800 border-b border-violet-200 pb-2">
                     {language === 'ml' ? label.ml : label.en}
                   </h3>
-                  {items.map(item => (
-                    <StressScreeningItemCard
-                      key={item.id}
-                      item={item}
-                      response={responses[item.id] ?? null}
-                      onResponse={handleResponse}
-                    />
-                  ))}
+                  <div className="space-y-3 colorful-questions">
+                    {items.map(item => (
+                      <StressScreeningItemCard
+                        key={item.id}
+                        item={item}
+                        response={responses[item.id] ?? null}
+                        onResponse={handleResponse}
+                      />
+                    ))}
+                  </div>
                 </div>
               );
             })}
@@ -269,6 +272,8 @@ export const StressScreeningAssessment = ({ onBack }: StressScreeningAssessmentP
           </CardContent>
         </Card>
       </div>
+      <AssessmentReference assessmentKey="stressScreening" />
+
     </div>
   );
 };

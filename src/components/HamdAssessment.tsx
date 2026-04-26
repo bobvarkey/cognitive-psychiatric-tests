@@ -7,8 +7,9 @@ import { HamdResults } from './HamdResults';
 import { HAMD_ITEMS } from '@/data/hamdScale';
 import { HamdResponse, HamdResult } from '@/types/hamd';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Frown } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface HamdAssessmentProps {
   onBack?: () => void;
@@ -20,12 +21,13 @@ export const HamdAssessment = ({ onBack }: HamdAssessmentProps) => {
   const [showResults, setShowResults] = useState(false);
 
   const handleResponse = (itemId: number, score: number) => {
+    const typed = score as HamdResponse['score'];
     setResponses(prev => {
       const existing = prev.find(r => r.itemId === itemId);
       if (existing) {
-        return prev.map(r => r.itemId === itemId ? { itemId, score: score as any } : r);
+        return prev.map(r => r.itemId === itemId ? { itemId, score: typed } : r);
       }
-      return [...prev, { itemId, score: score as any }];
+      return [...prev, { itemId, score: typed }];
     });
   };
 
@@ -88,7 +90,10 @@ export const HamdAssessment = ({ onBack }: HamdAssessmentProps) => {
           <CardContent className="p-6 md:p-8">
             <div className="space-y-4">
               <div>
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
+                  <span className="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-md">
+                    <Frown className="h-6 w-6" />
+                  </span>
                   {t('hamdTitle')}
                 </h1>
                 <p className="text-slate-600">
@@ -113,7 +118,7 @@ export const HamdAssessment = ({ onBack }: HamdAssessmentProps) => {
           </CardContent>
         </Card>
 
-        <div className="space-y-4">
+        <div className="space-y-4 colorful-questions">
           {HAMD_ITEMS.map(item => (
             <HamdItemCard
               key={item.id}
@@ -137,6 +142,8 @@ export const HamdAssessment = ({ onBack }: HamdAssessmentProps) => {
           </CardContent>
         </Card>
       </div>
+      <AssessmentReference assessmentKey="hamd" />
+
     </div>
   );
 };

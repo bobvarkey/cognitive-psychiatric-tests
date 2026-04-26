@@ -7,8 +7,9 @@ import { MsiBpdResults } from './MsiBpdResults';
 import { MSI_BPD_ITEMS } from '@/data/msiBpdScale';
 import { MsiBpdResponse, MsiBpdResult } from '@/types/msibpd';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Heart } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface MsiBpdAssessmentProps {
   onBack?: () => void;
@@ -82,7 +83,10 @@ export const MsiBpdAssessment = ({ onBack }: MsiBpdAssessmentProps) => {
           <CardContent className="p-6 md:p-8">
             <div className="space-y-4">
               <div>
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
+                  <span className="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-md">
+                    <Heart className="h-6 w-6" />
+                  </span>
                   {t('msiBpdTitle')}
                 </h1>
                 <p className="text-slate-600">
@@ -107,7 +111,7 @@ export const MsiBpdAssessment = ({ onBack }: MsiBpdAssessmentProps) => {
           </CardContent>
         </Card>
 
-        <div className="space-y-4">
+        <div className="space-y-4 colorful-questions">
           {MSI_BPD_ITEMS.map(item => (
             <MsiBpdItemCard
               key={item.id}
@@ -131,6 +135,8 @@ export const MsiBpdAssessment = ({ onBack }: MsiBpdAssessmentProps) => {
           </CardContent>
         </Card>
       </div>
+      <AssessmentReference assessmentKey="msibpd" />
+
     </div>
   );
 };

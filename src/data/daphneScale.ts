@@ -246,6 +246,8 @@ export const DAPHNE_SCALE_ITEMS_ML: DaphneItem[] = [
   }
 ];
 
-export const getDaphneScaleItems = (language: 'en' | 'ml'): DaphneItem[] => {
+import type { Language } from '@/contexts/LanguageContext';
+
+export const getDaphneScaleItems = (language: Language): DaphneItem[] => {
   return language === 'en' ? DAPHNE_SCALE_ITEMS_EN : DAPHNE_SCALE_ITEMS_ML;
 };

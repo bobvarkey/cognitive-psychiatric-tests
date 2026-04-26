@@ -9,6 +9,7 @@ import { delusionsScale } from '@/data/delusionsScale';
 import { DelusionResponse, DelusionResults } from '@/types/delusions';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 type AssessmentStep = 'selection' | 'detailed' | 'results';
 
@@ -185,6 +186,8 @@ export const DelusionsAssessment = () => {
           </Button>
         )}
       </div>
+      <AssessmentReference assessmentKey="delusions" />
+
     </div>
   );
 };

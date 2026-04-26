@@ -4,9 +4,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { TuliaItem, TuliaScore } from '@/types/tulia';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Info } from 'lucide-react';
-import meaninglessImage from '@/assets/tulia-meaningless.png';
-import intransitiveImage from '@/assets/tulia-intransitive.png';
-import transitiveImage from '@/assets/tulia-transitive.png';
 
 interface TuliaItemCardProps {
   item: TuliaItem;
@@ -39,17 +36,6 @@ export const TuliaItemCard = ({ item, value, onChange }: TuliaItemCardProps) => 
     }
   };
 
-  const getCategoryImage = () => {
-    switch (item.category) {
-      case 'meaningless':
-        return meaninglessImage;
-      case 'intransitive':
-        return intransitiveImage;
-      case 'transitive':
-        return transitiveImage;
-    }
-  };
-
   const getDomainBadge = () => {
     const colors = item.domain === 'imitation' 
       ? 'bg-purple-100 text-purple-800' 
@@ -68,35 +54,28 @@ export const TuliaItemCard = ({ item, value, onChange }: TuliaItemCardProps) => 
     <Card className="shadow-lg hover:shadow-xl transition-shadow">
       <div className={`h-2 bg-gradient-to-r ${getCategoryColor()}`} />
       <CardContent className="p-6 space-y-4">
-        <div className="flex items-start justify-between gap-4">
-          <img 
-            src={getCategoryImage()} 
-            alt={getCategoryLabel()} 
-            className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
-          />
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="text-lg font-bold text-slate-700">Item {item.id}</span>
-              {getDomainBadge()}
-              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor()} text-white`}>
-                {getCategoryLabel()}
-              </span>
-            </div>
-            <p className="text-sm text-slate-600 italic mb-2">
-              {language === 'en' ? item.instruction.en : item.instruction.ml}
-            </p>
-            <p className="text-base font-medium text-slate-800">
-              {language === 'en' ? item.description.en : item.description.ml}
-            </p>
-            {item.note && (
-              <div className="mt-3 p-3 bg-blue-50 rounded-lg flex gap-2">
-                <Info className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-blue-800">
-                  {language === 'en' ? item.note.en : item.note.ml}
-                </p>
-              </div>
-            )}
+        <div>
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <span className="text-lg font-bold text-slate-700">Item {item.id}</span>
+            {getDomainBadge()}
+            <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getCategoryColor()} text-white`}>
+              {getCategoryLabel()}
+            </span>
           </div>
+          <p className="text-sm text-slate-600 italic mb-2">
+            {language === 'en' ? item.instruction.en : item.instruction.ml}
+          </p>
+          <p className="text-base font-medium text-slate-800">
+            {language === 'en' ? item.description.en : item.description.ml}
+          </p>
+          {item.note && (
+            <div className="mt-3 p-3 bg-blue-50 rounded-lg flex gap-2">
+              <Info className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-blue-800">
+                {language === 'en' ? item.note.en : item.note.ml}
+              </p>
+            </div>
+          )}
         </div>
 
         <div className="pt-4 border-t">

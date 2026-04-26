@@ -1,14 +1,22 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type Language = 'en' | 'ml';
+export type Language = 'en' | 'ml';
+
+export const LANGUAGES: { code: Language; label: string; native: string }[] = [
+  { code: 'en', label: 'English', native: 'English' },
+  { code: 'ml', label: 'Malayalam', native: 'മലയാളം' },
+];
 
 interface LanguageContextType {
   language: Language;
-  toggleLanguage: () => void;
+  setLanguage: (lang: Language) => void;
+  toggleLanguage: () => void; // legacy: cycles through languages
   t: (key: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+// Languages: English (default) and Malayalam only.
 
 const translations = {
   en: {
@@ -112,7 +120,7 @@ const translations = {
     mocaClinicalNote1: 'The MoCA is a validated cognitive screening tool with high sensitivity for detecting mild cognitive impairment.',
     mocaClinicalNote2: 'Education adjustment: Add 1 point if ≤12 years of education. Normal score: ≥26/30.',
     mocaRecommendation: 'Further neuropsychological evaluation recommended for scores <26/30.',
-    cognitiveAssessments: 'Cognitive Assessments',
+    cognitiveAssessments: 'Cognito',
     selectAssessmentDescription: 'Choose the appropriate assessment tool based on your clinical needs and patient presentation.',
     keyFeatures: 'Key Features',
     startDaphneAssessment: 'Start DAPHNE Assessment',
@@ -341,7 +349,10 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [language, setLanguage] = useState<Language>('en');
 
   const toggleLanguage = () => {
-    setLanguage(prev => prev === 'en' ? 'ml' : 'en');
+    setLanguage(prev => {
+      const idx = LANGUAGES.findIndex(l => l.code === prev);
+      return LANGUAGES[(idx + 1) % LANGUAGES.length].code;
+    });
   };
 
   const t = (key: string): string => {
@@ -349,7 +360,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   return (
-    <LanguageContext.Provider value={{ language, toggleLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

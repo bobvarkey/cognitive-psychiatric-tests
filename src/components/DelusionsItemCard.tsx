@@ -31,7 +31,9 @@ export const DelusionsItemCard = ({ item, value, onChange }: DelusionsItemCardPr
         <div className="flex items-start justify-between gap-2">
           <CardTitle className="text-lg flex-1">
             {item.type}
-            <div className="text-base font-normal mt-1">{item.typeMl}</div>
+            {language === 'ml' && (
+              <div className="text-base font-normal mt-1">{item.typeMl}</div>
+            )}
           </CardTitle>
           {item.familiarity && (
             <Badge 
@@ -44,7 +46,9 @@ export const DelusionsItemCard = ({ item, value, onChange }: DelusionsItemCardPr
         </div>
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground">{item.description}</p>
-          <p className="text-sm text-muted-foreground">{item.descriptionMl}</p>
+          {language === 'ml' && (
+            <p className="text-sm text-muted-foreground">{item.descriptionMl}</p>
+          )}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">

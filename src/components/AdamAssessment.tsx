@@ -11,6 +11,7 @@ import { AdamDemographics, AdamResponse, AdamResult } from '@/types/adam';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { ClipboardList } from 'lucide-react';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface AdamAssessmentProps {
   onBack?: () => void;
@@ -193,14 +194,16 @@ export const AdamAssessment = ({ onBack }: AdamAssessmentProps) => {
         </h2>
       </div>
 
-      {likertItems.map((item) => (
-        <AdamItemCard
-          key={item.id}
-          item={item}
-          value={responses.get(item.id)}
-          onChange={(score) => handleScoreChange(item.id, score)}
-        />
-      ))}
+      <div className="space-y-4 colorful-questions">
+        {likertItems.map((item) => (
+          <AdamItemCard
+            key={item.id}
+            item={item}
+            value={responses.get(item.id)}
+            onChange={(score) => handleScoreChange(item.id, score)}
+          />
+        ))}
+      </div>
 
       {/* Section 2: BDI-style items */}
       <div className="mb-4 mt-8">
@@ -211,14 +214,16 @@ export const AdamAssessment = ({ onBack }: AdamAssessmentProps) => {
         </h2>
       </div>
 
-      {bdiItems.map((item) => (
-        <AdamItemCard
-          key={item.id}
-          item={item}
-          value={responses.get(item.id)}
-          onChange={(score) => handleScoreChange(item.id, score)}
-        />
-      ))}
+      <div className="space-y-4 colorful-questions">
+        {bdiItems.map((item) => (
+          <AdamItemCard
+            key={item.id}
+            item={item}
+            value={responses.get(item.id)}
+            onChange={(score) => handleScoreChange(item.id, score)}
+          />
+        ))}
+      </div>
 
       <div className="flex gap-4 mt-6">
         <Button
@@ -240,6 +245,8 @@ export const AdamAssessment = ({ onBack }: AdamAssessmentProps) => {
             : `എല്ലാ 10 ഇനങ്ങൾക്കും ഉത്തരം നൽകുക (${responses.size}/10 പൂർത്തിയായി)`}
         </p>
       )}
+      <AssessmentReference assessmentKey="adam" />
+
     </div>
   );
 };

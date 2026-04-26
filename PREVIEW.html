@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognito Pro - Dark Neon Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #1a0033 25%, #16213e 50%, #0f0c29 75%, #1a0033 100%);
+            background-attachment: fixed;
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: white;
+            overflow: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(15, 12, 41, 0.3);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .ad-banner {
+            background: linear-gradient(to right, rgba(99, 102, 241, 0.8), rgba(168, 85, 247, 0.8), rgba(236, 72, 153, 0.8));
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .ad-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .ad-banner-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .ad-banner-text h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .ad-banner-text p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .ad-banner-btn {
+            background: white;
+            color: #6366f1;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .ad-banner-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .assessments-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .assessment-card {
+            background: rgba(15, 12, 41, 0.4);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .assessment-card:hover {
+            border-color: rgba(99, 102, 241, 0.6);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .assessment-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .assessment-name {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .assessment-subtitle {
+            font-size: 11px;
+            color: #b0b0b0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(15, 12, 41, 0.5);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 24px;
+            padding: 32px 24px;
+            max-width: 420px;
+            width: 100%;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .star {
+            font-size: 20px;
+            animation: starPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes starPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .rating-text {
+            font-size: 12px;
+            color: #b0b0b0;
+            margin-bottom: 16px;
+        }
+
+        .icon-container {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 40px;
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: #b0b0b0;
+        }
+
+        .features-list {
+            margin: 24px 0;
+            space-y: 12px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+
+        .feature-check {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .feature-desc {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .pricing-section {
+            margin: 24px 0;
+            padding-top: 24px;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .pricing-option {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pricing-option.active {
+            background: rgba(99, 102, 241, 0.3);
+            border-color: rgba(99, 102, 241, 0.8);
+        }
+
+        .pricing-left {
+            text-align: left;
+        }
+
+        .pricing-plan {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .pricing-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 6px;
+        }
+
+        .pricing-note {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .pricing-right {
+            text-align: right;
+        }
+
+        .pricing-amount {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .pricing-period {
+            font-size: 11px;
+            color: #888;
+        }
+
+        .radio-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(99, 102, 241, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pricing-option.active .radio-btn {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border-color: #6366f1;
+        }
+
+        .cta-button {
+            width: 100%;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            border: none;
+            color: white;
+            padding: 14px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+            margin-bottom: 16px;
+        }
+
+        .cta-button:hover {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .footer-link {
+            background: none;
+            border: none;
+            color: #6366f1;
+            font-size: 11px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #a855f7;
+        }
+
+        .footer-separator {
+            color: #333;
+            font-size: 10px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <span style="font-size: 24px;">🧠</span>
+            <div>
+                <h1>Cognito</h1>
+                <div style="font-size: 12px; color: #888;">Clinical Assessment Toolkit</div>
+            </div>
+        </div>
+
+        <!-- Ad Banner -->
+        <div class="ad-banner">
+            <div class="ad-banner-content">
+                <div class="ad-banner-icon">⚡</div>
+                <div class="ad-banner-text">
+                    <h3>Upgrade to Cognito Pro</h3>
+                    <p>Unlock premium features, remove ads, get priority support</p>
+                </div>
+            </div>
+            <button class="ad-banner-btn" onclick="openModal()">Learn More</button>
+        </div>
+
+        <!-- Assessments Grid -->
+        <div class="section-title">Movement Disorders & Sleep</div>
+        <div class="assessments-grid">
+            <div class="assessment-card" onclick="openModal()">
+                <div class="assessment-icon">🎯</div>
+                <div class="assessment-name">MDS-UPDRS</div>
+                <div class="assessment-subtitle">Parkinson's Assessment</div>
+            </div>
+            <div class="assessment-card">
+                <div class="assessment-icon">📊</div>
+                <div class="assessment-name">Hoehn & Yahr</div>
+                <div class="assessment-subtitle">Parkinson's Staging</div>
+            </div>
+            <div class="assessment-card">
+                <div class="assessment-icon">🔄</div>
+                <div class="assessment-name">AIMS</div>
+                <div class="assessment-subtitle">Dyskinesia Assessment</div>
+            </div>
+            <div class="assessment-card">
+                <div class="assessment-icon">🔗</div>
+                <div class="assessment-name">TWSTRS</div>
+                <div class="assessment-subtitle">Cervical Dystonia</div>
+            </div>
+            <div class="assessment-card">
+                <div class="assessment-icon">😴</div>
+                <div class="assessment-name">Epworth Scale</div>
+                <div class="assessment-subtitle">Daytime Sleepiness</div>
+            </div>
+            <div class="assessment-card">
+                <div class="assessment-icon">⚠️</div>
+                <div class="assessment-name">STOP-BANG</div>
+                <div class="assessment-subtitle">Sleep Apnea Screening</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paywall Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+
+            <!-- Header -->
+            <div class="modal-header">
+                <div class="stars">
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                    <span class="star">⭐</span>
+                </div>
+                <div class="rating-text">49 stars • 1,000+ reviews</div>
+                <div class="icon-container">🔒</div>
+                <div class="modal-title">Get full access today</div>
+                <div class="modal-subtitle">Unlock all premium features and clinical tools</div>
+            </div>
+
+            <!-- Features -->
+            <div class="features-list">
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Premium Access</div>
+                        <div class="feature-desc">Get full access to all 40+ assessments</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Export & Reports</div>
+                        <div class="feature-desc">Download assessments as PDF and DOCX</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Clinical Analytics</div>
+                        <div class="feature-desc">Track patient progress and outcomes</div>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <div class="feature-title">Priority Support</div>
+                        <div class="feature-desc">Direct clinical and technical support</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="pricing-section">
+                <div class="pricing-option active" onclick="selectPlan(this, 'yearly')">
+                    <div>
+                        <div class="pricing-plan">
+                            Yearly
+                            <span class="pricing-badge">First year</span>
+                        </div>
+                        <div class="pricing-note">Then $20.99/year</div>
+                    </div>
+                    <div>
+                        <div class="pricing-amount">$24.99</div>
+                        <div class="pricing-period">/year</div>
+                    </div>
+                    <div class="radio-btn"></div>
+                </div>
+
+                <div class="pricing-option" onclick="selectPlan(this, 'monthly')">
+                    <div>
+                        <div class="pricing-plan">
+                            Monthly
+                            <span class="pricing-badge">First year</span>
+                        </div>
+                        <div class="pricing-note">Then $20.99/year</div>
+                    </div>
+                    <div>
+                        <div class="pricing-amount">$2.99</div>
+                        <div class="pricing-period">/month</div>
+                    </div>
+                    <div class="radio-btn"></div>
+                </div>
+            </div>
+
+            <!-- CTA Button -->
+            <button class="cta-button">Continue</button>
+
+            <!-- Footer Links -->
+            <div class="footer-links">
+                <button class="footer-link">Restore Purchase</button>
+                <span class="footer-separator">•</span>
+                <button class="footer-link">Terms</button>
+                <span class="footer-separator">•</span>
+                <button class="footer-link">Privacy</button>
+                <span class="footer-separator">•</span>
+                <a href="https://forms.gle/suggestions-link" target="_blank" class="footer-link" style="text-decoration: none;">Suggestions</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function selectPlan(element, plan) {
+            document.querySelectorAll('.pricing-option').forEach(el => {
+                el.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

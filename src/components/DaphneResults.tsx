@@ -1,23 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  FileText, 
-  RotateCcw, 
-  Download, 
-  User, 
+import { Textarea } from '@/components/ui/textarea';
+import {
+  FileText,
+  RotateCcw,
+  Download,
+  User,
   Calendar,
   Target,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  ClipboardCopy,
+  Check,
 } from 'lucide-react';
 import { DaphneResults as DaphneResultsType } from '@/types/daphne';
 import { getDaphneScaleItems } from '@/data/daphneScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { DomainRadarChart } from './DomainRadarChart';
+import { toast } from '@/hooks/use-toast';
+import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType } from 'docx';
+import { saveAs } from 'file-saver';
 
 interface DaphneResultsProps {
   results: DaphneResultsType;
@@ -35,6 +41,8 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
   onRestart
 }) => {
   const { t } = useLanguage();
+  const [copied, setCopied] = useState(false);
+  const [showNote, setShowNote] = useState(false);
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -101,6 +109,193 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const buildClinicalNote = (): string => {
+    const allItems = getDaphneScaleItems('en');
+    const scoreLabels = ['Normal (0)', 'Very mild (1)', 'Mild (2)', 'Moderate (3)', 'Severe (4)'];
+
+    const daphne6Positive = results.daphne6Score >= 4;
+    const daphne40Positive = results.daphne40Score >= 15;
+    let likelihood = 'Low likelihood of bvFTD';
+    if (daphne6Positive && daphne40Positive)
+      likelihood = 'High likelihood of bvFTD (both screening and diagnostic thresholds met)';
+    else if (daphne6Positive)
+      likelihood = 'Moderate likelihood of bvFTD (screening threshold met, diagnostic not)';
+    else if (daphne40Positive)
+      likelihood = 'Atypical presentation (diagnostic threshold met, screening not)';
+
+    const lines: string[] = [];
+    lines.push('DAPHNE-40 / DAPHNE-6 Behavioural Assessment');
+    lines.push('—'.repeat(46));
+    if (patientInfo.name) lines.push(`Patient: ${patientInfo.name}`);
+    if (patientInfo.age) lines.push(`Age: ${patientInfo.age}`);
+    if (patientInfo.assessorName) lines.push(`Assessor: ${patientInfo.assessorName}`);
+    lines.push(`Date: ${currentDate}`);
+    lines.push('');
+    lines.push(`DAPHNE-6 (screening): ${results.daphne6Score}/6 — threshold ≥4 (sens 92%)`);
+    lines.push(`DAPHNE-40 (diagnostic): ${results.daphne40Score}/40 — threshold ≥15 (spec 92%)`);
+    lines.push(`Impression: ${likelihood}.`);
+    lines.push('');
+    lines.push('Domain summary:');
+    domainDetails.forEach((d) => {
+      const responses = results.responses.filter((r) => {
+        const it = allItems.find((i) => i.id === r.itemId);
+        return it?.domain === d.key;
+      });
+      const sum = responses.reduce((a, r) => a + r.score, 0);
+      const positive = responses.some((r) => r.score > 0);
+      lines.push(`  • ${d.name}: ${sum}/${d.items * 4}  [${positive ? 'PRESENT' : 'absent'}]`);
+    });
+    lines.push('');
+    lines.push('Item-level findings:');
+    allItems.forEach((it) => {
+      const r = results.responses.find((x) => x.itemId === it.id);
+      const s = r?.score ?? 0;
+      lines.push(`  - ${it.title}: ${scoreLabels[s]}`);
+    });
+    lines.push('');
+    lines.push(
+      'Note: Screening tool. Final diagnosis requires clinical correlation, neuroimaging, and full neuropsychiatric evaluation.'
+    );
+    return lines.join('\n');
+  };
+
+  const handleCopyNote = async () => {
+    try {
+      await navigator.clipboard.writeText(buildClinicalNote());
+      setCopied(true);
+      toast({ title: 'Clinical note copied', description: 'Pasted-ready text is on your clipboard.' });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({
+        title: 'Copy failed',
+        description: 'Select the text manually and copy.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleExportDocx = async () => {
+    try {
+      const allItems = getDaphneScaleItems('en');
+      const scoreLabels = ['Normal (0)', 'Very mild (1)', 'Mild (2)', 'Moderate (3)', 'Severe (4)'];
+
+      const daphne6Positive = results.daphne6Score >= 4;
+      const daphne40Positive = results.daphne40Score >= 15;
+      let likelihood = 'Low likelihood of bvFTD';
+      if (daphne6Positive && daphne40Positive)
+        likelihood = 'High likelihood of bvFTD (both screening and diagnostic thresholds met)';
+      else if (daphne6Positive)
+        likelihood = 'Moderate likelihood of bvFTD (screening threshold met, diagnostic not)';
+      else if (daphne40Positive)
+        likelihood = 'Atypical presentation (diagnostic threshold met, screening not)';
+
+      const kv = (label: string, value: string) =>
+        new Paragraph({
+          children: [
+            new TextRun({ text: `${label}: `, bold: true }),
+            new TextRun(value),
+          ],
+        });
+
+      const heading = (text: string, level: typeof HeadingLevel.HEADING_1 | typeof HeadingLevel.HEADING_2) =>
+        new Paragraph({ heading: level, children: [new TextRun(text)] });
+
+      const bullet = (text: string) =>
+        new Paragraph({ bullet: { level: 0 }, children: [new TextRun(text)] });
+
+      const domainParagraphs: Paragraph[] = domainDetails.map((d) => {
+        const responses = results.responses.filter((r) => {
+          const it = allItems.find((i) => i.id === r.itemId);
+          return it?.domain === d.key;
+        });
+        const sum = responses.reduce((a, r) => a + r.score, 0);
+        const positive = responses.some((r) => r.score > 0);
+        return new Paragraph({
+          bullet: { level: 0 },
+          children: [
+            new TextRun({ text: `${d.name}: `, bold: true }),
+            new TextRun(`${sum}/${d.items * 4}  `),
+            new TextRun({ text: positive ? '[PRESENT]' : '[absent]', bold: positive }),
+          ],
+        });
+      });
+
+      const itemParagraphs: Paragraph[] = allItems.map((it) => {
+        const r = results.responses.find((x) => x.itemId === it.id);
+        const s = r?.score ?? 0;
+        return new Paragraph({
+          bullet: { level: 0 },
+          children: [
+            new TextRun({ text: `${it.title}: `, bold: true }),
+            new TextRun(scoreLabels[s]),
+          ],
+        });
+      });
+
+      const doc = new Document({
+        styles: {
+          default: { document: { run: { font: 'Calibri', size: 22 } } },
+        },
+        sections: [
+          {
+            properties: {
+              page: {
+                size: { width: 12240, height: 15840 },
+                margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 },
+              },
+            },
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                heading: HeadingLevel.HEADING_1,
+                children: [new TextRun('DAPHNE-40 / DAPHNE-6 Behavioural Assessment')],
+              }),
+              new Paragraph({ children: [] }),
+              ...(patientInfo.name ? [kv('Patient', patientInfo.name)] : []),
+              ...(patientInfo.age ? [kv('Age', patientInfo.age)] : []),
+              ...(patientInfo.assessorName ? [kv('Assessor', patientInfo.assessorName)] : []),
+              kv('Date', currentDate),
+              new Paragraph({ children: [] }),
+              heading('Scores', HeadingLevel.HEADING_2),
+              kv('DAPHNE-6 (screening)', `${results.daphne6Score}/6  — threshold ≥4 (sens 92%)`),
+              kv('DAPHNE-40 (diagnostic)', `${results.daphne40Score}/40 — threshold ≥15 (spec 92%)`),
+              kv('Impression', likelihood),
+              new Paragraph({ children: [] }),
+              heading('Domain summary', HeadingLevel.HEADING_2),
+              ...domainParagraphs,
+              new Paragraph({ children: [] }),
+              heading('Item-level findings', HeadingLevel.HEADING_2),
+              ...itemParagraphs,
+              new Paragraph({ children: [] }),
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text:
+                      'Note: Screening tool. Final diagnosis requires clinical correlation, neuroimaging, and full neuropsychiatric evaluation.',
+                    italics: true,
+                  }),
+                ],
+              }),
+            ],
+          },
+        ],
+      });
+
+      const blob = await Packer.toBlob(doc);
+      const safeName = (patientInfo.name || 'patient').replace(/[^a-z0-9_-]+/gi, '_');
+      const dateStamp = new Date().toISOString().slice(0, 10);
+      saveAs(blob, `DAPHNE_${safeName}_${dateStamp}.docx`);
+      toast({ title: 'DOCX exported', description: 'Clinical summary downloaded.' });
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: 'Export failed',
+        description: 'Could not generate the DOCX file.',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -184,6 +379,199 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
               </CardContent>
             </Card>
           </div>
+
+          {/* DAPHNE-6 Screening Interpretation Panel */}
+          {(() => {
+            const involvedDomains = domainDetails.filter((d) => {
+              const responses = results.responses.filter((r) => {
+                const it = getDaphneScaleItems('en').find((i) => i.id === r.itemId);
+                return it?.domain === d.key;
+              });
+              return responses.some((r) => r.score > 0);
+            });
+
+            const score = results.daphne6Score;
+            let status: 'negative' | 'possible' | 'high';
+            let statusLabel: string;
+            let statusDescription: string;
+            let statusBg: string;
+            let statusBorder: string;
+            let statusText: string;
+
+            if (score === 0) {
+              status = 'negative';
+              statusLabel = 'Negative screen';
+              statusDescription =
+                'No behavioural domains affected. bvFTD screening is negative on DAPHNE-6.';
+              statusBg = 'bg-medical-success/10';
+              statusBorder = 'border-medical-success/30';
+              statusText = 'text-medical-success';
+            } else if (score < 4) {
+              status = 'possible';
+              statusLabel = 'Possible behavioural change';
+              statusDescription = `${score} of 6 domains involved — below the DAPHNE-6 screening threshold (≥4). Behavioural change is present but does not meet the bvFTD screening cut-off; clinical follow-up advised.`;
+              statusBg = 'bg-medical-warning/10';
+              statusBorder = 'border-medical-warning/30';
+              statusText = 'text-medical-warning';
+            } else {
+              status = 'high';
+              statusLabel = 'High likelihood — positive screen';
+              statusDescription = `${score} of 6 domains involved — meets the DAPHNE-6 screening threshold (≥4, sensitivity 92%). Suggests high likelihood of bvFTD; proceed to full diagnostic work-up.`;
+              statusBg = 'bg-destructive/10';
+              statusBorder = 'border-destructive/30';
+              statusText = 'text-destructive';
+            }
+
+            const allDomainKeys = domainDetails.map((d) => d.key);
+            const involvedKeys = new Set(involvedDomains.map((d) => d.key));
+
+            return (
+              <Card className={`shadow-card border-2 ${statusBorder}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between flex-wrap gap-3">
+                    <span className="flex items-center">
+                      <Target className="h-5 w-5 mr-2 text-medical-primary" />
+                      DAPHNE-6 Screening Interpretation
+                    </span>
+                    <Badge variant="outline" className={`${statusText} border-current`}>
+                      {score}/6
+                    </Badge>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className={`rounded-lg p-4 ${statusBg} border ${statusBorder}`}>
+                    <h4 className={`font-semibold text-lg flex items-center mb-1 ${statusText}`}>
+                      <AlertCircle className="h-5 w-5 mr-2" />
+                      {statusLabel}
+                    </h4>
+                    <p className="text-sm text-foreground">{statusDescription}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2 text-foreground">
+                      Involved domains{' '}
+                      <span className="text-muted-foreground font-normal">
+                        ({involvedDomains.length}/6)
+                      </span>
+                    </h4>
+                    {involvedDomains.length === 0 ? (
+                      <p className="text-sm text-muted-foreground italic">
+                        None — all six domains scored 0.
+                      </p>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {allDomainKeys.map((key) => {
+                          const d = domainDetails.find((x) => x.key === key)!;
+                          const involved = involvedKeys.has(key);
+                          return (
+                            <Badge
+                              key={key}
+                              variant={involved ? 'destructive' : 'secondary'}
+                              className={
+                                involved
+                                  ? ''
+                                  : 'opacity-50 line-through decoration-muted-foreground/40'
+                              }
+                            >
+                              {d.name}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-muted-foreground italic border-t pt-3">
+                    DAPHNE-6 counts each of the six bvFTD domains (disinhibition, apathy, empathy,
+                    perseverations, hyperorality, neglect) as 1 if any item in that domain scores
+                    &gt;0. Cut-off ≥4 has 92% sensitivity for bvFTD (Boutoleau-Bretonnière, 2015).
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })()}
+
+          {/* Source / Citation */}
+          <Card className="shadow-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center">
+                <FileText className="h-4 w-4 mr-2 text-medical-primary" />
+                Source & citation
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <div className="rounded-md border border-border bg-muted/40 p-3 space-y-2">
+                <p className="text-foreground leading-relaxed">
+                  Boutoleau-Bretonnière C, Evrard C, Hardouin J-B, Rocher L, Charriau T,
+                  Etcharry-Bouyx F, Auriacombe S, Richard-Mornas A, Lebert F, Pasquier F,
+                  Vercelletto M, Thomas-Antérion C.{' '}
+                  <strong>
+                    DAPHNE: A new tool for the assessment of the behavioral variant of
+                    frontotemporal dementia.
+                  </strong>{' '}
+                  <em>Dementia and Geriatric Cognitive Disorders Extra.</em> 2015;5(3):503–516.
+                </p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                  <span>
+                    <strong className="text-foreground">DOI:</strong>{' '}
+                    <a
+                      href="https://doi.org/10.1159/000440859"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-medical-primary hover:underline"
+                    >
+                      10.1159/000440859
+                    </a>
+                  </span>
+                  <span>
+                    <strong className="text-foreground">PubMed:</strong>{' '}
+                    <a
+                      href="https://pubmed.ncbi.nlm.nih.gov/26955380/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-medical-primary hover:underline"
+                    >
+                      26955380
+                    </a>
+                  </span>
+                  <span>
+                    <strong className="text-foreground">Full text (Karger):</strong>{' '}
+                    <a
+                      href="https://karger.com/dee/article/5/3/503/93770"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-medical-primary hover:underline"
+                    >
+                      open access
+                    </a>
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="rounded-md border border-border p-3">
+                  <p className="font-semibold text-foreground mb-1">Tool version used</p>
+                  <ul className="text-muted-foreground space-y-0.5">
+                    <li>DAPHNE-40 — full 10-item, 0–4 scoring</li>
+                    <li>DAPHNE-6 — six-domain binary derivative</li>
+                    <li>Original validation cohort (n = 156, 2015)</li>
+                  </ul>
+                </div>
+                <div className="rounded-md border border-border p-3">
+                  <p className="font-semibold text-foreground mb-1">Cut-offs applied</p>
+                  <ul className="text-muted-foreground space-y-0.5">
+                    <li>DAPHNE-6 ≥ 4 → sensitivity 92% for bvFTD</li>
+                    <li>DAPHNE-40 ≥ 15 → specificity 92% for bvFTD</li>
+                  </ul>
+                </div>
+              </div>
+
+              <p className="text-xs text-muted-foreground italic">
+                Cut-offs and domain definitions reproduced from the 2015 validation paper. This
+                application implements scoring only and does not replace clinical judgement.
+              </p>
+            </CardContent>
+          </Card>
 
           {/* Domain Radar Chart */}
           <DomainRadarChart
@@ -346,11 +734,53 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
             </CardContent>
           </Card>
 
+          {/* Generated text note */}
+          {showNote && (
+            <Card className="shadow-card print:hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-lg flex items-center">
+                  <FileText className="h-5 w-5 mr-2 text-medical-primary" />
+                  Clinical text note
+                </CardTitle>
+                <Button onClick={handleCopyNote} variant="outline" size="sm">
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4 mr-2" /> Copied
+                    </>
+                  ) : (
+                    <>
+                      <ClipboardCopy className="h-4 w-4 mr-2" /> Copy
+                    </>
+                  )}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  readOnly
+                  value={buildClinicalNote()}
+                  className="font-mono text-xs min-h-[320px] whitespace-pre"
+                />
+              </CardContent>
+            </Card>
+          )}
+
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center print:hidden">
             <Button onClick={handlePrint} variant="outline" size="lg">
               <Download className="h-4 w-4 mr-2" />
               {t('results.print')}
+            </Button>
+            <Button
+              onClick={() => setShowNote((v) => !v)}
+              variant="outline"
+              size="lg"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              {showNote ? 'Hide text note' : 'Generate text note'}
+            </Button>
+            <Button onClick={handleExportDocx} variant="outline" size="lg">
+              <Download className="h-4 w-4 mr-2" />
+              Export to DOCX
             </Button>
             <Button onClick={onRestart} size="lg" className="bg-medical-primary hover:bg-medical-primary/90">
               <RotateCcw className="h-4 w-4 mr-2" />

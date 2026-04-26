@@ -1,0 +1,49 @@
+import { Lightbulb } from 'lucide-react';
+
+interface SuggestionsLinkProps {
+  variant?: 'button' | 'link' | 'icon';
+  className?: string;
+}
+
+export const SuggestionsLink = ({ variant = 'link', className = '' }: SuggestionsLinkProps) => {
+  const suggestionsUrl = 'https://forms.gle/suggestions-psycognito';
+
+  const openSuggestions = () => {
+    window.open(suggestionsUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  if (variant === 'icon') {
+    return (
+      <button
+        onClick={openSuggestions}
+        className={`p-2 rounded-lg hover:bg-indigo-500/20 transition text-indigo-400 hover:text-indigo-300 ${className}`}
+        title="Send us your suggestions"
+      >
+        <Lightbulb className="w-5 h-5" />
+      </button>
+    );
+  }
+
+  if (variant === 'button') {
+    return (
+      <button
+        onClick={openSuggestions}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 hover:text-indigo-200 transition border border-indigo-500/30 hover:border-indigo-400/50 ${className}`}
+      >
+        <Lightbulb className="w-4 h-4" />
+        <span className="text-sm font-medium">Suggestions</span>
+      </button>
+    );
+  }
+
+  return (
+    <a
+      href={suggestionsUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`text-indigo-400 hover:text-indigo-300 font-medium text-xs transition ${className}`}
+    >
+      Suggestions
+    </a>
+  );
+};

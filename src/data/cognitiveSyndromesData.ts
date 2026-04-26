@@ -245,7 +245,7 @@ export const cognitiveSyndromes: CognitiveSyndrome[] = [
     name: 'Othello Syndrome',
     nameMl: 'ഒഥെല്ലോ സിൻഡ്രോം',
     category: 'Other Delusions',
-    description: 'Delusional jealousy / morbid jealousy — an irrational belief that one\'s partner is cheating on them.',
+    description: 'Delusional jealousy / morbid jealousy — an irrational belief that one\'s partner is being unfaithful (infidelity, cheating). Common in alcohol use disorder, schizophrenia, and neurodegenerative disease.',
     descriptionMl: 'ഭ്രമാത്മക അസൂയ — പങ്കാളി വഞ്ചിക്കുന്നു എന്ന യുക്തിരഹിതമായ വിശ്വാസം.',
   },
   {

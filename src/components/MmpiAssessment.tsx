@@ -8,6 +8,7 @@ import { MmpiResponse, MmpiResults } from '@/types/mmpi';
 import { MmpiResults as MmpiResultsComponent } from '@/components/MmpiResults';
 import { Brain, ArrowLeft, ArrowRight, Info, CheckCircle2, XCircle } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface MmpiAssessmentProps {
   onBack?: () => void;
@@ -161,6 +162,8 @@ export const MmpiAssessment = ({ onBack }: MmpiAssessmentProps) => {
           </CardContent>
         </Card>
       </div>
+      <AssessmentReference assessmentKey="mmpi" />
+
     </div>
   );
 };

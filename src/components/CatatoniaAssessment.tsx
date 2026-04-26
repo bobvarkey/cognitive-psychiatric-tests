@@ -8,9 +8,11 @@ import { CatatoniaResponse, CatatoniaResults as CatatoniaResultsType } from '@/t
 import { CATATONIA_ITEMS } from '@/data/catatoniaScale';
 import { CatatoniaItemCard } from './CatatoniaItemCard';
 import { CatatoniaResults } from './CatatoniaResults';
-import { Activity, ClipboardCheck, RotateCcw, Home, AlertCircle } from 'lucide-react';
+import { Activity, ClipboardCheck, RotateCcw, Home, AlertCircle, BookOpen, BookMarked } from 'lucide-react';
 import { LanguageToggle } from './LanguageToggle';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { Dsm5CatatoniaCriteria } from './Dsm5CatatoniaCriteria';
+import { AssessmentReference } from './AssessmentReference';
 
 interface CatatoniaAssessmentProps {
   onBack?: () => void;
@@ -220,75 +222,96 @@ export const CatatoniaAssessment = ({ onBack }: CatatoniaAssessmentProps) => {
             <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-200 mb-4">
               <AlertCircle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
               <p className="text-sm text-amber-800">
-                {language === 'ml' 
-                  ? 'സ്ക്രീനിംഗ് ഇനങ്ങളിൽ (1-14) 2 അല്ലെങ്കിൽ അതിലധികം പോസിറ്റീവ് ആണെങ്കിൽ കാറ്ററ്റോണിയ സൂചിപ്പിക്കുന്നു. തീവ്രതയ്ക്കായി എല്ലാ 23 ഇനങ്ങളും റേറ്റ് ചെയ്യുക.'
-                  : 'A positive screen for catatonia is indicated by ≥2 of the first 14 items. Rate all 23 items for severity scoring.'}
+                {language === 'ml'
+                  ? 'BFCRS സ്ക്രീൻ + തീവ്രത നൽകുന്നു; DSM-5-TR രോഗനിർണയ മാനദണ്ഡങ്ങൾ പ്രത്യേകം നൽകുന്നു. ആവശ്യാനുസരണം രണ്ടും ഉപയോഗിക്കുക.'
+                  : 'BFCRS gives screen + severity; DSM-5-TR provides categorical diagnostic criteria. Use either or both as needed.'}
               </p>
             </div>
-            
-            <Tabs defaultValue="screening" className="w-full">
+
+            <Tabs defaultValue="bfcrs" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="screening" className="flex items-center gap-2">
-                  <ClipboardCheck className="h-4 w-4" />
-                  {language === 'ml' ? 'സ്ക്രീനിംഗ്' : 'Screening'} ({screeningAnswered}/14)
+                <TabsTrigger value="bfcrs" className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  BFCRS (Bush–Francis)
                 </TabsTrigger>
-                <TabsTrigger value="fullscale" className="flex items-center gap-2">
-                  <Activity className="h-4 w-4" />
-                  {language === 'ml' ? 'അധിക ഇനങ്ങൾ' : 'Additional Items'} ({fullAnswered}/9)
+                <TabsTrigger value="dsm5" className="flex items-center gap-2">
+                  <BookMarked className="h-4 w-4" />
+                  DSM-5 Criteria
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="screening">
-                <ScrollArea className="h-[60vh]">
-                  <div className="space-y-4 pr-4">
-                    {screeningItems.map(item => (
-                      <CatatoniaItemCard
-                        key={item.id}
-                        item={item}
-                        selectedScore={responses.scores[item.id]}
-                        onScoreChange={handleScoreChange}
-                      />
-                    ))}
+              <TabsContent value="bfcrs">
+                <Tabs defaultValue="screening" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-4">
+                    <TabsTrigger value="screening" className="flex items-center gap-2">
+                      <ClipboardCheck className="h-4 w-4" />
+                      {language === 'ml' ? 'സ്ക്രീനിംഗ്' : 'Screening'} ({screeningAnswered}/14)
+                    </TabsTrigger>
+                    <TabsTrigger value="fullscale" className="flex items-center gap-2">
+                      <Activity className="h-4 w-4" />
+                      {language === 'ml' ? 'അധിക ഇനങ്ങൾ' : 'Additional Items'} ({fullAnswered}/9)
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="screening">
+                    <ScrollArea className="h-[60vh]">
+                      <div className="space-y-4 pr-4 colorful-questions">
+                        {screeningItems.map(item => (
+                          <CatatoniaItemCard
+                            key={item.id}
+                            item={item}
+                            selectedScore={responses.scores[item.id]}
+                            onScoreChange={handleScoreChange}
+                          />
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </TabsContent>
+
+                  <TabsContent value="fullscale">
+                    <ScrollArea className="h-[60vh]">
+                      <div className="space-y-4 pr-4 colorful-questions">
+                        {fullScaleItems.map(item => (
+                          <CatatoniaItemCard
+                            key={item.id}
+                            item={item}
+                            selectedScore={responses.scores[item.id]}
+                            onScoreChange={handleScoreChange}
+                          />
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </TabsContent>
+                </Tabs>
+
+                <div className="flex justify-between items-center mt-6 pt-4 border-t">
+                  <div className="text-sm text-slate-600">
+                    {language === 'ml'
+                      ? `${screeningAnswered + fullAnswered}/23 ഇനങ്ങൾ പൂർത്തിയാക്കി`
+                      : `${screeningAnswered + fullAnswered}/23 items completed`}
                   </div>
-                </ScrollArea>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={handleReset}>
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      {language === 'ml' ? 'പുനഃക്രമീകരിക്കുക' : 'Reset'}
+                    </Button>
+                    <Button
+                      onClick={handleSubmit}
+                      className="bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700"
+                    >
+                      <ClipboardCheck className="h-4 w-4 mr-2" />
+                      {language === 'ml' ? 'ഫലങ്ങൾ കാണുക' : 'View Results'}
+                    </Button>
+                  </div>
+                </div>
+
+                <AssessmentReference assessmentKey="catatoniaBfcrs" />
               </TabsContent>
 
-              <TabsContent value="fullscale">
-                <ScrollArea className="h-[60vh]">
-                  <div className="space-y-4 pr-4">
-                    {fullScaleItems.map(item => (
-                      <CatatoniaItemCard
-                        key={item.id}
-                        item={item}
-                        selectedScore={responses.scores[item.id]}
-                        onScoreChange={handleScoreChange}
-                      />
-                    ))}
-                  </div>
-                </ScrollArea>
+              <TabsContent value="dsm5">
+                <Dsm5CatatoniaCriteria />
               </TabsContent>
             </Tabs>
-
-            <div className="flex justify-between items-center mt-6 pt-4 border-t">
-              <div className="text-sm text-slate-600">
-                {language === 'ml' 
-                  ? `${screeningAnswered + fullAnswered}/23 ഇനങ്ങൾ പൂർത്തിയാക്കി`
-                  : `${screeningAnswered + fullAnswered}/23 items completed`}
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={handleReset}>
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  {language === 'ml' ? 'പുനഃക്രമീകരിക്കുക' : 'Reset'}
-                </Button>
-                <Button 
-                  onClick={handleSubmit}
-                  className="bg-gradient-to-r from-cyan-500 to-teal-600 hover:from-cyan-600 hover:to-teal-700"
-                >
-                  <ClipboardCheck className="h-4 w-4 mr-2" />
-                  {language === 'ml' ? 'ഫലങ്ങൾ കാണുക' : 'View Results'}
-                </Button>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>

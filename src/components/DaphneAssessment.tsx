@@ -10,6 +10,7 @@ import { DaphneItemCard } from './DaphneItemCard';
 import { DaphneResults as DaphneResultsComponent } from './DaphneResults';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 export const DaphneAssessment = () => {
   const { language, t } = useLanguage();
@@ -258,6 +259,8 @@ export const DaphneAssessment = () => {
           </div>
         </div>
       </div>
+      <AssessmentReference assessmentKey="daphne" />
+
     </div>
   );
 };

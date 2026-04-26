@@ -6,6 +6,7 @@ import { fabItems } from '@/data/fabScale';
 import { FabResponse, FabScore } from '@/types/fab';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 export const FabAssessment = () => {
   const [responses, setResponses] = useState<Map<number, FabScore>>(new Map());
@@ -59,14 +60,16 @@ export const FabAssessment = () => {
 
       <PatientInfoForm />
 
-      {fabItems.map((item) => (
-        <FabItemCard
-          key={item.id}
-          item={item}
-          value={responses.get(item.id)}
-          onChange={(score) => handleScoreChange(item.id, score)}
-        />
-      ))}
+      <div className="space-y-4 mt-4 colorful-questions">
+        {fabItems.map((item) => (
+          <FabItemCard
+            key={item.id}
+            item={item}
+            value={responses.get(item.id)}
+            onChange={(score) => handleScoreChange(item.id, score)}
+          />
+        ))}
+      </div>
 
       <div className="flex gap-4 mt-6">
         <Button
@@ -86,6 +89,8 @@ export const FabAssessment = () => {
           {t('answerAll')}
         </p>
       )}
+      <AssessmentReference assessmentKey="fab" />
+
     </div>
   );
 };

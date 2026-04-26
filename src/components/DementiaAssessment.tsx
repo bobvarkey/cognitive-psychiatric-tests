@@ -14,6 +14,7 @@ import { DementiaResponse, DementiaResults as DementiaResultsType } from '@/type
 import { ArrowLeft, Brain, AlertTriangle, Stethoscope, ClipboardList, FlaskConical, Eye, Activity, ChevronDown, Users, Gauge } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import neurosyphilisFlowchart from '@/assets/neurosyphilis-flowchart.png';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface DementiaAssessmentProps {
   onBack?: () => void;
@@ -934,6 +935,8 @@ export const DementiaAssessment: React.FC<DementiaAssessmentProps> = ({ onBack }
           </CardContent>
         </Card>
       </div>
+      <AssessmentReference assessmentKey="dementia" />
+
     </div>
   );
 };

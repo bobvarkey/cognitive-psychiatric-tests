@@ -11,6 +11,7 @@ import { MINI_ACE_VERSIONS, MINI_ACE_ITEMS, getInterpretation, CLINICAL_NOTES } 
 import { MiniAceResponse, MiniAceResults } from '@/types/miniace';
 import { ArrowLeft, Brain, Clock, MessageSquare, ListChecks, RotateCcw, AlertCircle, CheckCircle2, Info, FileText, Cat } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface MiniAceAssessmentProps {
   onBack?: () => void;
@@ -323,7 +324,7 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
             </Card>
 
             {/* Assessment Items */}
-            <div className="space-y-6">
+            <div className="space-y-6 colorful-questions">
               {MINI_ACE_ITEMS.map((item) => (
                 <Card key={item.id} className="border border-emerald-100">
                   <CardContent className="p-4">
@@ -391,6 +392,8 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
           </CardContent>
         </Card>
       </div>
+      <AssessmentReference assessmentKey="miniace" />
+
     </div>
   );
 };

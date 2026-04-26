@@ -17,6 +17,7 @@ import { AdhdSymptomResponse, AdhdCriterionResponse, AdhdResults as AdhdResultsT
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Brain, ArrowRight, RotateCcw, ArrowLeft } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface AdhdAssessmentProps {
   onBack?: () => void;
@@ -181,14 +182,16 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
                 : `≥${age17Plus ? '5' : '6'} symptoms required (${ADHD_INATTENTION_SYMPTOMS.filter(s => symptomResponses.get(s.id)).length}/9 selected)`}
             </p>
           </div>
-          {ADHD_INATTENTION_SYMPTOMS.map((symptom) => (
-            <AdhdItemCard
-              key={symptom.id}
-              symptom={symptom}
-              checked={symptomResponses.get(symptom.id) || false}
-              onChange={(checked) => handleSymptomChange(symptom.id, checked)}
-            />
-          ))}
+          <div className="colorful-questions space-y-3">
+            {ADHD_INATTENTION_SYMPTOMS.map((symptom) => (
+              <AdhdItemCard
+                key={symptom.id}
+                symptom={symptom}
+                checked={symptomResponses.get(symptom.id) || false}
+                onChange={(checked) => handleSymptomChange(symptom.id, checked)}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Criterion A.2: Hyperactivity-Impulsivity */}
@@ -203,14 +206,16 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
                 : `≥${age17Plus ? '5' : '6'} symptoms required (${ADHD_HYPERACTIVITY_SYMPTOMS.filter(s => symptomResponses.get(s.id)).length}/9 selected)`}
             </p>
           </div>
-          {ADHD_HYPERACTIVITY_SYMPTOMS.map((symptom) => (
-            <AdhdItemCard
-              key={symptom.id}
-              symptom={symptom}
-              checked={symptomResponses.get(symptom.id) || false}
-              onChange={(checked) => handleSymptomChange(symptom.id, checked)}
-            />
-          ))}
+          <div className="colorful-questions space-y-3">
+            {ADHD_HYPERACTIVITY_SYMPTOMS.map((symptom) => (
+              <AdhdItemCard
+                key={symptom.id}
+                symptom={symptom}
+                checked={symptomResponses.get(symptom.id) || false}
+                onChange={(checked) => handleSymptomChange(symptom.id, checked)}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Criteria B, C, D, E */}
@@ -225,14 +230,16 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
                 : 'All criteria must be met for diagnosis'}
             </p>
           </div>
-          {ADHD_CRITERIA.map((criterion) => (
-            <AdhdCriterionCard
-              key={criterion.id}
-              criterion={criterion}
-              met={criterionResponses.get(criterion.id) || false}
-              onChange={(met) => handleCriterionChange(criterion.id, met)}
-            />
-          ))}
+          <div className="colorful-questions space-y-3">
+            {ADHD_CRITERIA.map((criterion) => (
+              <AdhdCriterionCard
+                key={criterion.id}
+                criterion={criterion}
+                met={criterionResponses.get(criterion.id) || false}
+                onChange={(met) => handleCriterionChange(criterion.id, met)}
+              />
+            ))}
+          </div>
         </div>
 
         <Card className="sticky bottom-4 shadow-xl border-0 print:hidden">
@@ -269,6 +276,8 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
           </CardContent>
         </Card>
       </div>
+      <AssessmentReference assessmentKey="adhd" />
+
     </div>
   );
 };

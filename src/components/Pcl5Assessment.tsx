@@ -7,6 +7,7 @@ import { pcl5Items } from '@/data/pcl5Scale';
 import { Pcl5Result } from '@/types/pcl5';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 export const Pcl5Assessment = () => {
   const [responses, setResponses] = useState<Map<number, number>>(new Map());
@@ -112,31 +113,33 @@ export const Pcl5Assessment = () => {
         </CardContent>
       </Card>
 
-      {pcl5Items.map((item) => {
-        if (item.type === 'screening') {
-          return (
-            <Pcl5ItemCard
-              key={item.id}
-              item={item}
-              value={responses.get(item.id)}
-              onChange={(score) => handleScoreChange(item.id, score)}
-            />
-          );
-        }
-        
-        if (hasTraumaExposure && item.type === 'question') {
-          return (
-            <Pcl5ItemCard
-              key={item.id}
-              item={item}
-              value={responses.get(item.id)}
-              onChange={(score) => handleScoreChange(item.id, score)}
-            />
-          );
-        }
-        
-        return null;
-      })}
+      <div className="space-y-4 colorful-questions">
+        {pcl5Items.map((item) => {
+          if (item.type === 'screening') {
+            return (
+              <Pcl5ItemCard
+                key={item.id}
+                item={item}
+                value={responses.get(item.id)}
+                onChange={(score) => handleScoreChange(item.id, score)}
+              />
+            );
+          }
+          
+          if (hasTraumaExposure && item.type === 'question') {
+            return (
+              <Pcl5ItemCard
+                key={item.id}
+                item={item}
+                value={responses.get(item.id)}
+                onChange={(score) => handleScoreChange(item.id, score)}
+              />
+            );
+          }
+          
+          return null;
+        })}
+      </div>
 
       <Card>
         <CardContent className="pt-6">
@@ -161,6 +164,8 @@ export const Pcl5Assessment = () => {
           )}
         </CardContent>
       </Card>
+      <AssessmentReference assessmentKey="pcl5" />
+
     </div>
   );
 };

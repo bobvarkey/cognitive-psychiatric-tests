@@ -10,6 +10,7 @@ import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 export const HareAssessment = () => {
   const { t } = useLanguage();
@@ -120,7 +121,7 @@ export const HareAssessment = () => {
           </CardContent>
         </Card>
 
-        <div className="space-y-6">
+        <div className="space-y-6 colorful-questions">
           {HARE_SCALE_ITEMS.map((item) => (
             <HareItemCard
               key={item.id}
@@ -169,6 +170,8 @@ export const HareAssessment = () => {
           </Card>
         </div>
       </div>
+      <AssessmentReference assessmentKey="hare" />
+
     </div>
   );
 };

@@ -171,7 +171,9 @@ export const CLINICAL_NOTES = {
   }
 };
 
-export const getInterpretation = (score: number, language: 'en' | 'ml'): { interpretation: string; riskLevel: 'normal' | 'mild' | 'moderate' | 'severe' } => {
+import type { Language } from '@/contexts/LanguageContext';
+
+export const getInterpretation = (score: number, language: Language): { interpretation: string; riskLevel: 'normal' | 'mild' | 'moderate' | 'severe' } => {
   if (score > 25) {
     return {
       interpretation: language === 'ml' 

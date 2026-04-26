@@ -13,6 +13,7 @@ import { NmsResultsComponent } from '@/components/NmsResults';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface NmsAssessmentProps {
   onBack: () => void;
@@ -262,15 +263,17 @@ export const NmsAssessment: React.FC<NmsAssessmentProps> = ({ onBack }) => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {getItemsByCategory(category).map(item => (
-                        <NmsItemCard
-                          key={item.id}
-                          item={item}
-                          score={response.scores[item.id]}
-                          onChange={(score) => handleScoreChange(item.id, score)}
-                          isMalayalam={isMalayalam}
-                        />
-                      ))}
+                      <div className="colorful-questions space-y-3">
+                        {getItemsByCategory(category).map(item => (
+                          <NmsItemCard
+                            key={item.id}
+                            item={item}
+                            score={response.scores[item.id]}
+                            onChange={(score) => handleScoreChange(item.id, score)}
+                            isMalayalam={isMalayalam}
+                          />
+                        ))}
+                      </div>
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -321,6 +324,8 @@ export const NmsAssessment: React.FC<NmsAssessmentProps> = ({ onBack }) => {
           </>
         )}
       </div>
+      <AssessmentReference assessmentKey="nms" />
+
     </div>
   );
 };

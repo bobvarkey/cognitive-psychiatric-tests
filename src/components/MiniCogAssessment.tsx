@@ -10,6 +10,7 @@ import { MiniCogItemCard } from '@/components/MiniCogItemCard';
 import { MiniCogResults } from '@/components/MiniCogResults';
 import { MiniCogResponse, MiniCogResults as MiniCogResultsType, MINI_COG_WORD_LISTS } from '@/types/minicog';
 import { Brain, ArrowRight, ArrowLeft } from 'lucide-react';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface PatientInfo {
   name: string;
@@ -278,6 +279,8 @@ export const MiniCogAssessment = () => {
           </div>
         )}
       </div>
+      <AssessmentReference assessmentKey="minicog" />
+
     </div>
   );
 };

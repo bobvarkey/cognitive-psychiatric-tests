@@ -8,8 +8,9 @@ import { PSS_ITEMS } from '@/data/pssScale';
 import { PssResponse, PssResult, PssScore } from '@/types/pss';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Gauge } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
+import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface PssAssessmentProps {
   onBack?: () => void;
@@ -93,7 +94,10 @@ export const PssAssessment = ({ onBack }: PssAssessmentProps) => {
           <CardContent className="p-6 md:p-8">
             <div className="space-y-4">
               <div>
-                <h1 className="text-3xl font-bold text-slate-800 mb-2">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-3">
+                  <span className="inline-flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
+                    <Gauge className="h-6 w-6" />
+                  </span>
                   {t('pssTitle')}
                 </h1>
                 <p className="text-slate-600">
@@ -118,7 +122,7 @@ export const PssAssessment = ({ onBack }: PssAssessmentProps) => {
           </CardContent>
         </Card>
 
-        <div className="space-y-4">
+        <div className="space-y-4 colorful-questions">
           {PSS_ITEMS.map(item => (
             <PssItemCard
               key={item.id}
@@ -142,6 +146,8 @@ export const PssAssessment = ({ onBack }: PssAssessmentProps) => {
           </CardContent>
         </Card>
       </div>
+      <AssessmentReference assessmentKey="pss" />
+
     </div>
   );
 };

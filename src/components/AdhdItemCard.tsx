@@ -44,10 +44,12 @@ export const AdhdItemCard = ({ symptom, checked, onChange }: AdhdItemCardProps) 
                 <span className="font-semibold text-slate-800">{symptom.label}</span>
               </div>
               <p className="text-sm text-slate-600 mb-1">{symptom.description}</p>
-              <div className="border-t pt-2 mt-2">
-                <p className="font-medium text-slate-700">{symptom.labelMl}</p>
-                <p className="text-sm text-slate-500">{symptom.descriptionMl}</p>
-              </div>
+              {language === 'ml' && (
+                <div className="border-t pt-2 mt-2">
+                  <p className="font-medium text-slate-700">{symptom.labelMl}</p>
+                  <p className="text-sm text-slate-500">{symptom.descriptionMl}</p>
+                </div>
+              )}
             </Label>
           </div>
         </div>

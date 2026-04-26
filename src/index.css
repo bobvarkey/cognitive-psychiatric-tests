@@ -99,12 +99,12 @@ All colors MUST be HSL.
     --input: 210 40% 16%;
     --ring: 210 100% 55%;
 
-    /* Medical theme colors for dark mode */
-    --medical-primary: 210 100% 55%;
+    /* Medical theme colors for dark mode - with neon accents */
+    --medical-primary: 280 100% 50%;
     --medical-secondary: 210 40% 16%;
-    --medical-accent: 210 40% 16%;
-    --medical-success: 142 71% 45%;
-    --medical-warning: 38 92% 60%;
+    --medical-accent: 280 100% 50%;
+    --medical-success: 120 100% 50%;
+    --medical-warning: 38 100% 60%;
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(210 100% 55%), hsl(210 100% 65%));
@@ -131,6 +131,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    position: relative;
   }
 }
 
@@ -144,5 +145,147 @@ All colors MUST be HSL.
   }
   .safe-area-pb {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Rotating soft pastel palette for question lists.
+     Adds a colored left border + subtle background tint to each direct
+     child (typically a Card), so multi-question scales become easier to scan. */
+  .colorful-questions > * {
+    position: relative;
+    transition: background-color 0.2s ease;
+  }
+  .colorful-questions > *::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-top-left-radius: inherit;
+    border-bottom-left-radius: inherit;
+    background: var(--q-accent, hsl(210 70% 60%));
+    pointer-events: none;
+  }
+  .colorful-questions > *:nth-child(8n+1) { background-color: hsl(0 80% 97%);   --q-accent: hsl(0 75% 65%);   }
+  .colorful-questions > *:nth-child(8n+2) { background-color: hsl(30 90% 96%);  --q-accent: hsl(30 85% 60%);  }
+  .colorful-questions > *:nth-child(8n+3) { background-color: hsl(50 90% 95%);  --q-accent: hsl(45 85% 55%);  }
+  .colorful-questions > *:nth-child(8n+4) { background-color: hsl(140 60% 95%); --q-accent: hsl(142 55% 50%); }
+  .colorful-questions > *:nth-child(8n+5) { background-color: hsl(180 60% 95%); --q-accent: hsl(180 55% 50%); }
+  .colorful-questions > *:nth-child(8n+6) { background-color: hsl(210 80% 96%); --q-accent: hsl(210 80% 60%); }
+  .colorful-questions > *:nth-child(8n+7) { background-color: hsl(265 70% 96%); --q-accent: hsl(265 65% 65%); }
+  .colorful-questions > *:nth-child(8n+8) { background-color: hsl(320 70% 96%); --q-accent: hsl(325 65% 65%); }
+
+  .dark .colorful-questions > *:nth-child(8n+1) { background-color: hsl(0 30% 14%);   }
+  .dark .colorful-questions > *:nth-child(8n+2) { background-color: hsl(30 35% 14%);  }
+  .dark .colorful-questions > *:nth-child(8n+3) { background-color: hsl(50 35% 14%);  }
+  .dark .colorful-questions > *:nth-child(8n+4) { background-color: hsl(140 30% 13%); }
+  .dark .colorful-questions > *:nth-child(8n+5) { background-color: hsl(180 30% 13%); }
+  .dark .colorful-questions > *:nth-child(8n+6) { background-color: hsl(210 35% 14%); }
+  .dark .colorful-questions > *:nth-child(8n+7) { background-color: hsl(265 30% 15%); }
+  .dark .colorful-questions > *:nth-child(8n+8) { background-color: hsl(320 30% 15%); }
+
+  /* Neon effects */
+  .neon-blue {
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8),
+                 0 0 20px rgba(0, 255, 255, 0.6),
+                 0 0 30px rgba(0, 255, 255, 0.4);
+  }
+
+  .neon-purple {
+    color: #da00ff;
+    text-shadow: 0 0 10px rgba(218, 0, 255, 0.8),
+                 0 0 20px rgba(218, 0, 255, 0.6),
+                 0 0 30px rgba(218, 0, 255, 0.4);
+  }
+
+  .neon-pink {
+    color: #ff006e;
+    text-shadow: 0 0 10px rgba(255, 0, 110, 0.8),
+                 0 0 20px rgba(255, 0, 110, 0.6),
+                 0 0 30px rgba(255, 0, 110, 0.4);
+  }
+
+  .neon-magenta {
+    color: #ff00ff;
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.8),
+                 0 0 20px rgba(255, 0, 255, 0.6),
+                 0 0 30px rgba(255, 0, 255, 0.4);
+  }
+
+  .neon-green {
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.8),
+                 0 0 20px rgba(0, 255, 0, 0.6),
+                 0 0 30px rgba(0, 255, 0, 0.4);
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply backdrop-blur-md;
+    background: rgba(15, 12, 41, 0.3);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(15, 12, 41, 0.5);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+  }
+
+  /* Gradient button neon */
+  .btn-neon {
+    background: linear-gradient(135deg, #da00ff, #ff006e);
+    @apply text-white font-semibold py-3 px-6 rounded-xl;
+    @apply transition-all duration-300;
+    box-shadow: 0 0 20px rgba(218, 0, 255, 0.6),
+                0 0 40px rgba(255, 0, 110, 0.4);
+  }
+
+  .btn-neon:hover {
+    box-shadow: 0 0 30px rgba(218, 0, 255, 0.8),
+                0 0 50px rgba(255, 0, 110, 0.6);
+    @apply translate-y-[-2px];
+  }
+
+  /* Neon icon container */
+  .icon-neon {
+    @apply flex items-center justify-center rounded-lg;
+    background: linear-gradient(135deg, rgba(218, 0, 255, 0.2), rgba(0, 255, 255, 0.2));
+    border: 1px solid rgba(218, 0, 255, 0.4);
+    box-shadow: 0 0 15px rgba(218, 0, 255, 0.3),
+                inset 0 0 15px rgba(0, 255, 255, 0.1);
+  }
+
+  .icon-neon svg {
+    filter: drop-shadow(0 0 8px rgba(218, 0, 255, 0.6))
+            drop-shadow(0 0 4px rgba(0, 255, 255, 0.4));
+  }
+
+  /* Neon glow utilities */
+  .glow-neon-blue {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5),
+                0 0 20px rgba(0, 255, 255, 0.3);
+  }
+
+  .glow-neon-magenta {
+    box-shadow: 0 0 10px rgba(255, 0, 255, 0.5),
+                0 0 20px rgba(255, 0, 255, 0.3);
+  }
+
+  .glow-neon-pink {
+    box-shadow: 0 0 10px rgba(255, 0, 110, 0.5),
+                0 0 20px rgba(255, 0, 110, 0.3);
+  }
+
+  /* Stars rating animation */
+  @keyframes starPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
+
+  .star-pulse {
+    animation: starPulse 2s ease-in-out infinite;
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
   }
 }
