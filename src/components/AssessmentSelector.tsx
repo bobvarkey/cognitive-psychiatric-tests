@@ -61,6 +61,7 @@ import { Sudep7InventoryAssessment } from '@/components/Sudep7InventoryAssessmen
 import { SudepSafetyChecklistAssessment } from '@/components/SudepSafetyChecklistAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
+import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
 import { AdhdScreenerLanding } from '@/components/AdhdScreenerLanding';
 import { cognitiveSyndromes, frontalLobeTests } from '@/data/cognitiveSyndromesData';
 import {
@@ -202,6 +203,22 @@ const assessments: AssessmentInfo[] = [
   { key: 'd-dats', name: 'D-DATS', subtitle: 'DAT Eligibility Screening', icon: Gauge, gradient: 'from-emerald-500 to-green-600', category: ['movement'], description: 'D-DATS — Dutch DAT Screening Tool; identifies PD patients eligible for Device-Aided Therapy (DBS, LCIG, CSAI, LECIG).' },
   { key: 'stimulus-dbs', name: 'Stimulus DBS', subtitle: 'DBS Appropriateness', icon: Brain, gradient: 'from-amber-500 to-orange-600', category: ['movement'], description: 'Stimulus 2 — Evidence-based decision support for assessing appropriateness of Deep Brain Stimulation referral in PD.' },
 ];
+
+const referenceKeyByAssessment: Partial<Record<AssessmentKey, string>> = {
+  'mds-updrs': 'mdsUpdrs',
+  'hoehn-yahr': 'hoehnYahr',
+  'stop-bang': 'stopBang',
+  'ilae-seizure-classification': 'ilaeSeizureClassification',
+  'sudep-7': 'sudep7',
+  'sudep-safety': 'sudepSafety',
+  'five-two-one': 'fiveTwoOne',
+  'anage-pd': 'anagePd',
+  'd-dats': 'dDats',
+  'stimulus-dbs': 'stimulusDbs',
+};
+
+const getAssessmentReference = (key: AssessmentKey) =>
+  ASSESSMENT_REFERENCES[referenceKeyByAssessment[key] ?? key];
 
 const categoryLabels: Record<Category, { en: string; ml: string; icon: React.ElementType }> = {
   all: { en: 'All', ml: 'എല്ലാം', icon: ClipboardList },
@@ -653,6 +670,7 @@ export const AssessmentSelector = () => {
                       const Icon = a.icon;
                       const color = neonColorPalette[index % neonColorPalette.length];
                       const customGlowStyle = color.customGlow ? { style: { boxShadow: color.customGlow } } : {};
+                      const reference = getAssessmentReference(a.key);
 
                       return (
                         <Tooltip key={a.key}>
@@ -685,10 +703,24 @@ export const AssessmentSelector = () => {
                               <span className="relative text-[11px] text-muted-foreground mt-0.5 leading-tight">
                                 {a.subtitle}
                               </span>
+                              {reference && (
+                                <span className="relative mt-2 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                                  <BookOpen className="h-3 w-3" />
+                                  Verified citation
+                                </span>
+                              )}
                             </button>
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
-                            {locked ? `Pro feature — ${a.description}` : a.description}
+                            <div className="space-y-2">
+                              <p>{locked ? `Pro feature — ${a.description}` : a.description}</p>
+                              {reference && (
+                                <p className="border-t border-border pt-2 text-muted-foreground">
+                                  <span className="font-semibold text-foreground">Citation: </span>
+                                  {reference.citation}
+                                </p>
+                              )}
+                            </div>
                           </TooltipContent>
                         </Tooltip>
                       );

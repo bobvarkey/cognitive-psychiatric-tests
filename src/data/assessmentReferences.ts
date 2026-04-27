@@ -52,12 +52,12 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
   },
   pcl5: {
     citation:
-      'Prins A, Bovin MJ, Smolenski DJ, et al. The Primary Care PTSD Screen for DSM-5 (PC-PTSD-5): development and evaluation within a Veteran primary care sample. J Gen Intern Med. 2016;31(10):1206–1211.',
-    url: 'https://doi.org/10.1007/s11606-016-3703-5',
+      'Weathers FW, Litz BT, Keane TM, Palmieri PA, Marx BP, Schnurr PP. The PTSD Checklist for DSM-5 (PCL-5). National Center for PTSD; 2013.',
+    url: 'https://www.ptsd.va.gov/professional/assessment/adult-sr/ptsd-checklist.asp',
   },
   dpdr: {
     citation:
-      'Sierra M, Berrios GE. The Cambridge Depersonalisation Scale: a new instrument for the measurement of depersonalisation. Psychiatry Res. 2000;93(2):153–164.',
+      'Sierra M, Berrios GE. The Cambridge Depersonalisation Scale. Psychiatry Res. 2000;93(2):153–164. Bernstein EM, Putnam FW. Development, reliability, and validity of a dissociation scale. J Nerv Ment Dis. 1986;174(12):727–735. Carlson EB, Putnam FW. Dissociative Experiences Scale-II. 1993.',
     url: 'https://doi.org/10.1016/s0165-1781(00)00100-1',
   },
   stressScreening: {
@@ -189,6 +189,162 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
     citation:
       'Kay SR, Fiszbein A, Opler LA. The Positive and Negative Syndrome Scale (PANSS) for schizophrenia. Schizophr Bull. 1987;13(2):261–276.',
     url: 'https://doi.org/10.1093/schbul/13.2.261',
+  },
+  moca: {
+    citation:
+      'Nasreddine ZS, Phillips NA, Bédirian V, et al. The Montreal Cognitive Assessment, MoCA: a brief screening tool for mild cognitive impairment. J Am Geriatr Soc. 2005;53(4):695–699.',
+    url: 'https://doi.org/10.1111/j.1532-5415.2005.53221.x',
+  },
+  callosal: {
+    citation:
+      'Sperry RW. Cerebral organization and behavior. Science. 1961;133(3466):1749–1757. Gazzaniga MS, Bogen JE, Sperry RW. Observations on visual perception after disconnexion of the cerebral hemispheres in man. Brain. 1965;88(2):221–236.',
+    url: 'https://doi.org/10.1126/science.133.3466.1749',
+  },
+  mse: {
+    citation:
+      'Trzepacz PT, Baker RW. The Psychiatric Mental Status Examination. Oxford University Press; 1993. Strub RL, Black FW. The Mental Status Examination in Neurology. 4th ed. F.A. Davis; 2000.',
+  },
+  consciousness: {
+    citation:
+      'Teasdale G, Jennett B. Assessment of coma and impaired consciousness. Lancet. 1974;2(7872):81–84. Wijdicks EFM, Bamlet WR, Maramattom BV, Manno EM, McClelland RL. Validation of a new coma scale: The FOUR score. Ann Neurol. 2005;58(4):585–593. Sessler CN, Gosnell MS, Grap MJ, et al. The Richmond Agitation-Sedation Scale. Am J Respir Crit Care Med. 2002;166(10):1338–1344.',
+    url: 'https://doi.org/10.1016/S0140-6736(74)91639-0',
+  },
+  substance: {
+    citation:
+      'Sullivan JT, Sykora K, Schneiderman J, Naranjo CA, Sellers EM. CIWA-Ar. Br J Addict. 1989;84(11):1353–1357. Gossop M, Darke S, Griffiths P, et al. Severity of Dependence Scale. Addiction. 1995;90(5):607–614.',
+    url: 'https://doi.org/10.1111/j.1360-0443.1989.tb00737.x',
+  },
+  bprs: {
+    citation:
+      'Overall JE, Gorham DR. The Brief Psychiatric Rating Scale. Psychol Rep. 1962;10(3):799–812.',
+    url: 'https://doi.org/10.2466/pr0.1962.10.3.799',
+  },
+  sapsSans: {
+    citation:
+      'Andreasen NC. The Scale for the Assessment of Negative Symptoms (SANS) and the Scale for the Assessment of Positive Symptoms (SAPS). University of Iowa; 1983–1984.',
+  },
+  crdpss: {
+    citation:
+      'American Psychiatric Association. Clinician-Rated Dimensions of Psychosis Symptom Severity. DSM-5 Section III Assessment Measures; 2013.',
+    url: 'https://www.psychiatry.org/psychiatrists/practice/dsm/educational-resources/assessment-measures',
+  },
+  sops: {
+    citation:
+      'Miller TJ, McGlashan TH, Rosen JL, et al. Prodromal assessment with the SIPS and SOPS: predictive validity, interrater reliability, and training to reliability. Schizophr Bull. 2003;29(4):703–715.',
+    url: 'https://doi.org/10.1093/oxfordjournals.schbul.a007040',
+  },
+  psyrats: {
+    citation:
+      'Haddock G, McCarron J, Tarrier N, Faragher EB. Scales to measure dimensions of hallucinations and delusions: the PSYRATS. Psychol Med. 1999;29(4):879–889.',
+    url: 'https://doi.org/10.1017/s0033291799008661',
+  },
+  vagus: {
+    citation:
+      'Gerretsen P, Remington G, Borlido C, et al. The VAGUS Insight into Psychosis Scale—self-report and clinician-rated versions. Psychiatry Res. 2014;220(3):1010–1015.',
+    url: 'https://doi.org/10.1016/j.psychres.2014.08.005',
+  },
+  adhdScreener: {
+    citation:
+      'Kessler RC, Adler L, Ames M, et al. WHO Adult ADHD Self-Report Scale (ASRS). Psychol Med. 2005;35(2):245–256. Wolraich ML, Feurer ID, Hannah JN, et al. Vanderbilt ADHD Diagnostic Parent Rating Scale. Pediatrics. 2003;112(6):1594–1604.',
+    url: 'https://doi.org/10.1017/s0033291704002892',
+  },
+  asrs6: {
+    citation:
+      'Kessler RC, Adler L, Ames M, et al. The World Health Organization Adult ADHD Self-Report Scale (ASRS): a short screening scale. Psychol Med. 2005;35(2):245–256.',
+    url: 'https://doi.org/10.1017/s0033291704002892',
+  },
+  asrs18: {
+    citation:
+      'Kessler RC, Adler LA, Gruber MJ, Sarawate CA, Spencer T, Van Brunt DL. Validity of the World Health Organization Adult ADHD Self-Report Scale (ASRS). Int J Methods Psychiatr Res. 2007;16(2):52–65.',
+    url: 'https://doi.org/10.1002/mpr.208',
+  },
+  vanderbilt: {
+    citation:
+      'Wolraich ML, Feurer ID, Hannah JN, Baumgaertel A, Pinnock TY. Obtaining systematic teacher reports of disruptive behavior disorders utilizing DSM-IV. J Abnorm Child Psychol. 1998;26(2):141–152. NICHQ Vanderbilt Assessment Scales.',
+    url: 'https://nichq.org/downloadable/nichq-vanderbilt-assessment-scales/',
+  },
+  mdsUpdrs: {
+    citation:
+      'Goetz CG, Tilley BC, Shaftman SR, et al. Movement Disorder Society-sponsored revision of the Unified Parkinson\'s Disease Rating Scale (MDS-UPDRS). Mov Disord. 2008;23(15):2129–2170.',
+    url: 'https://doi.org/10.1002/mds.22340',
+  },
+  hoehnYahr: {
+    citation:
+      'Hoehn MM, Yahr MD. Parkinsonism: onset, progression and mortality. Neurology. 1967;17(5):427–442.',
+    url: 'https://doi.org/10.1212/WNL.17.5.427',
+  },
+  aims: {
+    citation:
+      'Guy W. ECDEU Assessment Manual for Psychopharmacology, Revised. US Department of Health, Education, and Welfare; 1976. Includes the Abnormal Involuntary Movement Scale (AIMS).',
+    url: 'https://archive.org/details/ecdeuassessmentm1933guyw',
+  },
+  twstrs: {
+    citation:
+      'Consky ES, Lang AE. Clinical assessments of patients with cervical dystonia. In: Jankovic J, Hallett M, eds. Therapy with Botulinum Toxin. Marcel Dekker; 1994:211–237.',
+  },
+  epworth: {
+    citation:
+      'Johns MW. A new method for measuring daytime sleepiness: the Epworth Sleepiness Scale. Sleep. 1991;14(6):540–545.',
+    url: 'https://doi.org/10.1093/sleep/14.6.540',
+  },
+  stopBang: {
+    citation:
+      'Chung F, Yegneswaran B, Liao P, et al. STOP questionnaire: a tool to screen patients for obstructive sleep apnea. Anesthesiology. 2008;108(5):812–821. Chung F, Abdullah HR, Liao P. STOP-Bang Questionnaire: a practical approach. Chest. 2016;149(3):631–638.',
+    url: 'https://doi.org/10.1097/ALN.0b013e31816d83e4',
+  },
+  ilaeSeizureClassification: {
+    citation:
+      'Fisher RS, Cross JH, French JA, et al. Operational classification of seizure types by the International League Against Epilepsy. Epilepsia. 2017;58(4):522–530.',
+    url: 'https://doi.org/10.1111/epi.13670',
+  },
+  laep: {
+    citation:
+      'Baker GA, Jacoby A, Buck D, Stalgis C, Monnet D. Quality of life of people with epilepsy: a European study. Epilepsia. 1997;38(3):353–362. Includes the Liverpool Adverse Events Profile.',
+    url: 'https://doi.org/10.1111/j.1528-1157.1997.tb01128.x',
+  },
+  esgs: {
+    citation:
+      'Jehi L, Yardi R, Chagin K, et al. Development and validation of nomograms to provide individualised predictions of seizure outcomes after epilepsy surgery. Lancet Neurol. 2015;14(3):283–290.',
+    url: 'https://doi.org/10.1016/S1474-4422(14)70325-4',
+  },
+  cases: {
+    citation:
+      'Jette N, Quan H, Tellez-Zenteno JF, et al. Development of an online tool to determine appropriateness for an epilepsy surgery evaluation. Neurology. 2012;79(11):1084–1093.',
+    url: 'https://doi.org/10.1212/WNL.0b013e3182698ced',
+  },
+  engel: {
+    citation:
+      'Engel J Jr, Van Ness PC, Rasmussen TB, Ojemann LM. Outcome with respect to epileptic seizures. In: Engel J Jr, ed. Surgical Treatment of the Epilepsies. 2nd ed. Raven Press; 1993:609–621.',
+  },
+  sudep7: {
+    citation:
+      'Novak JL, Miller PR, Markovic D, Meymandi SK, DeGiorgio CM. Risk assessment for sudden death in epilepsy: the SUDEP-7 Inventory. Front Neurol. 2015;6:252.',
+    url: 'https://doi.org/10.3389/fneur.2015.00252',
+  },
+  sudepSafety: {
+    citation:
+      'Shankar R, Cox D, Jalihal V, et al. Sudden unexpected death in epilepsy (SUDEP): development of a safety checklist. Seizure. 2013;22(10):812–817.',
+    url: 'https://doi.org/10.1016/j.seizure.2013.07.014',
+  },
+  fiveTwoOne: {
+    citation:
+      'Antonini A, Stoessl AJ, Kleinman LS, et al. Developing consensus among movement disorder specialists on clinical indicators for identification and management of advanced Parkinson\'s disease: a multi-country Delphi-panel approach. Curr Med Res Opin. 2018;34(12):2063–2073.',
+    url: 'https://doi.org/10.1080/03007995.2018.1502165',
+  },
+  anagePd: {
+    citation:
+      'Martinez-Martin P, Odin P, Antonini A, et al. Advanced Parkinson\'s disease: clinical characteristics and treatment. Parkinsonism Relat Disord. 2015;21(9):1185–1191.',
+    url: 'https://doi.org/10.1016/j.parkreldis.2015.07.008',
+  },
+  dDats: {
+    citation:
+      'Dijk JM, Espay AJ, Katzenschlager R, de Bie RMA. The choice between advanced therapies for Parkinson\'s disease patients: why, what, and when? J Parkinsons Dis. 2020;10(s1):S65–S73.',
+    url: 'https://doi.org/10.3233/JPD-202104',
+  },
+  stimulusDbs: {
+    citation:
+      'Moro E, Allert N, Eleopra R, et al. A decision tool to support appropriate referral for deep brain stimulation in Parkinson\'s disease. J Neurol. 2009;256(1):83–88.',
+    url: 'https://doi.org/10.1007/s00415-009-0068-1',
   },
 };
 
