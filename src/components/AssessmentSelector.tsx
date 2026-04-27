@@ -670,6 +670,7 @@ export const AssessmentSelector = () => {
                       const Icon = a.icon;
                       const color = neonColorPalette[index % neonColorPalette.length];
                       const customGlowStyle = color.customGlow ? { style: { boxShadow: color.customGlow } } : {};
+                      const reference = getAssessmentReference(a.key);
 
                       return (
                         <Tooltip key={a.key}>
@@ -702,10 +703,24 @@ export const AssessmentSelector = () => {
                               <span className="relative text-[11px] text-muted-foreground mt-0.5 leading-tight">
                                 {a.subtitle}
                               </span>
+                              {reference && (
+                                <span className="relative mt-2 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                                  <BookOpen className="h-3 w-3" />
+                                  Verified citation
+                                </span>
+                              )}
                             </button>
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
-                            {locked ? `Pro feature — ${a.description}` : a.description}
+                            <div className="space-y-2">
+                              <p>{locked ? `Pro feature — ${a.description}` : a.description}</p>
+                              {reference && (
+                                <p className="border-t border-border pt-2 text-muted-foreground">
+                                  <span className="font-semibold text-foreground">Citation: </span>
+                                  {reference.citation}
+                                </p>
+                              )}
+                            </div>
                           </TooltipContent>
                         </Tooltip>
                       );
