@@ -61,6 +61,7 @@ import { Sudep7InventoryAssessment } from '@/components/Sudep7InventoryAssessmen
 import { SudepSafetyChecklistAssessment } from '@/components/SudepSafetyChecklistAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
+import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
 import { AdhdScreenerLanding } from '@/components/AdhdScreenerLanding';
 import { cognitiveSyndromes, frontalLobeTests } from '@/data/cognitiveSyndromesData';
 import {
@@ -202,6 +203,22 @@ const assessments: AssessmentInfo[] = [
   { key: 'd-dats', name: 'D-DATS', subtitle: 'DAT Eligibility Screening', icon: Gauge, gradient: 'from-emerald-500 to-green-600', category: ['movement'], description: 'D-DATS — Dutch DAT Screening Tool; identifies PD patients eligible for Device-Aided Therapy (DBS, LCIG, CSAI, LECIG).' },
   { key: 'stimulus-dbs', name: 'Stimulus DBS', subtitle: 'DBS Appropriateness', icon: Brain, gradient: 'from-amber-500 to-orange-600', category: ['movement'], description: 'Stimulus 2 — Evidence-based decision support for assessing appropriateness of Deep Brain Stimulation referral in PD.' },
 ];
+
+const referenceKeyByAssessment: Partial<Record<AssessmentKey, string>> = {
+  'mds-updrs': 'mdsUpdrs',
+  'hoehn-yahr': 'hoehnYahr',
+  'stop-bang': 'stopBang',
+  'ilae-seizure-classification': 'ilaeSeizureClassification',
+  'sudep-7': 'sudep7',
+  'sudep-safety': 'sudepSafety',
+  'five-two-one': 'fiveTwoOne',
+  'anage-pd': 'anagePd',
+  'd-dats': 'dDats',
+  'stimulus-dbs': 'stimulusDbs',
+};
+
+const getAssessmentReference = (key: AssessmentKey) =>
+  ASSESSMENT_REFERENCES[referenceKeyByAssessment[key] ?? key];
 
 const categoryLabels: Record<Category, { en: string; ml: string; icon: React.ElementType }> = {
   all: { en: 'All', ml: 'എല്ലാം', icon: ClipboardList },
