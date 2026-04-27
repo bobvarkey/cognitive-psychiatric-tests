@@ -263,6 +263,89 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Wolraich ML, Feurer ID, Hannah JN, Baumgaertel A, Pinnock TY. Obtaining systematic teacher reports of disruptive behavior disorders utilizing DSM-IV. J Abnorm Child Psychol. 1998;26(2):141–152. NICHQ Vanderbilt Assessment Scales.',
     url: 'https://nichq.org/downloadable/nichq-vanderbilt-assessment-scales/',
   },
+  mdsUpdrs: {
+    citation:
+      'Goetz CG, Tilley BC, Shaftman SR, et al. Movement Disorder Society-sponsored revision of the Unified Parkinson\'s Disease Rating Scale (MDS-UPDRS). Mov Disord. 2008;23(15):2129–2170.',
+    url: 'https://doi.org/10.1002/mds.22340',
+  },
+  hoehnYahr: {
+    citation:
+      'Hoehn MM, Yahr MD. Parkinsonism: onset, progression and mortality. Neurology. 1967;17(5):427–442.',
+    url: 'https://doi.org/10.1212/WNL.17.5.427',
+  },
+  aims: {
+    citation:
+      'Guy W. ECDEU Assessment Manual for Psychopharmacology, Revised. US Department of Health, Education, and Welfare; 1976. Includes the Abnormal Involuntary Movement Scale (AIMS).',
+    url: 'https://archive.org/details/ecdeuassessmentm1933guyw',
+  },
+  twstrs: {
+    citation:
+      'Consky ES, Lang AE. Clinical assessments of patients with cervical dystonia. In: Jankovic J, Hallett M, eds. Therapy with Botulinum Toxin. Marcel Dekker; 1994:211–237.',
+  },
+  epworth: {
+    citation:
+      'Johns MW. A new method for measuring daytime sleepiness: the Epworth Sleepiness Scale. Sleep. 1991;14(6):540–545.',
+    url: 'https://doi.org/10.1093/sleep/14.6.540',
+  },
+  stopBang: {
+    citation:
+      'Chung F, Yegneswaran B, Liao P, et al. STOP questionnaire: a tool to screen patients for obstructive sleep apnea. Anesthesiology. 2008;108(5):812–821. Chung F, Abdullah HR, Liao P. STOP-Bang Questionnaire: a practical approach. Chest. 2016;149(3):631–638.',
+    url: 'https://doi.org/10.1097/ALN.0b013e31816d83e4',
+  },
+  ilaeSeizureClassification: {
+    citation:
+      'Fisher RS, Cross JH, French JA, et al. Operational classification of seizure types by the International League Against Epilepsy. Epilepsia. 2017;58(4):522–530.',
+    url: 'https://doi.org/10.1111/epi.13670',
+  },
+  laep: {
+    citation:
+      'Baker GA, Jacoby A, Buck D, Stalgis C, Monnet D. Quality of life of people with epilepsy: a European study. Epilepsia. 1997;38(3):353–362. Includes the Liverpool Adverse Events Profile.',
+    url: 'https://doi.org/10.1111/j.1528-1157.1997.tb01128.x',
+  },
+  esgs: {
+    citation:
+      'Jehi L, Yardi R, Chagin K, et al. Development and validation of nomograms to provide individualised predictions of seizure outcomes after epilepsy surgery. Lancet Neurol. 2015;14(3):283–290.',
+    url: 'https://doi.org/10.1016/S1474-4422(14)70325-4',
+  },
+  cases: {
+    citation:
+      'Jette N, Quan H, Tellez-Zenteno JF, et al. Development of an online tool to determine appropriateness for an epilepsy surgery evaluation. Neurology. 2012;79(11):1084–1093.',
+    url: 'https://doi.org/10.1212/WNL.0b013e3182698ced',
+  },
+  engel: {
+    citation:
+      'Engel J Jr, Van Ness PC, Rasmussen TB, Ojemann LM. Outcome with respect to epileptic seizures. In: Engel J Jr, ed. Surgical Treatment of the Epilepsies. 2nd ed. Raven Press; 1993:609–621.',
+  },
+  sudep7: {
+    citation:
+      'Novak JL, Miller PR, Markovic D, Meymandi SK, DeGiorgio CM. Risk assessment for sudden death in epilepsy: the SUDEP-7 Inventory. Front Neurol. 2015;6:252.',
+    url: 'https://doi.org/10.3389/fneur.2015.00252',
+  },
+  sudepSafety: {
+    citation:
+      'Shankar R, Cox D, Jalihal V, et al. Sudden unexpected death in epilepsy (SUDEP): development of a safety checklist. Seizure. 2013;22(10):812–817.',
+    url: 'https://doi.org/10.1016/j.seizure.2013.07.014',
+  },
+  fiveTwoOne: {
+    citation:
+      'Antonini A, Stoessl AJ, Kleinman LS, et al. Developing consensus among movement disorder specialists on clinical indicators for identification and management of advanced Parkinson\'s disease: a multi-country Delphi-panel approach. Curr Med Res Opin. 2018;34(12):2063–2073.',
+    url: 'https://doi.org/10.1080/03007995.2018.1502165',
+  },
+  anagePd: {
+    citation:
+      'Martinez-Martin P, Odin P, Antonini A, et al. Advanced Parkinson\'s disease: clinical characteristics and treatment. Parkinsonism Relat Disord. 2015;21(9):1185–1191.',
+    url: 'https://doi.org/10.1016/j.parkreldis.2015.07.008',
+  },
+  dDats: {
+    citation:
+      'Dijk JM, Espay AJ, Katzenschlager R, de Bie RMA. The choice between advanced therapies for Parkinson\'s disease patients: why, what, and when? J Parkinsons Dis. 2020;10(s1):S65–S73.',
+    url: 'https://doi.org/10.3233/JPD-202104',
+  },
+  stimulusDbs: {
+    citation:
+      'Moro E, Allert N, Eleopra R, et al. A decision tool to support appropriate referral for deep brain stimulation in Parkinson\'s disease. J Neurol. 2009;256(1):83–88.',
+    url: 'https://doi.org/10.1007/s00415-009-0068-1',
+  },
 };
 
 export const getReference = (key: string): AssessmentReference | undefined =>
