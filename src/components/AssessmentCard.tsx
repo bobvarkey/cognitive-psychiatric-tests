@@ -2,6 +2,7 @@ import { Assessment } from '@/config/assessments';
 import { Button } from '@/components/ui/button';
 import { Clock, BookOpen, ChevronRight, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 interface AssessmentCardProps {
   assessment: Assessment;
