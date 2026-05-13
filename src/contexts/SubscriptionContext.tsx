@@ -29,24 +29,28 @@ interface SubscriptionContextType {
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
 export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isPremium, setIsPremium] = useState(false);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [features, setFeatures] = useState<PremiumFeatures>(getPremiumFeatures());
-  const [showPaywall, setShowPaywall] = useState(false);
-  const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(getDemoUnlockAll());
+  const FULL_PREMIUM_FEATURES: PremiumFeatures = {
+    allAssessments: true,
+    exportToPDF: true,
+    exportToDOCX: true,
+    clinicalAnalytics: true,
+    patientTracking: true,
+    prioritySupport: true,
+    offlineSync: true,
+    bannerAdsDisabled: true,
+  };
 
-  // Check subscription status on mount
-  useEffect(() => {
-    refreshSubscription();
-  }, []);
+  const [isPremium, setIsPremium] = useState(true);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [features, setFeatures] = useState<PremiumFeatures>(FULL_PREMIUM_FEATURES);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(true);
 
   const refreshSubscription = () => {
-    const premium = isPremiumUser();
-    const sub = getSubscription();
-    setIsPremium(premium);
-    setSubscription(sub);
-    setFeatures(getPremiumFeatures());
-    setDemoUnlockAllState(getDemoUnlockAll());
+    setIsPremium(true);
+    setFeatures(FULL_PREMIUM_FEATURES);
+    setDemoUnlockAllState(true);
+    setDemoUnlockAll(true);
   };
 
   const toggleDemoUnlockAll = (enabled: boolean) => {

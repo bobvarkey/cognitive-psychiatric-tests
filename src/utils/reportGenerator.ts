@@ -15,6 +15,49 @@ export interface ReportData {
   patientInfo?: Record<string, string>;
 }
 
+export function generateTextReport(data: ReportData): string {
+  const lines: string[] = [];
+  lines.push(data.assessmentName);
+  lines.push('='.repeat(Math.min(data.assessmentName.length, 60)));
+  lines.push(`Generated: ${data.date}`);
+  lines.push('');
+
+  if (data.patientInfo) {
+    for (const [key, value] of Object.entries(data.patientInfo)) {
+      lines.push(`${key}: ${value}`);
+    }
+    lines.push('');
+  }
+
+  if (data.totalScore) {
+    lines.push(`Score: ${data.totalScore}`);
+    if (data.severity) lines.push(`Severity: ${data.severity}`);
+    if (data.interpretation) lines.push(`Interpretation: ${data.interpretation}`);
+    lines.push('');
+  }
+
+  for (const section of data.sections) {
+    const marker = section.type === 'positive' ? '[!]' : section.type === 'negative' ? '[✓]' : section.type === 'not-assessed' ? '[○]' : '[*]';
+    lines.push(`--- ${section.title} ---`);
+    if (section.items.length > 0) {
+      for (const item of section.items) {
+        lines.push(`  ${marker} ${item}`);
+      }
+    } else {
+      lines.push('  (none)');
+    }
+    lines.push('');
+  }
+
+  if (data.disclaimer) {
+    lines.push(`DISCLAIMER: ${data.disclaimer}`);
+    lines.push('');
+  }
+
+  lines.push('This report is generated for clinical use only. Not a substitute for professional diagnosis.');
+  return lines.join('\n');
+}
+
 export function generatePdfReport(data: ReportData) {
   const getSectionClass = (type?: string) => {
     switch (type) {

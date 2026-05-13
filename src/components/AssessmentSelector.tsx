@@ -304,7 +304,7 @@ export const AssessmentSelector = () => {
     let filtered = assessments;
 
     // Filter based on subscription tier
-    const isProSubscriber = subscription?.priceId?.includes('_pro_') === true;
+    const isProSubscriber = true; // Always unlocked
 
     if (!isProSubscriber) {
       // Lite tier: exclude Pro-only assessments
@@ -670,7 +670,7 @@ export const AssessmentSelector = () => {
                       { glow: '', bg: 'from-yellow-500 to-black', icon: 'rgba(255,255,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,255,0,0.5), 0_0_20px_rgba(255,255,0,0.3)' }, // Yellow
                     ];
 
-                    const isProSubscriber = subscription?.priceId?.includes('_pro_') === true;
+                    const isProSubscriber = true; // Always unlocked
 
                     const renderTile = (a: AssessmentInfo, index: number, locked = false) => {
                       const Icon = a.icon;
