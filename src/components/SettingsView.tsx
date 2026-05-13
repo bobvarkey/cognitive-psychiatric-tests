@@ -1,9 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Settings as SettingsIcon, Languages, Trash2, Check } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
+
+export const SettingsView = () => {
+  const { language, setLanguage } = useLanguage();
+  const isMl = language === 'ml';
+  const { results, clear } = useResultsHistory();
+  const { clearPatientInfo } = usePatientInfo();
+  const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
 
 export const SettingsView = () => {
   const { language, setLanguage } = useLanguage();
