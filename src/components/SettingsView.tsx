@@ -14,12 +14,6 @@ export const SettingsView = () => {
   const { clearPatientInfo } = usePatientInfo();
   const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
 
-export const SettingsView = () => {
-  const { language, setLanguage } = useLanguage();
-  const isMl = language === 'ml';
-  const { results, clear } = useResultsHistory();
-  const { clearPatientInfo } = usePatientInfo();
-
   return (
     <div className="space-y-4">
       <Card>
