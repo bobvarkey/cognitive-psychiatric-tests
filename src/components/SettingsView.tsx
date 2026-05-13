@@ -64,6 +64,33 @@ export const SettingsView = () => {
             </div>
           </section>
 
+          {/* Access mode */}
+          <section>
+            <div className="flex items-center gap-2 mb-2">
+              <Unlock className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold">
+                {isMl ? 'പ്രവേശന രീതി' : 'Access mode'}
+              </h3>
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-border p-3">
+              <div className="min-w-0 pr-3">
+                <p className="text-sm font-medium">
+                  {isMl ? 'എല്ലാ ടെസ്റ്റുകളും അൺലോക്ക് ചെയ്യുക (ഡെമോ)' : 'Unlock all tests (demo)'}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {demoUnlockAll
+                    ? (isMl ? 'എല്ലാ പരിശോധനകളും പൂർണ്ണമായി ലഭ്യമാണ്.' : 'All assessments fully unlocked.')
+                    : (isMl ? 'ഡെമോ പരിമിതി ബാധകം — Pro ടെസ്റ്റുകൾ ലോക്കാണ്.' : 'Demo limits apply — Pro tests are locked.')}
+                </p>
+              </div>
+              <Switch
+                checked={demoUnlockAll}
+                onCheckedChange={toggleDemoUnlockAll}
+                aria-label="Toggle demo unlock all"
+              />
+            </div>
+          </section>
+
           {/* Data */}
           <section>
             <div className="flex items-center gap-2 mb-2">
