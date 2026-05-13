@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Pcl5Result } from '@/types/pcl5';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { AlertCircle, CheckCircle2, FileDown } from 'lucide-react';
-import { generatePdfReport } from '@/utils/reportGenerator';
+import { useState } from 'react';
+import { AlertCircle, CheckCircle2, Copy, Check, FileDown } from 'lucide-react';
+import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface Pcl5ResultsProps {
@@ -15,6 +17,7 @@ interface Pcl5ResultsProps {
 export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
   const { language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
+  const [copied, setCopied] = useState(false);
 
   const getScoreColor = (score: number) => {
     if (score >= 3) return 'text-red-600';

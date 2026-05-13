@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -5,6 +6,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { FallRiskResult } from "@/types/fallRisk";
 import { MORSE_RISK_LEVELS, INTERVENTIONS } from "@/data/fallRiskScale";
 import { AlertTriangle, CheckCircle, XCircle, Activity, Footprints, Brain, Pill, Home, Eye } from "lucide-react";
+import { ExportButtons } from '@/components/ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface FallRiskResultsProps {
   result: FallRiskResult;
@@ -36,6 +39,44 @@ export function FallRiskResults({ result }: FallRiskResultsProps) {
   };
 
   const morseInfo = getMorseRiskInfo();
+
+  const reportData: ReportData = useMemo(() => {
+    const riskLabel = getOverallRiskLabel();
+    const morseLabel = language === 'ml' ? morseInfo.labelMl : morseInfo.label;
+    return {
+      assessmentName: 'Fall Risk Assessment',
+      date: new Date().toLocaleDateString(),
+      interpretation: result.interpretation,
+      severity: riskLabel,
+      sections: [
+        {
+          title: 'STEADI Score',
+          items: [`Score: ${result.steadiScore}/14 (${result.steadiAtRisk ? 'At Risk (≥4)' : 'Not At Risk (<4)'})`],
+          type: result.steadiAtRisk ? 'positive' : 'negative',
+        },
+        {
+          title: 'Morse Fall Score',
+          items: [`Score: ${result.morseScore}/125`, `Level: ${morseLabel}`, `Action: ${language === 'ml' ? morseInfo.actionMl : morseInfo.action}`],
+          type: result.morseRiskLevel === 'high_risk' ? 'positive' : result.morseRiskLevel === 'low_risk' ? 'negative' : 'info',
+        },
+        {
+          title: 'Physical Assessment',
+          items: [
+            `TUG: ${result.tugAtRisk ? 'At Risk (≥12s)' : 'Normal (<12s)'}`,
+            `Chair Stand: ${result.chairStandAtRisk ? 'Needs Attention' : 'Adequate'}`,
+            `Balance: ${result.balanceAtRisk ? 'At Risk' : 'Good'}`,
+          ],
+          type: result.tugAtRisk || result.chairStandAtRisk || result.balanceAtRisk ? 'positive' : 'negative',
+        },
+        {
+          title: 'Recommendations',
+          items: result.recommendations.length > 0 ? result.recommendations : ['None'],
+          type: 'info',
+        },
+      ],
+      disclaimer: 'This assessment is a screening tool and not a diagnostic instrument. Results should be interpreted in the context of a comprehensive clinical evaluation.',
+    };
+  }, [result, language, morseInfo]);
 
   return (
     <div className="space-y-4">
@@ -217,6 +258,9 @@ export function FallRiskResults({ result }: FallRiskResultsProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Export Buttons */}
+      <ExportButtons data={reportData} className="mt-4" />
     </div>
   );
 }

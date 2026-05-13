@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AdamResult, AdamDemographics } from '@/types/adam';
 import { adamItems } from '@/data/adamScale';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { FileDown } from 'lucide-react';
-import { generatePdfReport } from '@/utils/reportGenerator';
+import { Copy, Check, FileDown } from 'lucide-react';
+import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
 
@@ -17,6 +19,7 @@ interface AdamResultsProps {
 export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps) => {
   const { language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
+  const [copied, setCopied] = useState(false);
 
   const getSeverityColor = (severity: AdamResult['severity']) => {
     switch (severity) {
@@ -188,6 +191,46 @@ export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps
             >
               <FileDown className="mr-2 h-4 w-4" />
               Export PDF
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                try {
+                  const positiveFindings: string[] = [];
+                  const negativeFindings: string[] = [];
+                  results.responses.forEach(r => {
+                    const item = adamItems.find(i => i.id === r.itemId);
+                    if (!item) return;
+                    const label = language === 'en' ? item.text : item.textMl;
+                    if (r.score >= 2) {
+                      positiveFindings.push(`${label} (Score: ${r.score}/3)`);
+                    } else {
+                      negativeFindings.push(`${label} (Score: ${r.score}/3)`);
+                    }
+                  });
+                  const text = generateTextReport({
+                    assessmentName: 'Apathy, Depression and Anhedonia Measure (ADAM)',
+                    date: new Date().toLocaleDateString(),
+                    totalScore: `${results.totalScore}/30`,
+                    severity: getSeverityLabel(results.severity),
+                    interpretation: results.interpretation,
+                    sections: [
+                      { title: 'Elevated Items', items: positiveFindings, type: 'positive' },
+                      { title: 'Low/Normal Items', items: negativeFindings, type: 'negative' },
+                    ],
+                    disclaimer: 'The ADAM is a screening instrument derived from machine learning. It does not substitute for a comprehensive clinical evaluation. Zhao et al. (2026) JNNP.',
+                    patientInfo: getPatientInfoForReport(),
+                  });
+                  await navigator.clipboard.writeText(text);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                } catch {}
+              }}
+              className="flex items-center gap-1.5"
+            >
+              {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+              {copied ? 'Copied' : 'Copy Text'}
             </Button>
           </div>
         </CardContent>

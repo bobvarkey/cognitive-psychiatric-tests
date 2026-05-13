@@ -1,15 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { DementiaResults as DementiaResultsType } from '@/types/dementia';
-import { 
-  ArrowLeft, 
-  RotateCcw, 
-  AlertTriangle, 
-  CheckCircle, 
+import {
+  ArrowLeft,
+  RotateCcw,
+  AlertTriangle,
+  CheckCircle,
   AlertCircle,
   Brain,
   Hand,
@@ -19,6 +19,8 @@ import {
   Lightbulb,
   Eye
 } from 'lucide-react';
+import { ExportButtons } from '@/components/ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface DementiaResultsProps {
   results: DementiaResultsType;
@@ -55,11 +57,120 @@ export const DementiaResults: React.FC<DementiaResultsProps> = ({ results, onBac
     }
   };
 
+  const reportData: ReportData = useMemo(() => {
+    const sections: ReportData['sections'] = [];
+
+    if (results.behav5Score !== undefined) {
+      sections.push({
+        title: 'BEHAV5+ Score',
+        items: [
+          `Score: ${results.behav5Score}/6`,
+          ...(results.behav5Positive.length > 0
+            ? [`Positive findings: ${results.behav5Positive.join(', ')}`]
+            : []),
+        ],
+        type: results.behav5Score >= 2 ? 'positive' : 'negative',
+      });
+    }
+
+    if (results.iqcodeScore > 0) {
+      sections.push({
+        title: 'Short IQCODE Score',
+        items: [
+          `Score: ${results.iqcodeScore.toFixed(2)}`,
+          `Interpretation: ${results.iqcodeInterpretation}`,
+        ],
+        type: 'info',
+      });
+    }
+
+    if (results.vatScore !== undefined) {
+      sections.push({
+        title: 'VAT Score',
+        items: [
+          `Score: ${results.vatScore}/${results.vatMaxScore}`,
+          results.vatScore >= 5
+            ? 'Normal memory performance'
+            : results.vatScore >= 3
+              ? 'Mild memory impairment'
+              : 'Significant memory impairment',
+        ],
+        type: results.vatScore >= 5 ? 'negative' : 'positive',
+      });
+    }
+
+    const softSignItems: string[] = [];
+    const sf = results.softSignsFindings;
+    if (sf.mhd !== null) softSignItems.push(`Midline Hand Drift (MHD): ${sf.mhd}`);
+    if (sf.sts !== null) softSignItems.push(`Shoulder Tapping Sign (STS): ${sf.sts}`);
+    if (sf.hts !== null) softSignItems.push(`Head Turning Sign (HTS): ${sf.hts}`);
+    if (sf.applause !== null) softSignItems.push(`Applause Sign: ${sf.applause}`);
+    if (sf.glabellar !== null) softSignItems.push(`Glabellar Tap: ${sf.glabellar}`);
+    if (sf.palmomental !== null) softSignItems.push(`Palmomental: ${sf.palmomental}`);
+    if (sf.snout !== null) softSignItems.push(`Snout: ${sf.snout}`);
+    if (softSignItems.length > 0) {
+      sections.push({
+        title: 'Soft Signs Findings',
+        items: softSignItems,
+        type: 'info',
+      });
+    }
+
+    const examItems: string[] = [];
+    const ce = results.clinicalExamFindings;
+    if (ce.frontal.length > 0) examItems.push(`Frontal Lobe: ${ce.frontal.join(', ')}`);
+    if (ce.temporal.length > 0) examItems.push(`Temporal Lobe: ${ce.temporal.join(', ')}`);
+    if (ce.parietal.length > 0) examItems.push(`Parietal Lobe: ${ce.parietal.join(', ')}`);
+    if (ce.occipital.length > 0) examItems.push(`Occipital Lobe: ${ce.occipital.join(', ')}`);
+    if (ce.general.length > 0) examItems.push(`General: ${ce.general.join(', ')}`);
+    if (examItems.length > 0) {
+      sections.push({
+        title: 'Clinical Examination Findings',
+        items: examItems,
+        type: 'positive',
+      });
+    }
+
+    if (results.historyFindings.length > 0) {
+      sections.push({
+        title: 'History Findings',
+        items: results.historyFindings,
+        type: 'info',
+      });
+    }
+
+    if (results.testsOrdered.length > 0) {
+      sections.push({
+        title: 'Tests Ordered',
+        items: results.testsOrdered,
+        type: 'info',
+      });
+    }
+
+    if (results.recommendations.length > 0) {
+      sections.push({
+        title: 'Recommendations',
+        items: results.recommendations,
+        type: 'info',
+      });
+    }
+
+    return {
+      assessmentName: 'Dementia Evaluation',
+      date: new Date().toLocaleDateString(),
+      interpretation: results.interpretation,
+      severity: results.riskLevel.charAt(0).toUpperCase() + results.riskLevel.slice(1),
+      sections,
+      disclaimer:
+        'This assessment is a screening tool only and not a diagnostic instrument. Results should be interpreted in the context of a comprehensive clinical evaluation.',
+    };
+  }, [results]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 p-4 md:p-8">
       <LanguageToggle />
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="flex gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <Button variant="ghost" onClick={onBack}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             {language === 'ml' ? 'തിരികെ' : 'Back'}
@@ -68,6 +179,7 @@ export const DementiaResults: React.FC<DementiaResultsProps> = ({ results, onBac
             <RotateCcw className="mr-2 h-4 w-4" />
             {language === 'ml' ? 'പുതിയ വിലയിരുത്തൽ' : 'New Assessment'}
           </Button>
+          <ExportButtons data={reportData} />
         </div>
 
         {/* Main Results Card */}

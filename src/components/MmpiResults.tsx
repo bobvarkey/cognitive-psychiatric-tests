@@ -4,9 +4,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { MmpiResults as MmpiResultsType } from '@/types/mmpi';
 import { MMPI_ITEMS, getRiskLevel, SOMATIZATION_SCALES } from '@/data/mmpiScale';
-import { generatePdfReport } from '@/utils/reportGenerator';
+import { useState } from 'react';
+import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
-import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, FileDown } from 'lucide-react';
+import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, Copy, Check, FileDown } from 'lucide-react';
 
 interface MmpiResultsProps {
   results: MmpiResultsType;
@@ -17,6 +19,7 @@ interface MmpiResultsProps {
 export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
   const { language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
+  const [copied, setCopied] = useState(false);
   const risk = getRiskLevel(results.trueCount);
 
   const trueItems = results.responses.filter(r => r.answer === true).map(r => {
@@ -213,6 +216,39 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
               <Button variant="outline" onClick={handleExportPdf} className="flex items-center gap-2">
                 <FileDown className="h-4 w-4" />
                 Export PDF
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const positive = trueItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+                    const negative = falseItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+                    const notAssessed = notAnswered.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+                    const text = generateTextReport({
+                      assessmentName: 'MMPI Ultra-Short OPD Screener',
+                      date: new Date().toLocaleDateString(),
+                      totalScore: `${results.trueCount}/10 True`,
+                      severity: language === 'ml' ? risk.labelMl : risk.label,
+                      interpretation: language === 'ml' ? risk.actionMl : risk.action,
+                      sections: [
+                        { title: 'Positive Findings (Endorsed as True)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
+                        { title: 'Negative Findings (Endorsed as False)', items: negative.length > 0 ? negative : ['None'], type: 'negative' },
+                        ...(notAssessed.length > 0 ? [{ title: 'Not Assessed (Unanswered)', items: notAssessed, type: 'not-assessed' as const }] : []),
+                        ...(somatizationFlag ? [{ title: 'Targeted Flag: Somatization Pattern', items: [`Hs + D + Hy somatization cluster: ${somatizationCount}/3 scales endorsed`], type: 'info' as const }] : []),
+                      ],
+                      disclaimer: 'Clinician use only; not diagnostic. Tally per scale for targeted flags (e.g., Hs+D+Hy = somatization).',
+                      patientInfo: getPatientInfoForReport(),
+                    });
+                    await navigator.clipboard.writeText(text);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  } catch {}
+                }}
+                className="flex items-center gap-1.5"
+              >
+                {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                {copied ? 'Copied' : 'Copy Text'}
               </Button>
               <Button onClick={onReset} className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 flex items-center gap-2">
                 <RotateCcw className="h-4 w-4" />

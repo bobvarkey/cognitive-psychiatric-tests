@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -5,6 +6,8 @@ import { TuliaResponse, TuliaResults as TuliaResultsType } from '@/types/tulia';
 import { tuliaItems } from '@/data/tuliaScale';
 import { Hand, AlertCircle, CheckCircle, XCircle, Printer, RotateCcw } from 'lucide-react';
 import { DomainRadarChart } from './DomainRadarChart';
+import { ExportButtons } from '@/components/ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface TuliaResultsProps {
   responses: TuliaResponse[];
@@ -122,6 +125,56 @@ export const TuliaResults = ({ responses }: TuliaResultsProps) => {
   const handleReset = () => {
     window.location.reload();
   };
+
+  const reportData: ReportData = useMemo(() => {
+    const itemResults = responses.map((response) => {
+      const item = tuliaItems.find(i => i.id === response.itemId);
+      if (!item) return `Item ${response.itemId}: ${response.score === 1 ? 'Pass' : 'Fail'}`;
+      return `${item.description.en}: ${response.score === 1 ? 'Pass' : 'Fail'}`;
+    });
+
+    return {
+      assessmentName: 'TULIA (Test of Upper Limb Apraxia) Assessment',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${results.totalScore}/12`,
+      severity: results.interpretation === 'normal' ? 'Normal' : results.interpretation === 'mild-apraxia' ? 'Mild' : 'Severe',
+      interpretation: interpretationDetails.description,
+      sections: [
+        {
+          title: 'Domain Scores',
+          items: [
+            `Imitation (Items 1-7): ${results.imitationScore}/7`,
+            `Pantomime (Items 8-12): ${results.pantomimeScore}/5`,
+          ],
+          type: 'info',
+        },
+        {
+          title: 'Category Scores',
+          items: [
+            `Meaningless: ${results.meaninglessScore}/1`,
+            `Intransitive: ${results.intransitiveScore}/3`,
+            `Transitive: ${results.transitiveScore}/8`,
+          ],
+          type: 'info',
+        },
+        {
+          title: 'Clinical Notes',
+          items: [
+            'Cut-off score: <9 suggests apraxia, <5 suggests severe apraxia',
+            'Screening tool with 93% specificity and 88% sensitivity',
+            'Comprehensive TULIA assessment recommended for detailed evaluation',
+          ],
+          type: 'info',
+        },
+        {
+          title: 'Item-by-Item Results',
+          items: itemResults,
+          type: 'info',
+        },
+      ],
+      disclaimer: 'This is a screening tool for apraxia. A comprehensive evaluation by a qualified clinician is recommended for diagnostic purposes.',
+    };
+  }, [results, responses, interpretationDetails]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-4 print:bg-white">
@@ -255,6 +308,7 @@ export const TuliaResults = ({ responses }: TuliaResultsProps) => {
                 <RotateCcw className="h-4 w-4" />
                 {language === 'en' ? 'New Assessment' : 'പുതിയ വിലയിരുത്തൽ'}
               </Button>
+              <ExportButtons data={reportData} />
             </div>
           </CardContent>
         </Card>

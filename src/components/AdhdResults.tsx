@@ -4,8 +4,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AdhdResults as AdhdResultsType } from '@/types/adhd';
 import { getPresentationLabel, DOMAIN_THRESHOLDS } from '@/data/adhdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, XCircle, FileDown } from 'lucide-react';
-import { generatePdfReport } from '@/utils/reportGenerator';
+import { useState } from 'react';
+import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, XCircle, Copy, Check, FileDown } from 'lucide-react';
+import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { ADHD_INATTENTION_SYMPTOMS, ADHD_HYPERACTIVITY_SYMPTOMS } from '@/data/adhdScale';
 
@@ -18,6 +20,7 @@ interface AdhdResultsProps {
 export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
   const { t, language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
+  const [copied, setCopied] = useState(false);
   
   const threshold = results.age17Plus ? DOMAIN_THRESHOLDS.adult : DOMAIN_THRESHOLDS.childAdolescent;
   const meetsInattention = results.inattentionCount >= threshold;
@@ -284,6 +287,43 @@ export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
               >
                 <FileDown className="h-4 w-4" />
                 Export PDF
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const positive = results.symptomResponses.filter(r => r.present).map(r => {
+                      const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
+                      return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
+                    });
+                    const negative = results.symptomResponses.filter(r => !r.present).map(r => {
+                      const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
+                      return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
+                    });
+                    const text = generateTextReport({
+                      assessmentName: 'DSM-5-TR ADHD Diagnostic Criteria Assessment',
+                      date: new Date().toLocaleDateString(),
+                      totalScore: `Inattention: ${results.inattentionCount}/9, Hyperactivity: ${results.hyperactivityCount}/9`,
+                      severity: interpretation.title,
+                      interpretation: interpretation.description,
+                      sections: [
+                        { title: 'Positive Findings (Endorsed Symptoms)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
+                        { title: 'Negative Findings (Not Endorsed)', items: negative, type: 'negative' },
+                        { title: 'Criteria B-E Status', items: results.criterionResponses.map(cr => `Criterion ${cr.criterionId}: ${cr.met ? 'Met' : 'Not Met'}`), type: 'info' },
+                      ],
+                      disclaimer: 'This is a screening tool only, not a diagnostic instrument.',
+                      patientInfo: getPatientInfoForReport(),
+                    });
+                    await navigator.clipboard.writeText(text);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  } catch {}
+                }}
+                className="flex items-center gap-1.5"
+              >
+                {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                {copied ? 'Copied' : 'Copy Text'}
               </Button>
               <Button
                 onClick={onReset}

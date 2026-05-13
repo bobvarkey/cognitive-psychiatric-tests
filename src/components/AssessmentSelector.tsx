@@ -59,6 +59,15 @@ import { DDatsAssessment } from '@/components/DDatsAssessment';
 import { StimulusDbsAssessment } from '@/components/StimulusDbsAssessment';
 import { Sudep7InventoryAssessment } from '@/components/Sudep7InventoryAssessment';
 import { SudepSafetyChecklistAssessment } from '@/components/SudepSafetyChecklistAssessment';
+import { IsiAssessment } from '@/components/IsiAssessment';
+import { BerlinAssessment } from '@/components/BerlinAssessment';
+import { PsqiAssessment } from '@/components/PsqiAssessment';
+import { FosqAssessment } from '@/components/FosqAssessment';
+import { IrlsAssessment } from '@/components/IrlsAssessment';
+import { AsrsAssessment } from '@/components/AsrsAssessment';
+import { CataplexyAssessment } from '@/components/CataplexyAssessment';
+import { SdqAssessment } from '@/components/SdqAssessment';
+import { AuditAssessment } from '@/components/AuditAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
@@ -99,7 +108,9 @@ type AssessmentKey =
   | 'mds-updrs' | 'hoehn-yahr' | 'aims' | 'twstrs' | 'epworth' | 'stop-bang'
   | 'ilae-seizure-classification' | 'laep' | 'esgs' | 'cases' | 'engel'
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
-  | 'sudep-7' | 'sudep-safety';
+  | 'sudep-7' | 'sudep-safety'
+  | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
+  | 'audit';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -175,6 +186,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'ipde', name: 'IPDE-SQ', subtitle: 'Personality Disorders', icon: Heart, gradient: 'from-rose-500 to-pink-600', category: ['personality'], description: 'IPDE Screening Questionnaire — DSM-IV self-report grouped by candidate PD across all 10 personality disorders; flags dimensions for structured interview.' },
   { key: 'cage', name: 'CAGE', subtitle: 'Alcohol Screen', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'CAGE — 4-item alcohol use screen (Cut-down, Annoyed, Guilty, Eye-opener). Score ≥ 2 = clinically significant.' },
   { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['substance'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
+  { key: 'audit', name: 'AUDIT', subtitle: 'Alcohol Use Disorders', icon: FlaskConical, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'AUDIT — Alcohol Use Disorders Identification Test (WHO); 10-item screen for hazardous drinking, harmful use, and alcohol dependence. Score 0-40 with zone-based intervention guidance.' },
   { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
   { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['movement'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
 
@@ -187,6 +199,14 @@ const assessments: AssessmentInfo[] = [
   // ─── Sleep Disorders ───
   { key: 'epworth', name: 'Epworth Scale', subtitle: 'Daytime Sleepiness', icon: Pause, gradient: 'from-indigo-500 to-blue-600', category: ['sleep'], description: 'ESS — Epworth Sleepiness Scale; 8-item self-report of daytime sleepiness likelihood in various situations.' },
   { key: 'stop-bang', name: 'STOP-BANG', subtitle: 'Sleep Apnea Screening', icon: AlertTriangle, gradient: 'from-amber-500 to-orange-600', category: ['sleep'], description: 'STOP-BANG — Obstructive sleep apnea risk screening tool; 8 yes/no questions for rapid OSA risk assessment.' },
+  { key: 'isi', name: 'ISI', subtitle: 'Insomnia Severity Index', icon: Pause, gradient: 'from-violet-500 to-purple-600', category: ['sleep'], description: 'ISI — Insomnia Severity Index; 7-item self-report measuring severity of insomnia symptoms, sleep dissatisfaction, and daytime interference.' },
+  { key: 'berlin', name: 'Berlin', subtitle: 'Sleep Apnea Questionnaire', icon: AlertTriangle, gradient: 'from-rose-500 to-red-600', category: ['sleep'], description: 'Berlin Questionnaire — 11-item OSA screening across snoring, daytime sleepiness, and hypertension/BMI categories. High/low risk stratification.' },
+  { key: 'psqi', name: 'PSQI', subtitle: 'Pittsburgh Sleep Quality Index', icon: Pause, gradient: 'from-sky-500 to-indigo-600', category: ['sleep'], description: 'PSQI — Pittsburgh Sleep Quality Index; 19-item self-report across 7 components assessing sleep quality over the past month. PSQI > 5 = poor sleep quality.' },
+  { key: 'fosq', name: 'FOSQ', subtitle: 'Functional Outcomes of Sleep', icon: Activity, gradient: 'from-emerald-500 to-teal-600', category: ['sleep'], description: 'FOSQ — Functional Outcomes of Sleep Questionnaire; 30 items across 5 subscales measuring the impact of sleepiness on daily functioning.' },
+  { key: 'irls', name: 'IRLS', subtitle: 'Restless Legs Scale', icon: Footprints, gradient: 'from-purple-500 to-violet-600', category: ['sleep'], description: 'IRLS — International Restless Legs Scale; 10-item clinician-rated scale assessing RLS symptom severity, frequency, and impact on sleep and mood.' },
+  { key: 'asrs-sleep', name: 'ASRS', subtitle: 'Augmentation Severity', icon: TrendingUp, gradient: 'from-red-500 to-rose-600', category: ['sleep'], description: 'ASRS — Augmentation Severity Rating Scale for RLS patients on dopaminergic therapy. Assesses earlier onset, intensity increase, and symptom spread.' },
+  { key: 'cataplexy', name: 'Cataplexy', subtitle: 'Narcolepsy Screening', icon: Zap, gradient: 'from-indigo-500 to-purple-600', category: ['sleep'], description: 'Cataplexy Questionnaire — 12-item screening for cataplexy in narcolepsy evaluation: emotional triggers, episode characteristics, and associated features.' },
+  { key: 'sdq', name: 'SDQ', subtitle: 'Sleep Disorders Questionnaire', icon: ClipboardList, gradient: 'from-teal-500 to-cyan-600', category: ['sleep'], description: 'SDQ — Sleep Disorders Questionnaire; 30-item comprehensive screen across 5 domains: sleep apnea, insomnia, narcolepsy, parasomnias, and RLS/PLMD.' },
 
   // ─── Epilepsy & Seizures ───
   { key: 'ilae-seizure-classification', name: 'ILAE Seizure Classification', subtitle: '2025 Updated Guidelines', icon: Zap, gradient: 'from-fuchsia-500 to-cyan-500', category: ['epilepsy'], description: 'ILAE 2025 — Interactive guide to the updated classification of epileptic seizures with full taxonomic hierarchy, clinical descriptors, and diagnostic guidelines.' },
@@ -215,6 +235,15 @@ const referenceKeyByAssessment: Partial<Record<AssessmentKey, string>> = {
   'anage-pd': 'anagePd',
   'd-dats': 'dDats',
   'stimulus-dbs': 'stimulusDbs',
+  isi: 'isi',
+  berlin: 'berlin',
+  psqi: 'psqi',
+  fosq: 'fosq',
+  irls: 'irls',
+  'asrs-sleep': 'asrsSleep',
+  cataplexy: 'cataplexy',
+  sdq: 'sdq',
+  audit: 'audit',
 };
 
 const getAssessmentReference = (key: AssessmentKey) =>
@@ -431,6 +460,8 @@ export const AssessmentSelector = () => {
       'ilae-seizure-classification': true, laep: true, esgs: true, cases: true, engel: true,
       'five-two-one': true, 'anage-pd': true, 'd-dats': true, 'stimulus-dbs': true,
       'sudep-7': true, 'sudep-safety': true,
+      isi: true, berlin: true, psqi: true, fosq: true, irls: true, 'asrs-sleep': true, cataplexy: true, sdq: true,
+      audit: true,
     };
 
     if (withOnBack[selectedAssessment]) {
@@ -484,6 +515,15 @@ export const AssessmentSelector = () => {
         'stimulus-dbs': StimulusDbsAssessment,
         'sudep-7': Sudep7InventoryAssessment,
         'sudep-safety': SudepSafetyChecklistAssessment,
+        isi: IsiAssessment,
+        berlin: BerlinAssessment,
+        psqi: PsqiAssessment,
+        fosq: FosqAssessment,
+        irls: IrlsAssessment,
+        'asrs-sleep': AsrsAssessment,
+        cataplexy: CataplexyAssessment,
+        sdq: SdqAssessment,
+        audit: AuditAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;

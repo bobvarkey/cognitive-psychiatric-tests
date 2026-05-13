@@ -1,9 +1,12 @@
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { HareResults as HareResultsType } from '@/types/hare';
 import { AlertTriangle, FileText, RotateCcw, Printer } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ExportButtons } from '@/components/ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface HareResultsProps {
   results: HareResultsType;
@@ -16,6 +19,32 @@ export const HareResults = ({ results, onReset }: HareResultsProps) => {
   const handlePrint = () => {
     window.print();
   };
+
+  const reportData: ReportData = useMemo(() => ({
+    assessmentName: 'PCL-R Assessment (Hare Psychopathy Checklist)',
+    date: new Date().toLocaleDateString(),
+    totalScore: `${results.totalScore}/40`,
+    interpretation: results.interpretation,
+    severity: results.totalScore >= 30 ? 'High' : results.totalScore >= 20 ? 'Moderate' : 'Low',
+    sections: [
+      {
+        title: 'Factor 1: Interpersonal/Affective',
+        items: [`Score: ${results.factor1Score}/16 - Measures emotional and interpersonal traits`],
+        type: 'info',
+      },
+      {
+        title: 'Factor 2: Lifestyle/Antisocial',
+        items: [`Score: ${results.factor2Score}/24 - Measures behavioral and lifestyle patterns`],
+        type: 'info',
+      },
+      {
+        title: 'Score Interpretation Guide',
+        items: ['0-19: Low range - Traits are minimal or not clinically significant', '20-29: Moderate range - Some traits present, further evaluation may be warranted', '30-40: High range - Significant traits present, professional evaluation strongly recommended'],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'This assessment is for educational purposes only. A clinical diagnosis requires professional evaluation by a qualified mental health professional with additional information including clinical interviews and collateral data.',
+  }), [results]);
 
   const getSeverityColor = (score: number, maxScore: number) => {
     const percentage = (score / maxScore) * 100;
@@ -38,7 +67,7 @@ export const HareResults = ({ results, onReset }: HareResultsProps) => {
           <h1 className="text-3xl font-bold text-slate-800">
             {t('assessmentResults') || 'Assessment Results'}
           </h1>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button variant="outline" onClick={handlePrint}>
               <Printer className="h-4 w-4 mr-2" />
               {t('print') || 'Print'}
@@ -47,6 +76,7 @@ export const HareResults = ({ results, onReset }: HareResultsProps) => {
               <RotateCcw className="h-4 w-4 mr-2" />
               {t('newAssessment') || 'New Assessment'}
             </Button>
+            <ExportButtons data={reportData} />
           </div>
         </div>
 

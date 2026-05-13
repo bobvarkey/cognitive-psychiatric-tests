@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -7,6 +7,8 @@ import { NmsResults as NmsResultsType } from '@/types/nms';
 import { NMS_CATEGORIES, NMS_RECOMMENDATIONS, NMS_DIAGNOSTIC_CRITERIA, NMS_CLINICAL_NOTES } from '@/data/nmsScale';
 import { AlertTriangle, ThermometerSun, Activity, Brain, FlaskConical, Stethoscope, Move, CheckCircle2, XCircle, HelpCircle, TrendingUp, Info } from 'lucide-react';
 import { DomainRadarChart } from './DomainRadarChart';
+import { ExportButtons } from '@/components/ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface NmsResultsProps {
   results: NmsResultsType;
@@ -65,9 +67,44 @@ export const NmsResultsComponent: React.FC<NmsResultsProps> = ({ results, isMala
   };
 
   const diagnosticInfo = NMS_DIAGNOSTIC_CRITERIA[results.diagnosticCategory];
-  const recommendations = isMalayalam 
-    ? NMS_RECOMMENDATIONS.generalMl 
+  const recommendations = isMalayalam
+    ? NMS_RECOMMENDATIONS.generalMl
     : NMS_RECOMMENDATIONS.general;
+
+  const reportData: ReportData = useMemo(() => {
+    const diagnosticLabel = isMalayalam ? diagnosticInfo.labelMl : diagnosticInfo.label;
+    const categoryItems = Object.entries(results.categoryScores).map(([category, score]) => {
+      const catInfo = NMS_CATEGORIES[category as keyof typeof NMS_CATEGORIES];
+      const name = isMalayalam ? catInfo.nameMl : catInfo.name;
+      return `${name}: ${score}/${catInfo.maxScore}${score >= 2 ? ' (≥2)' : ''}`;
+    });
+
+    return {
+      assessmentName: 'Neuroleptic Malignant Syndrome (NMS) Assessment',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${results.totalScore}/${results.maxScore}`,
+      severity: results.severity.charAt(0).toUpperCase() + results.severity.slice(1),
+      interpretation: isMalayalam ? results.interpretationMl : results.interpretation,
+      sections: [
+        {
+          title: 'Diagnostic Category',
+          items: [`${diagnosticLabel}`, `Domains with score ≥2: ${results.domainsWithScore2OrMore}/6`],
+          type: results.diagnosticCategory === 'definiteNms' ? 'positive' : results.diagnosticCategory === 'noNms' ? 'negative' : 'info',
+        },
+        {
+          title: 'Category Scores',
+          items: categoryItems,
+          type: 'info',
+        },
+        {
+          title: 'Management Recommendations',
+          items: recommendations,
+          type: 'info',
+        },
+      ],
+      disclaimer: 'This scale is for clinical assessment purposes only. Not a substitute for comprehensive medical evaluation.',
+    };
+  }, [results, isMalayalam, diagnosticInfo, recommendations]);
 
   return (
     <div className="space-y-6">
@@ -238,6 +275,9 @@ export const NmsResultsComponent: React.FC<NmsResultsProps> = ({ results, isMala
           </ul>
         </CardContent>
       </Card>
+
+      {/* Export Buttons */}
+      <ExportButtons data={reportData} className="mt-4" />
     </div>
   );
 };

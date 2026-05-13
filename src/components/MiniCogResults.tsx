@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MiniCogResults as MiniCogResultsType, MINI_COG_WORD_LISTS } from '@/types/minicog';
@@ -5,6 +6,8 @@ import { Brain, FileText, RotateCcw, AlertTriangle, CheckCircle2 } from 'lucide-
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ExportButtons } from '@/components/ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface MiniCogResultsProps {
   results: MiniCogResultsType;
@@ -42,6 +45,49 @@ export const MiniCogResults = ({ results, patientInfo, onRestart }: MiniCogResul
   };
 
   const wordList = MINI_COG_WORD_LISTS.find(list => list.version === results.wordListVersion);
+
+  const reportData: ReportData = useMemo(() => ({
+    assessmentName: 'Mini-Cog Cognitive Screening',
+    date: patientInfo.date || new Date().toLocaleDateString(),
+    totalScore: `${results.totalScore}/5`,
+    interpretation: results.interpretation,
+    severity: results.totalScore >= 4 ? 'Low Risk' : results.totalScore === 3 ? 'Borderline' : 'Positive Screen',
+    sections: [
+      {
+        title: 'Word Recall',
+        items: [
+          `Score: ${results.wordRecallScore}/3`,
+          wordList
+            ? `Word List Version ${results.wordListVersion}: ${(wordList.words || []).join(', ')}`
+            : 'Word list information not available',
+        ],
+        type: 'info',
+      },
+      {
+        title: 'Clock Drawing',
+        items: [
+          `Score: ${results.clockDrawScore}/2`,
+          results.clockDrawScore === 2 ? 'Normal clock drawing' : 'Abnormal clock drawing',
+        ],
+        type: 'info',
+      },
+      {
+        title: 'Score Interpretation Guide',
+        items: [
+          'Score >= 4: Low risk — negative screen for cognitive impairment',
+          'Score = 3: Borderline — consider further evaluation based on clinical context',
+          'Score <= 2: Positive screen — further evaluation strongly recommended',
+        ],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'The Mini-Cog is a screening tool, not a diagnostic instrument. A positive screen should prompt further comprehensive cognitive evaluation. Consider the patient\'s baseline function, education level, and other clinical factors when interpreting results.',
+    patientInfo: {
+      Name: patientInfo.name || 'Not provided',
+      Age: patientInfo.age || 'Not provided',
+      Date: patientInfo.date || new Date().toLocaleDateString(),
+    },
+  }), [results, patientInfo, wordList]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
@@ -232,6 +278,7 @@ export const MiniCogResults = ({ results, patientInfo, onRestart }: MiniCogResul
             <RotateCcw className="h-4 w-4" />
             {language === 'en' ? 'New Assessment' : 'പുതിയ വിലയിരുത്തൽ'}
           </Button>
+          <ExportButtons data={reportData} />
         </div>
       </div>
     </div>

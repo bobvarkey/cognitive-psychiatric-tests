@@ -1,8 +1,11 @@
+import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CatatoniaResults as CatatoniaResultsType } from '@/types/catatonia';
 import { AlertTriangle, CheckCircle, Activity, ClipboardList } from 'lucide-react';
+import { ExportButtons } from '@/components/ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface CatatoniaResultsProps {
   results: CatatoniaResultsType;
@@ -30,6 +33,21 @@ export const CatatoniaResults = ({ results }: CatatoniaResultsProps) => {
     };
     return language === 'ml' ? labels[severity]?.ml : labels[severity]?.en;
   };
+
+  const reportData: ReportData = useMemo(() => ({
+    assessmentName: 'Bush Francis Catatonia Rating Scale',
+    date: new Date().toLocaleDateString(),
+    totalScore: `${results.totalScore}/69`,
+    severity: results.severity.charAt(0).toUpperCase() + results.severity.slice(1),
+    interpretation: results.interpretation,
+    sections: [
+      { title: 'Screening', items: [`Screening Score: ${results.screeningScore}/14 (${results.screeningPositive ? 'Screen Positive (≥2)' : 'Screen Negative'})`], type: 'info' },
+      { title: 'Positive Findings', items: results.positiveItems.length > 0 ? results.positiveItems : ['None'], type: results.positiveItems.length > 0 ? 'positive' : 'info' },
+      { title: 'Scoring Guide', items: ['Screening: ≥2 positive = Screen positive for catatonia', 'Severity: 0 = No catatonia, 1-10 = Mild, 11-20 = Moderate, >20 = Severe'], type: 'info' },
+      { title: 'Recommendations', items: results.recommendations.length > 0 ? results.recommendations : ['None'], type: 'info' },
+    ],
+    disclaimer: 'This assessment is a screening tool only and not a diagnostic instrument.',
+  }), [results]);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -178,6 +196,9 @@ export const CatatoniaResults = ({ results }: CatatoniaResultsProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Export Buttons */}
+      <ExportButtons data={reportData} className="mt-4" />
     </div>
   );
 };

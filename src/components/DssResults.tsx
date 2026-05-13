@@ -1,10 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ArrowLeft, RotateCcw, AlertCircle, FileDown, Info } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info } from 'lucide-react';
 import { DssResult } from '@/types/dss';
 import { DSS_DOMAIN_LABEL } from '@/data/dssScale';
-import { generatePdfReport } from '@/utils/reportGenerator';
+import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface Props {
@@ -37,6 +39,7 @@ const fmt = (n: number) => n.toFixed(2);
 
 export const DssResults = ({ results, onReset, onBack }: Props) => {
   const { getPatientInfoForReport } = usePatientInfo();
+  const [copied, setCopied] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -174,6 +177,49 @@ export const DssResults = ({ results, onReset, onBack }: Props) => {
         >
           <FileDown className="h-4 w-4 mr-2" />
           Export PDF
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={async () => {
+            try {
+              const elevated = results.subscales
+                .filter((s) => s.elevated)
+                .map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
+              const normal = results.subscales
+                .filter((s) => !s.elevated)
+                .map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
+              const text = generateTextReport({
+                assessmentName: 'Dissociative Symptoms Scale (DSS)',
+                date: new Date().toLocaleDateString(),
+                totalScore: `${fmt(results.totalMean)}/4 (mean)`,
+                severity: SEVERITY_LABEL[results.severity],
+                interpretation: results.interpretation,
+                sections: [
+                  {
+                    title: 'Elevated subscales (mean ≥ 1.0)',
+                    items: elevated,
+                    type: 'positive',
+                  },
+                  {
+                    title: 'Subscales within normal range',
+                    items: normal,
+                    type: 'negative',
+                  },
+                ],
+                disclaimer:
+                  'Screening tool only. A subscale or total mean ≥ 1.0 is the developers\' suggested clinical threshold; diagnosis requires structured clinical evaluation.',
+                patientInfo: getPatientInfoForReport(),
+              });
+              await navigator.clipboard.writeText(text);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            } catch {}
+          }}
+          className="flex items-center gap-1.5"
+        >
+          {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+          {copied ? 'Copied' : 'Copy Text'}
         </Button>
         <Button variant="outline" onClick={onReset}>
           <RotateCcw className="h-4 w-4 mr-2" />
