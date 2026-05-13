@@ -22,6 +22,8 @@ interface SubscriptionContextType {
   initiatePurchase: (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => Promise<void>;
   activateDemoSubscription: (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => void;
   refreshSubscription: () => void;
+  demoUnlockAll: boolean;
+  toggleDemoUnlockAll: (enabled: boolean) => void;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
