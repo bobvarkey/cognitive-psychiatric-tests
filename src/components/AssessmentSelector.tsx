@@ -262,7 +262,7 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
 export const AssessmentSelector = () => {
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { showPaywall, setShowPaywall, initiatePurchase, subscription } = useSubscription();
+  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll } = useSubscription();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [searchQuery, setSearchQuery] = useState('');
