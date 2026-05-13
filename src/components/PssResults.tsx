@@ -2,10 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PssResult } from '@/types/pss';
 import { PSS_ITEMS } from '@/data/pssScale';
+import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
-import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, FileDown } from 'lucide-react';
-import { generatePdfReport } from '@/utils/reportGenerator';
+import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown } from 'lucide-react';
+import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface PssResultsProps {
@@ -17,6 +19,7 @@ interface PssResultsProps {
 export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
   const { t } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
+  const [copied, setCopied] = useState(false);
 
   const getSeverityIcon = () => {
     switch (result.severity) {
@@ -133,6 +136,51 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
               >
                 <FileDown className="mr-2 h-4 w-4" />
                 Export PDF
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  try {
+                    const positiveFindings: string[] = [];
+                    const negativeFindings: string[] = [];
+                    result.responses.forEach(r => {
+                      const item = PSS_ITEMS.find(i => i.id === r.itemId);
+                      if (!item) return;
+                      const effectiveScore = item.isReversed ? (4 - r.score) : r.score;
+                      const label = item.question;
+                      if (effectiveScore >= 2) {
+                        positiveFindings.push(`${label} (Score: ${r.score}/4, effective: ${effectiveScore})`);
+                      } else {
+                        negativeFindings.push(`${label} (Score: ${r.score}/4)`);
+                      }
+                    });
+                    const allItemIds = PSS_ITEMS.map(i => i.id);
+                    const answeredIds = result.responses.map(r => r.itemId);
+                    const notAssessed = PSS_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
+                    const text = generateTextReport({
+                      assessmentName: 'Perceived Stress Scale (PSS-10)',
+                      date: new Date().toLocaleDateString(),
+                      totalScore: `${result.totalScore}/40`,
+                      severity: result.severity === 'low' ? 'Low Stress' : result.severity === 'moderate' ? 'Moderate Stress' : 'High Stress',
+                      interpretation: result.interpretation,
+                      sections: [
+                        { title: 'Positive Findings (Elevated Stress Items)', items: positiveFindings, type: 'positive' },
+                        { title: 'Negative Findings (Low Stress Items)', items: negativeFindings, type: 'negative' },
+                        { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
+                      ],
+                      disclaimer: 'The PSS is a self-report measure of perceived stress. It is not a diagnostic instrument. Clinical judgment is essential for interpretation.',
+                      patientInfo: getPatientInfoForReport(),
+                    });
+                    await navigator.clipboard.writeText(text);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  } catch {}
+                }}
+                className="flex items-center gap-1.5"
+              >
+                {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                {copied ? 'Copied' : 'Copy Text'}
               </Button>
               {onBack && (
                 <Button onClick={onBack} variant="default" className="flex-1">
