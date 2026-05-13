@@ -1,15 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Settings as SettingsIcon, Languages, Trash2, Check } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 export const SettingsView = () => {
   const { language, setLanguage } = useLanguage();
   const isMl = language === 'ml';
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
+  const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
 
   return (
     <div className="space-y-4">
@@ -58,6 +61,33 @@ export const SettingsView = () => {
                   </button>
                 );
               })}
+            </div>
+          </section>
+
+          {/* Access mode */}
+          <section>
+            <div className="flex items-center gap-2 mb-2">
+              <Unlock className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold">
+                {isMl ? 'പ്രവേശന രീതി' : 'Access mode'}
+              </h3>
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-border p-3">
+              <div className="min-w-0 pr-3">
+                <p className="text-sm font-medium">
+                  {isMl ? 'എല്ലാ ടെസ്റ്റുകളും അൺലോക്ക് ചെയ്യുക (ഡെമോ)' : 'Unlock all tests (demo)'}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {demoUnlockAll
+                    ? (isMl ? 'എല്ലാ പരിശോധനകളും പൂർണ്ണമായി ലഭ്യമാണ്.' : 'All assessments fully unlocked.')
+                    : (isMl ? 'ഡെമോ പരിമിതി ബാധകം — Pro ടെസ്റ്റുകൾ ലോക്കാണ്.' : 'Demo limits apply — Pro tests are locked.')}
+                </p>
+              </div>
+              <Switch
+                checked={demoUnlockAll}
+                onCheckedChange={toggleDemoUnlockAll}
+                aria-label="Toggle demo unlock all"
+              />
             </div>
           </section>
 

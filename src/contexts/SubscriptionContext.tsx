@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { isPremiumUser, getSubscription, createDemoSubscription, getPremiumFeatures } from '@/services/subscriptionService';
+import { isPremiumUser, getSubscription, createDemoSubscription, getPremiumFeatures, getDemoUnlockAll, setDemoUnlockAll } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 
 interface PremiumFeatures {
@@ -22,6 +22,8 @@ interface SubscriptionContextType {
   initiatePurchase: (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => Promise<void>;
   activateDemoSubscription: (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => void;
   refreshSubscription: () => void;
+  demoUnlockAll: boolean;
+  toggleDemoUnlockAll: (enabled: boolean) => void;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -31,6 +33,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [features, setFeatures] = useState<PremiumFeatures>(getPremiumFeatures());
   const [showPaywall, setShowPaywall] = useState(false);
+  const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(getDemoUnlockAll());
 
   // Check subscription status on mount
   useEffect(() => {
@@ -43,12 +46,16 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setIsPremium(premium);
     setSubscription(sub);
     setFeatures(getPremiumFeatures());
+    setDemoUnlockAllState(getDemoUnlockAll());
+  };
+
+  const toggleDemoUnlockAll = (enabled: boolean) => {
+    setDemoUnlockAll(enabled);
+    refreshSubscription();
   };
 
   const initiatePurchase = async (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => {
     try {
-      // For demo purposes, we're activating demo subscription
-      // In production, this would integrate with Stripe
       activateDemoSubscription(plan, tier);
     } catch (error) {
       console.error('Purchase failed:', error);
@@ -71,6 +78,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     initiatePurchase,
     activateDemoSubscription,
     refreshSubscription,
+    demoUnlockAll,
+    toggleDemoUnlockAll,
   };
 
   return (

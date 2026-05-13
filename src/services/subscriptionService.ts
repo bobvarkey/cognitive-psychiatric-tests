@@ -46,10 +46,38 @@ export const PRICING = {
   },
 };
 
+// Demo override: when enabled, all tests are unlocked regardless of subscription.
+const DEMO_UNLOCK_KEY = 'psycognito.demoUnlockAll.v1';
+
+export const getDemoUnlockAll = (): boolean => {
+  try {
+    const v = localStorage.getItem(DEMO_UNLOCK_KEY);
+    // Default ON to preserve existing demo behaviour
+    return v === null ? true : v === 'true';
+  } catch {
+    return true;
+  }
+};
+
+export const setDemoUnlockAll = (enabled: boolean): void => {
+  try {
+    localStorage.setItem(DEMO_UNLOCK_KEY, String(enabled));
+  } catch {
+    /* ignore */
+  }
+};
+
 // Check if user has premium access
-// Demo override: all tests unlocked for everyone
 export const isPremiumUser = (): boolean => {
-  return true;
+  if (getDemoUnlockAll()) return true;
+  try {
+    const user = localStorage.getItem(USER_KEY);
+    if (!user) return false;
+    const userData: User = JSON.parse(user);
+    return userData.isPremium === true && userData.subscription?.status === 'active';
+  } catch {
+    return false;
+  }
 };
 
 // Get current user subscription
