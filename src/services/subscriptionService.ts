@@ -47,25 +47,9 @@ export const PRICING = {
 };
 
 // Check if user has premium access
+// Demo override: all tests unlocked for everyone
 export const isPremiumUser = (): boolean => {
-  try {
-    const user = localStorage.getItem(USER_KEY);
-    if (!user) return false;
-
-    const userData: User = JSON.parse(user);
-    if (!userData.subscription) return false;
-
-    // Check if subscription is still active
-    const now = Date.now() / 1000;
-    if (userData.subscription.currentPeriodEnd < now) {
-      // Subscription expired
-      return false;
-    }
-
-    return userData.subscription.status === 'active' || userData.subscription.status === 'trialing';
-  } catch {
-    return false;
-  }
+  return true;
 };
 
 // Get current user subscription
