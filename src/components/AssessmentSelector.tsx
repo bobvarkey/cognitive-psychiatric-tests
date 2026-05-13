@@ -368,10 +368,12 @@ export const AssessmentSelector = () => {
             <Home className="h-4 w-4" />
             <span className="hidden sm:inline">{t('backToMenu')}</span>
           </Button>
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-300 shadow-sm backdrop-blur-sm">
-            <CheckCircle className="h-3 w-3" />
-            Unlocked in demo
-          </span>
+          {demoUnlockAll && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-300 shadow-sm backdrop-blur-sm">
+              <CheckCircle className="h-3 w-3" />
+              Unlocked in demo
+            </span>
+          )}
         </div>
         {component}
       </div>
