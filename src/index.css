@@ -20,20 +20,20 @@ All colors MUST be HSL.
     --primary: 210 100% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 210 40% 8%;
+    --secondary: 222 40% 12%;
+    --secondary-foreground: 210 40% 96%;
 
-    --muted: 210 40% 96%;
+    --muted: 222 40% 12%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 210 100% 95%;
-    --accent-foreground: 210 100% 45%;
+    --accent: 222 40% 14%;
+    --accent-foreground: 210 100% 75%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 31% 91%;
-    --input: 214 31% 91%;
+    --border: 222 40% 16%;
+    --input: 222 40% 16%;
     --ring: 210 100% 45%;
 
     /* Medical theme colors */
