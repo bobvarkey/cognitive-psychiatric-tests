@@ -143,7 +143,7 @@ All colors MUST be HSL.
 
   /* Readability boosts for legacy hard-coded Tailwind colors over the dark theme.
      Many assessment components were written for a light background and use
-     text-slate-*/text-gray-*/bg-white directly. Remap them so they stay legible. */
+     text-slate, text-gray and bg-white directly. Remap them so they stay legible. */
   .text-slate-900, .text-slate-800, .text-slate-700,
   .text-gray-900, .text-gray-800, .text-gray-700,
   .text-zinc-900, .text-zinc-800, .text-zinc-700,
