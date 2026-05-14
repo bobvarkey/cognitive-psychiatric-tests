@@ -9,25 +9,25 @@ All colors MUST be HSL.
 @layer base {
   :root {
     --background: 222 47% 5%;
-    --foreground: 210 40% 96%;
+    --foreground: 0 0% 98%;
 
-    --card: 222 40% 8%;
-    --card-foreground: 210 40% 96%;
+    --card: 222 40% 9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 222 40% 8%;
-    --popover-foreground: 210 40% 96%;
+    --popover: 222 40% 9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 210 100% 45%;
+    --primary: 210 100% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 40% 12%;
-    --secondary-foreground: 210 40% 96%;
+    --secondary: 222 40% 14%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 222 40% 12%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 222 40% 14%;
+    --muted-foreground: 215 25% 80%;
 
-    --accent: 222 40% 14%;
-    --accent-foreground: 210 100% 75%;
+    --accent: 222 40% 16%;
+    --accent-foreground: 210 100% 85%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -140,6 +140,57 @@ All colors MUST be HSL.
     background-attachment: fixed;
     min-height: 100vh;
   }
+
+  /* Readability boosts for legacy hard-coded Tailwind colors over the dark theme.
+     Many assessment components were written for a light background and use
+     text-slate, text-gray and bg-white directly. Remap them so they stay legible. */
+  .text-slate-900, .text-slate-800, .text-slate-700,
+  .text-gray-900, .text-gray-800, .text-gray-700,
+  .text-zinc-900, .text-zinc-800, .text-zinc-700,
+  .text-neutral-900, .text-neutral-800, .text-neutral-700 {
+    color: hsl(0 0% 96%) !important;
+  }
+  .text-slate-600, .text-slate-500,
+  .text-gray-600, .text-gray-500,
+  .text-zinc-600, .text-zinc-500,
+  .text-neutral-600, .text-neutral-500 {
+    color: hsl(215 20% 80%) !important;
+  }
+  .text-slate-400, .text-gray-400, .text-zinc-400, .text-neutral-400 {
+    color: hsl(215 18% 72%) !important;
+  }
+
+  /* Tinted info boxes: darken light pastel backgrounds and brighten their text. */
+  .bg-blue-50   { background-color: hsl(210 70% 12%) !important; }
+  .bg-amber-50  { background-color: hsl(38 60% 12%) !important; }
+  .bg-green-50  { background-color: hsl(142 45% 12%) !important; }
+  .bg-red-50    { background-color: hsl(0 55% 14%) !important; }
+  .bg-rose-50   { background-color: hsl(350 55% 14%) !important; }
+  .bg-purple-50 { background-color: hsl(265 45% 14%) !important; }
+  .bg-pink-50   { background-color: hsl(325 50% 14%) !important; }
+  .bg-yellow-50 { background-color: hsl(48 60% 12%) !important; }
+  .bg-indigo-50 { background-color: hsl(230 55% 14%) !important; }
+  .bg-orange-50 { background-color: hsl(25 65% 13%) !important; }
+  .bg-teal-50   { background-color: hsl(180 50% 12%) !important; }
+  .bg-cyan-50   { background-color: hsl(190 55% 12%) !important; }
+  .bg-emerald-50{ background-color: hsl(155 50% 12%) !important; }
+
+  .text-blue-900,   .text-blue-800,   .text-blue-700   { color: hsl(210 95% 84%) !important; }
+  .text-amber-900,  .text-amber-800,  .text-amber-700  { color: hsl(38 95% 78%) !important; }
+  .text-green-900,  .text-green-800,  .text-green-700  { color: hsl(142 70% 78%) !important; }
+  .text-red-900,    .text-red-800,    .text-red-700    { color: hsl(0 90% 82%) !important; }
+  .text-rose-900,   .text-rose-800,   .text-rose-700   { color: hsl(350 90% 84%) !important; }
+  .text-purple-900, .text-purple-800, .text-purple-700 { color: hsl(265 85% 84%) !important; }
+  .text-pink-900,   .text-pink-800,   .text-pink-700   { color: hsl(325 85% 84%) !important; }
+  .text-yellow-900, .text-yellow-800, .text-yellow-700 { color: hsl(48 95% 78%) !important; }
+  .text-indigo-900, .text-indigo-800, .text-indigo-700 { color: hsl(230 90% 84%) !important; }
+  .text-orange-900, .text-orange-800, .text-orange-700 { color: hsl(25 95% 78%) !important; }
+  .text-teal-900,   .text-teal-800,   .text-teal-700   { color: hsl(180 75% 78%) !important; }
+  .text-cyan-900,   .text-cyan-800,   .text-cyan-700   { color: hsl(190 85% 80%) !important; }
+  .text-emerald-900,.text-emerald-800,.text-emerald-700{ color: hsl(155 75% 78%) !important; }
+
+  /* Improve body text legibility globally */
+  body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 }
 
 @layer utilities {
