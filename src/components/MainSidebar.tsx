@@ -128,11 +128,12 @@ export const MainSidebar = ({
                               <SidebarMenuSubButton
                                 onClick={() => onCategorySelect(cat.key)}
                                 isActive={isActive}
-                                className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                                size="md"
+                                className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-semibold gap-2.5 h-9 text-[14px]"
                               >
-                                <CatIcon className="h-3.5 w-3.5 shrink-0" />
-                                <span className="flex-1 text-left">{isMl ? cat.label.ml : cat.label.en}</span>
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sidebar-accent/60 text-sidebar-foreground/70 tabular-nums">
+                                <CatIcon className="h-4 w-4 shrink-0" />
+                                <span className="flex-1 text-left truncate">{isMl ? cat.label.ml : cat.label.en}</span>
+                                <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sidebar-accent text-sidebar-accent-foreground tabular-nums shrink-0">
                                   {cat.count}
                                 </span>
                               </SidebarMenuSubButton>
