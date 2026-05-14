@@ -97,10 +97,10 @@ export const MainSidebar = ({
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-2 py-1.5">
-          <Brain className="h-5 w-5 text-primary shrink-0" />
+        <div className="flex items-center gap-2.5 px-2 py-2.5">
+          <Brain className="h-6 w-6 text-primary shrink-0" />
           {!collapsed && (
-            <span className="text-sm font-semibold text-sidebar-foreground truncate">
+            <span className="text-base font-bold text-sidebar-foreground truncate tracking-tight">
               {isMl ? 'കോഗ്നിറ്റോ' : 'Cognito'}
             </span>
           )}
