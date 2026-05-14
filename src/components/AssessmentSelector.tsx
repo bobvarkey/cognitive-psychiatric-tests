@@ -569,7 +569,7 @@ export const AssessmentSelector = () => {
   } catch { /* ignore */ }
 
   return (
-    <SidebarProvider>
+    <SidebarProvider style={{ ['--sidebar-width' as any]: '17rem' }}>
       <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary">
         <LanguageToggle />
         <MainSidebar
