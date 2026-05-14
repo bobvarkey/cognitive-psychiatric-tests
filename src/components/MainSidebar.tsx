@@ -70,24 +70,25 @@ export const MainSidebar = ({
         onClick={() => onSectionChange(key)}
         isActive={isActive}
         tooltip={isMl ? def.ml : def.en}
-        className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-medium relative"
+        size="lg"
+        className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-semibold relative gap-3 text-[15px] py-2.5"
       >
-        <Icon className="h-4 w-4 shrink-0" />
+        <Icon className="h-5 w-5 shrink-0" />
         {!collapsed && (
           <>
-            <span className="flex-1 text-left">{isMl ? def.ml : def.en}</span>
+            <span className="flex-1 text-left leading-tight truncate">{isMl ? def.ml : def.en}</span>
             {badge !== undefined && badge !== 0 && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sidebar-accent/60 text-sidebar-foreground/70 tabular-nums">
+              <span className="ml-auto mr-3 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-primary/20 text-primary tabular-nums">
                 {badge}
               </span>
             )}
+            {pulse && (
+              <span
+                aria-hidden
+                className="h-2 w-2 rounded-full bg-primary animate-pulse ring-2 ring-sidebar-background shrink-0"
+              />
+            )}
           </>
-        )}
-        {pulse && (
-          <span
-            aria-hidden
-            className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary animate-pulse ring-2 ring-background"
-          />
         )}
       </SidebarMenuButton>
     );
