@@ -14,6 +14,7 @@ import { AdhdAssessment } from '@/components/AdhdAssessment';
 import { TuliaAssessment } from '@/components/TuliaAssessment';
 import { MsiBpdAssessment } from '@/components/MsiBpdAssessment';
 import { HamdAssessment } from '@/components/HamdAssessment';
+import { HamaAssessment } from '@/components/HamaAssessment';
 import { DelusionsAssessment } from '@/components/DelusionsAssessment';
 import { FabAssessment } from '@/components/FabAssessment';
 import { DpdrAssessment } from '@/components/DpdrAssessment';
@@ -99,7 +100,7 @@ import categoryPsychosisImg from '@/assets/category-psychosis.jpg';
 
 type AssessmentKey =
   | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
-  | 'hamd' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
+  | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
   | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
   | 'bprs' | 'sapsSans' | 'crdpss' | 'sops' | 'psyrats' | 'vagus'
@@ -115,7 +116,7 @@ type AssessmentKey =
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
   'miniace', 'mse', 'adhd', 'daphne', 'fab', 'tulia', 'cognitiveSyndromes',
-  'callosal', 'hare', 'dpdr', 'hamd', 'mmpi', 'bprs', 'crdpss', 'dementia',
+  'callosal', 'hare', 'dpdr', 'hamd', 'hama', 'mmpi', 'bprs', 'crdpss', 'dementia',
   'catatonia', 'hunter', 'consciousness', 'mds-updrs', 'eprs', 'aims',
   'asrs6', 'asrs18', 'vanderbilt', 'adhdScreener', 'substance', 'sops',
   'psyrats', 'vagus', 'sapsSans', 'panss', 'ipde', 'ybocs', 'moca',
@@ -147,6 +148,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'callosal', name: 'CDS', subtitle: 'Callosal Disconnection', icon: Brain, gradient: 'from-indigo-500 to-purple-600', category: ['cognitive'], description: 'CDS — Callosal Disconnection Syndrome ("split-brain") bedside tests: left-hand tactile anomia, agraphia, apraxia, alien-hand sign and left-visual-field anomia.' },
   { key: 'tulia', name: 'TULIA', subtitle: 'Apraxia Screen', icon: Hand, gradient: 'from-teal-500 to-cyan-600', category: ['cognitive'], description: 'TULIA — Test of Upper Limb Apraxia; 48-item gesture battery covering meaningless, intransitive and transitive movements.' },
   { key: 'hamd', name: 'HAM-D', subtitle: 'Depression Scale', icon: Frown, gradient: 'from-blue-500 to-indigo-600', category: ['mood'], description: 'HAM-D — Hamilton Depression Rating Scale; clinician-rated severity of depressive symptoms.' },
+  { key: 'hama', name: 'HAM-A', subtitle: 'Anxiety Scale', icon: Activity, gradient: 'from-amber-500 to-orange-600', category: ['mood'], description: 'HAM-A — Hamilton Anxiety Rating Scale; 14-item clinician-rated severity of anxiety (psychic and somatic).' },
   { key: 'pss', name: 'PSS-10', subtitle: 'Perceived Stress', icon: Gauge, gradient: 'from-emerald-500 to-teal-600', category: ['mood'], description: 'PSS-10 — Perceived Stress Scale; 10 items measuring how unpredictable and overloaded life feels.' },
   { key: 'pcl5', name: 'PC-PTSD-5', subtitle: 'PTSD Screen', icon: Shield, gradient: 'from-red-500 to-rose-600', category: ['mood'], description: 'PC-PTSD-5 — Primary Care PTSD Screen for DSM-5; 5-item trauma screen.' },
   { key: 'dpdr', name: 'DPDR Scales', subtitle: 'DPDR · CDS · DES-II · DSS', icon: Eye, gradient: 'from-cyan-500 to-blue-600', category: ['mood'], description: 'Depersonalisation, derealisation and dissociation scales: brief DPDR screen, Cambridge Depersonalisation Scale (CDS-29), Dissociative Experiences Scale (DES-II), and Dissociative Symptoms Scale (DSS, past-week brief). Choose by clinical question.' },
@@ -443,7 +445,7 @@ export const AssessmentSelector = () => {
     }
 
     const withOnBack: Record<string, boolean> = {
-      adhd: true, msibpd: true, hamd: true, pss: true,
+      adhd: true, msibpd: true, hamd: true, hama: true, pss: true,
       dementia: true, catatonia: true, stressScreening: true,
       fallRisk: true, miniace: true, nms: true, mmpi: true, adam: true,
       hunter: true, smarts: true, adverseEffects: true, cognitiveSyndromes: true,
@@ -472,6 +474,7 @@ export const AssessmentSelector = () => {
         adhd: AdhdAssessment,
         msibpd: MsiBpdAssessment,
         hamd: HamdAssessment,
+        hama: HamaAssessment,
         pss: PssAssessment,
         dementia: DementiaAssessment,
         catatonia: CatatoniaAssessment,

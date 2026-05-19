@@ -45,6 +45,11 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Hamilton M. A rating scale for depression. J Neurol Neurosurg Psychiatry. 1960;23(1):56–62.',
     url: 'https://doi.org/10.1136/jnnp.23.1.56',
   },
+  hama: {
+    citation:
+      'Hamilton M. The assessment of anxiety states by rating. Br J Med Psychol. 1959;32(1):50–55.',
+    url: 'https://doi.org/10.1111/j.2044-8341.1959.tb00467.x',
+  },
   pss: {
     citation:
       'Cohen S, Kamarck T, Mermelstein R. A global measure of perceived stress. J Health Soc Behav. 1983;24(4):385–396.',
