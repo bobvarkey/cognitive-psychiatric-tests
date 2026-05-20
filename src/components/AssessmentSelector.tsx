@@ -264,6 +264,7 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
   substance: { en: 'Substance abuse', ml: 'ലഹരി ഉപയോഗം', icon: FlaskConical },
   sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
+  fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമയാൾജിയ', icon: Activity },
 };
 
 const categoryImages: Partial<Record<Category, string>> = {
