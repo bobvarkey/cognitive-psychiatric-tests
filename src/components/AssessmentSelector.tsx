@@ -124,7 +124,7 @@ const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
   'twstrs', 'epworth', 'ilae-seizure-classification', 'engel', 'sudep-7'
 ];
 
-type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'adverse' | 'movement' | 'epilepsy' | 'substance' | 'sleep' | 'psychosis';
+type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'adverse' | 'movement' | 'epilepsy' | 'substance' | 'sleep' | 'psychosis' | 'fibromyalgia';
 
 interface AssessmentInfo {
   key: AssessmentKey;
