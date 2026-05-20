@@ -15,6 +15,7 @@ import { TuliaAssessment } from '@/components/TuliaAssessment';
 import { MsiBpdAssessment } from '@/components/MsiBpdAssessment';
 import { HamdAssessment } from '@/components/HamdAssessment';
 import { HamaAssessment } from '@/components/HamaAssessment';
+import { FibromyalgiaAssessment } from '@/components/FibromyalgiaAssessment';
 import { DelusionsAssessment } from '@/components/DelusionsAssessment';
 import { FabAssessment } from '@/components/FabAssessment';
 import { DpdrAssessment } from '@/components/DpdrAssessment';
@@ -111,7 +112,7 @@ type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit';
+  | 'audit' | 'fibromyalgia';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -191,6 +192,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'audit', name: 'AUDIT', subtitle: 'Alcohol Use Disorders', icon: FlaskConical, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'AUDIT — Alcohol Use Disorders Identification Test (WHO); 10-item screen for hazardous drinking, harmful use, and alcohol dependence. Score 0-40 with zone-based intervention guidance.' },
   { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
   { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['movement'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
+  { key: 'fibromyalgia', name: 'Fibromyalgia', subtitle: 'ACR 2010 (WPI + SSS)', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['adverse'], description: 'ACR 2010 preliminary diagnostic criteria for fibromyalgia. Widespread Pain Index (WPI, 0–19) plus Symptom Severity Scale (SSS, 0–12) covering fatigue, waking unrefreshed, cognitive symptoms, and somatic symptom burden.' },
 
   // ─── Movement Disorders ───
   { key: 'mds-updrs', name: 'MDS-UPDRS', subtitle: 'Parkinson\'s Assessment', icon: Activity, gradient: 'from-blue-500 to-cyan-600', category: ['movement'], description: 'MDS-UPDRS — Gold-standard comprehensive assessment for motor and non-motor symptoms in Parkinson\'s disease. 27 items across three parts.' },
@@ -464,6 +466,7 @@ export const AssessmentSelector = () => {
       'sudep-7': true, 'sudep-safety': true,
       isi: true, berlin: true, psqi: true, fosq: true, irls: true, 'asrs-sleep': true, cataplexy: true, sdq: true,
       audit: true,
+      fibromyalgia: true,
     };
 
     if (withOnBack[selectedAssessment]) {
@@ -527,6 +530,7 @@ export const AssessmentSelector = () => {
         cataplexy: CataplexyAssessment,
         sdq: SdqAssessment,
         audit: AuditAssessment,
+        fibromyalgia: FibromyalgiaAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;
