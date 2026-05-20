@@ -466,6 +466,7 @@ export const AssessmentSelector = () => {
       'sudep-7': true, 'sudep-safety': true,
       isi: true, berlin: true, psqi: true, fosq: true, irls: true, 'asrs-sleep': true, cataplexy: true, sdq: true,
       audit: true,
+      fibromyalgia: true,
     };
 
     if (withOnBack[selectedAssessment]) {
