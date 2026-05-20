@@ -15,6 +15,7 @@ import { TuliaAssessment } from '@/components/TuliaAssessment';
 import { MsiBpdAssessment } from '@/components/MsiBpdAssessment';
 import { HamdAssessment } from '@/components/HamdAssessment';
 import { HamaAssessment } from '@/components/HamaAssessment';
+import { FibromyalgiaAssessment } from '@/components/FibromyalgiaAssessment';
 import { DelusionsAssessment } from '@/components/DelusionsAssessment';
 import { FabAssessment } from '@/components/FabAssessment';
 import { DpdrAssessment } from '@/components/DpdrAssessment';
