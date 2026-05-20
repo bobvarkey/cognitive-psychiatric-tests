@@ -124,7 +124,7 @@ const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
   'twstrs', 'epworth', 'ilae-seizure-classification', 'engel', 'sudep-7'
 ];
 
-type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'adverse' | 'movement' | 'epilepsy' | 'substance' | 'sleep' | 'psychosis';
+type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'adverse' | 'movement' | 'epilepsy' | 'substance' | 'sleep' | 'psychosis' | 'fibromyalgia';
 
 interface AssessmentInfo {
   key: AssessmentKey;
@@ -192,7 +192,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'audit', name: 'AUDIT', subtitle: 'Alcohol Use Disorders', icon: FlaskConical, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'AUDIT — Alcohol Use Disorders Identification Test (WHO); 10-item screen for hazardous drinking, harmful use, and alcohol dependence. Score 0-40 with zone-based intervention guidance.' },
   { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
   { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['movement'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
-  { key: 'fibromyalgia', name: 'Fibromyalgia', subtitle: 'ACR 2010 (WPI + SSS)', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['adverse'], description: 'ACR 2010 preliminary diagnostic criteria for fibromyalgia. Widespread Pain Index (WPI, 0–19) plus Symptom Severity Scale (SSS, 0–12) covering fatigue, waking unrefreshed, cognitive symptoms, and somatic symptom burden.' },
+  { key: 'fibromyalgia', name: 'Fibromyalgia', subtitle: 'ACR 2010 (WPI + SSS)', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['fibromyalgia'], description: 'ACR 2010 preliminary diagnostic criteria for fibromyalgia. Widespread Pain Index (WPI, 0–19) plus Symptom Severity Scale (SSS, 0–12) covering fatigue, waking unrefreshed, cognitive symptoms, and somatic symptom burden.' },
 
   // ─── Movement Disorders ───
   { key: 'mds-updrs', name: 'MDS-UPDRS', subtitle: 'Parkinson\'s Assessment', icon: Activity, gradient: 'from-blue-500 to-cyan-600', category: ['movement'], description: 'MDS-UPDRS — Gold-standard comprehensive assessment for motor and non-motor symptoms in Parkinson\'s disease. 27 items across three parts.' },
@@ -264,6 +264,7 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
   substance: { en: 'Substance abuse', ml: 'ലഹരി ഉപയോഗം', icon: FlaskConical },
   sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
+  fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമയാൾജിയ', icon: Activity },
 };
 
 const categoryImages: Partial<Record<Category, string>> = {
@@ -278,7 +279,7 @@ const categoryImages: Partial<Record<Category, string>> = {
   psychosis: categoryPsychosisImg,
 };
 
-const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis'];
+const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis', 'fibromyalgia'];
 
 const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
   cognitive: 'from-sky-400/10 to-indigo-400/5',
@@ -290,6 +291,7 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
   substance: 'from-amber-300/10 to-orange-300/5',
   sleep: 'from-indigo-300/10 to-blue-300/5',
   psychosis: 'from-amber-300/10 to-fuchsia-300/5',
+  fibromyalgia: 'from-rose-300/10 to-pink-300/5',
 };
 
 export const AssessmentSelector = () => {
