@@ -530,6 +530,7 @@ export const AssessmentSelector = () => {
         cataplexy: CataplexyAssessment,
         sdq: SdqAssessment,
         audit: AuditAssessment,
+        fibromyalgia: FibromyalgiaAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;
