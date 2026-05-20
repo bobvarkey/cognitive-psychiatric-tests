@@ -50,6 +50,11 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Hamilton M. The assessment of anxiety states by rating. Br J Med Psychol. 1959;32(1):50–55.',
     url: 'https://doi.org/10.1111/j.2044-8341.1959.tb00467.x',
   },
+  fibromyalgia: {
+    citation:
+      'Wolfe F, Clauw DJ, Fitzcharles M-A, et al. The American College of Rheumatology preliminary diagnostic criteria for fibromyalgia and measurement of symptom severity. Arthritis Care Res. 2010;62(5):600–610.',
+    url: 'https://doi.org/10.1002/acr.20140',
+  },
   pss: {
     citation:
       'Cohen S, Kamarck T, Mermelstein R. A global measure of perceived stress. J Health Soc Behav. 1983;24(4):385–396.',
