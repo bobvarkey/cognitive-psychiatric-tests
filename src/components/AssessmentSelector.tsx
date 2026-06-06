@@ -833,7 +833,7 @@ export const AssessmentSelector = () => {
                               filteredAssessments.length,
                             )}
                           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                            {filteredAssessments.map((a, idx) => renderTile(a, idx, !isProSubscriber && PRO_ONLY_ASSESSMENTS.includes(a.key)))}
+                            {filteredAssessments.map((a, idx) => renderTile(a, idx, false))}
                           </div>
                         </>
                       );
