@@ -738,15 +738,7 @@ export const AssessmentSelector = () => {
                                   : 'bg-card border-border hover:shadow-lg hover:border-primary/30'
                               }`}
                             >
-                              {/* Lock overlay for pro tiles */}
-                              {locked && (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl backdrop-blur-[1px] z-10">
-                                  <div className="flex flex-col items-center gap-1">
-                                    <Lock className="w-5 h-5 text-fuchsia-400 drop-shadow-[0_0_6px_rgba(255,0,255,0.7)]" />
-                                    <span className="text-[9px] font-bold text-fuchsia-300 uppercase tracking-wide">Pro</span>
-                                  </div>
-                                </div>
-                              )}
+                              {/* Pro lock overlay removed — all assessments unlocked */}
 
                               <div className={`absolute inset-0 bg-gradient-to-br ${a.gradient} opacity-0 group-hover:opacity-[0.06] transition-opacity`} aria-hidden />
                               <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${color.bg} flex items-center justify-center mb-2.5 border group-hover:scale-110 transition-all ${color.glow}`} style={{ borderColor: color.icon, ...customGlowStyle.style }}>
