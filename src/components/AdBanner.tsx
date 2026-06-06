@@ -7,7 +7,9 @@ export const AdBanner = () => {
   const { features, setShowPaywall } = useSubscription();
   const [isDismissed, setIsDismissed] = useState(false);
 
-  // Don't show ads for premium users or if dismissed
+  // All plans (including Pro) are unlocked — never show the upgrade ad.
+  return null;
+  // eslint-disable-next-line no-unreachable
   if (features.bannerAdsDisabled || isDismissed) return null;
 
   return (
