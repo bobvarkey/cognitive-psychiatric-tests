@@ -45,6 +45,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [features, setFeatures] = useState<PremiumFeatures>(FULL_PREMIUM_FEATURES);
   const [showPaywall, setShowPaywall] = useState(false);
   const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(true);
+  // Force-unlock: ensure Pro and all plans are always available.
 
   const refreshSubscription = () => {
     setIsPremium(true);
