@@ -849,7 +849,7 @@ export const AssessmentSelector = () => {
                             <section key={cat} aria-labelledby={`cat-${cat}`}>
                               {renderCategoryBanner(cat, items.length)}
                               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                                {items.map((a, idx) => renderTile(a, idx, !isProSubscriber && PRO_ONLY_ASSESSMENTS.includes(a.key)))}
+                                {items.map((a, idx) => renderTile(a, idx, false))}
                               </div>
                             </section>
                           );
