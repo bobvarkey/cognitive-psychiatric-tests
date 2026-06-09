@@ -199,8 +199,11 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
             </Button>
 
             <div className="border-t border-slate-200 pt-4 space-y-2">
+              <div className="text-sm text-slate-700">
+                Per occasion: <span className="font-semibold text-slate-900">{perOccasionTotal.toFixed(2)}</span> units
+              </div>
               <div className="text-lg font-bold text-slate-900">
-                Total units: {totalUnits.toFixed(2)}
+                Weekly total: {weeklyTotal.toFixed(2)} units
               </div>
               <Badge className={cn('text-sm border', category.className)}>{category.label}</Badge>
               <p className="text-xs text-slate-600">
