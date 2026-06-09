@@ -70,6 +70,7 @@ import { AsrsAssessment } from '@/components/AsrsAssessment';
 import { CataplexyAssessment } from '@/components/CataplexyAssessment';
 import { SdqAssessment } from '@/components/SdqAssessment';
 import { AuditAssessment } from '@/components/AuditAssessment';
+import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
@@ -112,7 +113,7 @@ type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit' | 'fibromyalgia';
+  | 'audit' | 'fibromyalgia' | 'alcohol-units';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -190,6 +191,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'cage', name: 'CAGE', subtitle: 'Alcohol Screen', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'CAGE — 4-item alcohol use screen (Cut-down, Annoyed, Guilty, Eye-opener). Score ≥ 2 = clinically significant.' },
   { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['substance'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
   { key: 'audit', name: 'AUDIT', subtitle: 'Alcohol Use Disorders', icon: FlaskConical, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'AUDIT — Alcohol Use Disorders Identification Test (WHO); 10-item screen for hazardous drinking, harmful use, and alcohol dependence. Score 0-40 with zone-based intervention guidance.' },
+  { key: 'alcohol-units', name: 'Alcohol Units Calculator', subtitle: 'UK Units & Weekly Risk', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'Calculate UK alcohol units from drink volume and ABV. Estimates weekly intake against the 14-unit low-risk guideline with quick presets for common drinks.' },
   { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
   { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['movement'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
   { key: 'fibromyalgia', name: 'Fibromyalgia', subtitle: 'ACR 2010 (WPI + SSS)', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['fibromyalgia'], description: 'ACR 2010 preliminary diagnostic criteria for fibromyalgia. Widespread Pain Index (WPI, 0–19) plus Symptom Severity Scale (SSS, 0–12) covering fatigue, waking unrefreshed, cognitive symptoms, and somatic symptom burden.' },
@@ -468,6 +470,7 @@ export const AssessmentSelector = () => {
       'sudep-7': true, 'sudep-safety': true,
       isi: true, berlin: true, psqi: true, fosq: true, irls: true, 'asrs-sleep': true, cataplexy: true, sdq: true,
       audit: true,
+      'alcohol-units': true,
       fibromyalgia: true,
     };
 
@@ -532,6 +535,7 @@ export const AssessmentSelector = () => {
         cataplexy: CataplexyAssessment,
         sdq: SdqAssessment,
         audit: AuditAssessment,
+        'alcohol-units': AlcoholUnitsCalculator,
         fibromyalgia: FibromyalgiaAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
