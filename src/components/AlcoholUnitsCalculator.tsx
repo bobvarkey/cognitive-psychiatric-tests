@@ -18,7 +18,7 @@ type Drink = {
   daysPerWeek: number;
 };
 
-const PRESET_DRINKS: Omit<Drink, 'id'>[] = [
+const PRESET_DRINKS: Omit<Drink, 'id' | 'daysPerWeek'>[] = [
   { name: 'Pint beer/lager (4%)', volumeMl: 568, abv: 4 },
   { name: '330 ml beer (5%)', volumeMl: 330, abv: 5 },
   { name: 'Wine 175 ml (13%)', volumeMl: 175, abv: 13 },
@@ -44,7 +44,7 @@ const riskCategory = (totalUnits: number) => {
 export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
   const { t } = useLanguage();
   const [drinks, setDrinks] = useState<Drink[]>([
-    { id: 1, name: 'Custom drink', volumeMl: 500, abv: 5 },
+    { id: 1, name: 'Custom drink', volumeMl: 500, abv: 5, daysPerWeek: 1 },
   ]);
   const [nextId, setNextId] = useState(2);
 
@@ -65,17 +65,21 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
   };
 
   const addDrink = () => {
-    setDrinks((prev) => [...prev, { id: nextId, name: 'Custom drink', volumeMl: 500, abv: 5 }]);
+    setDrinks((prev) => [...prev, { id: nextId, name: 'Custom drink', volumeMl: 500, abv: 5, daysPerWeek: 1 }]);
     setNextId((i) => i + 1);
   };
 
   const removeDrink = (id: number) => setDrinks((prev) => prev.filter((d) => d.id !== id));
 
-  const applyPreset = (id: number, preset: Omit<Drink, 'id'>) =>
+  const applyPreset = (id: number, preset: Omit<Drink, 'id' | 'daysPerWeek'>) =>
     setDrinks((prev) => prev.map((d) => (d.id === id ? { ...d, ...preset } : d)));
 
-  const totalUnits = drinks.reduce((sum, d) => sum + calcUnits(d.volumeMl, d.abv), 0);
-  const category = riskCategory(totalUnits);
+  const perOccasionTotal = drinks.reduce((sum, d) => sum + calcUnits(d.volumeMl, d.abv), 0);
+  const weeklyTotal = drinks.reduce(
+    (sum, d) => sum + calcUnits(d.volumeMl, d.abv) * (d.daysPerWeek || 0),
+    0,
+  );
+  const category = riskCategory(weeklyTotal);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4 md:p-8">
