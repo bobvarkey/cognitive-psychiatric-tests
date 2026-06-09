@@ -43,8 +43,10 @@ export const CageAssessment = ({ onBack }: Props) => {
                 {positive ? 'Positive screen' : 'Negative screen'}
               </Badge>
             </div>
-            <div className="text-sm text-slate-700 bg-amber-50 p-4 rounded-lg border border-amber-200">
-              <strong>Interpretation:</strong> A score of <strong>≥ 2</strong> is clinically significant and warrants further evaluation for an alcohol use disorder. Even one positive answer should prompt discussion.
+            <div className="text-sm text-slate-700 bg-amber-50 p-4 rounded-lg border border-amber-200 space-y-2">
+              <p><strong>Interpretation:</strong> A score of <strong>≥ 2</strong> is clinically significant and warrants further evaluation for an alcohol use disorder. Even one positive answer should prompt discussion.</p>
+              <p><strong>Psychometric note:</strong> Scores of 2 or higher had a 93% sensitivity / 76% specificity for the identification of "excessive drinking" and a 91% sensitivity / 77% specificity for the identification of alcoholism.</p>
+              <p><strong>Clinical action:</strong> If positive, take a detailed drinking history (quantity, frequency, last drink), screen for withdrawal risk (CIWA-Ar), assess for comorbid mood/anxiety disorders, and consider AUDIT for severity grading. Offer brief intervention, pharmacotherapy (naltrexone, acamprosate, disulfiram) where appropriate, and referral to addiction services.</p>
             </div>
             <div className="flex justify-center gap-3 print:hidden">
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
