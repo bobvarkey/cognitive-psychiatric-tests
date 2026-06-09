@@ -70,6 +70,7 @@ import { AsrsAssessment } from '@/components/AsrsAssessment';
 import { CataplexyAssessment } from '@/components/CataplexyAssessment';
 import { SdqAssessment } from '@/components/SdqAssessment';
 import { AuditAssessment } from '@/components/AuditAssessment';
+import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
