@@ -341,3 +341,17 @@ All colors MUST be HSL.
     text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
   }
 }
+
+/* Force assessment question text to dark black for readability */
+.text-slate-700,
+.text-slate-600,
+.text-slate-500,
+.text-muted-foreground {
+  color: #000 !important;
+}
+
+/* Card titles (questions) always dark black */
+h3.tracking-tight,
+[class*="CardTitle"] {
+  color: #000 !important;
+}
