@@ -15,6 +15,7 @@ type Drink = {
   name: string;
   volumeMl: number;
   abv: number;
+  daysPerWeek: number;
 };
 
 const PRESET_DRINKS: Omit<Drink, 'id'>[] = [
