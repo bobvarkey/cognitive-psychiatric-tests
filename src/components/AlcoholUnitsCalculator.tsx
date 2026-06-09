@@ -27,6 +27,15 @@ const PRESET_DRINKS: Omit<Drink, 'id' | 'daysPerWeek'>[] = [
   { name: 'Spirit 35 ml (40%)', volumeMl: 35, abv: 40 },
 ];
 
+const FREQUENCY_PRESETS: { label: string; days: number }[] = [
+  { label: 'Rarely (<1/week)', days: 0.5 },
+  { label: 'Once a week', days: 1 },
+  { label: '2–3 times/week', days: 2.5 },
+  { label: '4–5 times/week', days: 4.5 },
+  { label: 'Almost daily (6/week)', days: 6 },
+  { label: 'Daily', days: 7 },
+];
+
 const WEEKLY_LOW_RISK_LIMIT = 14;
 
 const calcUnits = (volumeMl: number, abv: number) => (abv * volumeMl) / 1000;
@@ -159,7 +168,7 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
                         type="number"
                         min={0}
                         max={7}
-                        step={1}
+                        step={0.5}
                         value={drink.daysPerWeek}
                         onChange={(e) => handleChange(drink.id, 'daysPerWeek', e.target.value)}
                         className="text-slate-900"
@@ -172,6 +181,30 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
                       <div className="text-xs text-slate-700">
                         {(units * (drink.daysPerWeek || 0)).toFixed(2)} u / week
                       </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs text-slate-600">Frequency</Label>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {FREQUENCY_PRESETS.map((f) => {
+                        const active = Math.abs((drink.daysPerWeek || 0) - f.days) < 0.01;
+                        return (
+                          <button
+                            key={f.label}
+                            type="button"
+                            onClick={() => handleChange(drink.id, 'daysPerWeek', String(f.days))}
+                            className={cn(
+                              'rounded-full border px-3 py-1 text-xs',
+                              active
+                                ? 'border-amber-500 bg-amber-100 text-amber-900'
+                                : 'border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-800',
+                            )}
+                          >
+                            {f.label}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
