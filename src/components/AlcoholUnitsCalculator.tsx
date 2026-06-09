@@ -15,9 +15,10 @@ type Drink = {
   name: string;
   volumeMl: number;
   abv: number;
+  daysPerWeek: number;
 };
 
-const PRESET_DRINKS: Omit<Drink, 'id'>[] = [
+const PRESET_DRINKS: Omit<Drink, 'id' | 'daysPerWeek'>[] = [
   { name: 'Pint beer/lager (4%)', volumeMl: 568, abv: 4 },
   { name: '330 ml beer (5%)', volumeMl: 330, abv: 5 },
   { name: 'Wine 175 ml (13%)', volumeMl: 175, abv: 13 },
@@ -43,7 +44,7 @@ const riskCategory = (totalUnits: number) => {
 export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
   const { t } = useLanguage();
   const [drinks, setDrinks] = useState<Drink[]>([
-    { id: 1, name: 'Custom drink', volumeMl: 500, abv: 5 },
+    { id: 1, name: 'Custom drink', volumeMl: 500, abv: 5, daysPerWeek: 1 },
   ]);
   const [nextId, setNextId] = useState(2);
 
@@ -64,17 +65,21 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
   };
 
   const addDrink = () => {
-    setDrinks((prev) => [...prev, { id: nextId, name: 'Custom drink', volumeMl: 500, abv: 5 }]);
+    setDrinks((prev) => [...prev, { id: nextId, name: 'Custom drink', volumeMl: 500, abv: 5, daysPerWeek: 1 }]);
     setNextId((i) => i + 1);
   };
 
   const removeDrink = (id: number) => setDrinks((prev) => prev.filter((d) => d.id !== id));
 
-  const applyPreset = (id: number, preset: Omit<Drink, 'id'>) =>
+  const applyPreset = (id: number, preset: Omit<Drink, 'id' | 'daysPerWeek'>) =>
     setDrinks((prev) => prev.map((d) => (d.id === id ? { ...d, ...preset } : d)));
 
-  const totalUnits = drinks.reduce((sum, d) => sum + calcUnits(d.volumeMl, d.abv), 0);
-  const category = riskCategory(totalUnits);
+  const perOccasionTotal = drinks.reduce((sum, d) => sum + calcUnits(d.volumeMl, d.abv), 0);
+  const weeklyTotal = drinks.reduce(
+    (sum, d) => sum + calcUnits(d.volumeMl, d.abv) * (d.daysPerWeek || 0),
+    0,
+  );
+  const category = riskCategory(weeklyTotal);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4 md:p-8">
@@ -125,7 +130,7 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div>
                       <Label className="text-xs text-slate-600">Volume (ml)</Label>
                       <Input
@@ -148,12 +153,24 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
                         className="text-slate-900"
                       />
                     </div>
+                    <div>
+                      <Label className="text-xs text-slate-600">Days / week</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        max={7}
+                        step={1}
+                        value={drink.daysPerWeek}
+                        onChange={(e) => handleChange(drink.id, 'daysPerWeek', e.target.value)}
+                        className="text-slate-900"
+                      />
+                    </div>
                     <div className="flex flex-col justify-end">
                       <div className="text-sm font-semibold text-slate-900">
-                        Units: {units.toFixed(2)}
+                        {units.toFixed(2)} u / occasion
                       </div>
-                      <div className="text-[11px] text-slate-500">
-                        (ABV × ml) / 1000
+                      <div className="text-xs text-slate-700">
+                        {(units * (drink.daysPerWeek || 0)).toFixed(2)} u / week
                       </div>
                     </div>
                   </div>
@@ -182,8 +199,11 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
             </Button>
 
             <div className="border-t border-slate-200 pt-4 space-y-2">
+              <div className="text-sm text-slate-700">
+                Per occasion: <span className="font-semibold text-slate-900">{perOccasionTotal.toFixed(2)}</span> units
+              </div>
               <div className="text-lg font-bold text-slate-900">
-                Total units: {totalUnits.toFixed(2)}
+                Weekly total: {weeklyTotal.toFixed(2)} units
               </div>
               <Badge className={cn('text-sm border', category.className)}>{category.label}</Badge>
               <p className="text-xs text-slate-600">
