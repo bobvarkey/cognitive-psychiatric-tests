@@ -130,7 +130,7 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div>
                       <Label className="text-xs text-slate-600">Volume (ml)</Label>
                       <Input
@@ -153,12 +153,24 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
                         className="text-slate-900"
                       />
                     </div>
+                    <div>
+                      <Label className="text-xs text-slate-600">Days / week</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        max={7}
+                        step={1}
+                        value={drink.daysPerWeek}
+                        onChange={(e) => handleChange(drink.id, 'daysPerWeek', e.target.value)}
+                        className="text-slate-900"
+                      />
+                    </div>
                     <div className="flex flex-col justify-end">
                       <div className="text-sm font-semibold text-slate-900">
-                        Units: {units.toFixed(2)}
+                        {units.toFixed(2)} u / occasion
                       </div>
-                      <div className="text-[11px] text-slate-500">
-                        (ABV × ml) / 1000
+                      <div className="text-xs text-slate-700">
+                        {(units * (drink.daysPerWeek || 0)).toFixed(2)} u / week
                       </div>
                     </div>
                   </div>
