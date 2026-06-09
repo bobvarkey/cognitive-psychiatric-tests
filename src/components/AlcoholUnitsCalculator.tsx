@@ -27,6 +27,15 @@ const PRESET_DRINKS: Omit<Drink, 'id' | 'daysPerWeek'>[] = [
   { name: 'Spirit 35 ml (40%)', volumeMl: 35, abv: 40 },
 ];
 
+const FREQUENCY_PRESETS: { label: string; days: number }[] = [
+  { label: 'Rarely (<1/week)', days: 0.5 },
+  { label: 'Once a week', days: 1 },
+  { label: '2–3 times/week', days: 2.5 },
+  { label: '4–5 times/week', days: 4.5 },
+  { label: 'Almost daily (6/week)', days: 6 },
+  { label: 'Daily', days: 7 },
+];
+
 const WEEKLY_LOW_RISK_LIMIT = 14;
 
 const calcUnits = (volumeMl: number, abv: number) => (abv * volumeMl) / 1000;
