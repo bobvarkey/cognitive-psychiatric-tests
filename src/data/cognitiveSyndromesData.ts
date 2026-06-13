@@ -96,6 +96,40 @@ export const cognitiveSyndromes: CognitiveSyndrome[] = [
     description: 'A vivid sensation of the presence of somebody either somewhere in the room or behind the patient. Also known as a minor hallucination.',
     descriptionMl: 'മുറിയിൽ എവിടെയോ അല്ലെങ്കിൽ രോഗിയുടെ പിന്നിൽ ആരോ ഉണ്ടെന്ന ഉജ്ജ്വലമായ അനുഭവം.',
   },
+  {
+    id: 'autoprosopometamorphopsia',
+    name: 'Autoprosopometamorphopsia',
+    nameMl: 'ഓട്ടോപ്രോസോപോമെറ്റാമോർഫോപ്സിയ',
+    category: 'Perceptual Disorders',
+    description: "Seeing one's own face distorted (e.g., in a mirror).",
+    descriptionMl: 'സ്വന്തം മുഖം വികൃതമായി കാണൽ (ഉദാ. കണ്ണാടിയിൽ).',
+  },
+  {
+    id: 'heteroprosopometamorphopsia',
+    name: 'Heteroprosopometamorphopsia',
+    nameMl: 'ഹെറ്ററോപ്രോസോപോമെറ്റാമോർഫോപ്സിയ',
+    category: 'Perceptual Disorders',
+    description: "Seeing other people's faces distorted.",
+    descriptionMl: 'മറ്റുള്ളവരുടെ മുഖങ്ങൾ വികൃതമായി കാണൽ.',
+  },
+  {
+    id: 'hemiprosopometamorphopsia',
+    name: 'Hemiprosopometamorphopsia',
+    nameMl: 'ഹെമിപ്രോസോപോമെറ്റാമോർഫോപ്സിയ',
+    category: 'Perceptual Disorders',
+    description: 'Seeing only the right or left half of faces distorted.',
+    descriptionMl: 'മുഖങ്ങളുടെ വലത് അല്ലെങ്കിൽ ഇടത് പകുതി മാത്രം വികൃതമായി കാണൽ.',
+  },
+  {
+    id: 'zoanthroprosopometamorphopsia',
+    name: 'Zoanthroprosopometamorphopsia',
+    nameMl: 'സോആന്ത്രോപ്രോസോപോമെറ്റാമോർഫോപ്സിയ',
+    category: 'Perceptual Disorders',
+    description: 'Seeing human faces morph into animal faces.',
+    descriptionMl: 'മനുഷ്യ മുഖങ്ങൾ മൃഗ മുഖങ്ങളായി രൂപാന്തരപ്പെടുന്നതായി കാണൽ.',
+  },
+
+
 
   // Body Schema & Awareness
   {
