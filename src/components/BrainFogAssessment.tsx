@@ -357,11 +357,18 @@ export const BrainFogAssessment = ({ onBack }: Props) => {
       {/* Step 4 hint */}
       <Card className="mb-4">
         <CardHeader><CardTitle className="text-lg">Step 4 — Physical & cognitive exam</CardTitle></CardHeader>
-        <CardContent>
+        <CardContent className="space-y-2">
           <p className="text-sm text-slate-800">
-            Perform general and neurological examination, mental status assessment, and a cognitive screen
-            (e.g. MoCA, MMSE, or Mini-Cog). Use the linked cognitive tools in the sidebar to document findings.
+            Perform general and neurological examination and mental status assessment. Use a targeted
+            cognitive battery to document findings:
           </p>
+          <ul className="text-sm text-slate-800 list-disc pl-5 space-y-1">
+            <li><strong>MoCA</strong> — primary screener (~10 min); most commonly used in long-COVID brain fog studies.</li>
+            <li><strong>Mental Clutter Scale</strong> — validated specifically for brain fog.</li>
+            <li><strong>Trail Making Test A & B</strong> — processing speed and executive function.</li>
+            <li><strong>Digit Span</strong> — working memory.</li>
+            <li><strong>Formal neuropsychological testing</strong> if screening is abnormal.</li>
+          </ul>
         </CardContent>
       </Card>
 
