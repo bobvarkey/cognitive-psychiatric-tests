@@ -64,6 +64,12 @@ const MEDS: string[] = [
 
 const CAUSE_CATEGORIES: { key: string; title: string; conditions: string[]; workup?: string[] }[] = [
   {
+    key: 'postviral',
+    title: 'Infectious / Post-viral',
+    conditions: ['Long COVID', 'Post-viral fatigue syndrome', 'ME/CFS (myalgic encephalomyelitis)', 'POTS / dysautonomia', 'Hepatitis C', 'Chronic Lyme / post-treatment Lyme'],
+    workup: ['Post-exertional malaise screen', 'Active stand / tilt test for POTS', 'Lyme serology', 'Hepatitis C serology'],
+  },
+  {
     key: 'sleep',
     title: 'Sleep disorders',
     conditions: ['Obstructive sleep apnea', 'Sleep deprivation', 'Circadian rhythm disorder', 'Narcolepsy', 'Restless legs syndrome'],
@@ -72,8 +78,8 @@ const CAUSE_CATEGORIES: { key: string; title: string; conditions: string[]; work
   {
     key: 'metabolic',
     title: 'Metabolic / Endocrine',
-    conditions: ['Hypothyroidism', 'Diabetes', 'Electrolyte imbalance', 'Vitamin B12 deficiency', 'Folate deficiency', 'Iron deficiency', 'Vitamin D deficiency', 'Hepatic disease', 'Renal disease'],
-    workup: ['CBC', 'CMP', 'HbA1c', 'TSH', 'Vitamin B12', 'Folate', 'Ferritin', 'Vitamin D'],
+    conditions: ['Hypothyroidism', 'Hypoparathyroidism', 'Diabetes', 'Menopausal hormonal shift', 'Low free testosterone', 'Electrolyte imbalance', 'Vitamin B12 deficiency', 'Folate deficiency', 'Iron deficiency', 'Vitamin D deficiency', 'Magnesium deficiency', 'Hyperhomocysteinemia', 'Hepatic disease', 'Renal disease'],
+    workup: ['CBC', 'CMP', 'HbA1c', 'TSH + Free T3/T4', 'Holotranscobalamin (or B12)', 'Folate', 'Ferritin', 'Vitamin D', 'RBC magnesium', 'Homocysteine', 'PTH + calcium', 'Free testosterone'],
   },
   {
     key: 'psych',
@@ -84,19 +90,19 @@ const CAUSE_CATEGORIES: { key: string; title: string; conditions: string[]; work
   {
     key: 'neuro',
     title: 'Neurological',
-    conditions: ['Mild cognitive impairment', 'Dementia', 'Multiple sclerosis', 'Parkinson disease', 'Epilepsy', 'Migraine', 'Long COVID', 'Autoimmune encephalitis', 'CNS vasculitis'],
-    workup: ['MRI brain', 'EEG', 'CSF studies', 'Neuropsychological testing'],
+    conditions: ['Mild cognitive impairment', 'Dementia', 'Multiple sclerosis (check McDonald criteria)', 'Parkinson disease', 'Epilepsy', 'Migraine', 'Autoimmune / NMDAR encephalitis', 'CNS vasculitis', 'Subclavian steal syndrome'],
+    workup: ['MRI brain (FLAIR/DWI)', 'EEG', 'CSF studies', 'Neuropsychological testing', 'Carotid / vertebral Doppler'],
   },
   {
     key: 'autoimmune',
-    title: 'Systemic / Autoimmune',
-    conditions: ['SLE', 'Sjögren syndrome', 'Sarcoidosis', 'Vasculitis', 'Celiac disease', 'Chronic infection'],
-    workup: ['ANA', 'ESR/CRP', 'Autoimmune panel'],
+    title: 'Systemic / Autoimmune / Inflammatory',
+    conditions: ['SLE', 'Sjögren syndrome', 'Sarcoidosis', 'Vasculitis', 'Celiac disease', 'Chronic infection', 'Chemotherapy-related ("chemo-brain")'],
+    workup: ['ANA', 'dsDNA', 'ANCA', 'Complement', 'ESR/CRP', 'hsCRP', 'GGT'],
   },
   {
     key: 'drug',
     title: 'Medication / Substance-related',
-    conditions: ['Benzodiazepines', 'Anticholinergics', 'Antiepileptics', 'Alcohol', 'Recreational drugs', 'Drug-induced'],
+    conditions: ['Benzodiazepines', 'Anticholinergics', 'Antihistamines', 'Antiepileptics', 'Opioids', 'Alcohol', 'Recreational drugs', 'Drug-induced'],
     workup: ['Review medications and substance exposure'],
   },
   {
@@ -107,8 +113,29 @@ const CAUSE_CATEGORIES: { key: string; title: string; conditions: string[]; work
   },
 ];
 
-const FIRST_LINE_LABS = ['CBC', 'ESR/CRP', 'Electrolytes', 'Liver function', 'Renal function', 'Calcium', 'Magnesium', 'HbA1c', 'TSH', 'Vitamin B12', 'Folate', 'Ferritin', 'Vitamin D'];
-const ADDITIONAL_LABS = ['HIV', 'Syphilis', 'ANA', 'Cortisol (selected cases)', 'Celiac serology'];
+const FIRST_LINE_LABS = ['CBC', 'ESR/CRP', 'Electrolytes', 'Liver function', 'Renal function', 'Calcium', 'PTH', 'Magnesium', 'HbA1c', 'Fasting glucose', 'TSH', 'Free T4', 'Vitamin B12', 'Folate', 'Ferritin', 'Vitamin D'];
+const ADDITIONAL_LABS = [
+  'Sleep study (polysomnography)',
+  'Homocysteine',
+  'Carotid / vertebral Doppler (steal phenomenon)',
+  'Free testosterone',
+  'Free T3',
+  'RBC magnesium',
+  'hsCRP',
+  'GGT',
+  'Holotranscobalamin (in place of B12)',
+  'Lyme serology',
+  'TSH (repeat / reflex)',
+  'Magnesium (serum)',
+  'HIV',
+  'Syphilis',
+  'ANA / dsDNA / ANCA / complement',
+  'Hepatitis serology',
+  'Cortisol (selected cases)',
+  'Celiac serology',
+  'Active stand / tilt test (POTS)',
+  'Post-exertional malaise screen (ME/CFS)',
+];
 
 const MANAGEMENT = [
   'Treat the underlying cause',
