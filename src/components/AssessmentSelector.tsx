@@ -539,6 +539,7 @@ export const AssessmentSelector = () => {
         sdq: SdqAssessment,
         audit: AuditAssessment,
         'alcohol-units': AlcoholUnitsCalculator,
+        'brain-fog': BrainFogAssessment,
         fibromyalgia: FibromyalgiaAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
