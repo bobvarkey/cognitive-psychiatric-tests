@@ -43,6 +43,10 @@ const RED_FLAGS: string[] = [
   'Fever or meningism',
   'Severe headache',
   'Rapid cognitive decline',
+  'Progressive course over weeks–months',
+  'Systemic features (fever, weight loss, rash)',
+  'Age >60 with new-onset cognitive decline',
+  'CSF or imaging abnormalities',
 ];
 
 const ONSET = ['Acute', 'Subacute', 'Chronic', 'Fluctuating'];
