@@ -356,6 +356,11 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Moro E, Allert N, Eleopra R, et al. A decision tool to support appropriate referral for deep brain stimulation in Parkinson\'s disease. J Neurol. 2009;256(1):83–88.',
     url: 'https://doi.org/10.1007/s00415-009-0068-1',
   },
+  brainFog: {
+    citation:
+      'Ross AJ, Medow MS, Rowe PC, Stewart JM. What is brain fog? An evaluation of the symptom in postural tachycardia syndrome. Clin Auton Res. 2013;23(6):305–311. See also: Theoharides TC, Stewart JM, Hatziagelaki E, Kolaitis G. Brain "fog," inflammation and obesity: key aspects of neuropsychiatric disorders improved by luteolin. Front Neurosci. 2015;9:225.',
+    url: 'https://doi.org/10.1007/s10286-013-0212-z',
+  },
 };
 
 export const getReference = (key: string): AssessmentReference | undefined =>

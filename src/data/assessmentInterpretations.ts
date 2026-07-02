@@ -204,4 +204,9 @@ export const ASSESSMENT_INTERPRETATIONS: Record<string, AssessmentInterpretation
     psychometrics: 'MDS-UPDRS Part III inter-rater ICC > 0.90; total score α > 0.79 (Goetz 2008).',
     clinicalAction: 'Use serial scores to titrate levodopa and adjuncts (MAO-B inhibitors, dopamine agonists, COMT inhibitors, amantadine). Refer for DBS or device-aided therapies when motor fluctuations are not controlled. Address non-motor symptoms (mood, sleep, autonomic).',
   },
+  brainFog: {
+    interpretation: 'Brain fog is a symptom, not a diagnosis. Confirm the phenotype (attention, memory, processing-speed and executive complaints), rule out red flags (delirium, focal deficit, seizure, rapid decline), then work through sleep, metabolic/endocrine, psychiatric, neurological, autoimmune, medication/substance, and lifestyle causes systematically.',
+    psychometrics: 'No single validated scale; use MoCA (≤ 25 abnormal), MMSE, or Mini-Cog for cognitive screening; PHQ-9 and GAD-7 for mood; Epworth/STOP-BANG for sleep contribution.',
+    clinicalAction: 'Treat the underlying cause. Optimise sleep, exercise, Mediterranean diet, correct B12/iron/vitamin D deficiencies, review sedating and anticholinergic medications, treat comorbid anxiety/depression, and refer for neuropsychology or specialist input if symptoms persist beyond 3 months or worsen.',
+  },
 };
