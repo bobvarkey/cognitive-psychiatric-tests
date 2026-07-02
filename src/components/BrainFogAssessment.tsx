@@ -292,6 +292,23 @@ export const BrainFogAssessment = ({ onBack }: Props) => {
         </p>
       </div>
 
+      {/* Definition & phenomenology */}
+      <Card className="mb-4 bg-slate-50">
+        <CardHeader><CardTitle className="text-lg">Definition & phenomenology</CardTitle></CardHeader>
+        <CardContent className="text-sm text-slate-800 space-y-2">
+          <p>
+            Brain fog is best characterised subjectively as <strong>difficulty focusing and concentrating</strong>.
+            Reversibility and non-neurodegenerative mechanisms are considered necessary criteria — otherwise
+            the definition expands indefinitely and clinical relevance is lost.
+          </p>
+          <p>
+            Core symptom clusters: <em>fatigue, memory difficulty, attention deficit, slowed thought,
+            word-finding difficulty, non-orthostatic dizziness, muscle pain</em>. Patients use "brain fog" for a
+            wide range of subjective phenomena — clarify what the patient means before proceeding.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Step 1 */}
       <Card className="mb-4">
         <CardHeader><CardTitle className="text-lg">Step 1 — Confirm the symptom</CardTitle></CardHeader>
