@@ -473,6 +473,7 @@ export const AssessmentSelector = () => {
       isi: true, berlin: true, psqi: true, fosq: true, irls: true, 'asrs-sleep': true, cataplexy: true, sdq: true,
       audit: true,
       'alcohol-units': true,
+      'brain-fog': true,
       fibromyalgia: true,
     };
 
