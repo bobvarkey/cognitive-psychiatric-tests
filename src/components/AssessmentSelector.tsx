@@ -285,7 +285,7 @@ const categoryImages: Partial<Record<Category, string>> = {
   psychosis: categoryPsychosisImg,
 };
 
-const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis', 'fibromyalgia'];
+const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis', 'fibromyalgia', 'brainfog'];
 
 const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
   cognitive: 'from-sky-400/10 to-indigo-400/5',
@@ -298,6 +298,7 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
   sleep: 'from-indigo-300/10 to-blue-300/5',
   psychosis: 'from-amber-300/10 to-fuchsia-300/5',
   fibromyalgia: 'from-rose-300/10 to-pink-300/5',
+  brainfog: 'from-slate-300/10 to-indigo-300/5',
 };
 
 export const AssessmentSelector = () => {
