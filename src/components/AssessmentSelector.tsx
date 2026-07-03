@@ -82,6 +82,7 @@ import {
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
   ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, Lock, TrendingUp, CheckCircle,
+  Cloud,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
