@@ -38,7 +38,7 @@ import { AdverseEffectsAssessment } from '@/components/AdverseEffectsAssessment'
 import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
 import { CallosalAssessment } from '@/components/CallosalAssessment';
 import { MseAssessment } from '@/components/MseAssessment';
-import { MocaAssessment } from '@/components/MocaAssessment';
+import { CcsaAssessment } from '@/components/CcsaAssessment';
 import { ConsciousnessAssessment } from '@/components/ConsciousnessAssessment';
 import { SubstanceAssessment } from '@/components/SubstanceAssessment';
 import { PsychosisScaleAssessment } from '@/components/PsychosisScaleAssessment';
@@ -148,7 +148,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'fab', name: 'FAB', subtitle: 'Frontal Battery', icon: Zap, gradient: 'from-amber-500 to-yellow-600', category: ['cognitive'], description: 'FAB — Frontal Assessment Battery; 6 subtests for executive/frontal lobe dysfunction.' },
   { key: 'cognitiveSyndromes', name: 'Cog Syndromes', subtitle: 'Frontal & Neuro', icon: BookOpen, gradient: 'from-sky-500 to-indigo-600', category: ['cognitive'], description: 'Reference library of 30+ neuropsychiatric syndromes and 11 frontal-lobe bedside tests.' },
   { key: 'mse', name: 'MSE', subtitle: 'Mental Status Exam', icon: ClipboardList, gradient: 'from-slate-500 to-zinc-600', category: ['cognitive'], description: 'Comprehensive Mental Status Examination — consciousness, orientation, attention, memory, language, frontal-lobe, parietal, occipital and temporal-lobe bedside testing.' },
-  { key: 'moca', name: 'MoCA', subtitle: 'Montreal Cognitive Assessment', icon: BookOpen, gradient: 'from-fuchsia-500 to-purple-600', category: ['cognitive'], description: 'MoCA — 30-point multidomain cognitive screen for mild cognitive impairment; reference card with domains, cut-offs and link to the official test.' },
+  { key: 'moca', name: 'CCSA', subtitle: 'Comprehensive Cognitive Screening', icon: BookOpen, gradient: 'from-fuchsia-500 to-purple-600', category: ['cognitive'], description: 'CCSA — original 30-point multidomain cognitive screen (orientation, memory, attention, executive, language, visuospatial, recall). Prototype tool; not clinically validated.' },
   { key: 'callosal', name: 'CDS', subtitle: 'Callosal Disconnection', icon: Brain, gradient: 'from-indigo-500 to-purple-600', category: ['cognitive'], description: 'CDS — Callosal Disconnection Syndrome ("split-brain") bedside tests: left-hand tactile anomia, agraphia, apraxia, alien-hand sign and left-visual-field anomia.' },
   { key: 'tulia', name: 'TULIA', subtitle: 'Apraxia Screen', icon: Hand, gradient: 'from-teal-500 to-cyan-600', category: ['cognitive'], description: 'TULIA — Test of Upper Limb Apraxia; 48-item gesture battery covering meaningless, intransitive and transitive movements.' },
   { key: 'hamd', name: 'HAM-D', subtitle: 'Depression Scale', icon: Frown, gradient: 'from-blue-500 to-indigo-600', category: ['mood'], description: 'HAM-D — Hamilton Depression Rating Scale; clinician-rated severity of depressive symptoms.' },
@@ -503,7 +503,7 @@ export const AssessmentSelector = () => {
         adverseEffects: AdverseEffectsAssessment,
         callosal: CallosalAssessment,
         mse: MseAssessment,
-        moca: MocaAssessment,
+        moca: CcsaAssessment,
         consciousness: ConsciousnessAssessment,
         substance: SubstanceAssessment,
         iqcode: IqcodeAssessment,
