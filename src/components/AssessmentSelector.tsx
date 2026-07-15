@@ -827,7 +827,7 @@ export const AssessmentSelector = () => {
                                     adverse: 'Adverse drug reactions, side-effect monitoring and safety risk tools.',
                                     movement: 'Parkinsonism, dyskinesia, dystonia and catatonia movement assessments.',
                                     epilepsy: 'Seizure classification, epilepsy surgery, medication effects and SUDEP tools.',
-                                    substance: 'Alcohol, opioid, withdrawal and dependence screening scales.',
+                                    substance: 'Alcohol, opioid, withdrawal, dependence and problematic internet/social media use screens.',
                                     sleep: 'Daytime sleepiness and obstructive sleep apnea screening.',
                                     psychosis: 'Positive, negative and prodromal symptom assessments.',
                                   }[cat]
