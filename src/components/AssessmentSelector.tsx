@@ -72,6 +72,7 @@ import { SdqAssessment } from '@/components/SdqAssessment';
 import { AuditAssessment } from '@/components/AuditAssessment';
 import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { BrainFogAssessment } from '@/components/BrainFogAssessment';
+import { SmdsSfAssessment } from '@/components/SmdsSfAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
@@ -115,7 +116,7 @@ type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog';
+  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -194,6 +195,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['substance'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
   { key: 'audit', name: 'AUDIT', subtitle: 'Alcohol Use Disorders', icon: FlaskConical, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'AUDIT — Alcohol Use Disorders Identification Test (WHO); 10-item screen for hazardous drinking, harmful use, and alcohol dependence. Score 0-40 with zone-based intervention guidance.' },
   { key: 'alcohol-units', name: 'Alcohol Units Calculator', subtitle: 'UK Units & Weekly Risk', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'Calculate UK alcohol units from drink volume and ABV. Estimates weekly intake against the 14-unit low-risk guideline with quick presets for common drinks.' },
+  { key: 'smds-sf', name: 'SMDS-SF', subtitle: 'Social Media Disorder — PUI', icon: MessageCircle, gradient: 'from-fuchsia-500 to-pink-600', category: ['substance'], description: 'Social Media Disorder Scale — Short Form (van den Eijnden 2016). Nine yes/no items across DSM-5 IGD-analogous domains (preoccupation, tolerance, withdrawal, persistence, displacement, escape, problems, deception, conflict). ≥5 "yes" flags probable disordered social media use.' },
   { key: 'brain-fog', name: 'Brain Fog', subtitle: 'Clinical Algorithm', icon: Brain, gradient: 'from-slate-500 to-indigo-600', category: ['brainfog'], description: 'Structured 8-step diagnostic algorithm for brain fog — confirm symptom, screen red flags, characterize history, categorize cause, order investigations, and generate an exportable clinical note.' },
   { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
   { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['movement'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
@@ -267,7 +269,7 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   adverse: { en: 'Adverse reactions', ml: 'പ്രതികൂല പ്രതികരണങ്ങൾ', icon: Pill },
   movement: { en: 'Movement disorders', ml: 'ചലന വൈകല്യങ്ങൾ', icon: Activity },
   epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
-  substance: { en: 'Substance abuse', ml: 'ലഹരി ഉപയോഗം', icon: FlaskConical },
+  substance: { en: 'Substance abuse & PUI (internet addiction)', ml: 'ലഹരി ഉപയോഗം & ഇന്റർനെറ്റ് ആസക്തി', icon: FlaskConical },
   sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
   fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമയാൾജിയ', icon: Activity },
   brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
@@ -476,6 +478,7 @@ export const AssessmentSelector = () => {
       isi: true, berlin: true, psqi: true, fosq: true, irls: true, 'asrs-sleep': true, cataplexy: true, sdq: true,
       audit: true,
       'alcohol-units': true,
+      'smds-sf': true,
       'brain-fog': true,
       fibromyalgia: true,
     };
@@ -542,6 +545,7 @@ export const AssessmentSelector = () => {
         sdq: SdqAssessment,
         audit: AuditAssessment,
         'alcohol-units': AlcoholUnitsCalculator,
+        'smds-sf': SmdsSfAssessment,
         'brain-fog': BrainFogAssessment,
         fibromyalgia: FibromyalgiaAssessment,
       };
@@ -823,7 +827,7 @@ export const AssessmentSelector = () => {
                                     adverse: 'Adverse drug reactions, side-effect monitoring and safety risk tools.',
                                     movement: 'Parkinsonism, dyskinesia, dystonia and catatonia movement assessments.',
                                     epilepsy: 'Seizure classification, epilepsy surgery, medication effects and SUDEP tools.',
-                                    substance: 'Alcohol, opioid, withdrawal and dependence screening scales.',
+                                    substance: 'Alcohol, opioid, withdrawal, dependence and problematic internet/social media use screens.',
                                     sleep: 'Daytime sleepiness and obstructive sleep apnea screening.',
                                     psychosis: 'Positive, negative and prodromal symptom assessments.',
                                   }[cat]
