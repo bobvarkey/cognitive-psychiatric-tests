@@ -269,7 +269,7 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   adverse: { en: 'Adverse reactions', ml: 'പ്രതികൂല പ്രതികരണങ്ങൾ', icon: Pill },
   movement: { en: 'Movement disorders', ml: 'ചലന വൈകല്യങ്ങൾ', icon: Activity },
   epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
-  substance: { en: 'Substance abuse', ml: 'ലഹരി ഉപയോഗം', icon: FlaskConical },
+  substance: { en: 'Substance abuse & PUI (internet addiction)', ml: 'ലഹരി ഉപയോഗം & ഇന്റർനെറ്റ് ആസക്തി', icon: FlaskConical },
   sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
   fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമയാൾജിയ', icon: Activity },
   brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
