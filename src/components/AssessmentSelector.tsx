@@ -545,6 +545,7 @@ export const AssessmentSelector = () => {
         sdq: SdqAssessment,
         audit: AuditAssessment,
         'alcohol-units': AlcoholUnitsCalculator,
+        'smds-sf': SmdsSfAssessment,
         'brain-fog': BrainFogAssessment,
         fibromyalgia: FibromyalgiaAssessment,
       };
