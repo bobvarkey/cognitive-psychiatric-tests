@@ -1,7 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
@@ -129,6 +140,92 @@ export const SettingsView = () => {
                   {isMl ? 'മായ്ക്കുക' : 'Clear'}
                 </Button>
               </div>
+            </div>
+          </section>
+
+          {/* Delete account & all data */}
+          <section>
+            <div className="flex items-center gap-2 mb-2">
+              <ShieldAlert className="h-4 w-4 text-destructive" />
+              <h3 className="text-sm font-semibold">
+                {isMl ? 'അക്കൗണ്ട് & ഡാറ്റ ഡിലീറ്റ് ചെയ്യുക' : 'Delete account & data'}
+              </h3>
+            </div>
+            <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-3 space-y-3">
+              <p className="text-xs text-muted-foreground">
+                {isMl
+                  ? 'ഈ ഉപകരണത്തിലെ എല്ലാ ഡാറ്റയും (സംരക്ഷിച്ച ഫലങ്ങൾ, രോഗി വിവരങ്ങൾ, മുൻഗണനകൾ, സബ്‌സ്ക്രിപ്ഷൻ അവസ്ഥ) ശാശ്വതമായി മായ്ക്കും. ഈ പ്രവർത്തനം പഴയപടിയാക്കാൻ കഴിയില്ല.'
+                  : 'Permanently erases all data stored on this device — saved results, patient identification, preferences, and subscription state. This action cannot be undone.'}
+              </p>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm" className="w-full">
+                    {isMl ? 'അക്കൗണ്ടും ഡാറ്റയും ഡിലീറ്റ് ചെയ്യുക' : 'Delete account & all data'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      {isMl ? 'ഉറപ്പാണോ?' : 'Are you absolutely sure?'}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {isMl
+                        ? 'ഈ ഉപകരണത്തിലെ എല്ലാ പ്രാദേശിക ഡാറ്റയും ശാശ്വതമായി ഇല്ലാതാക്കും, തുടർന്ന് ആപ്പ് പുനഃസ്ഥാപിക്കും. ഇത് പഴയപടിയാക്കാൻ കഴിയില്ല.'
+                        : 'This will permanently erase every piece of local data this app has stored on this device, then reload the app. This cannot be reversed.'}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>
+                      {isMl ? 'റദ്ദാക്കുക' : 'Cancel'}
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      onClick={async () => {
+                        try {
+                          clear();
+                          clearPatientInfo();
+                          try { localStorage.clear(); } catch { /* ignore */ }
+                          try { sessionStorage.clear(); } catch { /* ignore */ }
+                          try {
+                            if ('indexedDB' in window && typeof (indexedDB as unknown as { databases?: () => Promise<Array<{ name?: string }>> }).databases === 'function') {
+                              const dbs = await (indexedDB as unknown as { databases: () => Promise<Array<{ name?: string }>> }).databases();
+                              await Promise.all(
+                                dbs.map((db) =>
+                                  db.name
+                                    ? new Promise<void>((resolve) => {
+                                        const req = indexedDB.deleteDatabase(db.name!);
+                                        req.onsuccess = req.onerror = req.onblocked = () => resolve();
+                                      })
+                                    : Promise.resolve()
+                                )
+                              );
+                            }
+                          } catch { /* ignore */ }
+                          try {
+                            if ('caches' in window) {
+                              const keys = await caches.keys();
+                              await Promise.all(keys.map((k) => caches.delete(k)));
+                            }
+                          } catch { /* ignore */ }
+                          try {
+                            document.cookie.split(';').forEach((c) => {
+                              const eq = c.indexOf('=');
+                              const name = (eq > -1 ? c.substr(0, eq) : c).trim();
+                              if (name) {
+                                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+                              }
+                            });
+                          } catch { /* ignore */ }
+                        } finally {
+                          window.location.replace('/');
+                        }
+                      }}
+                    >
+                      {isMl ? 'ശാശ്വതമായി ഡിലീറ്റ് ചെയ്യുക' : 'Delete permanently'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </section>
         </CardContent>
