@@ -187,9 +187,8 @@ export const SettingsView = () => {
                           try { localStorage.clear(); } catch { /* ignore */ }
                           try { sessionStorage.clear(); } catch { /* ignore */ }
                           try {
-                            if ('indexedDB' in window && 'databases' in indexedDB) {
-                              // @ts-expect-error - databases() exists in modern browsers
-                              const dbs: Array<{ name?: string }> = await indexedDB.databases();
+                            if ('indexedDB' in window && typeof (indexedDB as unknown as { databases?: () => Promise<Array<{ name?: string }>> }).databases === 'function') {
+                              const dbs = await (indexedDB as unknown as { databases: () => Promise<Array<{ name?: string }>> }).databases();
                               await Promise.all(
                                 dbs.map((db) =>
                                   db.name
