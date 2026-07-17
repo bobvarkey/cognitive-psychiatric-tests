@@ -60,6 +60,7 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
   const [a1c, setA1c] = useState('5.8');
   const [sexfx, setSexfx] = useState('No');
   const [bleed, setBleed] = useState('No');
+  const [sweat, setSweat] = useState<'None' | 'Mild' | 'Moderate' | 'Severe'>('None');
 
   const { risk, metFlag, sexualFlag, bleedFlag, weeksNum, wgNum, a1cNum } = useMemo(() => {
     const risk = DRUG_RISK[drug];
