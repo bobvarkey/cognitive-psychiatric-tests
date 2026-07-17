@@ -553,6 +553,7 @@ export const AssessmentSelector = () => {
         'alcohol-units': AlcoholUnitsCalculator,
         'smds-sf': SmdsSfAssessment,
         'antipsychotic-metabolic': AntipsychoticMetabolicAssessment,
+        'ssri-adverse': SsriAdverseEventsAssessment,
         'brain-fog': BrainFogAssessment,
         fibromyalgia: FibromyalgiaAssessment,
       };
