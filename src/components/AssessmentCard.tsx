@@ -24,12 +24,6 @@ export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => 
             <p className="text-xs text-gray-500 mt-1">{assessment.abbreviation}</p>
           </div>
         </div>
-        {demoUnlockAll && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-            <CheckCircle className="h-3 w-3" />
-            Unlocked in demo
-          </span>
-        )}
       </div>
 
       {/* Description */}

@@ -416,12 +416,6 @@ export const AssessmentSelector = () => {
             <Home className="h-4 w-4" />
             <span className="hidden sm:inline">{t('backToMenu')}</span>
           </Button>
-          {demoUnlockAll && (
-            <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-300 shadow-sm backdrop-blur-sm">
-              <CheckCircle className="h-3 w-3" />
-              Unlocked in demo
-            </span>
-          )}
         </div>
         {component}
       </div>
@@ -773,12 +767,6 @@ export const AssessmentSelector = () => {
                               <span className="relative text-[11px] text-muted-foreground mt-0.5 leading-tight">
                                 {a.subtitle}
                               </span>
-                              {demoUnlockAll && (
-                                <span className="relative mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-300">
-                                  <CheckCircle className="h-3 w-3" />
-                                  Unlocked in demo
-                                </span>
-                              )}
                               {reference && (
                                 <span className="relative mt-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                                   <BookOpen className="h-3 w-3" />
