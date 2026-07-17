@@ -35,6 +35,7 @@ const ADVERSE_EVENTS = [
   'Bleeding risk, especially GI bleeding when combined with NSAIDs/anticoagulants.',
   'Insomnia, vivid dreams, emotional blunting, and initial anxiety activation.',
   'Discontinuation symptoms: dizziness, flu-like symptoms, electric shocks, irritability.',
+  'Antidepressant-Induced Excessive Sweating (ADIES): diurnal or nocturnal sweating, often dose-related.',
 ];
 
 const ACTIONS = [
@@ -60,8 +61,9 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
   const [a1c, setA1c] = useState('5.8');
   const [sexfx, setSexfx] = useState('No');
   const [bleed, setBleed] = useState('No');
+  const [sweat, setSweat] = useState<'None' | 'Mild' | 'Moderate' | 'Severe'>('None');
 
-  const { risk, metFlag, sexualFlag, bleedFlag, weeksNum, wgNum, a1cNum } = useMemo(() => {
+  const { risk, metFlag, sexualFlag, bleedFlag, sweatFlag, weeksNum, wgNum, a1cNum } = useMemo(() => {
     const risk = DRUG_RISK[drug];
     const weeksNum = +weeks;
     const wgNum = +wg;
@@ -69,8 +71,13 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
     const metFlag = wgNum >= 2 || a1cNum >= 5.7 ? 'metabolic concern' : 'metabolic reassuring';
     const sexualFlag = sexfx === 'Yes' ? 'sexual adverse effect present' : 'no sexual complaint';
     const bleedFlag = bleed === 'Yes' ? 'higher bleeding concern' : 'no extra bleeding concern';
-    return { risk, metFlag, sexualFlag, bleedFlag, weeksNum, wgNum, a1cNum };
-  }, [drug, weeks, wg, a1c, sexfx, bleed]);
+    const sweatFlag =
+      sweat === 'Severe' ? 'ADIES — severe sweating' :
+      sweat === 'Moderate' ? 'ADIES — moderate sweating' :
+      sweat === 'Mild' ? 'ADIES — mild sweating' :
+      'no excessive sweating';
+    return { risk, metFlag, sexualFlag, bleedFlag, sweatFlag, weeksNum, wgNum, a1cNum };
+  }, [drug, weeks, wg, a1c, sexfx, bleed, sweat]);
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
@@ -138,6 +145,18 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label>Excessive sweating (ADIES)</Label>
+                  <Select value={sweat} onValueChange={(v) => setSweat(v as typeof sweat)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="None">None</SelectItem>
+                      <SelectItem value="Mild">Mild — occasional</SelectItem>
+                      <SelectItem value="Moderate">Moderate — daily, bothersome</SelectItem>
+                      <SelectItem value="Severe">Severe — soaks clothes / nocturnal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -190,6 +209,25 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
                   </Badge>
                   <p className="text-xs text-muted-foreground mt-2">
                     Anxiety activation and insomnia are most common in the first few weeks.
+                  </p>
+                </div>
+                <div className="rounded-lg border p-3 md:col-span-2">
+                  <Badge
+                    variant="outline"
+                    className={
+                      sweat === 'Severe' ? pillColor('high') :
+                      sweat === 'Moderate' ? pillColor('moderate') :
+                      sweat === 'Mild' ? pillColor('moderate') :
+                      pillColor('low')
+                    }
+                  >
+                    {sweatFlag}
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Antidepressant-Induced Excessive Sweating (ADIES): dose-related, often diurnal or nocturnal.
+                    Rule out infection, hyperthyroidism, menopause, hypoglycaemia, and serotonin syndrome.
+                    Options: dose reduction, switch (mirtazapine, bupropion, agomelatine), or add-on
+                    (terazosin, cyproheptadine, benztropine, or topical glycopyrrolate) per specialist advice.
                   </p>
                 </div>
               </div>
