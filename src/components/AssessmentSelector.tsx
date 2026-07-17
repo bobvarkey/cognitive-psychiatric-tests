@@ -73,6 +73,7 @@ import { AuditAssessment } from '@/components/AuditAssessment';
 import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { BrainFogAssessment } from '@/components/BrainFogAssessment';
 import { SmdsSfAssessment } from '@/components/SmdsSfAssessment';
+import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMetabolicAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
