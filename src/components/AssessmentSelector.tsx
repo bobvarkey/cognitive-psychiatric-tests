@@ -74,6 +74,7 @@ import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { BrainFogAssessment } from '@/components/BrainFogAssessment';
 import { SmdsSfAssessment } from '@/components/SmdsSfAssessment';
 import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMetabolicAssessment';
+import { SsriAdverseEventsAssessment } from '@/components/SsriAdverseEventsAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
@@ -117,7 +118,7 @@ type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic';
+  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -176,6 +177,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'smarts', name: 'SMARTS', subtitle: 'Treatment Side Effects', icon: ClipboardList, gradient: 'from-orange-500 to-amber-500', category: ['adverse'], description: 'SMARTS — Systematic Monitoring of Adverse events Related to TreatmentS; patient-reported side-effect checklist.' },
   { key: 'adverseEffects', name: 'Adverse Effects', subtitle: 'Drug-Class Checklist', icon: Pill, gradient: 'from-fuchsia-500 to-purple-600', category: ['adverse'], description: 'Drug-class adverse-effect checklist for psychotropic medications.' },
   { key: 'antipsychotic-metabolic', name: 'Antipsychotic Metabolic', subtitle: 'BMI · WHtR · Risk Triage', icon: Pill, gradient: 'from-blue-500 to-indigo-600', category: ['adverse'], description: 'Antipsychotic metabolic syndrome tracker — BMI, waist-to-height ratio, drug-specific metabolic/cardiac/QTc risk, monitoring schedule, and adverse-event flags.' },
+  { key: 'ssri-adverse', name: 'SSRI Adverse Events', subtitle: 'Metabolic · Sexual · Bleeding', icon: Pill, gradient: 'from-cyan-500 to-blue-600', category: ['adverse'], description: 'SSRI adverse events tracker — screen metabolic, sexual, bleeding, sleep, and discontinuation effects for common SSRIs with monitoring schedule and suggested actions.' },
   { key: 'fallRisk', name: 'Fall Risk', subtitle: 'STEADI, Morse & FRAT', icon: Footprints, gradient: 'from-orange-500 to-red-600', category: ['adverse'], description: 'Fall risk assessment combining CDC STEADI, Morse Fall Scale and FRAT (Falls Risk Assessment Tool).' },
   { key: 'consciousness', name: 'Coma & Consciousness', subtitle: 'GCS · FOUR · RASS · ABS', icon: Activity, gradient: 'from-slate-600 to-zinc-700', category: ['cognitive'], description: 'Bedside scales of consciousness, sedation and agitation: Glasgow Coma Scale (GCS), FOUR Score for intubated patients, Richmond Agitation–Sedation Scale (RASS), and Agitated Behavior Scale (ABS) for traumatic brain injury.' },
   { key: 'substance', name: 'Withdrawal & Dependence', subtitle: 'CIWA-Ar · SDS', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'Substance-specific scales: CIWA-Ar quantifies severity of alcohol withdrawal (10 items, 0–67); SDS — Severity of Dependence Scale, 5 items measuring psychological dependence and compulsive use.' },
@@ -482,6 +484,7 @@ export const AssessmentSelector = () => {
       'alcohol-units': true,
       'smds-sf': true,
       'antipsychotic-metabolic': true,
+      'ssri-adverse': true,
       'brain-fog': true,
       fibromyalgia: true,
     };
@@ -550,6 +553,7 @@ export const AssessmentSelector = () => {
         'alcohol-units': AlcoholUnitsCalculator,
         'smds-sf': SmdsSfAssessment,
         'antipsychotic-metabolic': AntipsychoticMetabolicAssessment,
+        'ssri-adverse': SsriAdverseEventsAssessment,
         'brain-fog': BrainFogAssessment,
         fibromyalgia: FibromyalgiaAssessment,
       };
