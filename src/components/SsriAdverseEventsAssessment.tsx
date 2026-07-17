@@ -210,6 +210,25 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
                     Anxiety activation and insomnia are most common in the first few weeks.
                   </p>
                 </div>
+                <div className="rounded-lg border p-3 md:col-span-2">
+                  <Badge
+                    variant="outline"
+                    className={
+                      sweat === 'Severe' ? pillColor('high') :
+                      sweat === 'Moderate' ? pillColor('moderate') :
+                      sweat === 'Mild' ? pillColor('moderate') :
+                      pillColor('low')
+                    }
+                  >
+                    {sweatFlag}
+                  </Badge>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Antidepressant-Induced Excessive Sweating (ADIES): dose-related, often diurnal or nocturnal.
+                    Rule out infection, hyperthyroidism, menopause, hypoglycaemia, and serotonin syndrome.
+                    Options: dose reduction, switch (mirtazapine, bupropion, agomelatine), or add-on
+                    (terazosin, cyproheptadine, benztropine, or topical glycopyrrolate) per specialist advice.
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
