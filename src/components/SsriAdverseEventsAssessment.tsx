@@ -62,7 +62,7 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
   const [bleed, setBleed] = useState('No');
   const [sweat, setSweat] = useState<'None' | 'Mild' | 'Moderate' | 'Severe'>('None');
 
-  const { risk, metFlag, sexualFlag, bleedFlag, weeksNum, wgNum, a1cNum } = useMemo(() => {
+  const { risk, metFlag, sexualFlag, bleedFlag, sweatFlag, weeksNum, wgNum, a1cNum } = useMemo(() => {
     const risk = DRUG_RISK[drug];
     const weeksNum = +weeks;
     const wgNum = +wg;
@@ -70,8 +70,13 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
     const metFlag = wgNum >= 2 || a1cNum >= 5.7 ? 'metabolic concern' : 'metabolic reassuring';
     const sexualFlag = sexfx === 'Yes' ? 'sexual adverse effect present' : 'no sexual complaint';
     const bleedFlag = bleed === 'Yes' ? 'higher bleeding concern' : 'no extra bleeding concern';
-    return { risk, metFlag, sexualFlag, bleedFlag, weeksNum, wgNum, a1cNum };
-  }, [drug, weeks, wg, a1c, sexfx, bleed]);
+    const sweatFlag =
+      sweat === 'Severe' ? 'ADIES — severe sweating' :
+      sweat === 'Moderate' ? 'ADIES — moderate sweating' :
+      sweat === 'Mild' ? 'ADIES — mild sweating' :
+      'no excessive sweating';
+    return { risk, metFlag, sexualFlag, bleedFlag, sweatFlag, weeksNum, wgNum, a1cNum };
+  }, [drug, weeks, wg, a1c, sexfx, bleed, sweat]);
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-6">
