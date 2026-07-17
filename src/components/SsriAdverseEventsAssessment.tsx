@@ -144,6 +144,18 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label>Excessive sweating (ADIES)</Label>
+                  <Select value={sweat} onValueChange={(v) => setSweat(v as typeof sweat)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="None">None</SelectItem>
+                      <SelectItem value="Mild">Mild — occasional</SelectItem>
+                      <SelectItem value="Moderate">Moderate — daily, bothersome</SelectItem>
+                      <SelectItem value="Severe">Severe — soaks clothes / nocturnal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
