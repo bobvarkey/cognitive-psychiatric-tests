@@ -35,6 +35,7 @@ const ADVERSE_EVENTS = [
   'Bleeding risk, especially GI bleeding when combined with NSAIDs/anticoagulants.',
   'Insomnia, vivid dreams, emotional blunting, and initial anxiety activation.',
   'Discontinuation symptoms: dizziness, flu-like symptoms, electric shocks, irritability.',
+  'Antidepressant-Induced Excessive Sweating (ADIES): diurnal or nocturnal sweating, often dose-related.',
 ];
 
 const ACTIONS = [
