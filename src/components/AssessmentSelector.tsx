@@ -481,6 +481,7 @@ export const AssessmentSelector = () => {
       audit: true,
       'alcohol-units': true,
       'smds-sf': true,
+      'antipsychotic-metabolic': true,
       'brain-fog': true,
       fibromyalgia: true,
     };
