@@ -75,6 +75,7 @@ import { BrainFogAssessment } from '@/components/BrainFogAssessment';
 import { SmdsSfAssessment } from '@/components/SmdsSfAssessment';
 import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMetabolicAssessment';
 import { SsriAdverseEventsAssessment } from '@/components/SsriAdverseEventsAssessment';
+import { OpdPsychEvalAssessment } from '@/components/OpdPsychEvalAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
@@ -118,7 +119,7 @@ type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse';
+  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -204,6 +205,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
   { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['movement'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
   { key: 'fibromyalgia', name: 'Fibromyalgia', subtitle: 'ACR 2010 (WPI + SSS)', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['fibromyalgia'], description: 'ACR 2010 preliminary diagnostic criteria for fibromyalgia. Widespread Pain Index (WPI, 0–19) plus Symptom Severity Scale (SSS, 0–12) covering fatigue, waking unrefreshed, cognitive symptoms, and somatic symptom burden.' },
+  { key: 'opd-psych-eval', name: 'OPD Psych Evaluation', subtitle: 'Pediatric / SLD Workup', icon: ClipboardList, gradient: 'from-emerald-500 to-teal-600', category: ['cognitive'], description: 'Brief OPD psychological evaluation performa — identification, presenting complaints, clinical observation, prenatal/perinatal/postnatal history, developmental milestones, family history, psychological test results (MISIC, BKT, VSMS, ISAA, NIMHANS SLD, IQ), reading/writing/calculation skills and diagnosis with exportable report.' },
 
   // ─── Movement Disorders ───
   { key: 'mds-updrs', name: 'MDS-UPDRS', subtitle: 'Parkinson\'s Assessment', icon: Activity, gradient: 'from-blue-500 to-cyan-600', category: ['movement'], description: 'MDS-UPDRS — Gold-standard comprehensive assessment for motor and non-motor symptoms in Parkinson\'s disease. 27 items across three parts.' },
@@ -481,6 +483,7 @@ export const AssessmentSelector = () => {
       'ssri-adverse': true,
       'brain-fog': true,
       fibromyalgia: true,
+      'opd-psych-eval': true,
     };
 
     if (withOnBack[selectedAssessment]) {
@@ -550,6 +553,7 @@ export const AssessmentSelector = () => {
         'ssri-adverse': SsriAdverseEventsAssessment,
         'brain-fog': BrainFogAssessment,
         fibromyalgia: FibromyalgiaAssessment,
+        'opd-psych-eval': OpdPsychEvalAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;
