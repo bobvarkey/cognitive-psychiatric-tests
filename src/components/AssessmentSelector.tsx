@@ -75,6 +75,7 @@ import { BrainFogAssessment } from '@/components/BrainFogAssessment';
 import { SmdsSfAssessment } from '@/components/SmdsSfAssessment';
 import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMetabolicAssessment';
 import { SsriAdverseEventsAssessment } from '@/components/SsriAdverseEventsAssessment';
+import { OpdPsychEvalAssessment } from '@/components/OpdPsychEvalAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
