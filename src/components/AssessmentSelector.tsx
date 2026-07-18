@@ -483,6 +483,7 @@ export const AssessmentSelector = () => {
       'ssri-adverse': true,
       'brain-fog': true,
       fibromyalgia: true,
+      'opd-psych-eval': true,
     };
 
     if (withOnBack[selectedAssessment]) {
