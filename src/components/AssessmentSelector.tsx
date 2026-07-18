@@ -144,6 +144,7 @@ interface AssessmentInfo {
 }
 
 const assessments: AssessmentInfo[] = [
+  { key: 'opd-psych-eval', name: 'OPD Psych Evaluation', subtitle: 'Pediatric / SLD Workup', icon: ClipboardList, gradient: 'from-emerald-500 to-teal-600', category: ['cognitive'], description: 'Brief OPD psychological evaluation performa — identification, presenting complaints, clinical observation, prenatal/perinatal/postnatal history, developmental milestones, family history, psychological test results (MISIC, BKT, VSMS, ISAA, NIMHANS SLD, IQ), reading/writing/calculation skills and diagnosis with exportable report.' },
   { key: 'daphne', name: 'DAPHNE', subtitle: 'bvFTD Assessment', icon: Brain, gradient: 'from-purple-500 to-pink-600', category: ['cognitive'], description: 'DAPHNE — Behavioural variant Frontotemporal Dementia screening across disinhibition, apathy, perseveration, hyperorality, neglect and loss of empathy.' },
 
   { key: 'minicog', name: 'Mini-Cog™', subtitle: 'Brief Screening', icon: Brain, gradient: 'from-blue-500 to-cyan-600', category: ['cognitive'], description: 'Mini-Cog — 3-item recall plus clock-drawing; rapid bedside dementia screen (~3 min).' },
