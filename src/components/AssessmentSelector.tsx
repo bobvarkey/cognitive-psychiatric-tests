@@ -553,6 +553,7 @@ export const AssessmentSelector = () => {
         'ssri-adverse': SsriAdverseEventsAssessment,
         'brain-fog': BrainFogAssessment,
         fibromyalgia: FibromyalgiaAssessment,
+        'opd-psych-eval': OpdPsychEvalAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return <Comp onBack={handleBackToMenu} />;
