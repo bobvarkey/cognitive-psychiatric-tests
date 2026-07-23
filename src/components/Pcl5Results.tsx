@@ -93,6 +93,45 @@ export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
         </CardContent>
       </Card>
 
+      {results.hasTraumaExposure && results.totalScore >= 33 && (
+        <Alert variant="destructive" className="border-red-500 bg-red-50 dark:bg-red-950/30">
+          <AlertCircle className="h-5 w-5 text-red-600" />
+          <AlertDescription>
+            <div className="font-semibold text-red-700 dark:text-red-400 text-base mb-2">
+              {language === 'en'
+                ? `Provisional PTSD cut-off met (Total ${results.totalScore} ≥ 33)`
+                : `പ്രൊവിഷണൽ PTSD കട്ട്-ഓഫ് നിറവേറ്റി (മൊത്തം ${results.totalScore} ≥ 33)`}
+            </div>
+            <div className="text-sm space-y-1 text-red-900 dark:text-red-200">
+              <div className="flex items-center gap-2">
+                {results.meetsDsm5Pattern ? (
+                  <CheckCircle2 className="h-4 w-4 text-red-700" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 text-yellow-700" />
+                )}
+                <span>
+                  {language === 'en' ? 'DSM-5 symptom-cluster pattern (B≥1, C≥1, D≥2, E≥2 items rated ≥2): ' : 'DSM-5 ലക്ഷണ പാറ്റേൺ: '}
+                  <strong>{results.meetsDsm5Pattern ? (language === 'en' ? 'Met' : 'നിറവേറ്റി') : (language === 'en' ? 'Not met' : 'നിറവേറ്റിയിട്ടില്ല')}</strong>
+                </span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                <div>B — Intrusion: <strong>{results.clusterB}/20</strong></div>
+                <div>C — Avoidance: <strong>{results.clusterC}/8</strong></div>
+                <div>D — Cognition/Mood: <strong>{results.clusterD}/28</strong></div>
+                <div>E — Arousal: <strong>{results.clusterE}/24</strong></div>
+              </div>
+              <p className="mt-2 italic">
+                {language === 'en'
+                  ? 'Recommend structured clinical interview (e.g., CAPS-5) to confirm diagnosis and assess functional impairment, duration (>1 month), and rule out other causes.'
+                  : 'രോഗനിർണ്ണയം സ്ഥിരീകരിക്കാൻ CAPS-5 പോലുള്ള ക്ലിനിക്കൽ അഭിമുഖം ശുപാർശ ചെയ്യുന്നു.'}
+              </p>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+
+
+
       {results.hasTraumaExposure && (
         <Card>
           <CardHeader>
