@@ -28,16 +28,19 @@ export const Pcl5ItemCard = ({ item, value, onChange }: Pcl5ItemCardProps) => {
           onValueChange={(val) => onChange(parseInt(val))}
         >
           <div className="space-y-3">
-            {pcl5ScoreOptions.map((option) => (
+            {(item.type === 'screening' ? pcl5ScreeningOptions : pcl5ScoreOptions).map((option) => (
               <div key={option.value} className="flex items-center space-x-3">
-                <RadioGroupItem 
-                  value={option.value.toString()} 
-                  id={`item-${item.id}-${option.value}`} 
+                <RadioGroupItem
+                  value={option.value.toString()}
+                  id={`item-${item.id}-${option.value}`}
                 />
                 <Label
                   htmlFor={`item-${item.id}-${option.value}`}
                   className="font-normal cursor-pointer flex-1"
                 >
+                  {item.type === 'question' && (
+                    <span className="mr-2 text-muted-foreground">{option.value}</span>
+                  )}
                   {language === 'en' ? option.label : option.labelMl}
                 </Label>
               </div>
