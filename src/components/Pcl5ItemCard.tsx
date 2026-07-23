@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Pcl5Item } from '@/types/pcl5';
-import { pcl5ScoreOptions } from '@/data/pcl5Scale';
+import { pcl5ScoreOptions, pcl5ScreeningOptions } from '@/data/pcl5Scale';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Pcl5ItemCardProps {
