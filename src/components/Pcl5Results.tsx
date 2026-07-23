@@ -52,7 +52,7 @@ export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
                     `C — Avoidance (0–8): ${results.clusterC}`,
                     `D — Negative alterations in cognition/mood (0–28): ${results.clusterD}`,
                     `E — Alterations in arousal & reactivity (0–24): ${results.clusterE}`,
-                  ], type: 'neutral' },
+                  ], type: 'info' },
                 ],
                 disclaimer: 'PCL-5 is a screening/self-report measure, not a diagnostic instrument. Positive screens warrant a structured clinical interview (e.g., CAPS-5).',
                 patientInfo: getPatientInfoForReport(),
