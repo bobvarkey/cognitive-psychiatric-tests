@@ -154,6 +154,7 @@ export const HamaResults = ({ result, onReset, onBack }: HamaResultsProps) => {
               >
                 <Download className="h-4 w-4" />
                 Download .txt
+              </Button>
               {onBack && (
                 <Button onClick={onBack} variant="default" className="flex-1">
                   {t('backToMenu')}

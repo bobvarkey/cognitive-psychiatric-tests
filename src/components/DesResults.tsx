@@ -225,6 +225,7 @@ export const DesResults = ({ results, onReset, onBack }: Props) => {
         >
           <Download className="h-4 w-4" />
           Download .txt
+        </Button>
         <Button variant="outline" onClick={onReset}>
           <RotateCcw className="h-4 w-4 mr-2" />
           Retake Assessment
