@@ -4,8 +4,8 @@ import { HamaResult } from '@/types/hama';
 import { HAMA_ITEMS, HAMA_OPTIONS } from '@/data/hamaScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
-import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown } from 'lucide-react';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown, Download } from 'lucide-react';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface HamaResultsProps {
@@ -145,6 +145,15 @@ export const HamaResults = ({ result, onReset, onBack }: HamaResultsProps) => {
               >
                 {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
                 {copied ? 'Copied' : 'Copy Text'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => downloadTextReport(buildReport())}
+                className="flex items-center gap-1.5"
+              >
+                <Download className="h-4 w-4" />
+                Download .txt
               </Button>
               {onBack && (
                 <Button onClick={onBack} variant="default" className="flex-1">

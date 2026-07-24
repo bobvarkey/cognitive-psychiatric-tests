@@ -4,8 +4,8 @@ import { HamdResult } from '@/types/hamd';
 import { HAMD_ITEMS } from '@/data/hamdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
-import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown } from 'lucide-react';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown, Download } from 'lucide-react';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
@@ -189,6 +189,40 @@ export const HamdResults = ({ result, onReset, onBack }: HamdResultsProps) => {
               >
                 {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
                 {copied ? 'Copied' : 'Copy Text'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const positiveFindings: string[] = [];
+                  const negativeFindings: string[] = [];
+                  result.responses.forEach(r => {
+                    const item = HAMD_ITEMS.find(i => i.id === r.itemId);
+                    if (!item) return;
+                    if (r.score > 0) positiveFindings.push(`${item.question} — ${item.options[r.score]} (Score: ${r.score}/${item.maxScore})`);
+                    else negativeFindings.push(`${item.question} (Score: 0)`);
+                  });
+                  const answeredIds = result.responses.map(r => r.itemId);
+                  const notAssessed = HAMD_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
+                  downloadTextReport({
+                    assessmentName: 'Hamilton Depression Rating Scale (HAM-D)',
+                    date: new Date().toLocaleDateString(),
+                    totalScore: `${result.totalScore}/52`,
+                    severity: result.severity === 'normal' ? 'Normal' : result.severity === 'mild' ? 'Mild Depression' : result.severity === 'moderate' ? 'Moderate Depression' : result.severity === 'severe' ? 'Severe Depression' : 'Very Severe Depression',
+                    interpretation: result.interpretation,
+                    sections: [
+                      { title: 'Positive Findings (Symptoms Present)', items: positiveFindings, type: 'positive' },
+                      { title: 'Negative Findings (Symptoms Absent)', items: negativeFindings, type: 'negative' },
+                      { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
+                    ],
+                    disclaimer: 'The HAM-D is a clinician-rated scale. Scores should be interpreted in the context of a comprehensive clinical assessment.',
+                    patientInfo: getPatientInfoForReport(),
+                  });
+                }}
+                className="flex items-center gap-1.5"
+              >
+                <Download className="h-4 w-4" />
+                Download .txt
               </Button>
               {onBack && (
                 <Button onClick={onBack} variant="default" className="flex-1">

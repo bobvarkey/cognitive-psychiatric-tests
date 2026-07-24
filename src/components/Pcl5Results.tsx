@@ -4,20 +4,73 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Pcl5Result } from '@/types/pcl5';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
-import { AlertCircle, CheckCircle2, Copy, Check, FileDown } from 'lucide-react';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { AlertCircle, CheckCircle2, Copy, Check, FileDown, Download } from 'lucide-react';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface Pcl5ResultsProps {
   results: Pcl5Result;
   onReset: () => void;
+  responses?: Map<number, number>;
 }
 
-export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
+const SYMPTOM_IDS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+const B_IDS = [1,2,3,4,5];
+const C_IDS = [6,7];
+const D_IDS = [8,9,10,11,12,13,14];
+const E_IDS = [15,16,17,18,19,20];
+
+export const Pcl5Results = ({ results, onReset, responses }: Pcl5ResultsProps) => {
   const { language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const likertCounts = [0, 0, 0, 0, 0];
+  if (responses) {
+    SYMPTOM_IDS.forEach(id => {
+      const v = responses.get(id);
+      if (typeof v === 'number' && v >= 0 && v <= 4) likertCounts[v]++;
+    });
+  }
+  const answeredCount = responses ? SYMPTOM_IDS.filter(id => responses.has(id)).length : 0;
+  const countAtOrAbove2 = (ids: number[]) =>
+    responses ? ids.reduce((s, id) => s + ((responses.get(id) ?? 0) >= 2 ? 1 : 0), 0) : 0;
+  const bMet = countAtOrAbove2(B_IDS);
+  const cMet = countAtOrAbove2(C_IDS);
+  const dMet = countAtOrAbove2(D_IDS);
+  const eMet = countAtOrAbove2(E_IDS);
+
+  const buildReport = () => ({
+    assessmentName: 'PCL-5 PTSD Checklist (DSM-5)',
+    date: new Date().toLocaleDateString(),
+    totalScore: `${results.totalScore}/80`,
+    severity: results.probablePTSD ? 'Probable PTSD' : 'Below Clinical Threshold',
+    interpretation: language === 'en' ? results.interpretation : results.interpretationMl,
+    sections: [
+      { title: 'Summary', items: [
+        `Trauma Exposure: ${results.hasTraumaExposure ? 'Yes' : 'No'}`,
+        `Total Score: ${results.totalScore}/80 (cut-off ≥33)`,
+        `DSM-5 pattern (B≥1, C≥1, D≥2, E≥2 rated ≥2): ${results.meetsDsm5Pattern ? 'Met' : 'Not met'}`,
+        `Items answered: ${answeredCount}/20`,
+      ], type: (results.probablePTSD ? 'positive' : 'negative') as 'positive' | 'negative' },
+      { title: 'Likert Distribution (items rated 0–4)', items: [
+        `0 — Not at all: ${likertCounts[0]}`,
+        `1 — A little bit: ${likertCounts[1]}`,
+        `2 — Moderately: ${likertCounts[2]}`,
+        `3 — Quite a bit: ${likertCounts[3]}`,
+        `4 — Extremely: ${likertCounts[4]}`,
+      ], type: 'info' as const },
+      { title: 'Cluster Totals', items: [
+        `B — Intrusion: ${results.clusterB}/20 (items ≥2: ${bMet}/5)`,
+        `C — Avoidance: ${results.clusterC}/8 (items ≥2: ${cMet}/2)`,
+        `D — Cognition/Mood: ${results.clusterD}/28 (items ≥2: ${dMet}/7)`,
+        `E — Arousal/Reactivity: ${results.clusterE}/24 (items ≥2: ${eMet}/6)`,
+      ], type: 'info' as const },
+    ],
+    disclaimer: 'PCL-5 is a screening/self-report measure, not a diagnostic instrument. Positive screens warrant a structured clinical interview (e.g., CAPS-5).',
+    patientInfo: getPatientInfoForReport(),
+  });
 
   const getScoreColor = (score: number) => {
     if (score >= 33) return 'text-red-600';
@@ -31,42 +84,114 @@ export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
         <h1 className="text-3xl font-bold">
           {language === 'en' ? 'PCL-5 Results' : 'PCL-5 ഫലങ്ങൾ'}
         </h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button
             variant="outline"
-            onClick={() => {
-              generatePdfReport({
-                assessmentName: 'PCL-5 PTSD Checklist (DSM-5)',
-                date: new Date().toLocaleDateString(),
-                totalScore: `${results.totalScore}/80`,
-                severity: results.probablePTSD ? 'Probable PTSD' : 'Below Clinical Threshold',
-                interpretation: language === 'en' ? results.interpretation : results.interpretationMl,
-                sections: [
-                  { title: 'Screening', items: [
-                    `Trauma Exposure: ${results.hasTraumaExposure ? 'Yes' : 'No'}`,
-                    `Total Score: ${results.totalScore}/80 (provisional cut-off ≥33)`,
-                    `DSM-5 symptom-cluster pattern met: ${results.meetsDsm5Pattern ? 'Yes' : 'No'}`,
-                  ], type: results.probablePTSD ? 'positive' : 'negative' },
-                  { title: 'Cluster Subscores', items: [
-                    `B — Intrusion (0–20): ${results.clusterB}`,
-                    `C — Avoidance (0–8): ${results.clusterC}`,
-                    `D — Negative alterations in cognition/mood (0–28): ${results.clusterD}`,
-                    `E — Alterations in arousal & reactivity (0–24): ${results.clusterE}`,
-                  ], type: 'info' },
-                ],
-                disclaimer: 'PCL-5 is a screening/self-report measure, not a diagnostic instrument. Positive screens warrant a structured clinical interview (e.g., CAPS-5).',
-                patientInfo: getPatientInfoForReport(),
-              });
+            size="sm"
+            onClick={async () => {
+              try {
+                const text = generateTextReport(buildReport());
+                await navigator.clipboard.writeText(text);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              } catch {}
             }}
+            className="flex items-center gap-1.5"
+          >
+            {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+            {copied ? 'Copied' : 'Copy Text'}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => downloadTextReport(buildReport())}
+            className="flex items-center gap-1.5"
+          >
+            <Download className="h-4 w-4" />
+            Download .txt
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => generatePdfReport(buildReport())}
           >
             <FileDown className="mr-2 h-4 w-4" />
             Export PDF
           </Button>
-          <Button onClick={onReset} variant="outline">
+          <Button onClick={onReset} variant="outline" size="sm">
             {language === 'en' ? 'New Assessment' : 'പുതിയ വിലയിരുത്തൽ'}
           </Button>
         </div>
       </div>
+
+      {results.hasTraumaExposure && (
+        <Card className="border-2">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <span>{language === 'en' ? 'PCL-5 Summary' : 'PCL-5 സംഗ്രഹം'}</span>
+              <span className={`text-sm font-semibold ${results.meetsDsm5Pattern ? 'text-red-600' : 'text-muted-foreground'}`}>
+                {language === 'en'
+                  ? `DSM-5 pattern: ${results.meetsDsm5Pattern ? 'Met' : 'Not met'}`
+                  : `DSM-5 പാറ്റേൺ: ${results.meetsDsm5Pattern ? 'നിറവേറ്റി' : 'നിറവേറ്റിയിട്ടില്ല'}`}
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="p-3 rounded-md bg-muted text-center">
+                <div className="text-xs text-muted-foreground">Total</div>
+                <div className={`text-2xl font-bold ${getScoreColor(results.totalScore)}`}>{results.totalScore}<span className="text-sm text-muted-foreground">/80</span></div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">cut-off ≥33</div>
+              </div>
+              <div className="p-3 rounded-md bg-muted text-center">
+                <div className="text-xs text-muted-foreground">B — Intrusion</div>
+                <div className="text-2xl font-bold">{results.clusterB}<span className="text-sm text-muted-foreground">/20</span></div>
+                <div className={`text-[10px] mt-0.5 ${bMet >= 1 ? 'text-red-600' : 'text-muted-foreground'}`}>≥2 items: {bMet}/5 (need ≥1)</div>
+              </div>
+              <div className="p-3 rounded-md bg-muted text-center">
+                <div className="text-xs text-muted-foreground">C — Avoidance</div>
+                <div className="text-2xl font-bold">{results.clusterC}<span className="text-sm text-muted-foreground">/8</span></div>
+                <div className={`text-[10px] mt-0.5 ${cMet >= 1 ? 'text-red-600' : 'text-muted-foreground'}`}>≥2 items: {cMet}/2 (need ≥1)</div>
+              </div>
+              <div className="p-3 rounded-md bg-muted text-center">
+                <div className="text-xs text-muted-foreground">D — Cognition/Mood</div>
+                <div className="text-2xl font-bold">{results.clusterD}<span className="text-sm text-muted-foreground">/28</span></div>
+                <div className={`text-[10px] mt-0.5 ${dMet >= 2 ? 'text-red-600' : 'text-muted-foreground'}`}>≥2 items: {dMet}/7 (need ≥2)</div>
+              </div>
+              <div className="p-3 rounded-md bg-muted text-center">
+                <div className="text-xs text-muted-foreground">E — Arousal</div>
+                <div className="text-2xl font-bold">{results.clusterE}<span className="text-sm text-muted-foreground">/24</span></div>
+                <div className={`text-[10px] mt-0.5 ${eMet >= 2 ? 'text-red-600' : 'text-muted-foreground'}`}>≥2 items: {eMet}/6 (need ≥2)</div>
+              </div>
+            </div>
+
+            <div>
+              <div className="text-sm font-medium mb-2">
+                {language === 'en' ? 'Likert response distribution (20 items)' : 'ലിക്കർട്ട് വിതരണം (20 ഇനങ്ങൾ)'}
+              </div>
+              <div className="grid grid-cols-5 gap-2">
+                {[
+                  { v: 0, label: '0 Not at all' },
+                  { v: 1, label: '1 A little' },
+                  { v: 2, label: '2 Moderately' },
+                  { v: 3, label: '3 Quite a bit' },
+                  { v: 4, label: '4 Extremely' },
+                ].map(({ v, label }) => (
+                  <div key={v} className="p-2 rounded-md border text-center">
+                    <div className="text-[10px] text-muted-foreground">{label}</div>
+                    <div className="text-xl font-bold">{likertCounts[v]}</div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                {language === 'en'
+                  ? `${answeredCount}/20 symptom items answered. An item is counted toward the DSM-5 pattern only when rated ≥2 (Moderately or higher).`
+                  : `${answeredCount}/20 ലക്ഷണ ഇനങ്ങൾ ഉത്തരം ചെയ്തു. ≥2 റേറ്റിംഗ് ഉള്ള ഇനങ്ങൾ മാത്രമേ DSM-5 പാറ്റേണിലേക്ക് കണക്കാക്കൂ.`}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

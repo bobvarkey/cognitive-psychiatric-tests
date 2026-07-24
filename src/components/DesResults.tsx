@@ -2,9 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useState } from 'react';
-import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info } from 'lucide-react';
+import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info, Download } from 'lucide-react';
 import { DesResult } from '@/types/des';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
@@ -197,6 +197,34 @@ export const DesResults = ({ results, onReset, onBack }: Props) => {
         >
           {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
           {copied ? 'Copied' : 'Copy Text'}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            downloadTextReport({
+              assessmentName: 'Dissociative Experiences Scale (DES-II)',
+              date: new Date().toLocaleDateString(),
+              totalScore: `${fmt(results.totalMean)}/100 (mean)`,
+              severity: SEVERITY_LABEL[results.severity],
+              interpretation: results.interpretation,
+              sections: [{
+                title: 'Subscales',
+                items: [
+                  `Total DES mean: ${fmt(results.totalMean)}/100`,
+                  `DES-T (taxon) mean: ${fmt(results.taxonMean)}/100`,
+                  `Items completed: ${results.itemsScored}/28`,
+                ],
+                type: 'positive',
+              }],
+              disclaimer: 'Screening tool only. A mean score ≥30 suggests possible dissociative disorder; confirm with structured interview (e.g. SCID-D).',
+              patientInfo: getPatientInfoForReport(),
+            });
+          }}
+          className="flex items-center gap-1.5"
+        >
+          <Download className="h-4 w-4" />
+          Download .txt
         </Button>
         <Button variant="outline" onClick={onReset}>
           <RotateCcw className="h-4 w-4 mr-2" />

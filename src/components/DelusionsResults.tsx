@@ -4,11 +4,11 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { DelusionResults } from '@/types/delusions';
 import { useState } from 'react';
-import { AlertCircle, Brain, CheckCircle2, Copy, Check, FileText, FileDown } from 'lucide-react';
+import { AlertCircle, Brain, CheckCircle2, Copy, Check, FileText, FileDown, Download } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ClinicalContextTable } from './ClinicalContextTable';
 import { delusionsScale } from '@/data/delusionsScale';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
@@ -357,6 +357,44 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
         >
           {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
           {copied ? 'Copied' : 'Copy Text'}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            const positiveFindings: string[] = [];
+            const negativeFindings: string[] = [];
+            const notAssessed: string[] = [];
+            const getSevLabel = (s?: number) => s === 1 ? 'Mild' : s === 2 ? 'Moderate' : s === 3 ? 'Severe' : '';
+            delusionsScale.forEach(item => {
+              const response = results.responses.find(r => r.itemId === item.id);
+              if (!response) {
+                notAssessed.push(`${item.type} (${item.section} — ${item.category})`);
+              } else if (response.present) {
+                positiveFindings.push(`${item.type} — ${getSevLabel(response.severity)} (${item.section}, ${item.category})`);
+              } else {
+                negativeFindings.push(`${item.type} (${item.section} — ${item.category})`);
+              }
+            });
+            downloadTextReport({
+              assessmentName: 'Delusional Syndromes & Hallucinations Assessment',
+              date: new Date().toLocaleDateString(),
+              totalScore: `${results.totalPresent} symptoms present`,
+              severity: getSeverityLevel(),
+              interpretation: getClinicalInterpretation(),
+              sections: [
+                { title: 'Positive Findings (Symptoms Present)', items: positiveFindings, type: 'positive' },
+                { title: 'Negative Findings (Symptoms Absent)', items: negativeFindings, type: 'negative' },
+                { title: 'Items Not Assessed / Not Entered', items: notAssessed, type: 'not-assessed' },
+              ],
+              disclaimer: 'This assessment is a screening tool only. Comprehensive psychiatric evaluation is essential for accurate diagnosis and treatment planning.',
+              patientInfo: getPatientInfoForReport(),
+            });
+          }}
+          className="flex items-center gap-1.5"
+        >
+          <Download className="h-4 w-4" />
+          Download .txt
         </Button>
       </div>
     </div>

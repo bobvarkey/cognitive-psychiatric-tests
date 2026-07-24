@@ -2,9 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useState } from 'react';
-import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info } from 'lucide-react';
+import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info, Download } from 'lucide-react';
 import { CdsResult } from '@/types/cds';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
@@ -195,6 +195,32 @@ export const CdsResults = ({ results, onReset, onBack }: Props) => {
         >
           {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
           {copied ? 'Copied' : 'Copy Text'}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => downloadTextReport({
+            assessmentName: 'Cambridge Depersonalisation Scale (CDS-29)',
+            date: new Date().toLocaleDateString(),
+            totalScore: `${results.totalScore}/290`,
+            severity: SEVERITY_LABEL[results.severity],
+            interpretation: results.interpretation,
+            sections: [{
+              title: 'Subtotals',
+              items: [
+                `Frequency: ${results.frequencyScore}/116`,
+                `Duration: ${results.durationScore}/174`,
+                `Items endorsed: ${results.itemsEndorsed}/29`,
+              ],
+              type: 'positive',
+            }],
+            disclaimer: 'Screening tool only. A score ≥70 is the suggested clinical cutoff. Diagnosis requires structured clinical evaluation.',
+            patientInfo: getPatientInfoForReport(),
+          })}
+          className="flex items-center gap-1.5"
+        >
+          <Download className="h-4 w-4" />
+          Download .txt
         </Button>
         <Button variant="outline" onClick={onReset}>
           <RotateCcw className="h-4 w-4 mr-2" />

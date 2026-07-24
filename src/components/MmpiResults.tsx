@@ -5,10 +5,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { MmpiResults as MmpiResultsType } from '@/types/mmpi';
 import { MMPI_ITEMS, getRiskLevel, SOMATIZATION_SCALES } from '@/data/mmpiScale';
 import { useState } from 'react';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
-import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, Copy, Check, FileDown } from 'lucide-react';
+import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, Copy, Check, FileDown, Download } from 'lucide-react';
 
 interface MmpiResultsProps {
   results: MmpiResultsType;
@@ -249,6 +249,34 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
               >
                 {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
                 {copied ? 'Copied' : 'Copy Text'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const positive = trueItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+                  const negative = falseItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+                  const notAssessedX = notAnswered.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+                  downloadTextReport({
+                    assessmentName: 'MMPI Ultra-Short OPD Screener',
+                    date: new Date().toLocaleDateString(),
+                    totalScore: `${results.trueCount}/10 True`,
+                    severity: language === 'ml' ? risk.labelMl : risk.label,
+                    interpretation: language === 'ml' ? risk.actionMl : risk.action,
+                    sections: [
+                      { title: 'Positive Findings (Endorsed as True)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
+                      { title: 'Negative Findings (Endorsed as False)', items: negative.length > 0 ? negative : ['None'], type: 'negative' },
+                      ...(notAssessedX.length > 0 ? [{ title: 'Not Assessed (Unanswered)', items: notAssessedX, type: 'not-assessed' as const }] : []),
+                      ...(somatizationFlag ? [{ title: 'Targeted Flag: Somatization Pattern', items: [`Hs + D + Hy somatization cluster: ${somatizationCount}/3 scales endorsed`], type: 'info' as const }] : []),
+                    ],
+                    disclaimer: 'Clinician use only; not diagnostic. Tally per scale for targeted flags (e.g., Hs+D+Hy = somatization).',
+                    patientInfo: getPatientInfoForReport(),
+                  });
+                }}
+                className="flex items-center gap-1.5"
+              >
+                <Download className="h-4 w-4" />
+                Download .txt
               </Button>
               <Button onClick={onReset} className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 flex items-center gap-2">
                 <RotateCcw className="h-4 w-4" />

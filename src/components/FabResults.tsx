@@ -4,8 +4,8 @@ import { FabResponse, FabResult } from '@/types/fab';
 import { fabItems } from '@/data/fabScale';
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Copy, Check, FileDown } from 'lucide-react';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { Copy, Check, FileDown, Download } from 'lucide-react';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
@@ -225,6 +225,41 @@ export const FabResults = ({ responses, onReset }: FabResultsProps) => {
             >
               {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
               {copied ? 'Copied' : 'Copy Text'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const positiveFindings: string[] = [];
+                const negativeFindings: string[] = [];
+                responses.forEach(r => {
+                  const item = fabItems.find(i => i.id === r.itemId);
+                  if (!item) return;
+                  const label = language === 'en' ? item.domain : item.domainMl;
+                  if (r.score < 2) positiveFindings.push(`${label} — Impaired (Score: ${r.score}/3)`);
+                  else negativeFindings.push(`${label} (Score: ${r.score}/3)`);
+                });
+                const answeredIds = responses.map(r => r.itemId);
+                const notAssessed = fabItems.filter(i => !answeredIds.includes(i.id)).map(i => language === 'en' ? i.domain : i.domainMl);
+                downloadTextReport({
+                  assessmentName: 'Frontal Assessment Battery (FAB)',
+                  date: new Date().toLocaleDateString(),
+                  totalScore: `${results.totalScore}/18`,
+                  severity: getSeverityLabel(results.severity),
+                  interpretation: results.interpretation,
+                  sections: [
+                    { title: 'Positive Findings (Impaired Domains)', items: positiveFindings, type: 'positive' },
+                    { title: 'Negative Findings (Normal Domains)', items: negativeFindings, type: 'negative' },
+                    { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
+                  ],
+                  disclaimer: "A cut-off score of 12 on the FAB differentiates frontal dysexecutive dementias from Alzheimer's type. This is a screening tool.",
+                  patientInfo: getPatientInfoForReport(),
+                });
+              }}
+              className="flex items-center gap-1.5"
+            >
+              <Download className="h-4 w-4" />
+              Download .txt
             </Button>
           </div>
         </CardContent>
