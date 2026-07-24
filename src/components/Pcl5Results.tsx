@@ -4,8 +4,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Pcl5Result } from '@/types/pcl5';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
-import { AlertCircle, CheckCircle2, Copy, Check, FileDown } from 'lucide-react';
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { AlertCircle, CheckCircle2, Copy, Check, FileDown, Download } from 'lucide-react';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
