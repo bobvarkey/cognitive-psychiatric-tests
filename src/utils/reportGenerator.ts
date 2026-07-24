@@ -58,6 +58,23 @@ export function generateTextReport(data: ReportData): string {
   return lines.join('\n');
 }
 
+export function downloadTextReport(data: ReportData, filename?: string) {
+  const text = generateTextReport(data);
+  const safeName = (filename ?? data.assessmentName ?? 'clinical-report')
+    .replace(/[^a-z0-9-_]+/gi, '_')
+    .replace(/^_+|_+$/g, '');
+  const stamp = new Date().toISOString().slice(0, 10);
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${safeName}_${stamp}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export function generatePdfReport(data: ReportData) {
   const getSectionClass = (type?: string) => {
     switch (type) {
