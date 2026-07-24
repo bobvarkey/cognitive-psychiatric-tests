@@ -12,12 +12,65 @@ import { usePatientInfo } from '@/contexts/PatientInfoContext';
 interface Pcl5ResultsProps {
   results: Pcl5Result;
   onReset: () => void;
+  responses?: Map<number, number>;
 }
 
-export const Pcl5Results = ({ results, onReset }: Pcl5ResultsProps) => {
+const SYMPTOM_IDS = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+const B_IDS = [1,2,3,4,5];
+const C_IDS = [6,7];
+const D_IDS = [8,9,10,11,12,13,14];
+const E_IDS = [15,16,17,18,19,20];
+
+export const Pcl5Results = ({ results, onReset, responses }: Pcl5ResultsProps) => {
   const { language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const likertCounts = [0, 0, 0, 0, 0];
+  if (responses) {
+    SYMPTOM_IDS.forEach(id => {
+      const v = responses.get(id);
+      if (typeof v === 'number' && v >= 0 && v <= 4) likertCounts[v]++;
+    });
+  }
+  const answeredCount = responses ? SYMPTOM_IDS.filter(id => responses.has(id)).length : 0;
+  const countAtOrAbove2 = (ids: number[]) =>
+    responses ? ids.reduce((s, id) => s + ((responses.get(id) ?? 0) >= 2 ? 1 : 0), 0) : 0;
+  const bMet = countAtOrAbove2(B_IDS);
+  const cMet = countAtOrAbove2(C_IDS);
+  const dMet = countAtOrAbove2(D_IDS);
+  const eMet = countAtOrAbove2(E_IDS);
+
+  const buildReport = () => ({
+    assessmentName: 'PCL-5 PTSD Checklist (DSM-5)',
+    date: new Date().toLocaleDateString(),
+    totalScore: `${results.totalScore}/80`,
+    severity: results.probablePTSD ? 'Probable PTSD' : 'Below Clinical Threshold',
+    interpretation: language === 'en' ? results.interpretation : results.interpretationMl,
+    sections: [
+      { title: 'Summary', items: [
+        `Trauma Exposure: ${results.hasTraumaExposure ? 'Yes' : 'No'}`,
+        `Total Score: ${results.totalScore}/80 (cut-off ≥33)`,
+        `DSM-5 pattern (B≥1, C≥1, D≥2, E≥2 rated ≥2): ${results.meetsDsm5Pattern ? 'Met' : 'Not met'}`,
+        `Items answered: ${answeredCount}/20`,
+      ], type: (results.probablePTSD ? 'positive' : 'negative') as 'positive' | 'negative' },
+      { title: 'Likert Distribution (items rated 0–4)', items: [
+        `0 — Not at all: ${likertCounts[0]}`,
+        `1 — A little bit: ${likertCounts[1]}`,
+        `2 — Moderately: ${likertCounts[2]}`,
+        `3 — Quite a bit: ${likertCounts[3]}`,
+        `4 — Extremely: ${likertCounts[4]}`,
+      ], type: 'info' as const },
+      { title: 'Cluster Totals', items: [
+        `B — Intrusion: ${results.clusterB}/20 (items ≥2: ${bMet}/5)`,
+        `C — Avoidance: ${results.clusterC}/8 (items ≥2: ${cMet}/2)`,
+        `D — Cognition/Mood: ${results.clusterD}/28 (items ≥2: ${dMet}/7)`,
+        `E — Arousal/Reactivity: ${results.clusterE}/24 (items ≥2: ${eMet}/6)`,
+      ], type: 'info' as const },
+    ],
+    disclaimer: 'PCL-5 is a screening/self-report measure, not a diagnostic instrument. Positive screens warrant a structured clinical interview (e.g., CAPS-5).',
+    patientInfo: getPatientInfoForReport(),
+  });
 
   const getScoreColor = (score: number) => {
     if (score >= 33) return 'text-red-600';

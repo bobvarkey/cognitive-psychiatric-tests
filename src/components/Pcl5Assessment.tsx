@@ -112,7 +112,7 @@ export const Pcl5Assessment = () => {
   const progress = (answered / total) * 100;
 
   if (showResults) {
-    return <Pcl5Results results={calculateResults()} onReset={handleReset} />;
+    return <Pcl5Results results={calculateResults()} onReset={handleReset} responses={responses} />;
   }
 
   return (
