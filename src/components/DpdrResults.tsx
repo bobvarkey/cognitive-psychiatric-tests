@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { DpdrResult } from "@/types/dpdr";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
-import { ArrowLeft, RotateCcw, AlertCircle, Info, Copy, Check, FileDown } from "lucide-react";
+import { ArrowLeft, RotateCcw, AlertCircle, Info, Copy, Check, FileDown, Download } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { generatePdfReport, generateTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
@@ -303,6 +303,36 @@ export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
         >
           {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
           {copied ? 'Copied' : 'Copy Text'}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            const findings: string[] = [
+              `Depersonalization: ${results.depersonalizationScore}/32`,
+              `Derealization: ${results.derealizationScore}/28`,
+              `Impact & Distress: ${results.distressScore}/20`,
+            ];
+            const positive = findings.filter((_, i) => [results.depersonalizationScore, results.derealizationScore, results.distressScore][i] > 0);
+            const negative = findings.filter((_, i) => [results.depersonalizationScore, results.derealizationScore, results.distressScore][i] === 0);
+            downloadTextReport({
+              assessmentName: 'Depersonalization-Derealization Disorder Screening',
+              date: new Date().toLocaleDateString(),
+              totalScore: `${results.totalScore}/80`,
+              severity: getSeverityLabel(results.severity),
+              interpretation: language === 'en' ? results.interpretation : results.interpretationMl,
+              sections: [
+                { title: 'Positive Findings (Elevated Domains)', items: positive, type: 'positive' },
+                { title: 'Negative Findings (Normal Domains)', items: negative, type: 'negative' },
+              ],
+              disclaimer: 'This is a screening tool, not a diagnostic instrument. Only a qualified mental health professional can provide a formal diagnosis.',
+              patientInfo: getPatientInfoForReport(),
+            });
+          }}
+          className="flex items-center gap-1.5"
+        >
+          <Download className="h-4 w-4" />
+          Download .txt
         </Button>
         <Button variant="outline" onClick={onReset}>
           <RotateCcw className="h-4 w-4 mr-2" />
