@@ -29,7 +29,13 @@ type FlagKey =
   | 'mood_symptoms_prominent'
   | 'prominent_visual_hallucinations'
   | 'negative_symptoms_present'
-  | 'family_history_psychosis_or_mood';
+  | 'family_history_psychosis_or_mood'
+  | 'autoimmune_red_flags_present'
+  | 'mri_or_eeg_suggests_encephalitis'
+  | 'prominent_cognitive_decline'
+  | 'daphne_screen_available'
+  | 'bvftd_behavioral_features_present'
+  | 'strong_neurodegenerative_suspicion';
 
 const FLAGS: { key: FlagKey; label: string; group: string }[] = [
   { key: 'fluctuating_attention_or_consciousness', label: 'Fluctuating attention or level of consciousness', group: 'Acute / delirium features' },
@@ -46,6 +52,12 @@ const FLAGS: { key: FlagKey; label: string; group: string }[] = [
   { key: 'mood_symptoms_prominent', label: 'Prominent mood symptoms (major depression or mania)', group: 'Mood & primary psychotic features' },
   { key: 'negative_symptoms_present', label: 'Negative symptoms (affective flattening, avolition)', group: 'Mood & primary psychotic features' },
   { key: 'family_history_psychosis_or_mood', label: 'Family history of psychosis or mood disorder', group: 'Mood & primary psychotic features' },
+  { key: 'autoimmune_red_flags_present', label: 'Autoimmune red flags (seizures, catatonia, dyskinesias, autonomic instability, rapid onset <3\u20136 months)', group: 'Autoimmune & neurodegenerative flags' },
+  { key: 'mri_or_eeg_suggests_encephalitis', label: 'MRI or EEG suggests encephalitis (e.g. limbic changes, extreme delta brush, focal slowing)', group: 'Autoimmune & neurodegenerative flags' },
+  { key: 'prominent_cognitive_decline', label: 'Prominent or progressive cognitive decline', group: 'Autoimmune & neurodegenerative flags' },
+  { key: 'bvftd_behavioral_features_present', label: 'bvFTD behavioural features (disinhibition, apathy, hyperorality, loss of empathy, perseverations)', group: 'Autoimmune & neurodegenerative flags' },
+  { key: 'daphne_screen_available', label: 'DAPHNE screen available', group: 'Autoimmune & neurodegenerative flags' },
+  { key: 'strong_neurodegenerative_suspicion', label: 'Strong clinician suspicion of neurodegenerative disease', group: 'Autoimmune & neurodegenerative flags' },
 ];
 
 const DELUSION_TYPES = ['Persecutory', 'Somatic', 'Misidentification', 'Mixed', 'Not specified'];
@@ -100,6 +112,18 @@ const WORKUP: { id: string; label: string; items: string[] }[] = [
     ],
   },
   {
+    id: 'advanced_biomarkers_and_autoimmune_neurodegeneration',
+    label: 'Advanced biomarkers: autoimmune and neurodegenerative',
+    items: [
+      'Autoimmune neuronal antibodies (serum, with CSF if indicated): order when there are autoimmune red flags (rapid subacute onset, seizures, catatonia, abnormal movements, autonomic instability, fluctuating consciousness, or MRI/EEG evidence of limbic encephalitis). Include neuronal surface antibodies (NMDAR, AMPAR, GABA-B R, LGI1, CASPR2, GABA-A R) and paraneoplastic antibodies (Hu, Ri, Yo, Ma2, CV2/CRMP5, amphiphysin, GAD65).',
+      'CSF autoimmune and inflammatory markers: if autoimmune psychosis/encephalitis is suspected, perform lumbar puncture with CSF cell count, protein, glucose, oligoclonal bands, IgG index, and autoimmune/paraneoplastic panels; interpret serum antibody positivity in light of CSF findings and clinical picture.',
+      'Alzheimer-type biomarkers (tau/amyloid PET or CSF A\u03b2/tau): consider in late-onset psychosis with prominent or progressive cognitive decline, especially when dementia is suspected but not confirmed. Amyloid PET assesses A\u03b2 deposition; tau PET assesses tau pathology; CSF A\u03b242, total tau and phospho-tau provide complementary information.',
+      'Use tau/amyloid PET or CSF biomarkers primarily in tertiary/research or complex diagnostic cases, not as routine screening, to help distinguish dementia-related psychosis from primary schizophrenia-spectrum disorders.',
+      'DAPHNE screen (behavioural variant frontotemporal dementia): administer DAPHNE when there are prominent bvFTD-like behavioural changes (disinhibition, apathy, perseverations, hyperorality, loss of empathy, neglect of personal hygiene). High DAPHNE scores support suspicion of bvFTD and justify dedicated neurodegenerative workup (MRI with frontal/temporal atrophy, FDG-PET, genetic testing such as MAPT, GRN, C9orf72).',
+      'If autoimmune neuronal antibodies or neurodegenerative biomarkers are positive in the appropriate clinical context, reclassify the psychosis as autoimmune encephalitis/psychosis or dementia-related psychosis, and prioritise immunotherapy or dementia-directed care alongside cautious antipsychotic use.',
+    ],
+  },
+  {
     id: 'risk_assessment_and_management',
     label: 'Risk assessment and initial management',
     items: [
@@ -136,6 +160,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
   const [onsetWeeks, setOnsetWeeks] = useState<string>('');
   const [delusionType, setDelusionType] = useState<string>('Not specified');
   const [priorHistory, setPriorHistory] = useState<string>('None');
+  const [daphneScore, setDaphneScore] = useState<string>('');
   const [flags, setFlags] = useState<Record<string, boolean>>({});
   const [checked, setChecked] = useState<Record<string, boolean>>({});
 
@@ -159,7 +184,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
         ],
       };
     }
-    if (f('objective_cognitive_decline') || f('dementia_diagnosis_present')) {
+    if (f('objective_cognitive_decline') || f('dementia_diagnosis_present') || f('prominent_cognitive_decline')) {
       return {
         branchId: 'dementia_related_psychosis',
         label: 'Dementia-related psychosis',
@@ -172,6 +197,8 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
       };
     }
     if (
+      f('autoimmune_red_flags_present') ||
+      f('mri_or_eeg_suggests_encephalitis') ||
       f('brain_imaging_structural_lesion') ||
       f('focal_neurological_signs_present') ||
       f('new_seizures_or_epilepsy') ||
@@ -217,6 +244,8 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
       !isNaN(ageNum) && ageNum >= 40 &&
       !f('fluctuating_attention_or_consciousness') &&
       !f('objective_cognitive_decline') &&
+      !f('prominent_cognitive_decline') &&
+      !f('autoimmune_red_flags_present') &&
       !f('brain_imaging_structural_lesion') &&
       !f('substance_or_medication_trigger')
     ) {
@@ -233,6 +262,33 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
     }
     return DEFAULT_BRANCH;
   }, [flags, ageNum]);
+
+  const onsetWeeksNum = parseFloat(onsetWeeks);
+  const advancedRules = useMemo(() => {
+    const rules: { id: string; label: string; recommendation: string }[] = [];
+    if (f('autoimmune_red_flags_present') || f('mri_or_eeg_suggests_encephalitis') || (!isNaN(onsetWeeksNum) && onsetWeeksNum <= 12)) {
+      rules.push({
+        id: 'recommend_autoimmune_panel',
+        label: 'Autoimmune neuronal antibody testing',
+        recommendation: 'Order serum neuronal antibody panel and consider CSF autoimmune/paraneoplastic testing for suspected autoimmune psychosis/encephalitis.',
+      });
+    }
+    if (f('prominent_cognitive_decline') || f('strong_neurodegenerative_suspicion')) {
+      rules.push({
+        id: 'recommend_ad_biomarkers',
+        label: 'Alzheimer-type biomarkers',
+        recommendation: 'Consider tau/amyloid PET or CSF A\u03b2/tau biomarkers to evaluate for Alzheimer\u2019s disease or related neurodegenerative pathology underlying the psychosis.',
+      });
+    }
+    if (f('bvftd_behavioral_features_present') && f('daphne_screen_available')) {
+      rules.push({
+        id: 'recommend_daphne_screen',
+        label: 'DAPHNE screen (bvFTD)',
+        recommendation: 'Administer the DAPHNE behavioural variant frontotemporal dementia screen and, if elevated, pursue bvFTD-oriented imaging and genetic workup.',
+      });
+    }
+    return rules;
+  }, [flags, onsetWeeksNum]);
 
   const completedSections = WORKUP.map(s => ({
     label: s.label,
@@ -258,6 +314,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
           `Onset duration: ${onsetWeeks || 'not recorded'} weeks`,
           `Delusion type: ${delusionType}`,
           `Prior psychiatric history: ${priorHistory}`,
+          `DAPHNE total score: ${daphneScore || 'not recorded'}${daphneScore ? ' / 40' : ''}`,
         ],
       },
       {
@@ -269,6 +326,11 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
         title: 'Features not present',
         type: 'negative',
         items: FLAGS.filter(x => !flags[x.key]).map(x => x.label),
+      },
+      {
+        title: 'Advanced testing recommendations',
+        type: 'positive',
+        items: advancedRules.length ? advancedRules.map(r => `${r.label}: ${r.recommendation}`) : ['No advanced autoimmune or neurodegenerative testing triggered by current inputs.'],
       },
       {
         title: 'Recommendations',
@@ -295,6 +357,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
     setOnsetWeeks('');
     setDelusionType('Not specified');
     setPriorHistory('None');
+    setDaphneScore('');
     setFlags({});
     setChecked({});
   };
@@ -359,6 +422,11 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
             </div>
           </div>
 
+          <div className="space-y-1.5">
+            <Label htmlFor="lop-daphne">DAPHNE total score (0\u201340, optional)</Label>
+            <Input id="lop-daphne" type="number" inputMode="numeric" value={daphneScore} onChange={e => setDaphneScore(e.target.value)} placeholder="e.g. 18" />
+          </div>
+
           <Separator />
 
           {groups.map(g => (
@@ -391,6 +459,28 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
           <ul className="list-disc pl-5 space-y-1 text-sm">
             {classification.recommendations.map(r => <li key={r}>{r}</li>)}
           </ul>
+        </CardContent>
+      </Card>
+
+      {/* Advanced testing rules */}
+      <Card className="mb-4 border-2 border-amber-300 bg-amber-50">
+        <CardHeader><CardTitle className="text-lg">Advanced testing recommendations</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          {advancedRules.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No advanced autoimmune or neurodegenerative testing triggered by current inputs.</p>
+          ) : (
+            advancedRules.map(r => (
+              <div key={r.id} className="space-y-1">
+                <Badge variant="secondary" className="text-xs">{r.label}</Badge>
+                <p className="text-sm">{r.recommendation}</p>
+              </div>
+            ))
+          )}
+          {daphneScore && (
+            <p className="text-sm font-medium">
+              DAPHNE total: {daphneScore}/40 — higher scores support suspicion of behavioural variant FTD.
+            </p>
+          )}
         </CardContent>
       </Card>
 
