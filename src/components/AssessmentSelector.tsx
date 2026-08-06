@@ -72,6 +72,7 @@ import { SdqAssessment } from '@/components/SdqAssessment';
 import { AuditAssessment } from '@/components/AuditAssessment';
 import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { BrainFogAssessment } from '@/components/BrainFogAssessment';
+import { LateOnsetPsychosisAssessment } from '@/components/LateOnsetPsychosisAssessment';
 import { SmdsSfAssessment } from '@/components/SmdsSfAssessment';
 import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMetabolicAssessment';
 import { SsriAdverseEventsAssessment } from '@/components/SsriAdverseEventsAssessment';
@@ -119,7 +120,7 @@ type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval';
+  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -185,6 +186,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'substance', name: 'Withdrawal & Dependence', subtitle: 'CIWA-Ar · SDS', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'Substance-specific scales: CIWA-Ar quantifies severity of alcohol withdrawal (10 items, 0–67); SDS — Severity of Dependence Scale, 5 items measuring psychological dependence and compulsive use.' },
 
   // ─── Psychosis scales ───
+  { key: 'late-onset-psychosis', name: 'Late-Onset Psychosis', subtitle: 'Classification & Workup', icon: Brain, gradient: 'from-indigo-500 to-purple-600', category: ['psychosis'], description: 'Decision-support tool for new-onset psychosis in later life — classifies delirium, dementia-related, secondary/organic, substance-induced, mood-related and late-onset schizophrenia spectrum presentations, with a full history, laboratory, targeted, neuroimaging and risk-management workup checklist.' },
   { key: 'bprs', name: 'BPRS', subtitle: 'Brief Psychiatric', icon: ClipboardList, gradient: 'from-indigo-500 to-violet-600', category: ['psychosis'], description: 'BPRS — 18-item Brief Psychiatric Rating Scale (1–7); tracks acute psychiatric symptom severity and treatment response.' },
   { key: 'sapsSans', name: 'SAPS / SANS', subtitle: 'Pos & Neg Symptoms', icon: Sparkles, gradient: 'from-purple-500 to-fuchsia-600', category: ['psychosis'], description: 'SAPS / SANS — Andreasen global ratings (0–5) of positive and negative schizophrenia symptoms; public-domain alternative to PANSS.' },
   { key: 'crdpss', name: 'CRDPSS', subtitle: 'DSM-5 Dimensions', icon: Gauge, gradient: 'from-sky-500 to-indigo-600', category: ['psychosis'], description: 'CRDPSS — DSM-5 Clinician-Rated Dimensions of Psychosis Symptom Severity; 8 items, past 7 days.' },
@@ -484,6 +486,7 @@ export const AssessmentSelector = () => {
       'antipsychotic-metabolic': true,
       'ssri-adverse': true,
       'brain-fog': true,
+      'late-onset-psychosis': true,
       fibromyalgia: true,
       'opd-psych-eval': true,
     };
@@ -554,6 +557,7 @@ export const AssessmentSelector = () => {
         'antipsychotic-metabolic': AntipsychoticMetabolicAssessment,
         'ssri-adverse': SsriAdverseEventsAssessment,
         'brain-fog': BrainFogAssessment,
+        'late-onset-psychosis': LateOnsetPsychosisAssessment,
         fibromyalgia: FibromyalgiaAssessment,
         'opd-psych-eval': OpdPsychEvalAssessment,
       };
