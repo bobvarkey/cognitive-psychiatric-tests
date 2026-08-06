@@ -478,7 +478,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
           )}
           {daphneScore && (
             <p className="text-sm font-medium">
-              DAPHNE total: {daphneScore}/40 \u2014 higher scores support suspicion of behavioural variant FTD.
+              DAPHNE total: {daphneScore}/40 — higher scores support suspicion of behavioural variant FTD.
             </p>
           )}
         </CardContent>
