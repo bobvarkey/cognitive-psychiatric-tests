@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -62,6 +62,23 @@ const FLAGS: { key: FlagKey; label: string; group: string }[] = [
 
 const DELUSION_TYPES = ['Persecutory', 'Somatic', 'Misidentification', 'Mixed', 'Not specified'];
 const PRIOR_HISTORY = ['None', 'Mood disorder', 'Psychosis', 'Other psychiatric', 'Unknown'];
+
+// DAPHNE-6: six behavioural domains, each rated 0-4 (max 24)
+const DAPHNE_ITEMS: { key: string; letter: string; label: string; hint: string }[] = [
+  { key: 'disinhibition', letter: 'D', label: 'Disinhibition', hint: 'Socially inappropriate remarks/acts, impulsivity, loss of manners' },
+  { key: 'apathy', letter: 'A', label: 'Apathy', hint: 'Loss of initiative, drive and interest' },
+  { key: 'perseveration', letter: 'P', label: 'Perseveration / stereotyped behaviour', hint: 'Rituals, repetitive movements or phrases, rigid routines' },
+  { key: 'hyperorality', letter: 'H', label: 'Hyperorality / dietary change', hint: 'Food fads, sweet craving, overeating, oral exploration' },
+  { key: 'neglect', letter: 'N', label: 'Personal neglect', hint: 'Decline in hygiene, grooming and self-care' },
+  { key: 'empathy', letter: 'E', label: 'Loss of empathy', hint: 'Reduced warmth, concern and responsiveness to others' },
+];
+const DAPHNE_ANCHORS = ['0 absent', '1 questionable', '2 mild', '3 moderate', '4 severe'];
+const DAPHNE_MAX = DAPHNE_ITEMS.length * 4;
+const DAPHNE_CUTOFF = 12;
+
+const ANTIBODY_STATUS = ['Not done', 'Pending', 'Negative', 'Positive \u2013 serum only', 'Positive \u2013 CSF (confirmed)'];
+const CSF_STATUS = ['Not done', 'Pending', 'Normal', 'Inflammatory (pleocytosis / OCB / raised IgG index)'];
+const TAU_AMYLOID_STATUS = ['Not done', 'Pending', 'Negative \u2013 no AD pathology', 'Amyloid positive', 'Amyloid + tau positive'];
 
 const WORKUP: { id: string; label: string; items: string[] }[] = [
   {
@@ -160,13 +177,33 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
   const [onsetWeeks, setOnsetWeeks] = useState<string>('');
   const [delusionType, setDelusionType] = useState<string>('Not specified');
   const [priorHistory, setPriorHistory] = useState<string>('None');
-  const [daphneScore, setDaphneScore] = useState<string>('');
+  const [daphne, setDaphne] = useState<Record<string, number>>({});
+  const [antibodyStatus, setAntibodyStatus] = useState<string>('Not done');
+  const [csfStatus, setCsfStatus] = useState<string>('Not done');
+  const [tauAmyloidStatus, setTauAmyloidStatus] = useState<string>('Not done');
   const [flags, setFlags] = useState<Record<string, boolean>>({});
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+
+  const daphneAnswered = DAPHNE_ITEMS.filter(i => daphne[i.key] !== undefined);
+  const daphneComplete = daphneAnswered.length === DAPHNE_ITEMS.length;
+  const daphneTotal = daphneAnswered.reduce((n, i) => n + (daphne[i.key] || 0), 0);
+  const daphnePositiveDomains = DAPHNE_ITEMS.filter(i => (daphne[i.key] || 0) >= 2);
+  const daphneScore = daphneAnswered.length ? String(daphneTotal) : '';
 
   const f = (k: FlagKey) => !!flags[k];
   const toggleFlag = (k: FlagKey) => setFlags(p => ({ ...p, [k]: !p[k] }));
   const toggleItem = (k: string) => setChecked(p => ({ ...p, [k]: !p[k] }));
+
+  // Auto-fill bvFTD feature flags from the DAPHNE-6 widget
+  useEffect(() => {
+    setFlags(p => ({
+      ...p,
+      daphne_screen_available: daphneAnswered.length > 0,
+      bvftd_behavioral_features_present: daphnePositiveDomains.length >= 2 || daphneTotal >= DAPHNE_CUTOFF,
+      strong_neurodegenerative_suspicion: daphneTotal >= DAPHNE_CUTOFF ? true : p.strong_neurodegenerative_suspicion,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daphne]);
 
   const ageNum = parseFloat(age);
 
@@ -265,30 +302,53 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
 
   const onsetWeeksNum = parseFloat(onsetWeeks);
   const advancedRules = useMemo(() => {
-    const rules: { id: string; label: string; recommendation: string }[] = [];
-    if (f('autoimmune_red_flags_present') || f('mri_or_eeg_suggests_encephalitis') || (!isNaN(onsetWeeksNum) && onsetWeeksNum <= 12)) {
+    const rules: { id: string; label: string; recommendation: string; reasons: string[] }[] = [];
+
+    const abReasons: string[] = [];
+    if (f('autoimmune_red_flags_present')) abReasons.push('Autoimmune red flags recorded (seizures, catatonia, dyskinesias, autonomic instability or rapid onset).');
+    if (f('mri_or_eeg_suggests_encephalitis')) abReasons.push('MRI or EEG findings suggestive of encephalitis (limbic changes, extreme delta brush, focal slowing).');
+    if (!isNaN(onsetWeeksNum) && onsetWeeksNum <= 12) abReasons.push(`Subacute onset of ${onsetWeeksNum} weeks (\u226412 weeks) raises suspicion of an autoimmune process.`);
+    if (f('new_seizures_or_epilepsy')) abReasons.push('New-onset seizures accompany the psychosis.');
+    if (abReasons.length) {
       rules.push({
         id: 'recommend_autoimmune_panel',
         label: 'Autoimmune neuronal antibody testing',
-        recommendation: 'Order serum neuronal antibody panel and consider CSF autoimmune/paraneoplastic testing for suspected autoimmune psychosis/encephalitis.',
+        recommendation: 'Order serum neuronal antibody panel (NMDAR, LGI1, CASPR2, AMPAR, GABA-A/B, GAD65) and consider CSF autoimmune/paraneoplastic testing for suspected autoimmune psychosis/encephalitis.',
+        reasons: abReasons,
       });
     }
-    if (f('prominent_cognitive_decline') || f('strong_neurodegenerative_suspicion')) {
+
+    const adReasons: string[] = [];
+    if (f('prominent_cognitive_decline')) adReasons.push('Prominent or progressive cognitive decline recorded.');
+    if (f('objective_cognitive_decline')) adReasons.push('Objective cognitive decline documented or reported by caregiver.');
+    if (f('strong_neurodegenerative_suspicion')) adReasons.push('Clinician flagged strong suspicion of neurodegenerative disease.');
+    if (!isNaN(ageNum) && ageNum >= 60 && f('negative_symptoms_present')) adReasons.push(`Age ${ageNum} with negative symptoms \u2014 dementia-related psychosis must be excluded.`);
+    if (adReasons.length) {
       rules.push({
         id: 'recommend_ad_biomarkers',
-        label: 'Alzheimer-type biomarkers',
-        recommendation: 'Consider tau/amyloid PET or CSF A\u03b2/tau biomarkers to evaluate for Alzheimer\u2019s disease or related neurodegenerative pathology underlying the psychosis.',
+        label: 'Alzheimer-type biomarkers (tau / amyloid)',
+        recommendation: 'Consider tau/amyloid PET or CSF A\u03b242, total tau and phospho-tau to evaluate for Alzheimer\u2019s disease or related neurodegenerative pathology underlying the psychosis.',
+        reasons: adReasons,
       });
     }
-    if (f('bvftd_behavioral_features_present') && f('daphne_screen_available')) {
+
+    const dpReasons: string[] = [];
+    if (daphnePositiveDomains.length) dpReasons.push(`DAPHNE-6 domains scored \u22652: ${daphnePositiveDomains.map(d => d.label).join(', ')}.`);
+    if (daphneComplete) dpReasons.push(`DAPHNE-6 total ${daphneTotal}/${DAPHNE_MAX} ${daphneTotal >= DAPHNE_CUTOFF ? `\u2014 at or above the \u2265${DAPHNE_CUTOFF} threshold supporting bvFTD` : `\u2014 below the \u2265${DAPHNE_CUTOFF} threshold`}.`);
+    if (f('bvftd_behavioral_features_present') && !daphneAnswered.length) dpReasons.push('bvFTD behavioural features flagged clinically but DAPHNE-6 not yet completed.');
+    if (dpReasons.length) {
       rules.push({
         id: 'recommend_daphne_screen',
         label: 'DAPHNE screen (bvFTD)',
-        recommendation: 'Administer the DAPHNE behavioural variant frontotemporal dementia screen and, if elevated, pursue bvFTD-oriented imaging and genetic workup.',
+        recommendation: daphneTotal >= DAPHNE_CUTOFF
+          ? 'Elevated DAPHNE-6: pursue bvFTD-oriented workup \u2014 MRI for frontal/temporal atrophy, FDG-PET, neuropsychology and genetic testing (MAPT, GRN, C9orf72).'
+          : 'Complete/repeat the DAPHNE-6 behavioural screen with an informant; if elevated, pursue bvFTD-oriented imaging and genetic workup.',
+        reasons: dpReasons,
       });
     }
     return rules;
-  }, [flags, onsetWeeksNum]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flags, onsetWeeksNum, ageNum, daphne]);
 
   const completedSections = WORKUP.map(s => ({
     label: s.label,
