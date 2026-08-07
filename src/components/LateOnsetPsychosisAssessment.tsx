@@ -188,7 +188,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
   const daphneComplete = daphneAnswered.length === DAPHNE_ITEMS.length;
   const daphneTotal = daphneAnswered.reduce((n, i) => n + (daphne[i.key] || 0), 0);
   const daphnePositiveDomains = DAPHNE_ITEMS.filter(i => (daphne[i.key] || 0) >= 2);
-  const daphneScore = daphneAnswered.length ? String(daphneTotal) : '';
+  
 
   const f = (k: FlagKey) => !!flags[k];
   const toggleFlag = (k: FlagKey) => setFlags(p => ({ ...p, [k]: !p[k] }));
