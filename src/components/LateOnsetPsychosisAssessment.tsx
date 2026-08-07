@@ -512,9 +512,45 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="lop-daphne">DAPHNE total score (0\u201340, optional)</Label>
-            <Input id="lop-daphne" type="number" inputMode="numeric" value={daphneScore} onChange={e => setDaphneScore(e.target.value)} placeholder="e.g. 18" />
+          <Separator />
+
+          {/* DAPHNE-6 widget */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div>
+                <p className="text-sm font-semibold">DAPHNE-6 behavioural screen (bvFTD)</p>
+                <p className="text-xs text-muted-foreground">Rate each domain 0\u20134 with an informant. Auto-fills the total and bvFTD feature flags below.</p>
+              </div>
+              <Badge variant={daphneTotal >= DAPHNE_CUTOFF ? 'destructive' : 'secondary'}>
+                {daphneAnswered.length ? `${daphneTotal}/${DAPHNE_MAX}` : `\u2013/${DAPHNE_MAX}`}
+              </Badge>
+            </div>
+            {DAPHNE_ITEMS.map(item => (
+              <div key={item.key} className="rounded-md border p-2.5 space-y-2">
+                <div>
+                  <p className="text-sm font-medium">{item.letter} \u2014 {item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.hint}</p>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {DAPHNE_ANCHORS.map((a, i) => (
+                    <Button
+                      key={a}
+                      size="sm"
+                      variant={daphne[item.key] === i ? 'default' : 'outline'}
+                      onClick={() => setDaphne(p => ({ ...p, [item.key]: i }))}
+                    >
+                      {a}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {daphneAnswered.length > 0 && (
+              <p className="text-sm font-medium">
+                {daphneComplete ? 'Complete' : `${daphneAnswered.length}/${DAPHNE_ITEMS.length} domains rated`} \u2014 total {daphneTotal}/{DAPHNE_MAX}
+                {daphneTotal >= DAPHNE_CUTOFF ? ` (\u2265${DAPHNE_CUTOFF}: behavioural profile supports bvFTD suspicion)` : ` (below the \u2265${DAPHNE_CUTOFF} threshold)`}
+              </p>
+            )}
           </div>
 
           <Separator />
@@ -552,27 +588,62 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
         </CardContent>
       </Card>
 
-      {/* Advanced testing rules */}
+      {/* Advanced testing rules with reason trail */}
       <Card className="mb-4 border-2 border-amber-300 bg-amber-50">
-        <CardHeader><CardTitle className="text-lg">Advanced testing recommendations</CardTitle></CardHeader>
-        <CardContent className="space-y-3">
+        <CardHeader><CardTitle className="text-lg">Advanced testing recommendations &amp; reason trail</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
           {advancedRules.length === 0 ? (
             <p className="text-sm text-muted-foreground">No advanced autoimmune or neurodegenerative testing triggered by current inputs.</p>
           ) : (
             advancedRules.map(r => (
-              <div key={r.id} className="space-y-1">
+              <div key={r.id} className="space-y-1.5 rounded-md border border-amber-200 bg-white/70 p-3">
                 <Badge variant="secondary" className="text-xs">{r.label}</Badge>
                 <p className="text-sm">{r.recommendation}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Why this is recommended</p>
+                <ul className="list-disc pl-5 space-y-0.5 text-sm">
+                  {r.reasons.map(x => <li key={x}>{x}</li>)}
+                </ul>
               </div>
             ))
           )}
-          {daphneScore && (
-            <p className="text-sm font-medium">
-              DAPHNE total: {daphneScore}/40 — higher scores support suspicion of behavioural variant FTD.
-            </p>
-          )}
         </CardContent>
       </Card>
+
+      {/* Advanced biomarker summary */}
+      <Card className="mb-4 border-2 border-indigo-300 bg-indigo-50">
+        <CardHeader><CardTitle className="text-lg">Advanced biomarker summary</CardTitle></CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              { label: 'Neuronal antibody panel (serum/CSF)', value: antibodyStatus, set: setAntibodyStatus, options: ANTIBODY_STATUS },
+              { label: 'CSF analysis', value: csfStatus, set: setCsfStatus, options: CSF_STATUS },
+              { label: 'Tau / amyloid biomarkers (PET or CSF)', value: tauAmyloidStatus, set: setTauAmyloidStatus, options: TAU_AMYLOID_STATUS },
+            ].map(row => (
+              <div key={row.label} className="space-y-1.5">
+                <Label className="text-sm">{row.label}</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {row.options.map(o => (
+                    <Button key={o} size="sm" variant={row.value === o ? 'default' : 'outline'} onClick={() => row.set(o)}>{o}</Button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Separator />
+
+          <ul className="list-disc pl-5 space-y-1 text-sm">
+            {biomarkerSummary.lines.map(l => <li key={l}>{l}</li>)}
+          </ul>
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Consolidated impression</p>
+            <ul className="list-disc pl-5 space-y-1 text-sm font-medium">
+              {biomarkerSummary.impressions.map(l => <li key={l}>{l}</li>)}
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+
 
       {/* Workup */}
       {WORKUP.map(section => {
