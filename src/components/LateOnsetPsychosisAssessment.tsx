@@ -359,6 +359,25 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
   const totalItems = WORKUP.reduce((n, s) => n + s.items.length, 0);
   const totalDone = completedSections.reduce((n, s) => n + s.done.length, 0);
 
+  const biomarkerSummary = useMemo(() => {
+    const antibodyPositive = antibodyStatus.startsWith('Positive');
+    const adPositive = tauAmyloidStatus.includes('positive');
+    const lines = [
+      `Neuronal antibody panel: ${antibodyStatus}`,
+      `CSF analysis: ${csfStatus}`,
+      `Tau / amyloid biomarkers: ${tauAmyloidStatus}`,
+      daphneAnswered.length
+        ? `DAPHNE-6: ${daphneTotal}/${DAPHNE_MAX}${daphneComplete ? '' : ` (${daphneAnswered.length}/${DAPHNE_ITEMS.length} domains rated)`} \u2014 domains \u22652: ${daphnePositiveDomains.map(d => d.label).join(', ') || 'none'}`
+        : 'DAPHNE-6: not administered',
+    ];
+    const impressions: string[] = [];
+    if (antibodyPositive || csfStatus.startsWith('Inflammatory')) impressions.push('Findings support an autoimmune/inflammatory aetiology \u2014 involve neurology, consider immunotherapy and tumour screening.');
+    if (adPositive) impressions.push('Alzheimer-type biomarkers positive \u2014 reclassify towards dementia-related psychosis and prioritise dementia-directed care with cautious antipsychotic use.');
+    if (daphneComplete && daphneTotal >= DAPHNE_CUTOFF) impressions.push(`DAPHNE-6 \u2265${DAPHNE_CUTOFF} \u2014 behavioural profile consistent with bvFTD; arrange frontal/temporal imaging, FDG-PET and genetic counselling.`);
+    if (!impressions.length) impressions.push('No confirmatory advanced biomarker findings yet; interpret pending or not-done tests alongside the clinical picture.');
+    return { lines, impressions };
+  }, [antibodyStatus, csfStatus, tauAmyloidStatus, daphne]);
+
   const reportData: ReportData = {
     assessmentName: 'Late-Onset Psychosis \u2014 Classification & Workup',
     date: new Date().toLocaleString(),
@@ -374,7 +393,8 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
           `Onset duration: ${onsetWeeks || 'not recorded'} weeks`,
           `Delusion type: ${delusionType}`,
           `Prior psychiatric history: ${priorHistory}`,
-          `DAPHNE total score: ${daphneScore || 'not recorded'}${daphneScore ? ' / 40' : ''}`,
+          `DAPHNE-6 total: ${daphneAnswered.length ? `${daphneTotal} / ${DAPHNE_MAX}` : 'not administered'}`,
+          ...DAPHNE_ITEMS.map(i => `DAPHNE \u2013 ${i.label}: ${daphne[i.key] !== undefined ? `${daphne[i.key]}/4` : 'not rated'}`),
         ],
       },
       {
@@ -388,9 +408,16 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
         items: FLAGS.filter(x => !flags[x.key]).map(x => x.label),
       },
       {
-        title: 'Advanced testing recommendations',
+        title: 'Advanced testing recommendations (with reasons)',
         type: 'positive',
-        items: advancedRules.length ? advancedRules.map(r => `${r.label}: ${r.recommendation}`) : ['No advanced autoimmune or neurodegenerative testing triggered by current inputs.'],
+        items: advancedRules.length
+          ? advancedRules.flatMap(r => [`${r.label}: ${r.recommendation}`, ...r.reasons.map(x => `   \u2022 Why: ${x}`)])
+          : ['No advanced autoimmune or neurodegenerative testing triggered by current inputs.'],
+      },
+      {
+        title: 'Advanced biomarker summary',
+        type: 'info',
+        items: [...biomarkerSummary.lines, ...biomarkerSummary.impressions],
       },
       {
         title: 'Recommendations',
@@ -417,7 +444,10 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
     setOnsetWeeks('');
     setDelusionType('Not specified');
     setPriorHistory('None');
-    setDaphneScore('');
+    setDaphne({});
+    setAntibodyStatus('Not done');
+    setCsfStatus('Not done');
+    setTauAmyloidStatus('Not done');
     setFlags({});
     setChecked({});
   };
