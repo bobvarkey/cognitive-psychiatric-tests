@@ -910,6 +910,13 @@ export const AssessmentSelector = () => {
         </div>
       </div>
 
+      <MobileBottomNav
+        section={section}
+        onSectionChange={(s) => { setSection(s); pulse(s); }}
+        resultsCount={resultsCount}
+      />
+
+
       {/* Paywall Modal */}
       <PaywallModal
         isOpen={showPaywall}
