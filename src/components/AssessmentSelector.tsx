@@ -607,7 +607,10 @@ export const AssessmentSelector = () => {
   } catch { /* ignore */ }
 
   return (
-    <SidebarProvider style={{ ['--sidebar-width' as any]: '17rem' }}>
+    <SidebarProvider
+      defaultOpen={typeof window === 'undefined' ? true : window.innerWidth >= 1024}
+      style={{ ['--sidebar-width' as any]: '17rem' }}
+    >
       <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary">
         <LanguageToggle />
         <MainSidebar
