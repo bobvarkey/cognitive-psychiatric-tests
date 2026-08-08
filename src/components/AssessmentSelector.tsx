@@ -620,16 +620,16 @@ export const AssessmentSelector = () => {
 
         <div className="flex-1 flex flex-col min-w-0">
           {/* Sticky header */}
-          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-3 pb-3">
-            <div className="max-w-5xl mx-auto">
+          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
+            <div className="max-w-6xl mx-auto">
               <div className="flex items-center gap-2 mb-3">
-                <SidebarTrigger className="shrink-0" />
+                <SidebarTrigger className="shrink-0 hidden md:inline-flex" />
                 <Brain className="h-6 w-6 text-primary shrink-0" />
                 <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
                   {language === 'en' ? sectionTitles[section].en : sectionTitles[section].ml}
                 </h1>
                 {section === 'assessments' && (
-                  <span className="ml-auto text-xs text-muted-foreground hidden sm:inline">
+                  <span className="ml-auto text-xs text-muted-foreground hidden lg:inline">
                     {language === 'en' ? categoryLabels[activeCategory].en : categoryLabels[activeCategory].ml}
                   </span>
                 )}
@@ -637,34 +637,47 @@ export const AssessmentSelector = () => {
 
               {/* Search — only on Assessments */}
               {section === 'assessments' && (
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => { setSearchQuery(e.target.value); pulse('assessments'); }}
-                    onFocus={() => pulse('assessments')}
-                    placeholder={language === 'en' ? 'Search assessments…' : 'അസെസ്മെന്റുകൾ തിരയുക…'}
-                    className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                <div className="space-y-2.5">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <input
+                      type="search"
+                      inputMode="search"
+                      enterKeyHint="search"
+                      value={searchQuery}
+                      onChange={(e) => { setSearchQuery(e.target.value); pulse('assessments'); }}
+                      onFocus={() => pulse('assessments')}
+                      placeholder={language === 'en' ? 'Search assessments…' : 'അസെസ്മെന്റുകൾ തിരയുക…'}
+                      className="w-full pl-9 pr-9 py-3 text-base sm:text-sm rounded-xl border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        aria-label="Clear search"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Scrollable category chips — phones & tablets */}
+                  <CategoryChips
+                    categories={categoryList}
+                    activeCategory={activeCategory}
+                    onSelect={(cat) => { setActiveCategory(cat); pulse('assessments'); }}
                   />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
                 </div>
               )}
             </div>
           </header>
 
           <main
-            className="flex-1 max-w-5xl w-full mx-auto px-4 py-4 space-y-4"
+            className="flex-1 max-w-6xl w-full mx-auto px-4 py-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8"
             onFocusCapture={() => pulse(section)}
             onInput={() => pulse(section)}
           >
+
             {section === 'results' && <ResultsView onOpenAssessment={(k) => openAssessment(k as AssessmentKey)} />}
             {section === 'settings' && <SettingsView />}
             {section === 'suggestions' && <SuggestionsView />}
