@@ -97,6 +97,8 @@ import { AdBanner } from './AdBanner';
 import { SuggestionsView } from './SuggestionsView';
 import { LanguageToggle } from './LanguageToggle';
 import { MainSidebar, type Section } from './MainSidebar';
+import { MobileBottomNav } from './MobileBottomNav';
+import { CategoryChips } from './CategoryChips';
 import { ResultsView } from './ResultsView';
 import { SettingsView } from './SettingsView';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
