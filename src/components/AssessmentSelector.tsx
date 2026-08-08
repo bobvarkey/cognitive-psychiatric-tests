@@ -414,7 +414,7 @@ export const AssessmentSelector = () => {
   if (selectedAssessment) {
     const wrapWithBack = (component: React.ReactNode) => (
       <div>
-        <div className="fixed top-4 left-4 z-10 print:hidden flex items-center gap-2">
+        <div className="fixed left-3 z-30 print:hidden flex items-center gap-2 top-[max(0.75rem,env(safe-area-inset-top))]">
           <Button
             variant="outline"
             onClick={handleBackToMenu}
@@ -818,7 +818,7 @@ export const AssessmentSelector = () => {
                     const renderCategoryBanner = (cat: Exclude<Category, 'all'>, count: number) => {
                       const CatIcon = categoryLabels[cat].icon;
                       return (
-                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-6 h-56 sm:h-64`}>
+                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-40 sm:h-56 lg:h-64`}>
                           <img
                             src={categoryImages[cat]!}
                             alt=""
@@ -868,7 +868,7 @@ export const AssessmentSelector = () => {
                               activeCategory as Exclude<Category, 'all'>,
                               filteredAssessments.length,
                             )}
-                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
                             {filteredAssessments.map((a, idx) => renderTile(a, idx, false))}
                           </div>
                         </>
@@ -884,7 +884,7 @@ export const AssessmentSelector = () => {
                           return (
                             <section key={cat} aria-labelledby={`cat-${cat}`}>
                               {renderCategoryBanner(cat, items.length)}
-                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
                                 {items.map((a, idx) => renderTile(a, idx, false))}
                               </div>
                             </section>
