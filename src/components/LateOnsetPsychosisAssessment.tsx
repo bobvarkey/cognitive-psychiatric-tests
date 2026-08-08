@@ -52,7 +52,7 @@ const FLAGS: { key: FlagKey; label: string; group: string }[] = [
   { key: 'mood_symptoms_prominent', label: 'Prominent mood symptoms (major depression or mania)', group: 'Mood & primary psychotic features' },
   { key: 'negative_symptoms_present', label: 'Negative symptoms (affective flattening, avolition)', group: 'Mood & primary psychotic features' },
   { key: 'family_history_psychosis_or_mood', label: 'Family history of psychosis or mood disorder', group: 'Mood & primary psychotic features' },
-  { key: 'autoimmune_red_flags_present', label: 'Autoimmune red flags (seizures, catatonia, dyskinesias, autonomic instability, rapid onset <3\u20136 months)', group: 'Autoimmune & neurodegenerative flags' },
+  { key: 'autoimmune_red_flags_present', label: 'Autoimmune red flags (seizures, catatonia, dyskinesias, autonomic instability, rapid onset <3–6 months)', group: 'Autoimmune & neurodegenerative flags' },
   { key: 'mri_or_eeg_suggests_encephalitis', label: 'MRI or EEG suggests encephalitis (e.g. limbic changes, extreme delta brush, focal slowing)', group: 'Autoimmune & neurodegenerative flags' },
   { key: 'prominent_cognitive_decline', label: 'Prominent or progressive cognitive decline', group: 'Autoimmune & neurodegenerative flags' },
   { key: 'bvftd_behavioral_features_present', label: 'bvFTD behavioural features (disinhibition, apathy, hyperorality, loss of empathy, perseverations)', group: 'Autoimmune & neurodegenerative flags' },
@@ -76,9 +76,9 @@ const DAPHNE_ANCHORS = ['0 absent', '1 questionable', '2 mild', '3 moderate', '4
 const DAPHNE_MAX = DAPHNE_ITEMS.length * 4;
 const DAPHNE_CUTOFF = 12;
 
-const ANTIBODY_STATUS = ['Not done', 'Pending', 'Negative', 'Positive \u2013 serum only', 'Positive \u2013 CSF (confirmed)'];
+const ANTIBODY_STATUS = ['Not done', 'Pending', 'Negative', 'Positive – serum only', 'Positive – CSF (confirmed)'];
 const CSF_STATUS = ['Not done', 'Pending', 'Normal', 'Inflammatory (pleocytosis / OCB / raised IgG index)'];
-const TAU_AMYLOID_STATUS = ['Not done', 'Pending', 'Negative \u2013 no AD pathology', 'Amyloid positive', 'Amyloid + tau positive'];
+const TAU_AMYLOID_STATUS = ['Not done', 'Pending', 'Negative – no AD pathology', 'Amyloid positive', 'Amyloid + tau positive'];
 
 const WORKUP: { id: string; label: string; items: string[] }[] = [
   {
@@ -112,7 +112,7 @@ const WORKUP: { id: string; label: string; items: string[] }[] = [
     items: [
       'Infectious disease screen: HIV, syphilis serology (RPR/TPHA), consider hepatitis, TB or other infections based on risk.',
       'Autoimmune screen: ANA, ENA, dsDNA, ANCA, complement levels if systemic autoimmune disease suspected.',
-      'Endocrine/metabolic: cortisol/ACTH (Cushing\u2019s/Addison\u2019s), parathyroid hormone, calcium/magnesium, ammonia, others as clinically indicated.',
+      'Endocrine/metabolic: cortisol/ACTH (Cushing’s/Addison’s), parathyroid hormone, calcium/magnesium, ammonia, others as clinically indicated.',
       'Nutritional: thiamine, niacin, vitamin D if risk factors for deficiency or malnutrition.',
       'Heavy metals, porphyria tests, or other specialized labs if clinical suspicion exists.',
     ],
@@ -134,7 +134,7 @@ const WORKUP: { id: string; label: string; items: string[] }[] = [
     items: [
       'Autoimmune neuronal antibodies (serum, with CSF if indicated): order when there are autoimmune red flags (rapid subacute onset, seizures, catatonia, abnormal movements, autonomic instability, fluctuating consciousness, or MRI/EEG evidence of limbic encephalitis). Include neuronal surface antibodies (NMDAR, AMPAR, GABA-B R, LGI1, CASPR2, GABA-A R) and paraneoplastic antibodies (Hu, Ri, Yo, Ma2, CV2/CRMP5, amphiphysin, GAD65).',
       'CSF autoimmune and inflammatory markers: if autoimmune psychosis/encephalitis is suspected, perform lumbar puncture with CSF cell count, protein, glucose, oligoclonal bands, IgG index, and autoimmune/paraneoplastic panels; interpret serum antibody positivity in light of CSF findings and clinical picture.',
-      'Alzheimer-type biomarkers (tau/amyloid PET or CSF A\u03b2/tau): consider in late-onset psychosis with prominent or progressive cognitive decline, especially when dementia is suspected but not confirmed. Amyloid PET assesses A\u03b2 deposition; tau PET assesses tau pathology; CSF A\u03b242, total tau and phospho-tau provide complementary information.',
+      'Alzheimer-type biomarkers (tau/amyloid PET or CSF Aβ/tau): consider in late-onset psychosis with prominent or progressive cognitive decline, especially when dementia is suspected but not confirmed. Amyloid PET assesses Aβ deposition; tau PET assesses tau pathology; CSF Aβ42, total tau and phospho-tau provide complementary information.',
       'Use tau/amyloid PET or CSF biomarkers primarily in tertiary/research or complex diagnostic cases, not as routine screening, to help distinguish dementia-related psychosis from primary schizophrenia-spectrum disorders.',
       'DAPHNE screen (behavioural variant frontotemporal dementia): administer DAPHNE when there are prominent bvFTD-like behavioural changes (disinhibition, apathy, perseverations, hyperorality, loss of empathy, neglect of personal hygiene). High DAPHNE scores support suspicion of bvFTD and justify dedicated neurodegenerative workup (MRI with frontal/temporal atrophy, FDG-PET, genetic testing such as MAPT, GRN, C9orf72).',
       'If autoimmune neuronal antibodies or neurodegenerative biomarkers are positive in the appropriate clinical context, reclassify the psychosis as autoimmune encephalitis/psychosis or dementia-related psychosis, and prioritise immunotherapy or dementia-directed care alongside cautious antipsychotic use.',
@@ -163,8 +163,8 @@ interface Classification {
 
 const DEFAULT_BRANCH: Classification = {
   branchId: 'unclear',
-  label: 'Unclear \u2013 mixed or overlapping features',
-  classification: 'Unclear \u2013 mixed or overlapping features',
+  label: 'Unclear – mixed or overlapping features',
+  classification: 'Unclear – mixed or overlapping features',
   recommendations: [
     'Continue full medical, neurological, and psychiatric evaluation.',
     'Repeat cognitive testing after stabilization.',
@@ -307,7 +307,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
     const abReasons: string[] = [];
     if (f('autoimmune_red_flags_present')) abReasons.push('Autoimmune red flags recorded (seizures, catatonia, dyskinesias, autonomic instability or rapid onset).');
     if (f('mri_or_eeg_suggests_encephalitis')) abReasons.push('MRI or EEG findings suggestive of encephalitis (limbic changes, extreme delta brush, focal slowing).');
-    if (!isNaN(onsetWeeksNum) && onsetWeeksNum <= 12) abReasons.push(`Subacute onset of ${onsetWeeksNum} weeks (\u226412 weeks) raises suspicion of an autoimmune process.`);
+    if (!isNaN(onsetWeeksNum) && onsetWeeksNum <= 12) abReasons.push(`Subacute onset of ${onsetWeeksNum} weeks (≤12 weeks) raises suspicion of an autoimmune process.`);
     if (f('new_seizures_or_epilepsy')) abReasons.push('New-onset seizures accompany the psychosis.');
     if (abReasons.length) {
       rules.push({
@@ -322,26 +322,26 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
     if (f('prominent_cognitive_decline')) adReasons.push('Prominent or progressive cognitive decline recorded.');
     if (f('objective_cognitive_decline')) adReasons.push('Objective cognitive decline documented or reported by caregiver.');
     if (f('strong_neurodegenerative_suspicion')) adReasons.push('Clinician flagged strong suspicion of neurodegenerative disease.');
-    if (!isNaN(ageNum) && ageNum >= 60 && f('negative_symptoms_present')) adReasons.push(`Age ${ageNum} with negative symptoms \u2014 dementia-related psychosis must be excluded.`);
+    if (!isNaN(ageNum) && ageNum >= 60 && f('negative_symptoms_present')) adReasons.push(`Age ${ageNum} with negative symptoms — dementia-related psychosis must be excluded.`);
     if (adReasons.length) {
       rules.push({
         id: 'recommend_ad_biomarkers',
         label: 'Alzheimer-type biomarkers (tau / amyloid)',
-        recommendation: 'Consider tau/amyloid PET or CSF A\u03b242, total tau and phospho-tau to evaluate for Alzheimer\u2019s disease or related neurodegenerative pathology underlying the psychosis.',
+        recommendation: 'Consider tau/amyloid PET or CSF Aβ42, total tau and phospho-tau to evaluate for Alzheimer’s disease or related neurodegenerative pathology underlying the psychosis.',
         reasons: adReasons,
       });
     }
 
     const dpReasons: string[] = [];
-    if (daphnePositiveDomains.length) dpReasons.push(`DAPHNE-6 domains scored \u22652: ${daphnePositiveDomains.map(d => d.label).join(', ')}.`);
-    if (daphneComplete) dpReasons.push(`DAPHNE-6 total ${daphneTotal}/${DAPHNE_MAX} ${daphneTotal >= DAPHNE_CUTOFF ? `\u2014 at or above the \u2265${DAPHNE_CUTOFF} threshold supporting bvFTD` : `\u2014 below the \u2265${DAPHNE_CUTOFF} threshold`}.`);
+    if (daphnePositiveDomains.length) dpReasons.push(`DAPHNE-6 domains scored ≥2: ${daphnePositiveDomains.map(d => d.label).join(', ')}.`);
+    if (daphneComplete) dpReasons.push(`DAPHNE-6 total ${daphneTotal}/${DAPHNE_MAX} ${daphneTotal >= DAPHNE_CUTOFF ? `— at or above the ≥${DAPHNE_CUTOFF} threshold supporting bvFTD` : `— below the ≥${DAPHNE_CUTOFF} threshold`}.`);
     if (f('bvftd_behavioral_features_present') && !daphneAnswered.length) dpReasons.push('bvFTD behavioural features flagged clinically but DAPHNE-6 not yet completed.');
     if (dpReasons.length) {
       rules.push({
         id: 'recommend_daphne_screen',
         label: 'DAPHNE screen (bvFTD)',
         recommendation: daphneTotal >= DAPHNE_CUTOFF
-          ? 'Elevated DAPHNE-6: pursue bvFTD-oriented workup \u2014 MRI for frontal/temporal atrophy, FDG-PET, neuropsychology and genetic testing (MAPT, GRN, C9orf72).'
+          ? 'Elevated DAPHNE-6: pursue bvFTD-oriented workup — MRI for frontal/temporal atrophy, FDG-PET, neuropsychology and genetic testing (MAPT, GRN, C9orf72).'
           : 'Complete/repeat the DAPHNE-6 behavioural screen with an informant; if elevated, pursue bvFTD-oriented imaging and genetic workup.',
         reasons: dpReasons,
       });
@@ -367,19 +367,19 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
       `CSF analysis: ${csfStatus}`,
       `Tau / amyloid biomarkers: ${tauAmyloidStatus}`,
       daphneAnswered.length
-        ? `DAPHNE-6: ${daphneTotal}/${DAPHNE_MAX}${daphneComplete ? '' : ` (${daphneAnswered.length}/${DAPHNE_ITEMS.length} domains rated)`} \u2014 domains \u22652: ${daphnePositiveDomains.map(d => d.label).join(', ') || 'none'}`
+        ? `DAPHNE-6: ${daphneTotal}/${DAPHNE_MAX}${daphneComplete ? '' : ` (${daphneAnswered.length}/${DAPHNE_ITEMS.length} domains rated)`} — domains ≥2: ${daphnePositiveDomains.map(d => d.label).join(', ') || 'none'}`
         : 'DAPHNE-6: not administered',
     ];
     const impressions: string[] = [];
-    if (antibodyPositive || csfStatus.startsWith('Inflammatory')) impressions.push('Findings support an autoimmune/inflammatory aetiology \u2014 involve neurology, consider immunotherapy and tumour screening.');
-    if (adPositive) impressions.push('Alzheimer-type biomarkers positive \u2014 reclassify towards dementia-related psychosis and prioritise dementia-directed care with cautious antipsychotic use.');
-    if (daphneComplete && daphneTotal >= DAPHNE_CUTOFF) impressions.push(`DAPHNE-6 \u2265${DAPHNE_CUTOFF} \u2014 behavioural profile consistent with bvFTD; arrange frontal/temporal imaging, FDG-PET and genetic counselling.`);
+    if (antibodyPositive || csfStatus.startsWith('Inflammatory')) impressions.push('Findings support an autoimmune/inflammatory aetiology — involve neurology, consider immunotherapy and tumour screening.');
+    if (adPositive) impressions.push('Alzheimer-type biomarkers positive — reclassify towards dementia-related psychosis and prioritise dementia-directed care with cautious antipsychotic use.');
+    if (daphneComplete && daphneTotal >= DAPHNE_CUTOFF) impressions.push(`DAPHNE-6 ≥${DAPHNE_CUTOFF} — behavioural profile consistent with bvFTD; arrange frontal/temporal imaging, FDG-PET and genetic counselling.`);
     if (!impressions.length) impressions.push('No confirmatory advanced biomarker findings yet; interpret pending or not-done tests alongside the clinical picture.');
     return { lines, impressions };
   }, [antibodyStatus, csfStatus, tauAmyloidStatus, daphne]);
 
   const reportData: ReportData = {
-    assessmentName: 'Late-Onset Psychosis \u2014 Classification & Workup',
+    assessmentName: 'Late-Onset Psychosis — Classification & Workup',
     date: new Date().toLocaleString(),
     totalScore: `${totalDone}/${totalItems} workup items completed`,
     severity: classification.label,
@@ -394,7 +394,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
           `Delusion type: ${delusionType}`,
           `Prior psychiatric history: ${priorHistory}`,
           `DAPHNE-6 total: ${daphneAnswered.length ? `${daphneTotal} / ${DAPHNE_MAX}` : 'not administered'}`,
-          ...DAPHNE_ITEMS.map(i => `DAPHNE \u2013 ${i.label}: ${daphne[i.key] !== undefined ? `${daphne[i.key]}/4` : 'not rated'}`),
+          ...DAPHNE_ITEMS.map(i => `DAPHNE – ${i.label}: ${daphne[i.key] !== undefined ? `${daphne[i.key]}/4` : 'not rated'}`),
         ],
       },
       {
@@ -411,7 +411,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
         title: 'Advanced testing recommendations (with reasons)',
         type: 'positive',
         items: advancedRules.length
-          ? advancedRules.flatMap(r => [`${r.label}: ${r.recommendation}`, ...r.reasons.map(x => `   \u2022 Why: ${x}`)])
+          ? advancedRules.flatMap(r => [`${r.label}: ${r.recommendation}`, ...r.reasons.map(x => `   • Why: ${x}`)])
           : ['No advanced autoimmune or neurodegenerative testing triggered by current inputs.'],
       },
       {
@@ -425,12 +425,12 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
         items: classification.recommendations,
       },
       ...completedSections.map(s => ({
-        title: `${s.label} \u2014 completed`,
+        title: `${s.label} — completed`,
         type: 'info' as const,
         items: s.done,
       })),
       ...completedSections.map(s => ({
-        title: `${s.label} \u2014 pending`,
+        title: `${s.label} — pending`,
         type: 'not-assessed' as const,
         items: s.pending,
       })),
@@ -519,16 +519,16 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div>
                 <p className="text-sm font-semibold">DAPHNE-6 behavioural screen (bvFTD)</p>
-                <p className="text-xs text-muted-foreground">Rate each domain 0\u20134 with an informant. Auto-fills the total and bvFTD feature flags below.</p>
+                <p className="text-xs text-muted-foreground">Rate each domain 0–4 with an informant. Auto-fills the total and bvFTD feature flags below.</p>
               </div>
               <Badge variant={daphneTotal >= DAPHNE_CUTOFF ? 'destructive' : 'secondary'}>
-                {daphneAnswered.length ? `${daphneTotal}/${DAPHNE_MAX}` : `\u2013/${DAPHNE_MAX}`}
+                {daphneAnswered.length ? `${daphneTotal}/${DAPHNE_MAX}` : `–/${DAPHNE_MAX}`}
               </Badge>
             </div>
             {DAPHNE_ITEMS.map(item => (
               <div key={item.key} className="rounded-md border p-2.5 space-y-2">
                 <div>
-                  <p className="text-sm font-medium">{item.letter} \u2014 {item.label}</p>
+                  <p className="text-sm font-medium">{item.letter} — {item.label}</p>
                   <p className="text-xs text-muted-foreground">{item.hint}</p>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -547,8 +547,8 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
             ))}
             {daphneAnswered.length > 0 && (
               <p className="text-sm font-medium">
-                {daphneComplete ? 'Complete' : `${daphneAnswered.length}/${DAPHNE_ITEMS.length} domains rated`} \u2014 total {daphneTotal}/{DAPHNE_MAX}
-                {daphneTotal >= DAPHNE_CUTOFF ? ` (\u2265${DAPHNE_CUTOFF}: behavioural profile supports bvFTD suspicion)` : ` (below the \u2265${DAPHNE_CUTOFF} threshold)`}
+                {daphneComplete ? 'Complete' : `${daphneAnswered.length}/${DAPHNE_ITEMS.length} domains rated`} — total {daphneTotal}/{DAPHNE_MAX}
+                {daphneTotal >= DAPHNE_CUTOFF ? ` (≥${DAPHNE_CUTOFF}: behavioural profile supports bvFTD suspicion)` : ` (below the ≥${DAPHNE_CUTOFF} threshold)`}
               </p>
             )}
           </div>
