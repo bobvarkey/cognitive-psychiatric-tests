@@ -45,6 +45,7 @@ import { PsychosisScaleAssessment } from '@/components/PsychosisScaleAssessment'
 import { BdiAssessment } from '@/components/BdiAssessment';
 import { YbocsAssessment } from '@/components/YbocsAssessment';
 import { IpdeAssessment } from '@/components/IpdeAssessment';
+import { Pid5UnifiedAssessment } from '@/components/Pid5UnifiedAssessment';
 import { CageAssessment } from '@/components/CageAssessment';
 import { CowsAssessment } from '@/components/CowsAssessment';
 import { SimpsonAngusAssessment } from '@/components/SimpsonAngusAssessment';
@@ -122,7 +123,7 @@ type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis';
+  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis' | 'pid5-unified';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -200,6 +201,7 @@ const assessments: AssessmentInfo[] = [
   // ─── New scales ───
   { key: 'bdi', name: 'BDI-II', subtitle: 'Depression', icon: Frown, gradient: 'from-blue-600 to-indigo-700', category: ['mood'], description: 'BDI-II — Beck Depression Inventory–II; 21-item self-report rating depressive symptoms over the past two weeks. Score 0–63 with severity bands.' },
   { key: 'ybocs', name: 'Y-BOCS', subtitle: 'OCD Severity', icon: Activity, gradient: 'from-violet-500 to-purple-600', category: ['mood'], description: 'Y-BOCS — Yale-Brown Obsessive Compulsive Scale; 10 clinician-rated items (5 obsessions + 5 compulsions, 0–4 each). Total 0–40 with severity bands.' },
+  { key: 'pid5-unified', name: 'Unified PID-5 Screener', subtitle: 'Traits, patterns & clusters', icon: Heart, gradient: 'from-indigo-500 to-purple-600', category: ['personality'], description: 'Unified PID-5 Trait and Personality Pattern Screener — original 30-item, non-diagnostic tool covering five broad trait domains, the ten traditional personality patterns, and Clusters A/B/C. Not the official PID-5-BF.' },
   { key: 'ipde', name: 'IPDE-SQ', subtitle: 'Personality Disorders', icon: Heart, gradient: 'from-rose-500 to-pink-600', category: ['personality'], description: 'IPDE Screening Questionnaire — DSM-IV self-report grouped by candidate PD across all 10 personality disorders; flags dimensions for structured interview.' },
   { key: 'cage', name: 'CAGE', subtitle: 'Alcohol Screen', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'CAGE — 4-item alcohol use screen (Cut-down, Annoyed, Guilty, Eye-opener). Score ≥ 2 = clinically significant.' },
   { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['substance'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
@@ -491,6 +493,7 @@ export const AssessmentSelector = () => {
       'late-onset-psychosis': true,
       fibromyalgia: true,
       'opd-psych-eval': true,
+      'pid5-unified': true,
     };
 
     if (withOnBack[selectedAssessment]) {
@@ -523,6 +526,7 @@ export const AssessmentSelector = () => {
         bdi: BdiAssessment,
         ybocs: YbocsAssessment,
         ipde: IpdeAssessment,
+        'pid5-unified': Pid5UnifiedAssessment,
         cage: CageAssessment,
         cows: CowsAssessment,
         simpsonAngus: SimpsonAngusAssessment,
