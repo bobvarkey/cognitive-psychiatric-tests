@@ -303,6 +303,7 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
 };
 
 export const AssessmentSelector = () => {
+  const navigate = useNavigate();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
   const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll } = useSubscription();
