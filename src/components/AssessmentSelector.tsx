@@ -953,7 +953,8 @@ export const AssessmentSelector = () => {
             )}
           </main>
         </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
 
       <MobileBottomNav
         section={section}
