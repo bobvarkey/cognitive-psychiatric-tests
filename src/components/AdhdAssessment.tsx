@@ -18,6 +18,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Brain, ArrowRight, RotateCcw, ArrowLeft } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ProgressIndicator } from './ProgressIndicator';
+
 
 interface AdhdAssessmentProps {
   onBack?: () => void;
@@ -98,7 +100,15 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8 pt-16">
+      <ProgressIndicator 
+        sections={[
+          { id: 'sec-inattention', label: 'Inattention' },
+          { id: 'sec-hyperactivity', label: 'Hyperactivity' },
+          { id: 'sec-criteria', label: 'Criteria B-E' },
+        ]} 
+      />
+
       <div className="max-w-4xl mx-auto">
         {onBack && (
           <Button variant="ghost" onClick={onBack} className="mb-4">
@@ -171,7 +181,7 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
         </Card>
 
         {/* Criterion A.1: Inattention */}
-        <div className="mb-8">
+        <div id="sec-inattention" className="mb-8">
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-t-lg p-4 mb-4">
             <h2 className="text-xl font-bold">
               {language === 'ml' ? 'A.1 ശ്രദ്ധക്കുറവ്' : 'A.1 Inattention'}
@@ -195,7 +205,7 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
         </div>
 
         {/* Criterion A.2: Hyperactivity-Impulsivity */}
-        <div className="mb-8">
+        <div id="sec-hyperactivity" className="mb-8">
           <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg p-4 mb-4">
             <h2 className="text-xl font-bold">
               {language === 'ml' ? 'A.2 അമിത സജീവതയും ആവേഗവും' : 'A.2 Hyperactivity and Impulsivity'}
@@ -219,7 +229,7 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
         </div>
 
         {/* Criteria B, C, D, E */}
-        <div className="mb-8">
+        <div id="sec-criteria" className="mb-8">
           <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-t-lg p-4 mb-4">
             <h2 className="text-xl font-bold">
               {language === 'ml' ? 'മാനദണ്ഡങ്ങൾ B-E' : 'Criteria B-E'}
