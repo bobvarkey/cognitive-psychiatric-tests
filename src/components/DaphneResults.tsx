@@ -395,17 +395,17 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                     {daphne6Positive ? (
                       <>
                         The patient met the DAPHNE-6 screening threshold (<strong>{results.daphne6Score} ≥ 4</strong>), which carries a <strong>92% sensitivity</strong> for the behavioral variant of Frontotemporal Dementia (bvFTD).
-                        {results.daphne40Positive ? (
+                        {daphne40Positive ? (
                           <span> Furthermore, the diagnostic threshold (DAPHNE-40: {results.daphne40Score} ≥ 15) was also met, significantly increasing clinical suspicion.</span>
                         ) : (
-                          <span> However, the diagnostic threshold was not met (DAPHNE-40: {results.daphne40Score}), suggesting a need for careful clinical follow-up or re-evaluation.</span>
+                          <span> However, the diagnostic threshold was not met (DAPHNE-40: {results.daphne40Score} < 15), suggesting a need for careful clinical follow-up or re-evaluation.</span>
                         )}
                         {" "}A comprehensive neuropsychiatric evaluation and neuroimaging are strongly indicated.
                       </>
                     ) : (
                       <>
                         The screening threshold was not met (<strong>{results.daphne6Score} &lt; 4</strong>). This suggests a <strong>low likelihood of bvFTD</strong> based on the DAPHNE-6 criteria.
-                        {results.daphne40Positive && (
+                        {daphne40Positive && (
                           <span> <strong>Note:</strong> An atypical presentation is noted as the DAPHNE-40 diagnostic threshold was exceeded ({results.daphne40Score} ≥ 15).</span>
                         )}
                         {" "}Clinical monitoring is advised if symptoms persist or progress.
