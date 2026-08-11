@@ -6,10 +6,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ArrowLeft, Brain, Copy, RotateCcw } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { ProgressIndicator } from './ProgressIndicator';
 
 interface CcsaAssessmentProps {
   onBack?: () => void;
 }
+
 
 type SectionKey = 'orientation' | 'immediate' | 'digitFwd' | 'digitBwd' | 'vigilance' | 'serial7' | 'abstraction' | 'sequencing' | 'naming' | 'repetition' | 'fluency' | 'copy' | 'clock' | 'recall';
 
@@ -93,7 +95,18 @@ Note: Original screening prototype — not clinically validated.`;
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
+    <div className="min-h-screen bg-background p-4 md:p-6 pt-16">
+      <ProgressIndicator 
+        sections={[
+          { id: 'sec-orientation', label: 'Orientation' },
+          { id: 'sec-immediate', label: 'Immediate Memory' },
+          { id: 'sec-attention', label: 'Attention' },
+          { id: 'sec-executive', label: 'Executive' },
+          { id: 'sec-language', label: 'Language' },
+          { id: 'sec-visuospatial', label: 'Visuospatial' },
+          { id: 'sec-delayed', label: 'Delayed Recall' },
+        ]} 
+      />
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-3">
@@ -107,6 +120,7 @@ Note: Original screening prototype — not clinically validated.`;
               <p className="text-sm text-muted-foreground">CCSA — original 30-point cognitive screen (~10–12 min)</p>
             </div>
           </div>
+
           <Badge variant="secondary" className="gap-1"><Brain className="h-3.5 w-3.5" /> Prototype tool</Badge>
         </div>
 
@@ -156,8 +170,9 @@ Note: Original screening prototype — not clinically validated.`;
         </Card>
 
         {/* 1. Orientation */}
-        <Card>
+        <Card id="sec-orientation">
           <CardHeader><CardTitle className="text-lg">1. Orientation <span className="text-sm text-muted-foreground font-normal">(6 pts — 1 each)</span></CardTitle></CardHeader>
+
           <CardContent className="space-y-2">
             <p className="text-sm text-muted-foreground">Ask each item. Tick the correct answers.</p>
             {ORIENTATION_ITEMS.map((q, i) => (
@@ -170,8 +185,9 @@ Note: Original screening prototype — not clinically validated.`;
         </Card>
 
         {/* 2. Immediate memory */}
-        <Card>
+        <Card id="sec-immediate">
           <CardHeader><CardTitle className="text-lg">2. Immediate Memory <span className="text-sm text-muted-foreground font-normal">(5 pts)</span></CardTitle></CardHeader>
+
           <CardContent className="space-y-2">
             <p className="text-sm">Read the five words once, then ask the patient to repeat. Tell them to remember for later.</p>
             <p className="font-mono text-sm bg-muted rounded p-2">{WORDS.join(' – ')}</p>
@@ -185,8 +201,9 @@ Note: Original screening prototype — not clinically validated.`;
         </Card>
 
         {/* 3. Attention */}
-        <Card>
+        <Card id="sec-attention">
           <CardHeader><CardTitle className="text-lg">3. Attention <span className="text-sm text-muted-foreground font-normal">(5 pts)</span></CardTitle></CardHeader>
+
           <CardContent className="space-y-4 text-sm">
             <div>
               <p className="font-medium mb-1">A. Digit span (2 pts)</p>
@@ -222,8 +239,9 @@ Note: Original screening prototype — not clinically validated.`;
         </Card>
 
         {/* 4. Executive */}
-        <Card>
+        <Card id="sec-executive">
           <CardHeader><CardTitle className="text-lg">4. Executive Function <span className="text-sm text-muted-foreground font-normal">(4 pts)</span></CardTitle></CardHeader>
+
           <CardContent className="space-y-4 text-sm">
             <div>
               <p className="font-medium mb-1">A. Verbal abstraction (2 pts)</p>
@@ -247,8 +265,9 @@ Note: Original screening prototype — not clinically validated.`;
         </Card>
 
         {/* 5. Language */}
-        <Card>
+        <Card id="sec-language">
           <CardHeader><CardTitle className="text-lg">5. Language <span className="text-sm text-muted-foreground font-normal">(4 pts)</span></CardTitle></CardHeader>
+
           <CardContent className="space-y-4 text-sm">
             <div>
               <p className="font-medium mb-1">A. Naming (2 pts)</p>
@@ -276,8 +295,9 @@ Note: Original screening prototype — not clinically validated.`;
         </Card>
 
         {/* 6. Visuospatial */}
-        <Card>
+        <Card id="sec-visuospatial">
           <CardHeader><CardTitle className="text-lg">6. Visuospatial Skills <span className="text-sm text-muted-foreground font-normal">(3 pts)</span></CardTitle></CardHeader>
+
           <CardContent className="space-y-4 text-sm">
             <div>
               <p className="font-medium mb-1">A. Copy an original geometric figure (2 pts)</p>
@@ -299,8 +319,9 @@ Note: Original screening prototype — not clinically validated.`;
         </Card>
 
         {/* 7. Delayed recall */}
-        <Card>
+        <Card id="sec-delayed">
           <CardHeader><CardTitle className="text-lg">7. Delayed Recall <span className="text-sm text-muted-foreground font-normal">(3 pts — first 3 spontaneous)</span></CardTitle></CardHeader>
+
           <CardContent className="space-y-2 text-sm">
             <p className="text-muted-foreground">Ask the patient to recall the five earlier words spontaneously. Score 1 pt each for the first three recalled (max 3).</p>
             {WORDS.map((w, i) => (

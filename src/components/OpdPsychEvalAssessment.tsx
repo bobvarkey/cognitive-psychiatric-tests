@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ArrowLeft, Copy, Check, Printer } from 'lucide-react';
+import { ProgressIndicator } from './ProgressIndicator';
+
 
 interface Props { onBack: () => void }
 
@@ -271,7 +273,22 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
   const impressionOpts = ['Age Appropriate', 'Age inappropriate', 'Other observation'];
 
   return (
-    <div className="max-w-5xl mx-auto p-4">
+    <div className="max-w-5xl mx-auto p-4 pt-16">
+      <ProgressIndicator 
+        sections={[
+          { id: 'sec-ident', label: 'Identification' },
+          { id: 'sec-complaints', label: 'Complaints' },
+          { id: 'sec-obs', label: 'Observation' },
+          { id: 'sec-prenatal', label: 'Prenatal' },
+          { id: 'sec-perinatal', label: 'Perinatal' },
+          { id: 'sec-tests', label: 'Tests' },
+          { id: 'sec-reading', label: 'Reading' },
+          { id: 'sec-writing', label: 'Writing' },
+          { id: 'sec-calc', label: 'Calculation' },
+          { id: 'sec-dx', label: 'Diagnosis' },
+        ]} 
+      />
+
       <div className="flex items-center justify-between mb-4 print:hidden">
         <Button variant="ghost" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-2" />Back</Button>
         <div className="flex gap-2">
@@ -287,7 +304,7 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
 
       <h1 className="text-2xl font-bold text-black mb-4">OPD Psychological Evaluation</h1>
 
-      <Section title="Identification Data">
+      <div id="sec-ident"><Section title="Identification Data">
         <div className="grid sm:grid-cols-2 gap-3">
           {[
             ['name', 'Name'], ['dateTime', 'Date & Time'], ['dob', 'Date of Birth'],
@@ -303,9 +320,9 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
             value={ident.handedness}
             onChange={v => setIdent({ ...ident, handedness: v })} />
         </div>
-      </Section>
-
-      <Section title="Presenting Complaints">
+      </Section></div>
+      
+      <div id="sec-complaints"><Section title="Presenting Complaints">
         <div className="grid sm:grid-cols-2 gap-2">
           {complaintList.map(c => (
             <label key={c} className="flex items-center gap-2 text-black">
@@ -319,9 +336,9 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
           <Label className="text-sm text-black">Others</Label>
           <Input value={complaintsOther} onChange={e => setComplaintsOther(e.target.value)} />
         </div>
-      </Section>
+      </Section></div>
 
-      <Section title="Clinical Observation">
+      <div id="sec-obs"><Section title="Clinical Observation">
         <Choice label="General Appearance" options={['Well Kempt', 'Unkempt', 'Sickly']}
           value={obs.appearance} onChange={v => setObs({ ...obs, appearance: v })} />
         <Choice label="Consciousness" options={['Present', 'Partial', 'Absent']}
@@ -336,9 +353,10 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
           <Label className="text-sm text-black">Any behavioural / emotional problem</Label>
           <Textarea value={obs.behavioral} onChange={e => setObs({ ...obs, behavioral: e.target.value })} />
         </div>
-      </Section>
+      </Section></div>
 
-      <Section title="Prenatal History">
+
+      <div id="sec-prenatal"><Section title="Prenatal History">
         <Choice label="Maternal complications during pregnancy"
           options={['Yes', 'No']} value={prenatal.maternal}
           onChange={v => setPrenatal({ ...prenatal, maternal: v })} />
@@ -347,9 +365,10 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
           <Textarea value={prenatal.maternalDetail}
             onChange={e => setPrenatal({ ...prenatal, maternalDetail: e.target.value })} />
         </div>
-      </Section>
+      </Section></div>
 
-      <Section title="Perinatal History">
+
+      <div id="sec-perinatal"><Section title="Perinatal History">
         <div className="grid sm:grid-cols-2 gap-3">
           <div>
             <Label className="text-sm text-black">Mother's age when child was born (yrs)</Label>
@@ -400,7 +419,7 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
           <Label className="text-sm text-black">Any other relevant information</Label>
           <Textarea value={otherPerinatal} onChange={e => setOtherPerinatal(e.target.value)} />
         </div>
-      </Section>
+      </Section></div>
 
       <Section title="Postnatal History">
         <Choice label="Head Injury" options={['Yes', 'No']}
@@ -455,7 +474,7 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
         </div>
       </Section>
 
-      <Section title="Psychological Test Results">
+      <div id="sec-tests"><Section title="Psychological Test Results">
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
           {[
             ['misic', 'MISIC'], ['bkt', 'BKT'], ['vsms', 'VSMS'],
@@ -469,21 +488,21 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
             </div>
           ))}
         </div>
-      </Section>
+      </Section></div>
 
-      <Section title="Reading">
+      <div id="sec-reading"><Section title="Reading">
         <YNGrid label="Reading" items={readingSkills} state={reading} setState={setReading} />
         <Choice label="Impression" options={impressionOpts}
           value={readingImpression} onChange={setReadingImpression} />
-      </Section>
+      </Section></div>
 
-      <Section title="Writing">
+      <div id="sec-writing"><Section title="Writing">
         <YNGrid label="Writing" items={writingSkills} state={writing} setState={setWriting} />
         <Choice label="Impression" options={impressionOpts}
           value={writingImpression} onChange={setWritingImpression} />
-      </Section>
+      </Section></div>
 
-      <Section title="Calculation">
+      <div id="sec-calc"><Section title="Calculation">
         <div className="grid sm:grid-cols-2 gap-2">
           {calcSkills.map(c => (
             <label key={c} className="flex items-center gap-2 text-black">
@@ -495,9 +514,9 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
         </div>
         <Choice label="Impression" options={impressionOpts}
           value={calcImpression} onChange={setCalcImpression} />
-      </Section>
+      </Section></div>
 
-      <Section title="Diagnosis">
+      <div id="sec-dx"><Section title="Diagnosis">
         <div className="grid sm:grid-cols-2 gap-2">
           {diagnoses.map(d => (
             <label key={d} className="flex items-center gap-2 text-black">
@@ -507,7 +526,7 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
             </label>
           ))}
         </div>
-      </Section>
+      </Section></div>
 
       <Card>
         <CardHeader><CardTitle className="text-lg text-black">Generated Report</CardTitle></CardHeader>

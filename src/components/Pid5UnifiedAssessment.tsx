@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Brain, AlertTriangle, RotateCcw } from 'lucide-react';
 import { ExportButtons } from '@/components/ExportButtons';
+import { ProgressIndicator } from './ProgressIndicator';
 import type { ReportData } from '@/utils/reportGenerator';
+
 import {
   PID5_ITEMS, PID5_DOMAINS, PID5_PATTERNS, PID5_CLUSTERS, PID5_RESPONSE_OPTIONS,
   PID5_SAFETY_ITEMS, PID5_MIN_ITEMS, PID5_DOMAIN_MIN_ITEMS, PID5_PATTERN_MIN_ITEMS,
@@ -218,7 +220,9 @@ export const Pid5UnifiedAssessment = ({ onBack }: Props) => {
   }
 
   return (
-    <div className="space-y-4 max-w-3xl mx-auto">
+    <div className="space-y-4 max-w-3xl mx-auto pt-16">
+      <ProgressIndicator sections={[]} />
+
       <div className="flex items-center justify-between gap-2">
         {onBack && <Button variant="ghost" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-1" />Back</Button>}
         <div className="flex items-center gap-2 text-primary"><Brain className="h-5 w-5" /><span className="font-semibold">Unified PID-5 Screener</span></div>
