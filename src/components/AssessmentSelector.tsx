@@ -107,7 +107,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import cognitoHero from '@/assets/cognito-hero.png';
 // Images removed as they are unused and causing build errors
 
-type AssessmentKey =
+export type AssessmentKey =
   | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
