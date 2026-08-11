@@ -490,7 +490,7 @@ export const AssessmentSelector = () => {
     }
 
     if (selectedAssessment === 'asrs6' || selectedAssessment === 'asrs18' || selectedAssessment === 'vanderbilt') {
-      return (
+      return wrapWithBack(
         <PsychosisScaleAssessment
           scale={ADHD_SCREENERS[selectedAssessment]}
           onBack={handleBackToMenu}
