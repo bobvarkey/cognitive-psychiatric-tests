@@ -9,7 +9,9 @@ export const NavigationButtons = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
+      // Show scroll top button if page is long enough and scrolled down
+      const isLongPage = document.documentElement.scrollHeight > window.innerHeight * 1.5;
+      setShowScrollTop(isLongPage && window.scrollY > 300);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -20,12 +22,12 @@ export const NavigationButtons = () => {
   };
 
   return (
-    <div className="fixed bottom-24 right-6 flex flex-col gap-3 z-[60] print:hidden">
+    <div className="fixed bottom-24 right-6 flex flex-col gap-4 z-[100] print:hidden">
       <Button
         variant="secondary"
         size="icon"
         onClick={() => navigate('/')}
-        className="rounded-full shadow-lg bg-background/80 backdrop-blur-md border border-border/50 h-12 w-12 hover:scale-110 transition-transform dark:bg-card/80 dark:border-primary/20"
+        className="rounded-full shadow-xl bg-primary text-primary-foreground border-2 border-primary-foreground/20 h-14 w-14 hover:scale-110 transition-all active:scale-95 flex items-center justify-center"
         title="Back to Home"
       >
         <Home className="h-6 w-6" />
@@ -36,7 +38,7 @@ export const NavigationButtons = () => {
           variant="secondary"
           size="icon"
           onClick={scrollToTop}
-          className="rounded-full shadow-lg bg-background/80 backdrop-blur-md border border-border/50 h-12 w-12 animate-in fade-in slide-in-from-bottom-4 hover:scale-110 transition-transform dark:bg-card/80 dark:border-primary/20"
+          className="rounded-full shadow-xl bg-secondary text-secondary-foreground border-2 border-secondary-foreground/20 h-14 w-14 animate-in fade-in zoom-in slide-in-from-bottom-4 hover:scale-110 transition-all active:scale-95 flex items-center justify-center"
           title="Back to Top"
         >
           <ArrowUp className="h-6 w-6" />
