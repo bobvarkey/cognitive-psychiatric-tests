@@ -103,11 +103,7 @@ import { ResultsView } from './ResultsView';
 import { SettingsView } from './SettingsView';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import cognitoHero from '@/assets/cognito-hero.png';
-import categoryCognitiveImg from '@/assets/category-cognitive.jpg';
-import categoryMoodImg from '@/assets/category-mood.jpg';
-import categoryPersonalityImg from '@/assets/category-personality.jpg';
-import categoryMedicalImg from '@/assets/category-medical.jpg';
-import categoryPsychosisImg from '@/assets/category-psychosis.jpg';
+// Images removed as they are unused and causing build errors
 
 type AssessmentKey =
   | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
@@ -284,10 +280,8 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
   substance: { en: 'Substance abuse & PUI (internet addiction)', ml: 'ലഹരി ഉപയോഗം & ഇന്റർനെറ്റ് ആസക്തി', icon: FlaskConical },
   sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
-  fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമയാൾജിയ', icon: Activity },
-  brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
-  brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
   fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമിയൽജിയ', icon: Heart },
+  brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
 };
 
 const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis', 'fibromyalgia', 'brainfog'];
@@ -814,28 +808,19 @@ export const AssessmentSelector = () => {
                     const renderCategoryBanner = (cat: Exclude<Category, 'all'>, count: number) => {
                       const CatIcon = categoryLabels[cat].icon;
                       return (
-                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-40 sm:h-56 lg:h-64`}>
-                          <img
-                            src={categoryImages[cat]!}
-                            alt=""
-                            aria-hidden
-                            loading="lazy"
-                            width={1024}
-                            height={512}
-                            className="absolute inset-0 w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-32 sm:h-40`}>
+                          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/5 to-transparent" />
                           <div className="relative h-full flex flex-col justify-end p-6 sm:p-8">
                             <div className="flex items-center gap-2 mb-2">
                               <CatIcon className="h-6 w-6 text-primary shrink-0" />
-                              <h3 className="text-2xl sm:text-3xl font-bold text-white">
+                              <h3 className="text-2xl sm:text-3xl font-bold text-foreground">
                                 {language === 'en' ? categoryLabels[cat].en : categoryLabels[cat].ml}
                               </h3>
                               <span className="ml-auto text-sm font-semibold px-3 py-1 rounded-full bg-primary/90 text-white tabular-nums">
                                 {count} assessments
                               </span>
                             </div>
-                            <p className="text-sm sm:text-base text-gray-200 max-w-2xl">
+                            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
                               {language === 'en'
                                 ? {
                                     cognitive: 'Memory, attention, executive function and dementia screens.',
@@ -847,7 +832,9 @@ export const AssessmentSelector = () => {
                                     substance: 'Alcohol, opioid, withdrawal, dependence and problematic internet/social media use screens.',
                                     sleep: 'Daytime sleepiness and obstructive sleep apnea screening.',
                                     psychosis: 'Positive, negative and prodromal symptom assessments.',
-                                  }[cat]
+                                    fibromyalgia: 'Chronic pain and fibromyalgia diagnostic criteria.',
+                                    brainfog: 'Clinical framework for evaluating cognitive fog and post-viral syndromes.',
+                                  }[cat as keyof typeof categoryLabels]
                                 : ''}
                             </p>
                           </div>
