@@ -159,11 +159,11 @@ export const MainSidebar = ({
                                 onClick={() => onCategorySelect(cat.key)}
                                 isActive={isActive}
                                 size="md"
-                                className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all ${
+                                className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all hover:bg-sidebar-accent/50 group/item ${
                                   isHighlighted ? 'ring-1 ring-primary/50 bg-primary/5' : ''
                                 } ${!isActive && catSearch && !isHighlighted ? 'opacity-40 blur-[0.5px]' : ''}`}
                               >
-                                <CatIcon className={`h-4 w-4 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                                <CatIcon className={`h-4 w-4 shrink-0 transition-transform group-hover/item:scale-110 ${isActive ? 'text-primary' : 'text-muted-foreground group-hover/item:text-foreground'}`} />
                                 <span className="flex-1 text-left truncate">{isMl ? cat.label.ml : cat.label.en}</span>
                                 <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-sidebar-accent/80 text-sidebar-foreground tabular-nums shrink-0">
                                   {cat.count}
