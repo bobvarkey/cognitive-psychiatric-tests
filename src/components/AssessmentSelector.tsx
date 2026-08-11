@@ -286,18 +286,8 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
   fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമയാൾജിയ', icon: Activity },
   brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
-};
-
-const categoryImages: Partial<Record<Category, string>> = {
-  cognitive: categoryCognitiveImg,
-  mood: categoryMoodImg,
-  personality: categoryPersonalityImg,
-  adverse: categoryMedicalImg,
-  movement: categoryMedicalImg,
-  epilepsy: categoryMedicalImg,
-  substance: categoryMedicalImg,
-  sleep: categoryMedicalImg,
-  psychosis: categoryPsychosisImg,
+  brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
+  fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമിയൽജിയ', icon: Heart },
 };
 
 const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis', 'fibromyalgia', 'brainfog'];
