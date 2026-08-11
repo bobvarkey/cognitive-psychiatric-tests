@@ -338,6 +338,8 @@ export const AssessmentSelector = () => {
   const openAssessment = (key: AssessmentKey) => {
     setLanguage('en');
     setSelectedAssessment(key);
+    navigate(`/assessment/${key}`, { replace: false });
+    window.scrollTo(0, 0);
   };
 
   const handleBackToMenu = () => {
@@ -345,6 +347,8 @@ export const AssessmentSelector = () => {
     setLanguage('en');
     setSelectedAssessment(null);
     setDeepLinkQuery('');
+    navigate('/', { replace: true });
+    window.scrollTo(0, 0);
   };
 
   const filteredAssessments = useMemo(() => {
