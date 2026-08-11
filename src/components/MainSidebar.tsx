@@ -1,4 +1,6 @@
-import { ClipboardList, FileBarChart, Settings, Brain, Lightbulb } from 'lucide-react';
+import { ClipboardList, FileBarChart, Settings, Brain, Lightbulb, Search, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 import {
   Sidebar,
   SidebarContent,
@@ -53,10 +55,30 @@ export const MainSidebar = ({
   resultsCount,
   pulseSections,
 }: MainSidebarProps) => {
-  const { state } = useSidebar();
+  const { state, setOpen, setOpenMobile } = useSidebar();
   const collapsed = state === 'collapsed';
   const { language } = useLanguage();
   const isMl = language === 'ml';
+  const [catSearch, setCatSearch] = useState('');
+
+  // Persist sidebar state
+  useEffect(() => {
+    const saved = localStorage.getItem('sidebar_expanded');
+    if (saved !== null) {
+      const isExpanded = saved === 'true';
+      setOpen(isExpanded);
+      setOpenMobile(isExpanded);
+    }
+  }, [setOpen, setOpenMobile]);
+
+  const handleToggle = (open: boolean) => {
+    localStorage.setItem('sidebar_expanded', String(open));
+  };
+
+  const filteredCategories = categories.filter(cat => 
+    cat.label.en.toLowerCase().includes(catSearch.toLowerCase()) ||
+    cat.label.ml.toLowerCase().includes(catSearch.toLowerCase())
+  );
 
   const renderSectionRow = (key: Section, badge?: number | string) => {
     const def = SECTION_LABELS[key];
@@ -93,7 +115,7 @@ export const MainSidebar = ({
   };
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" onOpenChange={handleToggle}>
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2.5 px-2 py-2.5">
           <Brain className="h-6 w-6 text-primary shrink-0" />
@@ -116,28 +138,59 @@ export const MainSidebar = ({
                     {renderSectionRow('assessments')}
                   </CollapsibleTrigger>
                   {!collapsed && section === 'assessments' && (
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {categories.map((cat) => {
+                    <CollapsibleContent className="animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-3 py-2">
+                        <div className="relative group">
+                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                          <Input
+                            placeholder="Filter categories..."
+                            value={catSearch}
+                            onChange={(e) => setCatSearch(e.target.value)}
+                            className="h-8 pl-7 pr-7 text-xs bg-sidebar-accent/50 border-transparent focus:bg-sidebar-background transition-all"
+                          />
+                          {catSearch && (
+                            <button 
+                              onClick={() => setCatSearch('')}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <SidebarMenuSub className="border-l-0 ml-0 px-1.5">
+                        {filteredCategories.map((cat) => {
                           const CatIcon = cat.icon;
                           const isActive = activeCategory === cat.key;
+                          const isHighlighted = catSearch && (
+                            cat.label.en.toLowerCase().includes(catSearch.toLowerCase()) ||
+                            cat.label.ml.toLowerCase().includes(catSearch.toLowerCase())
+                          );
+
                           return (
                             <SidebarMenuSubItem key={cat.key}>
                               <SidebarMenuSubButton
                                 onClick={() => onCategorySelect(cat.key)}
                                 isActive={isActive}
                                 size="md"
-                                className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-semibold gap-2.5 h-9 text-[14px]"
+                                className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all ${
+                                  isHighlighted ? 'ring-1 ring-primary/50 bg-primary/5' : ''
+                                } ${!isActive && catSearch && !isHighlighted ? 'opacity-40 blur-[0.5px]' : ''}`}
                               >
-                                <CatIcon className="h-4 w-4 shrink-0" />
+                                <CatIcon className={`h-4 w-4 shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
                                 <span className="flex-1 text-left truncate">{isMl ? cat.label.ml : cat.label.en}</span>
-                                <span className="ml-auto text-[11px] font-semibold px-2 py-0.5 rounded-full bg-sidebar-accent text-sidebar-accent-foreground tabular-nums shrink-0">
+                                <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-sidebar-accent/80 text-sidebar-foreground tabular-nums shrink-0">
                                   {cat.count}
                                 </span>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           );
                         })}
+                        {filteredCategories.length === 0 && (
+                          <div className="px-4 py-3 text-[11px] text-muted-foreground italic text-center">
+                            No categories found
+                          </div>
+                        )}
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   )}

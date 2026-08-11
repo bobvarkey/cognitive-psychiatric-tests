@@ -89,6 +89,9 @@ import {
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
   Cloud,
 } from 'lucide-react';
+import { NavigationButtons } from './NavigationButtons';
+import { MiniAppSearch, GlossaryDialog } from './ThemeExtras';
+import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -629,28 +632,33 @@ export const AssessmentSelector = () => {
 
               {/* Search — only on Assessments */}
               {section === 'assessments' && (
-                <div className="space-y-2.5">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input
-                      type="search"
-                      inputMode="search"
-                      enterKeyHint="search"
-                      value={searchQuery}
-                      onChange={(e) => { setSearchQuery(e.target.value); pulse('assessments'); }}
-                      onFocus={() => pulse('assessments')}
-                      placeholder={language === 'en' ? 'Search assessments…' : 'അസെസ്മെന്റുകൾ തിരയുക…'}
-                      className="w-full pl-9 pr-9 py-3 text-base sm:text-sm rounded-xl border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    />
-                    {searchQuery && (
-                      <button
-                        onClick={() => setSearchQuery('')}
-                        aria-label="Clear search"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row gap-3 items-center">
+                    <div className="relative flex-1 w-full">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                      <input
+                        type="search"
+                        inputMode="search"
+                        enterKeyHint="search"
+                        value={searchQuery}
+                        onChange={(e) => { setSearchQuery(e.target.value); pulse('assessments'); }}
+                        onFocus={() => pulse('assessments')}
+                        placeholder={language === 'en' ? 'Search clinical tools…' : 'ക്ലിനിക്കൽ ടൂളുകൾ തിരയുക…'}
+                        className="w-full pl-9 pr-9 py-3 text-base sm:text-sm rounded-xl border border-input bg-card/50 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all shadow-sm"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          aria-label="Clear search"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 self-end sm:self-center">
+                      <GlossaryDialog />
+                    </div>
                   </div>
 
                   {/* Scrollable category chips — phones & tablets */}
@@ -906,6 +914,14 @@ export const AssessmentSelector = () => {
         onClose={() => setShowPaywall(false)}
         onSelectPlan={initiatePurchase}
       />
+
+      <NavigationButtons />
+      
+      {!navigator.onLine && (
+        <div className="fixed inset-0 z-[100] bg-background">
+          <OfflineFallback />
+        </div>
+      )}
     </SidebarProvider>
   );
 };
