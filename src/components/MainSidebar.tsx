@@ -1,5 +1,6 @@
 import { ClipboardList, FileBarChart, Settings, Brain, Lightbulb, Search, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import {
   Sidebar,
@@ -56,6 +57,8 @@ export const MainSidebar = ({
   pulseSections,
 }: MainSidebarProps) => {
   const { state } = useSidebar();
+  const navigate = useNavigate();
+  const location = useLocation();
   const collapsed = state === 'collapsed';
   const { language } = useLanguage();
   const isMl = language === 'ml';
@@ -71,9 +74,17 @@ export const MainSidebar = ({
     const Icon = def.icon;
     const isActive = section === key;
     const pulse = pulseSections?.has(key);
+    
+    const handleClick = () => {
+      onSectionChange(key);
+      if (key === 'results') navigate('/history');
+      else if (key === 'settings') navigate('/settings');
+      else if (key === 'assessments') navigate('/');
+    };
+
     return (
       <SidebarMenuButton
-        onClick={() => onSectionChange(key)}
+        onClick={handleClick}
         isActive={isActive}
         tooltip={isMl ? def.ml : def.en}
         size="lg"
@@ -155,8 +166,11 @@ export const MainSidebar = ({
 
                           return (
                             <SidebarMenuSubItem key={cat.key}>
-                              <SidebarMenuSubButton
-                                onClick={() => onCategorySelect(cat.key)}
+                            <SidebarMenuSubButton
+                                onClick={() => {
+                                  onCategorySelect(cat.key);
+                                  if (location.pathname !== '/') navigate('/');
+                                }}
                                 isActive={isActive}
                                 size="md"
                                 className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all hover:bg-sidebar-accent/50 group/item ${

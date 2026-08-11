@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DaphneAssessment } from '@/components/DaphneAssessment';
@@ -107,7 +108,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import cognitoHero from '@/assets/cognito-hero.png';
 // Images removed as they are unused and causing build errors
 
-type AssessmentKey =
+export type AssessmentKey =
   | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
@@ -303,6 +304,8 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
 };
 
 export const AssessmentSelector = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
   const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll } = useSubscription();
@@ -311,6 +314,34 @@ export const AssessmentSelector = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deepLinkQuery, setDeepLinkQuery] = useState('');
   const [section, setSection] = useState<Section>('assessments');
+
+  // Handle routing for deep links
+  useEffect(() => {
+    const path = location.pathname;
+    const parts = path.split('/');
+    
+    if (path === '/history') setSection('results');
+    else if (path === '/settings') setSection('settings');
+    else if (path === '/glossary') {
+      // Logic for glossary if needed
+    }
+    else if (path.startsWith('/assessment/')) {
+      const id = parts[2] as AssessmentKey;
+      if (id && id !== selectedAssessment) {
+        setSelectedAssessment(id);
+      }
+    } else if (path === '/') {
+      setSelectedAssessment(null);
+      setSection('assessments');
+    }
+  }, [location.pathname]);
+
+  // Sync section based on current selection for deep linked assessments
+  useEffect(() => {
+    if (selectedAssessment) {
+      setSection('assessments');
+    }
+  }, [selectedAssessment]);
   const [pulseSections, setPulseSections] = useState<Set<Section>>(new Set());
 
   const handleToggleSidebar = (open: boolean) => {
@@ -338,6 +369,8 @@ export const AssessmentSelector = () => {
   const openAssessment = (key: AssessmentKey) => {
     setLanguage('en');
     setSelectedAssessment(key);
+    navigate(`/assessment/${key}`, { replace: false });
+    window.scrollTo(0, 0);
   };
 
   const handleBackToMenu = () => {
@@ -345,6 +378,8 @@ export const AssessmentSelector = () => {
     setLanguage('en');
     setSelectedAssessment(null);
     setDeepLinkQuery('');
+    navigate('/', { replace: true });
+    window.scrollTo(0, 0);
   };
 
   const filteredAssessments = useMemo(() => {
