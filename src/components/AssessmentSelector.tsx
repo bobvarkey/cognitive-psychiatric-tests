@@ -612,7 +612,7 @@ export const AssessmentSelector = () => {
 
         <div className="flex-1 flex flex-col min-w-0">
           {/* Sticky header */}
-          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
+          <header className="sticky top-0 z-20 bg-background/80 dark:bg-background/60 backdrop-blur-xl border-b border-border/50 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center gap-2 mb-3">
                 <SidebarTrigger className="shrink-0 hidden md:inline-flex" />

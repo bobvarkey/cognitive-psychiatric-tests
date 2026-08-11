@@ -19,7 +19,7 @@ export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => 
         <div className="flex items-center gap-3">
           <div className="text-4xl">{assessment.icon}</div>
           <div>
-            <h3 className="font-semibold text-gray-900 text-sm leading-tight">
+            <h3 className="font-semibold text-foreground text-sm leading-tight">
               {assessment.name}
             </h3>
             <p className="text-xs text-gray-500 mt-1">{assessment.abbreviation}</p>
@@ -28,7 +28,7 @@ export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => 
       </div>
 
       {/* Description */}
-      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
         {assessment.description}
       </p>
 
