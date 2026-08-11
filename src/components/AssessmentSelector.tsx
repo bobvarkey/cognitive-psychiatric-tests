@@ -598,7 +598,7 @@ export const AssessmentSelector = () => {
       onOpenChange={handleToggleSidebar}
       style={{ ['--sidebar-width' as any]: '17rem' }}
     >
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-background/95 to-secondary/30 dark:from-background dark:via-background/80 dark:to-primary/5">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-secondary">
         <LanguageToggle />
         <MainSidebar
           section={section}
@@ -612,7 +612,7 @@ export const AssessmentSelector = () => {
 
         <div className="flex-1 flex flex-col min-w-0">
           {/* Sticky header */}
-          <header className="sticky top-0 z-20 bg-background/80 dark:bg-background/60 backdrop-blur-xl border-b border-border/50 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
+          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
             <div className="max-w-6xl mx-auto">
               <div className="flex items-center gap-2 mb-3">
                 <SidebarTrigger className="shrink-0 hidden md:inline-flex" />
@@ -665,17 +665,17 @@ export const AssessmentSelector = () => {
 
                 {/* Hero banner — only when no search/filter */}
                 {!searchQuery.trim() && activeCategory === 'all' && (
-                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-xl dark:shadow-primary/5 dark:border-primary/20 bg-card">
+                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-sm">
                     <img
                       src={cognitoHero}
                       alt={language === 'en' ? 'Clinician using Cognito on a tablet' : 'ടാബ്‌ലെറ്റിൽ Cognito ഉപയോഗിക്കുന്ന ക്ലിനിക്‌ഷ്യൻ'}
-                      className="w-full h-auto block opacity-90 group-hover:opacity-100 transition-opacity"
+                      className="w-full h-auto block"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 flex items-start justify-center pt-8 bg-gradient-to-b from-black/50 via-black/20 to-transparent rounded-2xl">
-                      <h2 className="text-3xl sm:text-4xl font-extrabold text-white text-center px-4 leading-tight max-w-sm drop-shadow-lg">
+                    <div className="absolute inset-0 flex items-start justify-center pt-6 bg-gradient-to-b from-black/30 to-transparent rounded-2xl">
+                      <h2 className="text-2xl sm:text-3xl font-bold text-amber-300 text-center px-4 leading-tight max-w-sm">
                         {language === 'en'
-                          ? 'Neuropsychiatric\nEvaluation Companion'
+                          ? 'Neuropsychiatric\nevaluation companion'
                           : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}
                       </h2>
                     </div>
