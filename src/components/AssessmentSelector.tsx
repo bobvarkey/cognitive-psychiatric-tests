@@ -650,9 +650,9 @@ export const AssessmentSelector = () => {
       onOpenChange={handleToggleSidebar}
       style={{ ['--sidebar-width' as any]: '17rem' }}
     >
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
         <motion.div
-          key="main-content"
+          key={selectedAssessment ? 'assessment-active' : 'home'}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
