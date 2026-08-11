@@ -153,30 +153,27 @@ All colors MUST be HSL.
     color: #000;
   }
 
-  /* Force a light, high-contrast palette across all assessment panels.
-     Cards and any hard-coded dark surfaces are normalized to white. */
+  /* Enable dark mode for specific containers while keeping standard text defaults */
+  .dark .bg-card {
+    background-color: hsl(240 10% 6%) !important;
+    color: hsl(0 0% 100%) !important;
+  }
+  
+  .dark .text-foreground {
+    color: hsl(0 0% 100%) !important;
+  }
+
+  .dark .text-muted-foreground {
+    color: hsl(240 5% 70%) !important;
+  }
+
+  /* Reset forced white/black overrides to respect themes */
   .bg-slate-900, .bg-slate-800, .bg-slate-700,
   .bg-gray-900, .bg-gray-800, .bg-gray-700,
   .bg-zinc-900, .bg-zinc-800, .bg-zinc-700,
   .bg-neutral-900, .bg-neutral-800, .bg-neutral-700,
   .bg-black {
-    background-color: #ffffff !important;
-    color: #000 !important;
-  }
-
-  /* Keep legacy slate/gray/zinc/neutral text dark on the light background. */
-  .text-white,
-  .text-slate-50, .text-slate-100, .text-slate-200, .text-slate-300,
-  .text-gray-50, .text-gray-100, .text-gray-200, .text-gray-300,
-  .text-zinc-50, .text-zinc-100, .text-zinc-200, .text-zinc-300,
-  .text-neutral-50, .text-neutral-100, .text-neutral-200, .text-neutral-300,
-  .text-slate-400, .text-gray-400, .text-zinc-400, .text-neutral-400,
-  .text-slate-500, .text-slate-600, .text-slate-700, .text-slate-800, .text-slate-900,
-  .text-gray-500, .text-gray-600, .text-gray-700, .text-gray-800, .text-gray-900,
-  .text-zinc-500, .text-zinc-600, .text-zinc-700, .text-zinc-800, .text-zinc-900,
-  .text-neutral-500, .text-neutral-600, .text-neutral-700, .text-neutral-800, .text-neutral-900,
-  .text-muted-foreground {
-    color: #000 !important;
+    @apply dark:bg-card dark:text-card-foreground;
   }
 
   /* Preserve readable pastel info boxes on light background. */
@@ -368,18 +365,22 @@ All colors MUST be HSL.
   }
 }
 
-/* Force assessment question text to dark black for readability */
+/* Respect dark mode for text */
+.dark .text-slate-700,
+.dark .text-slate-600,
+.dark .text-slate-500,
+.dark h3.tracking-tight,
+.dark [class*="CardTitle"] {
+  color: hsl(0 0% 100%) !important;
+}
+
 .text-slate-700,
 .text-slate-600,
 .text-slate-500,
-.text-muted-foreground {
-  color: #000 !important;
-}
-
-/* Card titles (questions) always dark black */
+.text-muted-foreground,
 h3.tracking-tight,
 [class*="CardTitle"] {
-  color: #000 !important;
+  color: inherit;
 }
 
 

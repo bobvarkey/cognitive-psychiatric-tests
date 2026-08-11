@@ -25,7 +25,7 @@ export const NavigationButtons = () => {
         variant="secondary"
         size="icon"
         onClick={() => navigate('/')}
-        className="rounded-full shadow-lg bg-background/80 backdrop-blur-md border border-border h-12 w-12 hover:scale-110 transition-transform"
+        className="rounded-full shadow-lg bg-background/80 backdrop-blur-md border border-border/50 h-12 w-12 hover:scale-110 transition-transform dark:bg-card/80 dark:border-primary/20"
         title="Back to Home"
       >
         <Home className="h-6 w-6" />
@@ -36,7 +36,7 @@ export const NavigationButtons = () => {
           variant="secondary"
           size="icon"
           onClick={scrollToTop}
-          className="rounded-full shadow-lg bg-background/80 backdrop-blur-md border border-border h-12 w-12 animate-in fade-in slide-in-from-bottom-4 hover:scale-110 transition-transform"
+          className="rounded-full shadow-lg bg-background/80 backdrop-blur-md border border-border/50 h-12 w-12 animate-in fade-in slide-in-from-bottom-4 hover:scale-110 transition-transform dark:bg-card/80 dark:border-primary/20"
           title="Back to Top"
         >
           <ArrowUp className="h-6 w-6" />
