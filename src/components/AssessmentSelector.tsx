@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DaphneAssessment } from '@/components/DaphneAssessment';
@@ -432,7 +433,24 @@ export const AssessmentSelector = () => {
   // Render selected assessment
   if (selectedAssessment) {
     const wrapWithBack = (component: React.ReactNode) => (
-      <div>
+      <motion.div
+        key={selectedAssessment}
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        drag="x"
+        dragDirectionLock
+        dragConstraints={{ left: 0, right: 1000 }}
+        dragElastic={0.05}
+        dragListener={true}
+        onDragEnd={(_, info) => {
+          if (info.offset.x > 80 || info.velocity.x > 300) {
+            handleBackToMenu();
+          }
+        }}
+        className="fixed inset-0 z-50 bg-background overflow-y-auto"
+      >
         <div className="fixed left-3 z-30 print:hidden flex items-center gap-2 top-[max(0.75rem,env(safe-area-inset-top))]">
           <Button
             variant="outline"
@@ -445,7 +463,7 @@ export const AssessmentSelector = () => {
           </Button>
         </div>
         {component}
-      </div>
+      </motion.div>
     );
 
     const psychosisKeys: Record<string, keyof typeof PSYCHOSIS_SCALES> = {
@@ -457,7 +475,7 @@ export const AssessmentSelector = () => {
       vagus: 'vagus',
     };
     if (selectedAssessment in psychosisKeys) {
-      return (
+      return wrapWithBack(
         <PsychosisScaleAssessment
           scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
           onBack={handleBackToMenu}
@@ -466,15 +484,15 @@ export const AssessmentSelector = () => {
     }
 
     if (selectedAssessment === 'adhdScreener') {
-      return <AdhdScreenerLanding onBack={handleBackToMenu} />;
+      return wrapWithBack(<AdhdScreenerLanding onBack={handleBackToMenu} />);
     }
 
     if (selectedAssessment === 'dpdr') {
-      return <DpdrLanding onBack={handleBackToMenu} />;
+      return wrapWithBack(<DpdrLanding onBack={handleBackToMenu} />);
     }
 
     if (selectedAssessment === 'asrs6' || selectedAssessment === 'asrs18' || selectedAssessment === 'vanderbilt') {
-      return (
+      return wrapWithBack(
         <PsychosisScaleAssessment
           scale={ADHD_SCREENERS[selectedAssessment]}
           onBack={handleBackToMenu}
@@ -515,7 +533,7 @@ export const AssessmentSelector = () => {
 
     if (withOnBack[selectedAssessment]) {
       if (selectedAssessment === 'cognitiveSyndromes') {
-        return <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />;
+        return wrapWithBack(<CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />);
       }
       const ComponentMap: Record<string, React.ComponentType<any>> = {
         adhd: AdhdAssessment,
@@ -585,7 +603,7 @@ export const AssessmentSelector = () => {
         'opd-psych-eval': OpdPsychEvalAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
-      return <Comp onBack={handleBackToMenu} />;
+      return wrapWithBack(<Comp onBack={handleBackToMenu} />);
     }
 
     const wrapMap: Record<string, React.ReactNode> = {
@@ -633,7 +651,14 @@ export const AssessmentSelector = () => {
       onOpenChange={handleToggleSidebar}
       style={{ ['--sidebar-width' as any]: '17rem' }}
     >
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-secondary">
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={selectedAssessment ? 'assessment-active' : 'home'}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-secondary"
+        >
         <LanguageToggle />
         <MainSidebar
           section={section}
@@ -930,7 +955,8 @@ export const AssessmentSelector = () => {
             )}
           </main>
         </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
 
       <MobileBottomNav
         section={section}
