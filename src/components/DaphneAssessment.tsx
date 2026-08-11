@@ -212,7 +212,16 @@ export const DaphneAssessment = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle pt-16">
-      <ProgressIndicator sections={[]} />
+      <ProgressIndicator 
+        sections={[
+          { id: 'disinhibition', label: language === 'ml' ? 'അനിയന്ത്രണം' : 'Disinhibition' },
+          { id: 'apathy', label: language === 'ml' ? 'നിസ്സംഗത' : 'Apathy' },
+          { id: 'empathy', label: language === 'ml' ? 'സഹാനുഭൂതി' : 'Empathy' },
+          { id: 'perseverations', label: language === 'ml' ? 'ആവർത്തനം' : 'Perseverations' },
+          { id: 'hyperorality', label: language === 'ml' ? 'അമിത വായ്ക്കോളിത്തം' : 'Hyperorality' },
+          { id: 'neglect', label: language === 'ml' ? 'അവഗണന' : 'Neglect' }
+        ]} 
+      />
 
       <LanguageToggle />
       <div className="container mx-auto px-4 py-6">
