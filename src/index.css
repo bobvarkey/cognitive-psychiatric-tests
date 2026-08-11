@@ -125,12 +125,12 @@ All colors MUST be HSL.
   body.dark {
     background-color: hsl(240 10% 4%);
     background-image: 
-      radial-gradient(at 0% 0%, hsla(320, 100%, 50%, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(20, 100%, 60%, 0.15) 0px, transparent 50%),
+      radial-gradient(at 20% 0%, hsla(320, 100%, 50%, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsla(20, 100%, 60%, 0.15) 0px, transparent 50%),
       radial-gradient(at 50% 100%, hsla(15, 100%, 60%, 0.1) 0px, transparent 50%),
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+      linear-gradient(rgba(255, 255, 255, 0.025) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1.5px, transparent 1.5px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 52px 52px, 52px 52px;
     background-attachment: fixed;
   }
 }
@@ -143,11 +143,13 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     position: relative;
-    background-color: hsl(0 0% 100%);
+    background-color: hsl(0 0% 98%);
     background-image:
-      linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
+      radial-gradient(at 0% 0%, hsla(210, 100%, 50%, 0.03) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(20, 100%, 60%, 0.03) 0px, transparent 50%),
+      linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
     background-attachment: fixed;
     min-height: 100vh;
     color: #000;
