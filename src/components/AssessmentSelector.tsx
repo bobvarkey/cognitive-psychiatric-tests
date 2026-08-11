@@ -351,15 +351,6 @@ export const AssessmentSelector = () => {
   const filteredAssessments = useMemo(() => {
     let filtered = assessments;
 
-    // Filter based on subscription tier
-    const _isProSubscriber = true; // Always unlocked
-
-    /* 
-    if (!isProSubscriber) {
-      // Lite tier: exclude Pro-only assessments
-      filtered = filtered.filter(a => !PRO_ONLY_ASSESSMENTS.includes(a.key));
-    }
-    */
 
     if (activeCategory !== 'all') {
       filtered = filtered.filter(a => a.category.includes(activeCategory));
@@ -492,7 +483,7 @@ export const AssessmentSelector = () => {
       if (selectedAssessment === 'cognitiveSyndromes') {
         return <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />;
       }
-      const ComponentMap: Record<string, React.ComponentType<{ onBack?: () => void }>> = {
+      const ComponentMap: Record<string, React.ComponentType<any>> = {
         adhd: AdhdAssessment,
         msibpd: MsiBpdAssessment,
         hamd: HamdAssessment,
@@ -766,7 +757,7 @@ export const AssessmentSelector = () => {
                       { glow: '', bg: 'from-yellow-500 to-black', icon: 'rgba(255,255,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,255,0,0.5), 0_0_20px_rgba(255,255,0,0.3)' }, // Yellow
                     ];
 
-                    const _isProSubscriber = true; // Always unlocked
+                    // const _isProSubscriber = true; // Always unlocked
 
                     const renderTile = (a: AssessmentInfo, index: number, locked = false) => {
                       const Icon = a.icon;
