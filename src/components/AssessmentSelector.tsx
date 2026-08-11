@@ -433,7 +433,22 @@ export const AssessmentSelector = () => {
   // Render selected assessment
   if (selectedAssessment) {
     const wrapWithBack = (component: React.ReactNode) => (
-      <div>
+      <motion.div
+        key={selectedAssessment}
+        initial={{ x: '100%' }}
+        animate={{ x: 0 }}
+        exit={{ x: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={0.7}
+        onDragEnd={(_, info) => {
+          if (info.offset.x > 150 || info.velocity.x > 500) {
+            handleBackToMenu();
+          }
+        }}
+        className="fixed inset-0 z-50 bg-background overflow-y-auto"
+      >
         <div className="fixed left-3 z-30 print:hidden flex items-center gap-2 top-[max(0.75rem,env(safe-area-inset-top))]">
           <Button
             variant="outline"
@@ -446,7 +461,7 @@ export const AssessmentSelector = () => {
           </Button>
         </div>
         {component}
-      </div>
+      </motion.div>
     );
 
     const psychosisKeys: Record<string, keyof typeof PSYCHOSIS_SCALES> = {
