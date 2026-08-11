@@ -6,7 +6,6 @@ import { useState } from "react";
 import { ArrowLeft, RotateCcw, AlertCircle, Info, Copy, Check, FileDown, Download } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
-import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface DpdrResultsProps {

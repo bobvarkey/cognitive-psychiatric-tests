@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import {
   ASRS_ITEMS,
-  ASRS_SCALE_SCORING_GUIDE,
   ASRS_SCALE_ITEM_SCORING,
   ASRS_YESNO_SCORING_GUIDE,
   ASRS_INTERPRETATION

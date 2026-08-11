@@ -250,7 +250,7 @@ const Section = ({
   </div>
 );
 
-export const ConsciousnessAssessment = ({ onBack }: ConsciousnessAssessmentProps) => {
+export const ConsciousnessAssessment = ({ onBack: _onBack }: ConsciousnessAssessmentProps) => {
   const { language } = useLanguage();
   const isMl = language === 'ml';
   const tr = (b: Bilingual) => (isMl ? b.ml : b.en);

@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { X, Check, Brain, Download, BarChart3, Headphones, Star } from 'lucide-react';
+import { X, Check, Brain, Star } from 'lucide-react';
 
 interface PaywallModalProps {
   isOpen: boolean;

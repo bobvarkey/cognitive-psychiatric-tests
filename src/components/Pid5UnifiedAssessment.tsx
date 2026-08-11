@@ -12,7 +12,7 @@ import {
   PID5_ITEMS, PID5_DOMAINS, PID5_PATTERNS, PID5_CLUSTERS, PID5_RESPONSE_OPTIONS,
   PID5_SAFETY_ITEMS, PID5_MIN_ITEMS, PID5_DOMAIN_MIN_ITEMS, PID5_PATTERN_MIN_ITEMS,
   PID5_COPYRIGHT_NOTE, bandFor,
-  type ClusterKey, type PatternKey, type Pid5Domain,
+  type ClusterKey, type PatternKey,
 } from '@/data/pid5UnifiedScale';
 
 interface Props { onBack?: () => void }

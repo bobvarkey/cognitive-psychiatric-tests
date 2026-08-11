@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { isPremiumUser, getSubscription, createDemoSubscription, getPremiumFeatures, getDemoUnlockAll, setDemoUnlockAll } from '@/services/subscriptionService';
+import React, { createContext, useContext, useState } from 'react';
+import { createDemoSubscription, setDemoUnlockAll } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 
 interface PremiumFeatures {

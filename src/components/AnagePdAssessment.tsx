@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Home, BookOpen, CheckCircle } from 'lucide-react';
 import { ANAGE_PD_DOMAINS } from '@/data/pdManagementTools';
 
 interface AnagePdAssessmentProps {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Home, AlertCircle, BookOpen, CheckCircle, X } from 'lucide-react';
+import { Home, AlertCircle, BookOpen, CheckCircle } from 'lucide-react';
 import { LAEP_ITEMS } from '@/data/epilepsyScales';
 
 interface LaepAssessmentProps {

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -423,8 +422,8 @@ const sections: MseSection[] = [
 
 type Status = 'normal' | 'abnormal' | 'na';
 
-export const MseAssessment = ({ onBack }: MseAssessmentProps) => {
-  const { t } = useLanguage();
+export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
+  const { t: _t } = useLanguage();
   const { patientInfo } = usePatientInfo();
   const [status, setStatus] = useState<Record<string, Status>>({});
   const [notes, setNotes] = useState('');

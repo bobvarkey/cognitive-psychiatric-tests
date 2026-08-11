@@ -24,10 +24,10 @@ export const CategoryChips = ({ categories, activeCategory, onSelect }: Category
               type="button"
               onClick={() => onSelect(cat.key)}
               aria-pressed={active}
-              className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 min-h-[36px] text-[13px] font-medium transition-colors ${
+              className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 min-h-[36px] text-[13px] font-medium transition-all shadow-sm active:scale-95 ${
                 active
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'bg-card text-foreground border-border'
+                  ? 'bg-primary text-primary-foreground border-primary shadow-primary/20'
+                  : 'bg-card/50 backdrop-blur-sm text-foreground border-border hover:border-primary/50'
               }`}
             >
               <Icon className="h-3.5 w-3.5 shrink-0" />

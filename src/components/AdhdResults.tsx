@@ -7,7 +7,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, XCircle, Copy, Check, FileDown, Download } from 'lucide-react';
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
-import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { ADHD_INATTENTION_SYMPTOMS, ADHD_HYPERACTIVITY_SYMPTOMS } from '@/data/adhdScale';
 

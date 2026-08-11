@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Home, BookOpen, TrendingUp } from 'lucide-react';
-import { DBS_CANDIDACY_CRITERIA, STIMULUS_APPROPRIATENESS_SCALE } from '@/data/pdManagementTools';
+import { DBS_CANDIDACY_CRITERIA } from '@/data/pdManagementTools';
 
 interface StimulusDbsAssessmentProps {
   onBack?: () => void;

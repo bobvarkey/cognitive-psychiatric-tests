@@ -4,12 +4,11 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { DelusionResults } from '@/types/delusions';
 import { useState } from 'react';
-import { AlertCircle, Brain, CheckCircle2, Copy, Check, FileText, FileDown, Download } from 'lucide-react';
+import { AlertCircle, Brain, Copy, Check, FileText, FileDown, Download } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ClinicalContextTable } from './ClinicalContextTable';
 import { delusionsScale } from '@/data/delusionsScale';
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
-import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface DelusionsResultsProps {

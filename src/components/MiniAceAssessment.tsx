@@ -4,12 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Slider } from '@/components/ui/slider';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { MINI_ACE_VERSIONS, MINI_ACE_ITEMS, getInterpretation, CLINICAL_NOTES } from '@/data/miniAceScale';
 import { MiniAceResponse, MiniAceResults } from '@/types/miniace';
-import { ArrowLeft, Brain, Clock, MessageSquare, ListChecks, RotateCcw, AlertCircle, CheckCircle2, Info, FileText, Cat } from 'lucide-react';
+import { ArrowLeft, Brain, Clock, ListChecks, AlertCircle, CheckCircle2, Info, FileText, Cat } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
 

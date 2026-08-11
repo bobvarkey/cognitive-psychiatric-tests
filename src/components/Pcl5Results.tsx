@@ -6,7 +6,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { AlertCircle, CheckCircle2, Copy, Check, FileDown, Download } from 'lucide-react';
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
-import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface Pcl5ResultsProps {

@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info, Download } from 'lucide-react';
 import { DesResult } from '@/types/des';
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
-import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface Props {

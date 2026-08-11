@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { MMPI_ITEMS, getRiskLevel, SOMATIZATION_SCALES } from '@/data/mmpiScale';
+import { MMPI_ITEMS, getRiskLevel } from '@/data/mmpiScale';
 import { MmpiResponse, MmpiResults } from '@/types/mmpi';
 import { MmpiResults as MmpiResultsComponent } from '@/components/MmpiResults';
 import { Brain, ArrowLeft, ArrowRight, Info, CheckCircle2, XCircle } from 'lucide-react';

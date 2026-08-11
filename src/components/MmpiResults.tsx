@@ -6,9 +6,8 @@ import { MmpiResults as MmpiResultsType } from '@/types/mmpi';
 import { MMPI_ITEMS, getRiskLevel, SOMATIZATION_SCALES } from '@/data/mmpiScale';
 import { useState } from 'react';
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
-import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
-import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, Copy, Check, FileDown, Download } from 'lucide-react';
+import { Brain, RotateCcw, Printer, AlertTriangle, ArrowLeft, Copy, Check, FileDown, Download } from 'lucide-react';
 
 interface MmpiResultsProps {
   results: MmpiResultsType;

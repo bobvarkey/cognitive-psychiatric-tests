@@ -18,7 +18,6 @@ import { HamaAssessment } from '@/components/HamaAssessment';
 import { FibromyalgiaAssessment } from '@/components/FibromyalgiaAssessment';
 import { DelusionsAssessment } from '@/components/DelusionsAssessment';
 import { FabAssessment } from '@/components/FabAssessment';
-import { DpdrAssessment } from '@/components/DpdrAssessment';
 import { DpdrLanding } from '@/components/DpdrLanding';
 import { MiniCogAssessment } from '@/components/MiniCogAssessment';
 import { IqcodeAssessment } from '@/components/IqcodeAssessment';
@@ -87,9 +86,12 @@ import {
   Brain, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap,
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
   ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
-  Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, Lock, TrendingUp, CheckCircle,
+  Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
   Cloud,
 } from 'lucide-react';
+import { NavigationButtons } from './NavigationButtons';
+import { MiniAppSearch, GlossaryDialog } from './ThemeExtras';
+import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -104,11 +106,7 @@ import { ResultsView } from './ResultsView';
 import { SettingsView } from './SettingsView';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import cognitoHero from '@/assets/cognito-hero.png';
-import categoryCognitiveImg from '@/assets/category-cognitive.jpg';
-import categoryMoodImg from '@/assets/category-mood.jpg';
-import categoryPersonalityImg from '@/assets/category-personality.jpg';
-import categoryMedicalImg from '@/assets/category-medical.jpg';
-import categoryPsychosisImg from '@/assets/category-psychosis.jpg';
+// Images removed as they are unused and causing build errors
 
 type AssessmentKey =
   | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
@@ -285,20 +283,8 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
   substance: { en: 'Substance abuse & PUI (internet addiction)', ml: 'ലഹരി ഉപയോഗം & ഇന്റർനെറ്റ് ആസക്തി', icon: FlaskConical },
   sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
-  fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമയാൾജിയ', icon: Activity },
+  fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമിയൽജിയ', icon: Heart },
   brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
-};
-
-const categoryImages: Partial<Record<Category, string>> = {
-  cognitive: categoryCognitiveImg,
-  mood: categoryMoodImg,
-  personality: categoryPersonalityImg,
-  adverse: categoryMedicalImg,
-  movement: categoryMedicalImg,
-  epilepsy: categoryMedicalImg,
-  substance: categoryMedicalImg,
-  sleep: categoryMedicalImg,
-  psychosis: categoryPsychosisImg,
 };
 
 const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis', 'fibromyalgia', 'brainfog'];
@@ -320,13 +306,17 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
 export const AssessmentSelector = () => {
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll } = useSubscription();
+  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll } = useSubscription();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [deepLinkQuery, setDeepLinkQuery] = useState('');
   const [section, setSection] = useState<Section>('assessments');
   const [pulseSections, setPulseSections] = useState<Set<Section>>(new Set());
+
+  const handleToggleSidebar = (open: boolean) => {
+    localStorage.setItem('sidebar_expanded', String(open));
+  };
 
   // Pulse a sidebar item briefly when its area is focused / receives input.
   const pulse = (s: Section) => {
@@ -361,13 +351,6 @@ export const AssessmentSelector = () => {
   const filteredAssessments = useMemo(() => {
     let filtered = assessments;
 
-    // Filter based on subscription tier
-    const isProSubscriber = true; // Always unlocked
-
-    if (!isProSubscriber) {
-      // Lite tier: exclude Pro-only assessments
-      filtered = filtered.filter(a => !PRO_ONLY_ASSESSMENTS.includes(a.key));
-    }
 
     if (activeCategory !== 'all') {
       filtered = filtered.filter(a => a.category.includes(activeCategory));
@@ -500,7 +483,7 @@ export const AssessmentSelector = () => {
       if (selectedAssessment === 'cognitiveSyndromes') {
         return <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />;
       }
-      const ComponentMap: Record<string, React.ComponentType<{ onBack: () => void }>> = {
+      const ComponentMap: Record<string, React.ComponentType<any>> = {
         adhd: AdhdAssessment,
         msibpd: MsiBpdAssessment,
         hamd: HamdAssessment,
@@ -613,6 +596,7 @@ export const AssessmentSelector = () => {
   return (
     <SidebarProvider
       defaultOpen={typeof window === 'undefined' ? true : window.innerWidth >= 1024}
+      onOpenChange={handleToggleSidebar}
       style={{ ['--sidebar-width' as any]: '17rem' }}
     >
       <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary">
@@ -646,28 +630,12 @@ export const AssessmentSelector = () => {
 
               {/* Search — only on Assessments */}
               {section === 'assessments' && (
-                <div className="space-y-2.5">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <input
-                      type="search"
-                      inputMode="search"
-                      enterKeyHint="search"
-                      value={searchQuery}
-                      onChange={(e) => { setSearchQuery(e.target.value); pulse('assessments'); }}
-                      onFocus={() => pulse('assessments')}
-                      placeholder={language === 'en' ? 'Search assessments…' : 'അസെസ്മെന്റുകൾ തിരയുക…'}
-                      className="w-full pl-9 pr-9 py-3 text-base sm:text-sm rounded-xl border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                    />
-                    {searchQuery && (
-                      <button
-                        onClick={() => setSearchQuery('')}
-                        aria-label="Clear search"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
+                <div className="space-y-3">
+                  <div className="flex flex-col sm:flex-row gap-3 items-center">
+                    <MiniAppSearch onSearch={(q) => { setSearchQuery(q); pulse('assessments'); }} />
+                    <div className="flex items-center gap-2 shrink-0">
+                      <GlossaryDialog />
+                    </div>
                   </div>
 
                   {/* Scrollable category chips — phones & tablets */}
@@ -768,7 +736,7 @@ export const AssessmentSelector = () => {
                       { glow: '', bg: 'from-yellow-500 to-black', icon: 'rgba(255,255,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,255,0,0.5), 0_0_20px_rgba(255,255,0,0.3)' }, // Yellow
                     ];
 
-                    const isProSubscriber = true; // Always unlocked
+                    // const _isProSubscriber = true; // Always unlocked
 
                     const renderTile = (a: AssessmentInfo, index: number, locked = false) => {
                       const Icon = a.icon;
@@ -781,10 +749,10 @@ export const AssessmentSelector = () => {
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => locked ? setShowPaywall(true) : openAssessment(a.key)}
-                              className={`group relative flex flex-col items-center justify-center text-center p-3 sm:p-4 min-h-[132px] rounded-2xl border shadow-sm transition-all duration-200 active:scale-[0.97] overflow-hidden ${
+                              className={`group relative flex flex-col items-center justify-center text-center p-3 sm:p-4 min-h-[132px] rounded-2xl border shadow-sm transition-all duration-300 active:scale-[0.97] overflow-hidden ${
                                 locked
                                   ? 'bg-card/50 border-border/50 opacity-60 cursor-pointer'
-                                  : 'bg-card border-border hover:shadow-lg hover:border-primary/30'
+                                  : 'bg-card border-border hover:shadow-xl hover:border-primary/50 hover:bg-accent/5 dark:hover:bg-primary/5'
                               }`}
                             >
                               {/* Pro lock overlay removed — all assessments unlocked */}
@@ -825,30 +793,21 @@ export const AssessmentSelector = () => {
                     const renderCategoryBanner = (cat: Exclude<Category, 'all'>, count: number) => {
                       const CatIcon = categoryLabels[cat].icon;
                       return (
-                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-40 sm:h-56 lg:h-64`}>
-                          <img
-                            src={categoryImages[cat]!}
-                            alt=""
-                            aria-hidden
-                            loading="lazy"
-                            width={1024}
-                            height={512}
-                            className="absolute inset-0 w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-32 sm:h-40`}>
+                          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/5 to-transparent" />
                           <div className="relative h-full flex flex-col justify-end p-6 sm:p-8">
                             <div className="flex items-center gap-2 mb-2">
                               <CatIcon className="h-6 w-6 text-primary shrink-0" />
-                              <h3 className="text-2xl sm:text-3xl font-bold text-white">
+                              <h3 className="text-2xl sm:text-3xl font-bold text-foreground">
                                 {language === 'en' ? categoryLabels[cat].en : categoryLabels[cat].ml}
                               </h3>
                               <span className="ml-auto text-sm font-semibold px-3 py-1 rounded-full bg-primary/90 text-white tabular-nums">
                                 {count} assessments
                               </span>
                             </div>
-                            <p className="text-sm sm:text-base text-gray-200 max-w-2xl">
+                            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
                               {language === 'en'
-                                ? {
+                                ? (({
                                     cognitive: 'Memory, attention, executive function and dementia screens.',
                                     mood: 'Depression, anxiety, stress, trauma and related affective scales.',
                                     personality: 'Personality structure and disorder screening tools.',
@@ -858,7 +817,9 @@ export const AssessmentSelector = () => {
                                     substance: 'Alcohol, opioid, withdrawal, dependence and problematic internet/social media use screens.',
                                     sleep: 'Daytime sleepiness and obstructive sleep apnea screening.',
                                     psychosis: 'Positive, negative and prodromal symptom assessments.',
-                                  }[cat]
+                                    fibromyalgia: 'Chronic pain and fibromyalgia diagnostic criteria.',
+                                    brainfog: 'Clinical framework for evaluating cognitive fog and post-viral syndromes.',
+                                  } as Record<string, string>)[cat] || '')
                                 : ''}
                             </p>
                           </div>
@@ -868,6 +829,26 @@ export const AssessmentSelector = () => {
 
                     // Filtered or searching → flat grid (with optional single banner)
                     if (searchQuery.trim() || activeCategory !== 'all') {
+                      if (filteredAssessments.length === 0) {
+                        return (
+                          <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in slide-in-from-top-4">
+                            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                              <Search className="h-8 w-8 text-muted-foreground" />
+                            </div>
+                            <h3 className="text-xl font-semibold mb-2">No matching tools found</h3>
+                            <p className="text-muted-foreground max-w-sm">
+                              We couldn't find any assessments matching "{searchQuery}". Try adjusting your keywords or category.
+                            </p>
+                            <Button 
+                              variant="link" 
+                              onClick={() => setSearchQuery('')}
+                              className="mt-4 text-primary"
+                            >
+                              Clear search query
+                            </Button>
+                          </div>
+                        );
+                      }
                       return (
                         <>
                           {activeCategory !== 'all' && !searchQuery.trim() &&
@@ -930,6 +911,14 @@ export const AssessmentSelector = () => {
         onClose={() => setShowPaywall(false)}
         onSelectPlan={initiatePurchase}
       />
+
+      <NavigationButtons />
+      
+      {!navigator.onLine && (
+        <div className="fixed inset-0 z-[100] bg-background">
+          <OfflineFallback />
+        </div>
+      )}
     </SidebarProvider>
   );
 };

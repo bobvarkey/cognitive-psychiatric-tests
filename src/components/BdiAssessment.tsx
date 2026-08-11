@@ -38,7 +38,7 @@ const BDI_ITEMS: { id: number; label: string; options: string[] }[] = [
 ];
 
 export const BdiAssessment = ({ onBack }: Props) => {
-  const { t, language } = useLanguage();
+  const { t, language: _language } = useLanguage();
   const [responses, setResponses] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
 
