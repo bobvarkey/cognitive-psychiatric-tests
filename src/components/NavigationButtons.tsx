@@ -20,7 +20,7 @@ export const NavigationButtons = () => {
   };
 
   return (
-    <div className="fixed bottom-24 right-6 flex flex-col gap-3 z-50">
+    <div className="fixed bottom-24 right-6 flex flex-col gap-3 z-[60] print:hidden">
       <Button
         variant="secondary"
         size="icon"
