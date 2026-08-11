@@ -649,7 +649,14 @@ export const AssessmentSelector = () => {
       onOpenChange={handleToggleSidebar}
       style={{ ['--sidebar-width' as any]: '17rem' }}
     >
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-secondary">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="main-content"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-secondary"
+        >
         <LanguageToggle />
         <MainSidebar
           section={section}
