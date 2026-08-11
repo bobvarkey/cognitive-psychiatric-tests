@@ -36,12 +36,16 @@ export const MiniAppSearch = ({ onSearch }: { onSearch: (q: string) => void }) =
 
 export const GlossaryDialog = () => {
   const terms = [
-    { term: 'Aprosexia', definition: 'Inability to maintain attention.' },
-    { term: 'Agraphia', definition: 'Loss of ability to write.' },
-    { term: 'Apraxia', definition: 'Inability to perform learned purposeful movements.' },
-    { term: 'Gegenhalten', definition: 'Form of hypertonia where resistance increases with velocity.' },
-    { term: 'Mitgehen', definition: 'Automatic compliance with movements induced by others.' },
-    { term: 'Anomia', definition: 'Difficulty in recalling names of objects.' },
+    { term: 'Aprosexia', definition: 'Complete inability to focus or maintain attention.' },
+    { term: 'Agraphia', definition: 'Loss of ability to write, typically due to brain injury.' },
+    { term: 'Apraxia', definition: 'Inability to perform learned purposeful movements despite physical capacity.' },
+    { term: 'Gegenhalten', definition: 'Paratonic rigidity; resistance to passive movement that increases with the velocity of the movement.' },
+    { term: 'Mitgehen', definition: 'Extreme form of cooperation where a patient moves a limb in response to light pressure.' },
+    { term: 'Akinesia', definition: 'Loss or impairment of the power of voluntary movement.' },
+    { term: 'Prosopometamorphopsia', definition: 'A visual disorder characterized by altered perception of faces.' },
+    { term: 'Conflicting Instructions', definition: 'Test for inhibitory control where the patient must do the opposite of the examiner\'s action.' },
+    { term: 'Go/No-Go', definition: 'Test of executive function measuring the ability to inhibit a prepotent response.' },
+    { term: 'Luria\'s Test', definition: 'Motor sequencing test (e.g., Fist-Edge-Palm) to assess frontal lobe function.' },
   ];
 
   return (
