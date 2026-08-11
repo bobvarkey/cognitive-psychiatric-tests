@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TWSTRS_ITEMS, TWSTRS_INTERPRETATION } from '@/data/twstrsScale';
 import { ArrowLeft, RotateCcw, AlertCircle } from 'lucide-react';
 

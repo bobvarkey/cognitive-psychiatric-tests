@@ -6,7 +6,6 @@ import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info, Downloa
 import { DssResult } from '@/types/dss';
 import { DSS_DOMAIN_LABEL } from '@/data/dssScale';
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
-import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 
 interface Props {

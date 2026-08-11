@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Info, Shield, Scale } from 'lucide-react';
 
 interface FooterProps {

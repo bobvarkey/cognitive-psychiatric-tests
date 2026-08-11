@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { IRLS_ITEMS, IRLS_SCORING_GUIDE, IRLS_INTERPRETATION } from '@/data/internationalRestlessLegsScale';
 import { ExportButtons } from '@/components/ExportButtons';
-import { generateTextReport, type ReportData } from '@/utils/reportGenerator';
+import { type ReportData } from '@/utils/reportGenerator';
 import { ArrowLeft, RotateCcw, User } from 'lucide-react';
 
 interface IrlsAssessmentProps {

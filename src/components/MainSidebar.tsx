@@ -1,10 +1,9 @@
-import { ClipboardList, FileBarChart, Settings, Brain, Languages, Trash2, Lightbulb } from 'lucide-react';
+import { ClipboardList, FileBarChart, Settings, Brain, Lightbulb } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -16,7 +15,6 @@ import {
 } from '@/components/ui/sidebar';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
 
 export type Section = 'assessments' | 'results' | 'settings' | 'suggestions';
 export type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'adverse' | 'movement' | 'epilepsy' | 'substance' | 'sleep' | 'psychosis' | 'fibromyalgia' | 'brainfog';

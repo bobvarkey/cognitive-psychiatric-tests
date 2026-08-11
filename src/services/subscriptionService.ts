@@ -96,7 +96,7 @@ export const getSubscription = (): Subscription | null => {
 // Initialize subscription (typically after Stripe checkout)
 export const initializeSubscription = (subscription: Subscription): void => {
   try {
-    let user: User = {
+    const user: User = {
       id: `user_${Date.now()}`,
       email: 'user@psycognito.local',
       subscription,

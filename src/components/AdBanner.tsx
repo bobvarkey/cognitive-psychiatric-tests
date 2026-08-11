@@ -1,7 +1,6 @@
 import { useSubscription } from '@/contexts/SubscriptionContext';
-import { Zap, X, Lightbulb } from 'lucide-react';
+import { Zap, X } from 'lucide-react';
 import { useState } from 'react';
-import { SuggestionsLink } from './SuggestionsLink';
 
 export const AdBanner = () => {
   const { features, setShowPaywall } = useSubscription();
@@ -9,7 +8,7 @@ export const AdBanner = () => {
 
   // All plans (including Pro) are unlocked — never show the upgrade ad.
   return null;
-  // eslint-disable-next-line no-unreachable
+   
   if (features.bannerAdsDisabled || isDismissed) return null;
 
   return (

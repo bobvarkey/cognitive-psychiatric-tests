@@ -11,7 +11,6 @@ import { RotateCcw, Activity, Footprints, Stethoscope, HelpCircle, ClipboardList
 import { FratTab, emptyFratResponses, type FratResponses } from "@/components/FratTab";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';

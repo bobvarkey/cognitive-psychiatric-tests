@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Copy, Check, FileDown, Download } from 'lucide-react';
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
-import type { ReportData } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
 

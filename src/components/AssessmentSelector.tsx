@@ -18,7 +18,6 @@ import { HamaAssessment } from '@/components/HamaAssessment';
 import { FibromyalgiaAssessment } from '@/components/FibromyalgiaAssessment';
 import { DelusionsAssessment } from '@/components/DelusionsAssessment';
 import { FabAssessment } from '@/components/FabAssessment';
-import { DpdrAssessment } from '@/components/DpdrAssessment';
 import { DpdrLanding } from '@/components/DpdrLanding';
 import { MiniCogAssessment } from '@/components/MiniCogAssessment';
 import { IqcodeAssessment } from '@/components/IqcodeAssessment';
@@ -87,7 +86,7 @@ import {
   Brain, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap,
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
   ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
-  Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, Lock, TrendingUp, CheckCircle,
+  Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
   Cloud,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';

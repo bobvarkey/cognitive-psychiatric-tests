@@ -1,4 +1,4 @@
-import { Search, HelpCircle, History, Settings, Book, Info } from 'lucide-react';
+import { Search, Book } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';

@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { FallRiskResult } from "@/types/fallRisk";
 import { MORSE_RISK_LEVELS, INTERVENTIONS } from "@/data/fallRiskScale";
-import { AlertTriangle, CheckCircle, XCircle, Activity, Footprints, Brain, Pill, Home, Eye } from "lucide-react";
+import { AlertTriangle, CheckCircle, XCircle, Activity, Footprints, Pill, Home, Eye } from "lucide-react";
 import { ExportButtons } from '@/components/ExportButtons';
 import type { ReportData } from '@/utils/reportGenerator';
 
