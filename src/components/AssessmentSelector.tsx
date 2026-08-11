@@ -911,7 +911,7 @@ export const AssessmentSelector = () => {
         onSelectPlan={initiatePurchase}
       />
 
-      <NavigationButtons />
+      
       
       {!navigator.onLine && (
         <div className="fixed inset-0 z-[100] bg-background">
