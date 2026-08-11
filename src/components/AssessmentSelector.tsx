@@ -482,7 +482,7 @@ export const AssessmentSelector = () => {
     }
 
     if (selectedAssessment === 'adhdScreener') {
-      return <AdhdScreenerLanding onBack={handleBackToMenu} />;
+      return wrapWithBack(<AdhdScreenerLanding onBack={handleBackToMenu} />);
     }
 
     if (selectedAssessment === 'dpdr') {
