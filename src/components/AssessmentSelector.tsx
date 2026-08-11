@@ -305,6 +305,7 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
 
 export const AssessmentSelector = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
   const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll } = useSubscription();
@@ -333,7 +334,14 @@ export const AssessmentSelector = () => {
       setSelectedAssessment(null);
       setSection('assessments');
     }
-  }, [window.location.pathname]);
+  }, [location.pathname]);
+
+  // Sync section based on current selection for deep linked assessments
+  useEffect(() => {
+    if (selectedAssessment) {
+      setSection('assessments');
+    }
+  }, [selectedAssessment]);
   const [pulseSections, setPulseSections] = useState<Set<Section>>(new Set());
 
   const handleToggleSidebar = (open: boolean) => {
