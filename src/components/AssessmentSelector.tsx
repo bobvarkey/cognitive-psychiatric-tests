@@ -89,7 +89,6 @@ import {
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
   Cloud,
 } from 'lucide-react';
-import { NavigationButtons } from './NavigationButtons';
 import { MiniAppSearch, GlossaryDialog } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';

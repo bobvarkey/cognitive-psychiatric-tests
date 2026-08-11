@@ -8,6 +8,7 @@ import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import CategoryBrowser from "./pages/CategoryBrowser";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { NavigationButtons } from "@/components/NavigationButtons";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <NavigationButtons />
           </BrowserRouter>
         </PatientInfoProvider>
       </SubscriptionProvider>
