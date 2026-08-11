@@ -822,7 +822,7 @@ export const AssessmentSelector = () => {
                             </div>
                             <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
                               {language === 'en'
-                                ? {
+                                ? (({
                                     cognitive: 'Memory, attention, executive function and dementia screens.',
                                     mood: 'Depression, anxiety, stress, trauma and related affective scales.',
                                     personality: 'Personality structure and disorder screening tools.',
@@ -834,7 +834,7 @@ export const AssessmentSelector = () => {
                                     psychosis: 'Positive, negative and prodromal symptom assessments.',
                                     fibromyalgia: 'Chronic pain and fibromyalgia diagnostic criteria.',
                                     brainfog: 'Clinical framework for evaluating cognitive fog and post-viral syndromes.',
-                                  }[cat as keyof typeof categoryLabels]
+                                  } as Record<string, string>)[cat] || '')
                                 : ''}
                             </p>
                           </div>
