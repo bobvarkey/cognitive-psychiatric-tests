@@ -9,9 +9,11 @@ interface AssessmentCardProps {
 }
 
 export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => {
-  const { demoUnlockAll } = useSubscription();
   return (
-    <div className="group rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-all hover:border-blue-300">
+    <div className="group rounded-xl border border-border/50 bg-card p-6 shadow-sm hover:shadow-xl transition-all hover:border-primary/50 dark:hover:bg-accent/5 relative overflow-hidden">
+      <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+        <div className="text-6xl -rotate-12">{assessment.icon}</div>
+      </div>
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -51,7 +53,7 @@ export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => 
 
       {/* CTA Button */}
       <Button
-        className="w-full justify-between group/btn"
+        className="w-full justify-between group/btn bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
         onClick={onClick}
       >
         <span>Start Assessment</span>
