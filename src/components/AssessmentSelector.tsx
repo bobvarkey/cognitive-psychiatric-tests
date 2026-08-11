@@ -749,10 +749,10 @@ export const AssessmentSelector = () => {
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => locked ? setShowPaywall(true) : openAssessment(a.key)}
-                              className={`group relative flex flex-col items-center justify-center text-center p-3 sm:p-4 min-h-[132px] rounded-2xl border shadow-sm transition-all duration-200 active:scale-[0.97] overflow-hidden ${
+                              className={`group relative flex flex-col items-center justify-center text-center p-3 sm:p-4 min-h-[132px] rounded-2xl border shadow-sm transition-all duration-300 active:scale-[0.97] overflow-hidden ${
                                 locked
                                   ? 'bg-card/50 border-border/50 opacity-60 cursor-pointer'
-                                  : 'bg-card border-border hover:shadow-lg hover:border-primary/30'
+                                  : 'bg-card border-border hover:shadow-xl hover:border-primary/50 hover:bg-accent/5 dark:hover:bg-primary/5'
                               }`}
                             >
                               {/* Pro lock overlay removed — all assessments unlocked */}
