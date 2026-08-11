@@ -25,12 +25,12 @@ export const ZoomableImage = ({ src, alt, className }: ZoomableImageProps) => {
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden bg-black/90 border-none">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden bg-background/95 backdrop-blur-2xl border-primary/20 shadow-2xl shadow-primary/10">
         <button 
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 z-50 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+          className="absolute top-4 right-4 z-50 rounded-full bg-black/50 p-2 text-white hover:bg-primary transition-colors border border-white/20"
         >
-          <X className="h-6 w-6" />
+          <X className="h-5 w-5" />
         </button>
         <div className="w-full h-full flex items-center justify-center p-4">
           <img 
