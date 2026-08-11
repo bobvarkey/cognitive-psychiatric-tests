@@ -473,7 +473,7 @@ export const AssessmentSelector = () => {
       vagus: 'vagus',
     };
     if (selectedAssessment in psychosisKeys) {
-      return (
+      return wrapWithBack(
         <PsychosisScaleAssessment
           scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
           onBack={handleBackToMenu}
