@@ -486,7 +486,7 @@ export const AssessmentSelector = () => {
     }
 
     if (selectedAssessment === 'dpdr') {
-      return <DpdrLanding onBack={handleBackToMenu} />;
+      return wrapWithBack(<DpdrLanding onBack={handleBackToMenu} />);
     }
 
     if (selectedAssessment === 'asrs6' || selectedAssessment === 'asrs18' || selectedAssessment === 'vanderbilt') {
