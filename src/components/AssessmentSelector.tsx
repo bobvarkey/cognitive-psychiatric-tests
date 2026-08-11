@@ -440,8 +440,9 @@ export const AssessmentSelector = () => {
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         drag="x"
+        dragDirectionLock
         dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.7}
+        dragElastic={0.05}
         onDragEnd={(_, info) => {
           if (info.offset.x > 150 || info.velocity.x > 500) {
             handleBackToMenu();
