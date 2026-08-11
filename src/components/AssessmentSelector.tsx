@@ -313,6 +313,27 @@ export const AssessmentSelector = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deepLinkQuery, setDeepLinkQuery] = useState('');
   const [section, setSection] = useState<Section>('assessments');
+
+  // Handle routing for deep links
+  useEffect(() => {
+    const path = window.location.pathname;
+    const parts = path.split('/');
+    
+    if (path === '/history') setSection('results');
+    else if (path === '/settings') setSection('settings');
+    else if (path === '/glossary') {
+      // Logic for glossary if needed
+    }
+    else if (path.startsWith('/assessment/')) {
+      const id = parts[2] as AssessmentKey;
+      if (id && id !== selectedAssessment) {
+        setSelectedAssessment(id);
+      }
+    } else if (path === '/') {
+      setSelectedAssessment(null);
+      setSection('assessments');
+    }
+  }, [window.location.pathname]);
   const [pulseSections, setPulseSections] = useState<Set<Section>>(new Set());
 
   const handleToggleSidebar = (open: boolean) => {
