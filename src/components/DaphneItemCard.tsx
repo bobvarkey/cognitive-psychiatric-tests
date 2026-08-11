@@ -45,7 +45,7 @@ export const DaphneItemCard: React.FC<DaphneItemCardProps> = ({
   ];
 
   return (
-    <Card className="shadow-card">
+    <Card className="shadow-card" id={item.domain}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
