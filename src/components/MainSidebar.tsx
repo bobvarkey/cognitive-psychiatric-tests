@@ -55,25 +55,11 @@ export const MainSidebar = ({
   resultsCount,
   pulseSections,
 }: MainSidebarProps) => {
-  const { state, setOpen, setOpenMobile } = useSidebar();
+  const { state } = useSidebar();
   const collapsed = state === 'collapsed';
   const { language } = useLanguage();
   const isMl = language === 'ml';
   const [catSearch, setCatSearch] = useState('');
-
-  // Persist sidebar state
-  useEffect(() => {
-    const saved = localStorage.getItem('sidebar_expanded');
-    if (saved !== null) {
-      const isExpanded = saved === 'true';
-      setOpen(isExpanded);
-      setOpenMobile(isExpanded);
-    }
-  }, [setOpen, setOpenMobile]);
-
-  const handleToggle = (open: boolean) => {
-    localStorage.setItem('sidebar_expanded', String(open));
-  };
 
   const filteredCategories = categories.filter(cat => 
     cat.label.en.toLowerCase().includes(catSearch.toLowerCase()) ||
@@ -115,7 +101,7 @@ export const MainSidebar = ({
   };
 
   return (
-    <Sidebar collapsible="icon" onOpenChange={handleToggle}>
+    <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2.5 px-2 py-2.5">
           <Brain className="h-6 w-6 text-primary shrink-0" />

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Book, HelpCircle, X } from 'lucide-react';
+import { Search, Book, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';

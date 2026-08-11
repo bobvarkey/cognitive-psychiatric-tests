@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DaphneAssessment } from '@/components/DaphneAssessment';
@@ -314,6 +314,10 @@ export const AssessmentSelector = () => {
   const [section, setSection] = useState<Section>('assessments');
   const [pulseSections, setPulseSections] = useState<Set<Section>>(new Set());
 
+  const handleToggleSidebar = (open: boolean) => {
+    localStorage.setItem('sidebar_expanded', String(open));
+  };
+
   // Pulse a sidebar item briefly when its area is focused / receives input.
   const pulse = (s: Section) => {
     setPulseSections((prev) => {
@@ -599,6 +603,7 @@ export const AssessmentSelector = () => {
   return (
     <SidebarProvider
       defaultOpen={typeof window === 'undefined' ? true : window.innerWidth >= 1024}
+      onOpenChange={handleToggleSidebar}
       style={{ ['--sidebar-width' as any]: '17rem' }}
     >
       <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary">
