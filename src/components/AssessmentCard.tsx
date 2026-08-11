@@ -10,7 +10,7 @@ interface AssessmentCardProps {
 
 export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => {
   return (
-    <div className="group rounded-xl border border-border/50 bg-card p-6 shadow-sm hover:shadow-xl transition-all hover:border-primary/50 dark:hover:bg-accent/5 relative overflow-hidden">
+    <div className="group rounded-xl border border-border/50 bg-card p-6 shadow-sm hover:shadow-xl transition-all hover:border-primary/50 dark:hover:bg-accent/5 relative overflow-hidden dark:bg-card/80 dark:backdrop-blur-sm dark:shadow-primary/5">
       <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
         <div className="text-6xl -rotate-12">{assessment.icon}</div>
       </div>
@@ -19,7 +19,7 @@ export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => 
         <div className="flex items-center gap-3">
           <div className="text-4xl">{assessment.icon}</div>
           <div>
-            <h3 className="font-semibold text-gray-900 text-sm leading-tight">
+            <h3 className="font-semibold text-foreground text-sm leading-tight">
               {assessment.name}
             </h3>
             <p className="text-xs text-gray-500 mt-1">{assessment.abbreviation}</p>
@@ -28,7 +28,7 @@ export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => 
       </div>
 
       {/* Description */}
-      <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
         {assessment.description}
       </p>
 
