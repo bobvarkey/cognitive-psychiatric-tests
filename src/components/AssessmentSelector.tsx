@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DaphneAssessment } from '@/components/DaphneAssessment';
@@ -90,7 +90,7 @@ import {
   Cloud,
 } from 'lucide-react';
 import { NavigationButtons } from './NavigationButtons';
-import { MiniAppSearch, GlossaryDialog } from './ThemeExtras';
+import { GlossaryDialog } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
@@ -306,7 +306,7 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
 export const AssessmentSelector = () => {
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll } = useSubscription();
+  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll } = useSubscription();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -352,12 +352,14 @@ export const AssessmentSelector = () => {
     let filtered = assessments;
 
     // Filter based on subscription tier
-    const isProSubscriber = true; // Always unlocked
+    const _isProSubscriber = true; // Always unlocked
 
+    /* 
     if (!isProSubscriber) {
       // Lite tier: exclude Pro-only assessments
       filtered = filtered.filter(a => !PRO_ONLY_ASSESSMENTS.includes(a.key));
     }
+    */
 
     if (activeCategory !== 'all') {
       filtered = filtered.filter(a => a.category.includes(activeCategory));
@@ -490,7 +492,7 @@ export const AssessmentSelector = () => {
       if (selectedAssessment === 'cognitiveSyndromes') {
         return <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />;
       }
-      const ComponentMap: Record<string, React.ComponentType<{ onBack: () => void }>> = {
+      const ComponentMap: Record<string, React.ComponentType<{ onBack?: () => void }>> = {
         adhd: AdhdAssessment,
         msibpd: MsiBpdAssessment,
         hamd: HamdAssessment,
@@ -764,7 +766,7 @@ export const AssessmentSelector = () => {
                       { glow: '', bg: 'from-yellow-500 to-black', icon: 'rgba(255,255,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,255,0,0.5), 0_0_20px_rgba(255,255,0,0.3)' }, // Yellow
                     ];
 
-                    const isProSubscriber = true; // Always unlocked
+                    const _isProSubscriber = true; // Always unlocked
 
                     const renderTile = (a: AssessmentInfo, index: number, locked = false) => {
                       const Icon = a.icon;
