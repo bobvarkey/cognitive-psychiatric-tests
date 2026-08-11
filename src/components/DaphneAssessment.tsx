@@ -11,6 +11,7 @@ import { DaphneResults as DaphneResultsComponent } from './DaphneResults';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ProgressIndicator } from './ProgressIndicator';
 
 export const DaphneAssessment = () => {
   const { language, t } = useLanguage();
