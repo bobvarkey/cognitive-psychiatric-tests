@@ -598,7 +598,7 @@ export const AssessmentSelector = () => {
       onOpenChange={handleToggleSidebar}
       style={{ ['--sidebar-width' as any]: '17rem' }}
     >
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-background/95 to-secondary/30 dark:from-background dark:via-background/80 dark:to-primary/5">
         <LanguageToggle />
         <MainSidebar
           section={section}
@@ -665,17 +665,17 @@ export const AssessmentSelector = () => {
 
                 {/* Hero banner — only when no search/filter */}
                 {!searchQuery.trim() && activeCategory === 'all' && (
-                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-sm">
+                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-xl dark:shadow-primary/5 dark:border-primary/20 bg-card">
                     <img
                       src={cognitoHero}
                       alt={language === 'en' ? 'Clinician using Cognito on a tablet' : 'ടാബ്‌ലെറ്റിൽ Cognito ഉപയോഗിക്കുന്ന ക്ലിനിക്‌ഷ്യൻ'}
-                      className="w-full h-auto block"
+                      className="w-full h-auto block opacity-90 group-hover:opacity-100 transition-opacity"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 flex items-start justify-center pt-6 bg-gradient-to-b from-black/30 to-transparent rounded-2xl">
-                      <h2 className="text-2xl sm:text-3xl font-bold text-amber-300 text-center px-4 leading-tight max-w-sm">
+                    <div className="absolute inset-0 flex items-start justify-center pt-8 bg-gradient-to-b from-black/50 via-black/20 to-transparent rounded-2xl">
+                      <h2 className="text-3xl sm:text-4xl font-extrabold text-white text-center px-4 leading-tight max-w-sm drop-shadow-lg">
                         {language === 'en'
-                          ? 'Neuropsychiatric\nevaluation companion'
+                          ? 'Neuropsychiatric\nEvaluation Companion'
                           : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}
                       </h2>
                     </div>
