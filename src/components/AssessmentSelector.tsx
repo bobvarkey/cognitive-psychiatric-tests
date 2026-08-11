@@ -665,17 +665,17 @@ export const AssessmentSelector = () => {
 
                 {/* Hero banner — only when no search/filter */}
                 {!searchQuery.trim() && activeCategory === 'all' && (
-                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-sm">
+                  <div className="relative overflow-hidden rounded-2xl border border-border shadow-lg dark:border-primary/20 bg-card">
                     <img
                       src={cognitoHero}
                       alt={language === 'en' ? 'Clinician using Cognito on a tablet' : 'ടാബ്‌ലെറ്റിൽ Cognito ഉപയോഗിക്കുന്ന ക്ലിനിക്‌ഷ്യൻ'}
-                      className="w-full h-auto block"
+                      className="w-full h-auto block opacity-95"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 flex items-start justify-center pt-6 bg-gradient-to-b from-black/30 to-transparent rounded-2xl">
-                      <h2 className="text-2xl sm:text-3xl font-bold text-amber-300 text-center px-4 leading-tight max-w-sm">
+                    <div className="absolute inset-0 flex items-start justify-center pt-8 bg-gradient-to-b from-black/50 via-black/10 to-transparent rounded-2xl">
+                      <h2 className="text-3xl sm:text-4xl font-extrabold text-white text-center px-4 leading-tight max-w-sm drop-shadow-2xl">
                         {language === 'en'
-                          ? 'Neuropsychiatric\nevaluation companion'
+                          ? 'Neuropsychiatric\nEvaluation Companion'
                           : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}
                       </h2>
                     </div>
@@ -792,8 +792,8 @@ export const AssessmentSelector = () => {
                     const renderCategoryBanner = (cat: Exclude<Category, 'all'>, count: number) => {
                       const CatIcon = categoryLabels[cat].icon;
                       return (
-                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-32 sm:h-40`}>
-                          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/5 to-transparent" />
+                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-32 sm:h-40 dark:shadow-inner dark:shadow-primary/5`}>
+                          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent" />
                           <div className="relative h-full flex flex-col justify-end p-6 sm:p-8">
                             <div className="flex items-center gap-2 mb-2">
                               <CatIcon className="h-6 w-6 text-primary shrink-0" />
