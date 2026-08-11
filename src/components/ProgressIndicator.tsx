@@ -18,16 +18,17 @@ export const ProgressIndicator = ({ sections }: ProgressIndicatorProps) => {
         const element = document.getElementById(sections[i].id);
         if (element && element.offsetTop <= scrollPosition) {
           setActiveSection(sections[i].id);
-          setProgress(((i + 1) / sections.length) * 100);
           break;
         }
       }
       
-      // Calculate overall page progress as fallback/enhancement
+      // Calculate overall page progress
       const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
       const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      if (sections.length === 0) setProgress(scrolled);
+      if (height > 0) {
+        const scrolled = (winScroll / height) * 100;
+        setProgress(scrolled);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -35,10 +36,8 @@ export const ProgressIndicator = ({ sections }: ProgressIndicatorProps) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [sections]);
 
-  if (sections.length === 0) return null;
-
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] bg-background/80 backdrop-blur-md border-b border-border/50">
+    <div className="fixed top-0 left-0 right-0 z-[100] bg-background/80 backdrop-blur-md border-b border-border/50 print:hidden">
       <Progress value={progress} className="h-1 rounded-none bg-transparent" />
       <div className="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
         <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
@@ -47,17 +46,21 @@ export const ProgressIndicator = ({ sections }: ProgressIndicatorProps) => {
               key={section.id}
               className={`transition-colors ${activeSection === section.id ? 'text-primary' : 'hidden md:block opacity-40'}`}
             >
-              {idx + 1}. {section.label}
+              <span className="md:inline hidden">{idx + 1}. </span>{section.label}
               {idx < sections.length - 1 && activeSection === section.id && (
                 <span className="ml-2 text-muted-foreground/30 md:hidden">→</span>
               )}
             </div>
           ))}
+          {sections.length === 0 && (
+            <div className="text-primary">Assessment Progress</div>
+          )}
         </div>
-        <div className="font-mono tabular-nums ml-4">
+        <div className="font-mono tabular-nums ml-4 shrink-0">
           {Math.round(progress)}%
         </div>
       </div>
     </div>
   );
 };
+

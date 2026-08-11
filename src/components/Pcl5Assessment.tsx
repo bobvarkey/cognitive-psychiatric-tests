@@ -9,6 +9,8 @@ import { Pcl5Result } from '@/types/pcl5';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ProgressIndicator } from './ProgressIndicator';
+
 
 const SYMPTOM_ITEMS = pcl5Items.filter(i => i.type === 'question');
 
@@ -116,8 +118,10 @@ export const Pcl5Assessment = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="max-w-4xl mx-auto p-6 space-y-6 pt-16">
+      <ProgressIndicator sections={[]} />
       <PatientInfoForm />
+
       <Card>
         <CardHeader>
           <CardTitle className="text-3xl font-bold">
