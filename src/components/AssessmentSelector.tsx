@@ -443,6 +443,7 @@ export const AssessmentSelector = () => {
         dragDirectionLock
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.05}
+        dragListener={true}
         onDragEnd={(_, info) => {
           if (info.offset.x > 80 || info.velocity.x > 300) {
             handleBackToMenu();
