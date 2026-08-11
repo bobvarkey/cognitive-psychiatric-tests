@@ -210,7 +210,9 @@ export const DaphneAssessment = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen bg-gradient-subtle pt-16">
+      <ProgressIndicator sections={[]} />
+
       <LanguageToggle />
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
