@@ -398,7 +398,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                         {daphne40Positive ? (
                           <span> Furthermore, the diagnostic threshold (DAPHNE-40: {results.daphne40Score} ≥ 15) was also met, significantly increasing clinical suspicion.</span>
                         ) : (
-                          <span> However, the diagnostic threshold was not met (DAPHNE-40: {results.daphne40Score} < 15), suggesting a need for careful clinical follow-up or re-evaluation.</span>
+                          <span> However, the diagnostic threshold was not met (DAPHNE-40: {results.daphne40Score} &lt; 15), suggesting a need for careful clinical follow-up or re-evaluation.</span>
                         )}
                         {" "}A comprehensive neuropsychiatric evaluation and neuroimaging are strongly indicated.
                       </>
