@@ -441,7 +441,7 @@ export const AssessmentSelector = () => {
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         drag="x"
         dragDirectionLock
-        dragConstraints={{ left: 0, right: 0 }}
+        dragConstraints={{ left: 0, right: 1000 }}
         dragElastic={0.05}
         dragListener={true}
         onDragEnd={(_, info) => {
