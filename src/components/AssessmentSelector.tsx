@@ -317,7 +317,7 @@ export const AssessmentSelector = () => {
 
   // Handle routing for deep links
   useEffect(() => {
-    const path = window.location.pathname;
+    const path = location.pathname;
     const parts = path.split('/');
     
     if (path === '/history') setSection('results');
