@@ -30,7 +30,7 @@ const categoryColors: Record<CognitiveSyndromeCategory, string> = {
   'Movement & Behaviour': 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
 };
 
-export const CognitiveSyndromesAssessment = ({ onBack, initialSearchQuery = '' }: CognitiveSyndromesAssessmentProps) => {
+export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQuery = '' }: CognitiveSyndromesAssessmentProps) => {
   const { language, t } = useLanguage();
   const { patientInfo } = usePatientInfo();
   const [selectedSyndromes, setSelectedSyndromes] = useState<Set<string>>(new Set());

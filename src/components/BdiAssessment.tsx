@@ -37,8 +37,8 @@ const BDI_ITEMS: { id: number; label: string; options: string[] }[] = [
   { id: 21, label: 'Loss of Interest in Sex', options: ['I have not noticed any recent change in my interest in sex.', 'I am less interested in sex than I used to be.', 'I am much less interested in sex now.', 'I have lost interest in sex completely.'] },
 ];
 
-export const BdiAssessment = ({ onBack }: Props) => {
-  const { t, language } = useLanguage();
+export const BdiAssessment = ({ onBack: _onBack }: Props) => {
+  const { t, language: _language } = useLanguage();
   const [responses, setResponses] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
 

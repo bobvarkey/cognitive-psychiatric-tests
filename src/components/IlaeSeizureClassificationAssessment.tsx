@@ -18,7 +18,7 @@ interface IlaeSeizureClassificationAssessmentProps {
   onBack?: () => void;
 }
 
-export const IlaeSeizureClassificationAssessment = ({ onBack }: IlaeSeizureClassificationAssessmentProps) => {
+export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSeizureClassificationAssessmentProps) => {
   const [expandedCategories, setExpandedCategories] = useState<ExpandedCategories>({
     focal: true,
     generalized: true,

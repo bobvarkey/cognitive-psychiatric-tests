@@ -422,8 +422,8 @@ const sections: MseSection[] = [
 
 type Status = 'normal' | 'abnormal' | 'na';
 
-export const MseAssessment = ({ onBack }: MseAssessmentProps) => {
-  const { t } = useLanguage();
+export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
+  const { t: _t } = useLanguage();
   const { patientInfo } = usePatientInfo();
   const [status, setStatus] = useState<Record<string, Status>>({});
   const [notes, setNotes] = useState('');

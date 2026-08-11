@@ -17,7 +17,7 @@ interface AdamAssessmentProps {
   onBack?: () => void;
 }
 
-export const AdamAssessment = ({ onBack }: AdamAssessmentProps) => {
+export const AdamAssessment = ({ onBack: _onBack }: AdamAssessmentProps) => {
   const [responses, setResponses] = useState<Map<number, number>>(new Map());
   const [showResults, setShowResults] = useState(false);
   const [demographics, setDemographics] = useState<AdamDemographics>({
