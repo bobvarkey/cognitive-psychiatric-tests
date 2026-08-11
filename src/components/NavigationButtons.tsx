@@ -17,7 +17,23 @@ export const NavigationButtons = () => {
   }, []);
 
   const scrollToTop = useCallback(() => {
+    // Check if there is an active element that we might want to preserve
+    const activeElement = document.activeElement as HTMLElement;
+    
+    // Check if we are inside a dialog or modal
+    const isInsideDialog = activeElement?.closest('[role="dialog"], [role="alertdialog"]');
+    
+    // Smooth scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // If not in a dialog and the active element is an input, keep focus
+    // but allow the scroll to complete.
+    if (!isInsideDialog && activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+      // Re-focus after a short delay to ensure the scroll didn't blur it
+      setTimeout(() => {
+        activeElement.focus({ preventScroll: true });
+      }, 100);
+    }
   }, []);
 
   const goHome = useCallback(() => {
