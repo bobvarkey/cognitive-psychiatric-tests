@@ -104,7 +104,7 @@ export const MainSidebar = ({
     <Sidebar collapsible="icon" className="transition-all duration-300">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2.5 px-2 py-2.5">
-          <Brain className="h-6 w-6 text-primary shrink-0" />
+          <Brain className="h-6 w-6 text-primary shrink-0 transition-transform group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
           {!collapsed && (
             <span className="text-base font-bold text-sidebar-foreground truncate tracking-tight">
               {isMl ? 'കോഗ്നിറ്റോ' : 'Cognito'}
