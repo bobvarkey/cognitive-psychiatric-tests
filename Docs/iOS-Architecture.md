@@ -1,14 +1,20 @@
 # iOS Architecture Reference
 
-This project follows a mobile-optimized architecture for iOS deployment.
+## Overview
+Standards for maintaining a high-quality "native-feeling" experience on iOS and iPadOS.
 
-## Core Principles
-1. **Safe Area Insets**: Always use `env(safe-area-inset-*)` for sticky headers and footers.
-2. **Touch Targets**: Minimum 44x44px for all interactive elements.
-3. **Viewport**: `viewport-fit=cover` to handle notches.
-4. **Input Handling**: Use `inputmode="search"` and avoid font sizes below 16px to prevent auto-zoom.
+## Layout & Ergonomics
+- **Safe Areas**: Always respect `env(safe-area-inset-top)` and `env(safe-area-inset-bottom)`.
+- **Bottom Navigation**: Keep fixed bottom bars on iPhone (80px height including safe area).
+- **Touch Targets**: Minimum 44x44 points for all interactive elements.
+- **Search Inputs**: Font size must be at least 16px to prevent automatic iOS zoom on focus.
+- **Scrolling**: Use `-webkit-overflow-scrolling: touch` and `scrollbar-none` for smooth, clean lists.
 
-## Component Map
-- `MobileBottomNav`: iOS-style tab bar.
-- `CategoryChips`: Horizontal scroll for filter discovery.
-- `NavigationButtons`: Floating actions for navigation.
+## Visual Standards
+- **Backdrop Blur**: Use `backdrop-blur-md` with `bg-background/80` for headers and nav bars.
+- **Haptic Feedback**: (Future) Trigger haptics via the AppBuild wrapper on meaningful actions.
+- **Transitions**: Use CSS `transition-transform` with `hover:scale-110` sparingly but consistently for touch feedback.
+
+## Offline Support
+- App must show a clear "Offline Fallback" when network is unavailable.
+- Persist critical UI state (active tab, sidebar state) to `localStorage`.

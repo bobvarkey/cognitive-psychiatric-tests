@@ -21,6 +21,9 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/history" element={<Index />} />
+              <Route path="/settings" element={<Index />} />
+              <Route path="/glossary" element={<Index />} />
               <Route path="/category/:category" element={<CategoryBrowser />} />
               <Route path="/assessment/:id" element={<Index />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

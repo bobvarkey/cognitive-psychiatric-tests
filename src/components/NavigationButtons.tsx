@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Home, ArrowUp } from 'lucide-react';
-import { Button } from './ui/button';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 export const NavigationButtons = () => {
-  const [showTop, setShowTop] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowTop(window.scrollY > 400);
+      setShowScrollTop(window.scrollY > 300);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -18,34 +19,29 @@ export const NavigationButtons = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const goToHome = () => {
-    window.location.href = '/';
-  };
-
   return (
-    <div className="fixed bottom-24 right-6 flex flex-col gap-3 z-50 print:hidden">
+    <div className="fixed bottom-24 right-6 flex flex-col gap-3 z-50">
       <Button
         variant="secondary"
         size="icon"
-        className="rounded-full shadow-lg bg-background/80 backdrop-blur-sm border border-border hover:bg-accent transition-all duration-300"
-        onClick={goToHome}
+        onClick={() => navigate('/')}
+        className="rounded-full shadow-lg bg-background/80 backdrop-blur-md border border-border h-12 w-12 hover:scale-110 transition-transform"
         title="Back to Home"
       >
-        <Home className="h-5 w-5" />
+        <Home className="h-6 w-6" />
       </Button>
       
-      <Button
-        variant="secondary"
-        size="icon"
-        className={cn(
-          "rounded-full shadow-lg bg-background/80 backdrop-blur-sm border border-border hover:bg-accent transition-all duration-300",
-          showTop ? "opacity-100 scale-100" : "opacity-0 scale-0 pointer-events-none"
-        )}
-        onClick={scrollToTop}
-        title="Back to Top"
-      >
-        <ArrowUp className="h-5 w-5" />
-      </Button>
+      {showScrollTop && (
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={scrollToTop}
+          className="rounded-full shadow-lg bg-background/80 backdrop-blur-md border border-border h-12 w-12 animate-in fade-in slide-in-from-bottom-4 hover:scale-110 transition-transform"
+          title="Back to Top"
+        >
+          <ArrowUp className="h-6 w-6" />
+        </Button>
+      )}
     </div>
   );
 };

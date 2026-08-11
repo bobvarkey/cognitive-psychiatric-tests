@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Maximize2, Minimize2 } from 'lucide-react';
+import { Maximize2, X } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 interface ZoomableImageProps {
   src: string;
@@ -8,35 +9,37 @@ interface ZoomableImageProps {
 }
 
 export const ZoomableImage = ({ src, alt, className }: ZoomableImageProps) => {
-  const [isZoomed, setIsZoomed] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <>
-      <div 
-        className={`relative cursor-zoom-in group ${className}`}
-        onClick={() => setIsZoomed(true)}
-      >
-        <img src={src} alt={alt} className="w-full h-auto rounded-lg" />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-          <Maximize2 className="text-white h-8 w-8" />
-        </div>
-      </div>
-
-      {isZoomed && (
-        <div 
-          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 cursor-zoom-out"
-          onClick={() => setIsZoomed(false)}
-        >
-          <button className="absolute top-6 right-6 text-white p-2 hover:bg-white/10 rounded-full">
-            <Minimize2 className="h-8 w-8" />
-          </button>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <div className={`relative group cursor-zoom-in overflow-hidden rounded-lg ${className}`}>
           <img 
             src={src} 
             alt={alt} 
-            className="max-w-full max-h-full object-contain animate-in zoom-in-95 duration-300" 
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+            <Maximize2 className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+          </div>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden bg-black/90 border-none">
+        <button 
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 z-50 rounded-full bg-black/50 p-2 text-white hover:bg-black/70 transition-colors"
+        >
+          <X className="h-6 w-6" />
+        </button>
+        <div className="w-full h-full flex items-center justify-center p-4">
+          <img 
+            src={src} 
+            alt={alt} 
+            className="max-w-full max-h-[90vh] object-contain animate-in zoom-in-95 duration-300"
           />
         </div>
-      )}
-    </>
+      </DialogContent>
+    </Dialog>
   );
 };
