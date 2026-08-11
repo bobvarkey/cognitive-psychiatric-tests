@@ -298,6 +298,16 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     }
   };
 
+  const daphne6Positive = results.daphne6Score >= 4;
+  const daphne40Positive = results.daphne40Score >= 15;
+  const involvedDomains = domainDetails.filter((d) => {
+    const responses = results.responses.filter((r) => {
+      const it = getDaphneScaleItems('en').find((i) => i.id === r.itemId);
+      return it?.domain === d.key;
+    });
+    return responses.some((r) => r.score > 0);
+  });
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <LanguageToggle />
@@ -315,7 +325,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
               <div className="flex items-center justify-center space-x-8 text-sm text-muted-foreground">
                 <div className="flex items-center">
                   <User className="h-4 w-4 mr-2" />
-                  <span>{t('nav.patient')}: {patientInfo.name}</span>
+                  <span>{t('nav.patient')}: {patientInfo.name || 'Anonymous'}</span>
                 </div>
                 {patientInfo.age && (
                   <div className="flex items-center">
@@ -328,12 +338,86 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mt-2">
-                {t('results.assessed.by')}: {patientInfo.assessorName}
+                {t('results.assessed.by')}: {patientInfo.assessorName || 'Clinical User'}
               </p>
             </CardHeader>
           </Card>
 
-          {/* Primary Scores */}
+          {/* DAPHNE-6 Domain Score Summary (Clinician Ready) */}
+          <Card className="shadow-card border-2 border-medical-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center text-xl">
+                <Target className="h-6 w-6 mr-3 text-medical-primary" />
+                DAPHNE-6 Clinical Score Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div className="text-center p-6 bg-muted/30 rounded-xl border border-border">
+                  <div className="text-sm font-medium text-muted-foreground mb-1 uppercase tracking-wider">Total Score</div>
+                  <div className="text-6xl font-bold text-medical-primary mb-2">
+                    {results.daphne6Score}<span className="text-2xl text-muted-foreground">/6</span>
+                  </div>
+                  <Badge variant={daphne6Positive ? "destructive" : "secondary"} className="text-sm px-4 py-1">
+                    {daphne6Positive ? "POSITIVE SCREEN" : "NEGATIVE SCREEN"}
+                  </Badge>
+                </div>
+
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Domain Status</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    {domainDetails.map((domain) => {
+                      const involved = involvedDomains.some(id => id.key === domain.key);
+                      return (
+                        <div key={domain.key} className="flex items-center justify-between p-2 rounded-lg border bg-background/50">
+                          <span className="text-sm font-medium">{domain.name}</span>
+                          {involved ? (
+                            <Badge variant="destructive" className="h-5">Positive</Badge>
+                          ) : (
+                            <Badge variant="outline" className="h-5 opacity-60">Absent</Badge>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-4">
+                <h4 className="font-semibold text-lg flex items-center">
+                  <AlertCircle className="h-5 w-5 mr-2 text-medical-primary" />
+                  Clinician-Ready Conclusion
+                </h4>
+                <div className={`p-5 rounded-lg border-l-4 ${daphne6Positive ? 'bg-destructive/5 border-l-destructive' : 'bg-medical-success/5 border-l-medical-success'}`}>
+                  <p className="text-base leading-relaxed text-foreground">
+                    {daphne6Positive ? (
+                      <>
+                        The patient met the DAPHNE-6 screening threshold (<strong>{results.daphne6Score} ≥ 4</strong>), which carries a <strong>92% sensitivity</strong> for the behavioral variant of Frontotemporal Dementia (bvFTD).
+                        {results.daphne40Positive ? (
+                          <span> Furthermore, the diagnostic threshold (DAPHNE-40: {results.daphne40Score} ≥ 15) was also met, significantly increasing clinical suspicion.</span>
+                        ) : (
+                          <span> However, the diagnostic threshold was not met (DAPHNE-40: {results.daphne40Score}), suggesting a need for careful clinical follow-up or re-evaluation.</span>
+                        )}
+                        {" "}A comprehensive neuropsychiatric evaluation and neuroimaging are strongly indicated.
+                      </>
+                    ) : (
+                      <>
+                        The screening threshold was not met (<strong>{results.daphne6Score} &lt; 4</strong>). This suggests a <strong>low likelihood of bvFTD</strong> based on the DAPHNE-6 criteria.
+                        {results.daphne40Positive && (
+                          <span> <strong>Note:</strong> An atypical presentation is noted as the DAPHNE-40 diagnostic threshold was exceeded ({results.daphne40Score} ≥ 15).</span>
+                        )}
+                        {" "}Clinical monitoring is advised if symptoms persist or progress.
+                      </>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Primary Scores Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="shadow-card">
               <CardHeader>
@@ -380,202 +464,39 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
             </Card>
           </div>
 
-          {/* DAPHNE-6 Screening Interpretation Panel */}
-          {(() => {
-            const involvedDomains = domainDetails.filter((d) => {
-              const responses = results.responses.filter((r) => {
-                const it = getDaphneScaleItems('en').find((i) => i.id === r.itemId);
-                return it?.domain === d.key;
-              });
-              return responses.some((r) => r.score > 0);
-            });
-
-            const score = results.daphne6Score;
-            let status: 'negative' | 'possible' | 'high';
-            let statusLabel: string;
-            let statusDescription: string;
-            let statusBg: string;
-            let statusBorder: string;
-            let statusText: string;
-
-            if (score === 0) {
-              status = 'negative';
-              statusLabel = 'Negative screen';
-              statusDescription =
-                'No behavioural domains affected. bvFTD screening is negative on DAPHNE-6.';
-              statusBg = 'bg-medical-success/10';
-              statusBorder = 'border-medical-success/30';
-              statusText = 'text-medical-success';
-            } else if (score < 4) {
-              status = 'possible';
-              statusLabel = 'Possible behavioural change';
-              statusDescription = `${score} of 6 domains involved — below the DAPHNE-6 screening threshold (≥4). Behavioural change is present but does not meet the bvFTD screening cut-off; clinical follow-up advised.`;
-              statusBg = 'bg-medical-warning/10';
-              statusBorder = 'border-medical-warning/30';
-              statusText = 'text-medical-warning';
-            } else {
-              status = 'high';
-              statusLabel = 'High likelihood — positive screen';
-              statusDescription = `${score} of 6 domains involved — meets the DAPHNE-6 screening threshold (≥4, sensitivity 92%). Suggests high likelihood of bvFTD; proceed to full diagnostic work-up.`;
-              statusBg = 'bg-destructive/10';
-              statusBorder = 'border-destructive/30';
-              statusText = 'text-destructive';
-            }
-
-            const allDomainKeys = domainDetails.map((d) => d.key);
-            const involvedKeys = new Set(involvedDomains.map((d) => d.key));
-
-            return (
-              <Card className={`shadow-card border-2 ${statusBorder}`}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between flex-wrap gap-3">
-                    <span className="flex items-center">
-                      <Target className="h-5 w-5 mr-2 text-medical-primary" />
-                      DAPHNE-6 Screening Interpretation
-                    </span>
-                    <Badge variant="outline" className={`${statusText} border-current`}>
-                      {score}/6
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className={`rounded-lg p-4 ${statusBg} border ${statusBorder}`}>
-                    <h4 className={`font-semibold text-lg flex items-center mb-1 ${statusText}`}>
-                      <AlertCircle className="h-5 w-5 mr-2" />
-                      {statusLabel}
-                    </h4>
-                    <p className="text-sm text-foreground">{statusDescription}</p>
-                  </div>
-
-                  <div>
-                    <h4 className="text-sm font-semibold mb-2 text-foreground">
-                      Involved domains{' '}
-                      <span className="text-muted-foreground font-normal">
-                        ({involvedDomains.length}/6)
-                      </span>
-                    </h4>
-                    {involvedDomains.length === 0 ? (
-                      <p className="text-sm text-muted-foreground italic">
-                        None — all six domains scored 0.
-                      </p>
-                    ) : (
-                      <div className="flex flex-wrap gap-2">
-                        {allDomainKeys.map((key) => {
-                          const d = domainDetails.find((x) => x.key === key)!;
-                          const involved = involvedKeys.has(key);
-                          return (
-                            <Badge
-                              key={key}
-                              variant={involved ? 'destructive' : 'secondary'}
-                              className={
-                                involved
-                                  ? ''
-                                  : 'opacity-50 line-through decoration-muted-foreground/40'
-                              }
-                            >
-                              {d.name}
-                            </Badge>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  <p className="text-xs text-muted-foreground italic border-t pt-3">
-                    DAPHNE-6 counts each of the six bvFTD domains (disinhibition, apathy, empathy,
-                    perseverations, hyperorality, neglect) as 1 if any item in that domain scores
-                    &gt;0. Cut-off ≥4 has 92% sensitivity for bvFTD (Boutoleau-Bretonnière, 2015).
-                  </p>
-                </CardContent>
-              </Card>
-            );
-          })()}
-
           {/* Source / Citation */}
           <Card className="shadow-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center">
                 <FileText className="h-4 w-4 mr-2 text-medical-primary" />
-                Source & citation
+                Reference Standards
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div className="rounded-md border border-border bg-muted/40 p-3 space-y-2">
                 <p className="text-foreground leading-relaxed">
-                  Boutoleau-Bretonnière C, Evrard C, Hardouin J-B, Rocher L, Charriau T,
-                  Etcharry-Bouyx F, Auriacombe S, Richard-Mornas A, Lebert F, Pasquier F,
-                  Vercelletto M, Thomas-Antérion C.{' '}
-                  <strong>
-                    DAPHNE: A new tool for the assessment of the behavioral variant of
-                    frontotemporal dementia.
-                  </strong>{' '}
-                  <em>Dementia and Geriatric Cognitive Disorders Extra.</em> 2015;5(3):503–516.
+                  Boutoleau-Bretonnière C, et al.{' '}
+                  <strong>DAPHNE: A new tool for the assessment of the behavioral variant of frontotemporal dementia.</strong>{' '}
+                  <em>Dement Geriatr Cogn Disord Extra.</em> 2015;5(3):503–516.
                 </p>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                  <span>
-                    <strong className="text-foreground">DOI:</strong>{' '}
-                    <a
-                      href="https://doi.org/10.1159/000440859"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-medical-primary hover:underline"
-                    >
-                      10.1159/000440859
-                    </a>
-                  </span>
-                  <span>
-                    <strong className="text-foreground">PubMed:</strong>{' '}
-                    <a
-                      href="https://pubmed.ncbi.nlm.nih.gov/26955380/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-medical-primary hover:underline"
-                    >
-                      26955380
-                    </a>
-                  </span>
-                  <span>
-                    <strong className="text-foreground">Full text (Karger):</strong>{' '}
-                    <a
-                      href="https://karger.com/dee/article/5/3/503/93770"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-medical-primary hover:underline"
-                    >
-                      open access
-                    </a>
-                  </span>
-                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="rounded-md border border-border p-3">
-                  <p className="font-semibold text-foreground mb-1">Tool version used</p>
-                  <ul className="text-muted-foreground space-y-0.5">
-                    <li>DAPHNE-40 — full 10-item, 0–4 scoring</li>
-                    <li>DAPHNE-6 — six-domain binary derivative</li>
-                    <li>Original validation cohort (n = 156, 2015)</li>
-                  </ul>
+                  <p className="font-semibold text-foreground mb-1">DAPHNE-6 Threshold</p>
+                  <p className="text-muted-foreground">Score ≥ 4 indicates high sensitivity (92%) for bvFTD screening.</p>
                 </div>
                 <div className="rounded-md border border-border p-3">
-                  <p className="font-semibold text-foreground mb-1">Cut-offs applied</p>
-                  <ul className="text-muted-foreground space-y-0.5">
-                    <li>DAPHNE-6 ≥ 4 → sensitivity 92% for bvFTD</li>
-                    <li>DAPHNE-40 ≥ 15 → specificity 92% for bvFTD</li>
-                  </ul>
+                  <p className="font-semibold text-foreground mb-1">DAPHNE-40 Threshold</p>
+                  <p className="text-muted-foreground">Score ≥ 15 indicates high specificity (92%) for bvFTD diagnosis.</p>
                 </div>
               </div>
-
-              <p className="text-xs text-muted-foreground italic">
-                Cut-offs and domain definitions reproduced from the 2015 validation paper. This
-                application implements scoring only and does not replace clinical judgement.
-              </p>
             </CardContent>
           </Card>
 
           {/* Domain Radar Chart */}
           <DomainRadarChart
-            title={t('results.domain.analysis') + ' — Overview'}
+            title={t('results.domain.analysis') + ' — Visual Profile'}
             data={domainDetails.map((domain) => {
               const domainResponses = results.responses.filter(r => {
                 const item = getDaphneScaleItems('en').find(i => i.id === r.itemId);
@@ -591,156 +512,13 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
             })}
           />
 
-          {/* Domain Breakdown */}
-          <Card className="shadow-card">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <AlertCircle className="h-5 w-5 mr-2 text-medical-primary" />
-                {t('results.domain.analysis')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {domainDetails.map((domain) => {
-                  const domainResponses = results.responses.filter(r => {
-                    const item = getDaphneScaleItems('en').find(i => i.id === r.itemId);
-                    return item?.domain === domain.key;
-                  });
-                  
-                  const domainScore = domainResponses.reduce((sum, r) => sum + r.score, 0);
-                  const hasSymptoms = domainResponses.some(r => r.score > 0);
-                  
-                  return (
-                    <div key={domain.key} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-sm">{domain.name}</h4>
-                        <Badge variant={hasSymptoms ? "destructive" : "secondary"}>
-                          {hasSymptoms ? t('results.present') : t('results.absent')}
-                        </Badge>
-                      </div>
-                      <div className="text-2xl font-bold text-medical-primary">
-                        {domainScore}/{domain.items * 4}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {domain.items} {domain.items > 1 ? t('clinical.items') : t('clinical.item')}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Diagnostic Suggestion */}
-          <Card className="shadow-card border-2 border-medical-primary/20">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <AlertCircle className="h-5 w-5 mr-2 text-medical-primary" />
-                bvFTD Diagnostic Suggestion
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {(() => {
-                  const daphne6Positive = results.daphne6Score >= 4;
-                  const daphne40Positive = results.daphne40Score >= 15;
-                  
-                  if (daphne6Positive && daphne40Positive) {
-                    return (
-                      <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4">
-                        <h4 className="font-semibold text-destructive mb-2 flex items-center">
-                          <AlertCircle className="h-5 w-5 mr-2" />
-                          High Likelihood of bvFTD
-                        </h4>
-                        <p className="text-sm text-foreground">
-                          Both screening (DAPHNE-6: {results.daphne6Score} ≥4) and diagnostic (DAPHNE-40: {results.daphne40Score} ≥15) thresholds are met. This suggests a <strong>high likelihood of behavioral variant frontotemporal dementia (bvFTD)</strong>. Clinical correlation and further neurological evaluation are recommended.
-                        </p>
-                      </div>
-                    );
-                  } else if (daphne6Positive && !daphne40Positive) {
-                    return (
-                      <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
-                        <h4 className="font-semibold text-orange-700 dark:text-orange-400 mb-2 flex items-center">
-                          <AlertCircle className="h-5 w-5 mr-2" />
-                          Moderate Likelihood of bvFTD
-                        </h4>
-                        <p className="text-sm text-foreground">
-                          The screening threshold is met (DAPHNE-6: {results.daphne6Score} ≥4, 92% sensitivity), but the diagnostic threshold is not reached (DAPHNE-40: {results.daphne40Score} &lt;15). This suggests <strong>moderate likelihood</strong> of bvFTD. Further assessment and clinical evaluation are recommended.
-                        </p>
-                      </div>
-                    );
-                  } else if (!daphne6Positive && daphne40Positive) {
-                    return (
-                      <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4">
-                        <h4 className="font-semibold text-orange-700 dark:text-orange-400 mb-2 flex items-center">
-                          <AlertCircle className="h-5 w-5 mr-2" />
-                          Atypical Presentation
-                        </h4>
-                        <p className="text-sm text-foreground">
-                          The diagnostic threshold is met (DAPHNE-40: {results.daphne40Score} ≥15, 92% specificity), but the screening threshold is not (DAPHNE-6: {results.daphne6Score} &lt;4). This is an <strong>atypical presentation</strong> that warrants comprehensive clinical evaluation to rule out other conditions.
-                        </p>
-                      </div>
-                    );
-                  } else {
-                    return (
-                      <div className="bg-medical-success/10 border border-medical-success/30 rounded-lg p-4">
-                        <h4 className="font-semibold text-medical-success mb-2 flex items-center">
-                          <AlertCircle className="h-5 w-5 mr-2" />
-                          Low Likelihood of bvFTD
-                        </h4>
-                        <p className="text-sm text-foreground">
-                          Neither diagnostic threshold is met (DAPHNE-6: {results.daphne6Score} &lt;4, DAPHNE-40: {results.daphne40Score} &lt;15). This suggests a <strong>low likelihood of bvFTD</strong>. However, clinical judgment should be used in conjunction with these results.
-                        </p>
-                      </div>
-                    );
-                  }
-                })()}
-                <p className="text-xs text-muted-foreground italic">
-                  Note: This is a screening tool suggestion based on validated thresholds. Final diagnosis must be made by a qualified healthcare professional considering the full clinical picture, neuroimaging, and other diagnostic criteria.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Clinical Notes */}
-          <Card className="shadow-card">
-            <CardHeader>
-              <CardTitle>{t('results.clinical.notes')}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4 text-sm">
-                <div>
-                  <h4 className="font-medium mb-2">{t('results.scoring.method')}</h4>
-                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                    <li><strong>{t('results.screening')}:</strong> {t('clinical.scoring.daphne6')}</li>
-                    <li><strong>{t('results.diagnostic')}:</strong> {t('clinical.scoring.daphne40')}</li>
-                  </ul>
-                </div>
-                <Separator />
-                <div>
-                  <h4 className="font-medium mb-2">{t('results.assessment.domains')}</h4>
-                  <p className="text-muted-foreground">
-                    {t('clinical.domains.description')}
-                  </p>
-                </div>
-                <Separator />
-                <div>
-                  <h4 className="font-medium mb-2">Diagnostic Thresholds</h4>
-                  <p className="text-muted-foreground">
-                    DAPHNE-6 allowed bvFTD diagnosis (score ≥4) with a sensitivity of 92%, while DAPHNE-40 (score ≥15) had a specificity of 92%.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Generated text note */}
           {showNote && (
             <Card className="shadow-card print:hidden">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
                 <CardTitle className="text-lg flex items-center">
                   <FileText className="h-5 w-5 mr-2 text-medical-primary" />
-                  Clinical text note
+                  Generated Clinical Note
                 </CardTitle>
                 <Button onClick={handleCopyNote} variant="outline" size="sm">
                   {copied ? (
@@ -776,11 +554,11 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
               size="lg"
             >
               <FileText className="h-4 w-4 mr-2" />
-              {showNote ? 'Hide text note' : 'Generate text note'}
+              {showNote ? 'Hide Note' : 'Text Note'}
             </Button>
             <Button onClick={handleExportDocx} variant="outline" size="lg">
               <Download className="h-4 w-4 mr-2" />
-              Export to DOCX
+              DOCX
             </Button>
             <Button onClick={onRestart} size="lg" className="bg-medical-primary hover:bg-medical-primary/90">
               <RotateCcw className="h-4 w-4 mr-2" />
