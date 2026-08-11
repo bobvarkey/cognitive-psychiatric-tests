@@ -20,7 +20,7 @@ export const MiniAppSearch = ({ onSearch }: { onSearch: (q: string) => void }) =
         placeholder="Quick search tools..."
         value={query}
         onChange={handleChange}
-        className="pl-10 pr-4 h-11 bg-background/50 border-border focus:ring-primary focus:border-primary rounded-xl transition-all"
+        className="pl-10 pr-4 h-11 bg-card/50 border-border focus:ring-primary focus:border-primary rounded-xl transition-all dark:bg-card dark:border-primary/20"
       />
       {query && (
         <button

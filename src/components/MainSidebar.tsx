@@ -101,7 +101,7 @@ export const MainSidebar = ({
   };
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="transition-all duration-300">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2.5 px-2 py-2.5">
           <Brain className="h-6 w-6 text-primary shrink-0" />
