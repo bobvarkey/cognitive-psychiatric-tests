@@ -444,7 +444,7 @@ export const AssessmentSelector = () => {
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={0.05}
         onDragEnd={(_, info) => {
-          if (info.offset.x > 150 || info.velocity.x > 500) {
+          if (info.offset.x > 80 || info.velocity.x > 300) {
             handleBackToMenu();
           }
         }}
