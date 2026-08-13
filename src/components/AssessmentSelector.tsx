@@ -619,6 +619,7 @@ export const AssessmentSelector = () => {
         fibromyalgia: FibromyalgiaAssessment,
         'opd-psych-eval': OpdPsychEvalAssessment,
         'adhd-outpatient': AdhdOutpatientFlowAssessment,
+        triage: PsychiatricTriageAssessment,
       };
 
       const wrapMap: Record<string, React.ReactNode> = {
