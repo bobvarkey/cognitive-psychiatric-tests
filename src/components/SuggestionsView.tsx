@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
 export const SuggestionsView = () => {
-  const suggestionsUrl = 'https://forms.gle/suggestions-psycognito';
+  const suggestionsUrl = 'https://forms.gle/vPqf8m9z5jS2e6S78';
 
   return (
     <div className="space-y-6 max-w-2xl">
