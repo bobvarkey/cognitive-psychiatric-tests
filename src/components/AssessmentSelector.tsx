@@ -742,29 +742,29 @@ export const AssessmentSelector = () => {
           </header>
 
             <main
-            className="flex-1 w-full mx-auto px-4 py-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8"
+            className="flex-1 w-full mx-auto px-4 py-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8 flex flex-col items-center"
             onFocusCapture={() => pulse(section)}
             onInput={() => pulse(section)}
           >
 
             {section === 'results' && (
-              <div className="max-w-4xl mx-auto w-full">
+              <div className="w-full max-w-4xl">
                 <ResultsView onOpenAssessment={(k) => openAssessment(k as AssessmentKey)} />
               </div>
             )}
             {section === 'settings' && (
-              <div className="max-w-4xl mx-auto w-full">
+              <div className="w-full max-w-4xl">
                 <SettingsView />
               </div>
             )}
             {section === 'suggestions' && (
-              <div className="max-w-4xl mx-auto w-full">
+              <div className="w-full max-w-4xl">
                 <SuggestionsView />
               </div>
             )}
 
             {section === 'assessments' && (
-              <>
+              <div className="w-full max-w-4xl space-y-4">
                 {/* Ad Banner for free users */}
                 <div className="max-w-4xl mx-auto w-full">
                   <AdBanner />
@@ -998,7 +998,7 @@ export const AssessmentSelector = () => {
                     </p>
                   </div>
                 )}
-              </>
+              </div>
             )}
           </main>
         </div>
