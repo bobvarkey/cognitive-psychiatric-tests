@@ -487,19 +487,29 @@ export const AssessmentSelector = () => {
     }
 
     if (selectedAssessment === 'adhdScreener') {
-      return wrapWithBack(<AdhdScreenerLanding onBack={handleBackToMenu} />);
+      return wrapWithBack(
+        <div className="max-w-4xl mx-auto w-full">
+          <AdhdScreenerLanding onBack={handleBackToMenu} />
+        </div>
+      );
     }
 
     if (selectedAssessment === 'dpdr') {
-      return wrapWithBack(<DpdrLanding onBack={handleBackToMenu} />);
+      return wrapWithBack(
+        <div className="max-w-4xl mx-auto w-full">
+          <DpdrLanding onBack={handleBackToMenu} />
+        </div>
+      );
     }
 
     if (selectedAssessment === 'asrs6' || selectedAssessment === 'asrs18' || selectedAssessment === 'vanderbilt') {
       return wrapWithBack(
-        <PsychosisScaleAssessment
-          scale={ADHD_SCREENERS[selectedAssessment]}
-          onBack={handleBackToMenu}
-        />
+        <div className="max-w-4xl mx-auto w-full">
+          <PsychosisScaleAssessment
+            scale={ADHD_SCREENERS[selectedAssessment]}
+            onBack={handleBackToMenu}
+          />
+        </div>
       );
     }
 
