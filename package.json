@@ -8,7 +8,8 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:layout": "python3 scripts/verify-layout.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
