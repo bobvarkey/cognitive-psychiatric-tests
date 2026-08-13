@@ -562,11 +562,28 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                 </CardHeader>
                 <CardContent className="p-6 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Preferred Medication Strategy</p>
-                      <p className="text-lg font-bold text-purple-900 capitalize">
-                        {decisionOutputs.addPathway.preferredPharmacologicStrategy.replace(/_/g, ' ')}
-                      </p>
+                    <div className="space-y-4">
+                      <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Stepwise Medication Strategy</p>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-white rounded border border-purple-200">
+                          <p className="text-[10px] text-purple-600 font-bold uppercase">First Line</p>
+                          <p className="text-sm font-semibold capitalize">{decisionOutputs.addPathway.addMedicationStrategy.addFirstLine.replace(/_/g, ' ')}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded border border-purple-100">
+                          <p className="text-[10px] text-muted-foreground font-bold uppercase">Second Line</p>
+                          <p className="text-sm font-semibold capitalize">{decisionOutputs.addPathway.addMedicationStrategy.addSecondLine.replace(/_/g, ' ')}</p>
+                        </div>
+                        <div className="p-3 bg-white rounded border border-purple-50">
+                          <p className="text-[10px] text-muted-foreground font-bold uppercase">Third Line / Adjunct</p>
+                          <p className="text-sm font-semibold capitalize">{decisionOutputs.addPathway.addMedicationStrategy.addThirdLine.replace(/_/g, ' ')}</p>
+                        </div>
+                        {decisionOutputs.addPathway.addMedicationStrategy.addStrategyRationale && (
+                          <div className="p-3 bg-amber-50 rounded border border-amber-100">
+                            <p className="text-[10px] text-amber-700 font-bold uppercase">Rationale</p>
+                            <p className="text-xs italic text-amber-900">{decisionOutputs.addPathway.addMedicationStrategy.addStrategyRationale}</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Non-Pharmacologic Focus</p>
