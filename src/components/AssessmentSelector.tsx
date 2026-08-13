@@ -620,10 +620,18 @@ export const AssessmentSelector = () => {
 
       const Comp = ComponentMap[selectedAssessment];
       if (Comp) {
-        return wrapWithBack(<Comp onBack={handleBackToMenu} />);
+        return wrapWithBack(
+          <div className="max-w-4xl mx-auto w-full">
+            <Comp onBack={handleBackToMenu} />
+          </div>
+        );
       }
 
-      return wrapWithBack(wrapMap[selectedAssessment]);
+      return wrapWithBack(
+        <div className="max-w-4xl mx-auto w-full">
+          {wrapMap[selectedAssessment]}
+        </div>
+      );
     }
   }
 
