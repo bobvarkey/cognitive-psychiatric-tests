@@ -603,6 +603,7 @@ export const AssessmentSelector = () => {
         'late-onset-psychosis': LateOnsetPsychosisAssessment,
         fibromyalgia: FibromyalgiaAssessment,
         'opd-psych-eval': OpdPsychEvalAssessment,
+        'adhd-outpatient': AdhdOutpatientFlowAssessment,
       };
       const Comp = ComponentMap[selectedAssessment];
       return wrapWithBack(<Comp onBack={handleBackToMenu} />);
