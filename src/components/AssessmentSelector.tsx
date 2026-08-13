@@ -112,7 +112,7 @@ import cognitoHero from '@/assets/cognito-hero.png';
 // Images removed as they are unused and causing build errors
 
 export type AssessmentKey =
-  | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
+  | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
   | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
