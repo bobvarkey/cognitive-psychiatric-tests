@@ -91,7 +91,7 @@ export const MiniCogResults = ({ results, patientInfo, onRestart }: MiniCogResul
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Brain className="h-10 w-10 text-blue-600" />
