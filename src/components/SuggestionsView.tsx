@@ -1,9 +1,17 @@
-import { Lightbulb, ExternalLink, MessageSquare } from 'lucide-react';
+import { Lightbulb, ExternalLink, MessageSquare, AlertCircle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useState } from 'react';
 
 export const SuggestionsView = () => {
+  const [error, setError] = useState(false);
   const suggestionsUrl = 'https://forms.gle/vPqf8m9z5jS2e6S78';
+
+  const handleOpenForm = (e: React.MouseEvent) => {
+    // Basic connectivity check simulation or handling potential known issues
+    // Since it's an external link, we can't truly "catch" a 404 on another domain without CORS
+    // but we can provide a manual retry UI if the user reports it didn't work.
+  };
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -78,12 +86,45 @@ export const SuggestionsView = () => {
         <p className="text-gray-400 mb-6">
           Help shape the future of clinical assessment tools. Share your thoughts and ideas with our team.
         </p>
-        <a href={suggestionsUrl} target="_blank" rel="noopener noreferrer">
-          <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold px-8 py-3 rounded-xl inline-flex items-center gap-2">
-            Open Feedback Form
-            <ExternalLink className="w-4 h-4" />
-          </Button>
-        </a>
+        <div className="space-y-4">
+          <a 
+            href={suggestionsUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            onClick={() => setError(false)}
+          >
+            <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold px-8 py-3 rounded-xl inline-flex items-center gap-2">
+              Open Feedback Form
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+          </a>
+
+          {error && (
+            <div className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-center gap-3">
+              <AlertCircle className="w-5 h-5" />
+              <span>Link unavailable? Try refreshing or using the retry button.</span>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => {
+                  setError(false);
+                  window.open(suggestionsUrl, '_blank');
+                }}
+                className="text-red-400 hover:text-red-300 hover:bg-red-500/10 gap-1"
+              >
+                <RefreshCw className="w-3 h-3" />
+                Retry
+              </Button>
+            </div>
+          )}
+          
+          <button 
+            onClick={() => setError(!error)}
+            className="block mx-auto mt-2 text-xs text-gray-500 hover:text-gray-400 transition"
+          >
+            Link not working?
+          </button>
+        </div>
       </Card>
 
       {/* Footer Note */}

@@ -1,4 +1,7 @@
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, RefreshCw, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Button } from './ui/button';
+import { toast } from 'sonner';
 
 interface SuggestionsLinkProps {
   variant?: 'button' | 'link' | 'icon';
@@ -9,7 +12,11 @@ export const SuggestionsLink = ({ variant = 'link', className = '' }: Suggestion
   const suggestionsUrl = 'https://forms.gle/vPqf8m9z5jS2e6S78';
 
   const openSuggestions = () => {
-    window.open(suggestionsUrl, '_blank', 'noopener,noreferrer');
+    try {
+      window.open(suggestionsUrl, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      toast.error("Could not open feedback form. Please try again.");
+    }
   };
 
   if (variant === 'icon') {
