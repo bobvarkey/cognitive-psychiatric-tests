@@ -76,5 +76,35 @@ export interface AdhdOutpatientFlow {
         | 'diversion_misuse'
       )[];
     };
+    addManagement: {
+      isPredominantlyInattentive: boolean;
+      addSpecificNonPharmacologicPlan: (
+        | 'structured_planning_skills'
+        | 'time_management_training'
+        | 'organizational_coaching'
+        | 'digital_tool_support_apps'
+        | 'study_skill_program'
+        | 'environmental_distraction_reduction'
+        | 'sleep_hygiene_focus'
+        | 'none'
+      )[];
+      preferredPharmacologicStrategy: 'none' | 'long_acting_methylphenidate' | 'lisdexamfetamine' | 'atomoxetine' | 'bupropion' | 'other_non_stimulant';
+      cognitiveAdjuncts: (
+        | 'attention_training_exercises'
+        | 'metacognitive_therapy'
+        | 'executive_function_coaching'
+        | 'mindfulness_for_inattention'
+        | 'none'
+      )[];
+      schoolWorkAccommodations: (
+        | 'extended_time_exams'
+        | 'reduced_distraction_test_env'
+        | 'written_instruction_support'
+        | 'task_chunking_and_checklists'
+        | 'priority_seating'
+        | 'flexible_deadlines'
+        | 'none'
+      )[];
+    };
   };
 }
