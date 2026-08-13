@@ -263,18 +263,10 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             <span className="text-gray-700">•</span>
             <button
               onClick={() => {
-                try {
-                  const win = window.open("https://forms.gle/vPqf8m9z5jS2e6S78", "_blank", "noopener,noreferrer");
-                  if (!win) throw new Error("Popup blocked");
-                } catch (e) {
-                  toast.error("Feedback form unavailable", {
-                    description: "Link might be blocked. Click to retry.",
-                    action: {
-                      label: "Retry",
-                      onClick: () => window.open("https://forms.gle/vPqf8m9z5jS2e6S78", "_blank")
-                    }
-                  });
-                }
+                const searchParams = new URLSearchParams();
+                searchParams.set('view', 'suggestions');
+                window.location.hash = searchParams.toString();
+                onClose();
               }}
               className="text-magenta-400 hover:text-magenta-300 font-medium text-xs transition flex items-center gap-1"
             >
