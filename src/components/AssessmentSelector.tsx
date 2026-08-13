@@ -465,7 +465,9 @@ export const AssessmentSelector = () => {
             <span className="hidden sm:inline">{t('backToMenu')}</span>
           </Button>
         </div>
-        {component}
+        <div className="flex flex-col items-center">
+          {component}
+        </div>
       </motion.div>
     );
 
