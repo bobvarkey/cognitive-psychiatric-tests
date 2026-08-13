@@ -769,12 +769,20 @@ export const AssessmentSelector = () => {
                       className="w-full h-auto block opacity-95"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 flex items-start justify-center pt-8 bg-gradient-to-b from-black/50 via-black/10 to-transparent rounded-2xl">
+                    <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 bg-gradient-to-b from-black/60 via-black/20 to-transparent rounded-2xl gap-4">
                       <h2 className="text-3xl sm:text-4xl font-extrabold text-white text-center px-4 leading-tight max-w-sm drop-shadow-2xl">
                         {language === 'en'
                           ? 'Neuropsychiatric\nEvaluation Companion'
                           : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}
                       </h2>
+                      <Button
+                        onClick={() => openAssessment('triage')}
+                        className="bg-primary hover:bg-primary/90 text-white font-bold rounded-full px-8 py-6 h-auto shadow-2xl transition-transform active:scale-95 flex items-center gap-2 group border-2 border-white/20"
+                      >
+                        <Shield className="h-5 w-5" />
+                        <span>{language === 'en' ? 'Try Psychiatric Triage' : 'സൈക്യാട്രിക് ട്രയേജ് പരീക്ഷിക്കുക'}</span>
+                        <ArrowRight className="h-5 w-5 ml-1 transition-transform group-hover:translate-x-1" />
+                      </Button>
                     </div>
                     <div className="sr-only">
                       {language === 'en'
