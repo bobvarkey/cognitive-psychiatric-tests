@@ -582,7 +582,11 @@
                 <span class="footer-separator">•</span>
                 <button class="footer-link">Privacy</button>
                 <span class="footer-separator">•</span>
-                <button onclick="openFeedbackModal()" class="footer-link">Suggestions</button>
+                <button id="suggestions-retry-btn" onclick="handleRetrySuggestions()" class="footer-link" style="display: flex; align-items: center; gap: 4px;">
+                    <span id="suggestions-btn-text">Suggestions</span>
+                </button>
+                <span class="footer-separator">•</span>
+                <button onclick="openFeedbackModal()" class="footer-link">Local Feedback</button>
             </div>
     </div>
 </div>
@@ -621,15 +625,30 @@
 </div>
 
 <script>
-    function openModal() {
-        document.getElementById('modal').classList.add('active');
-        document.body.style.overflow = 'hidden';
+    let isRetrying = false;
+    const suggestionsUrl = 'https://forms.gle/vPqf8m9z5jS2e6S78';
+
+    function handleRetrySuggestions() {
+        if (isRetrying) return;
+        
+        isRetrying = true;
+        const btnText = document.getElementById('suggestions-btn-text');
+        const originalText = btnText.innerText;
+        btnText.innerText = 'Opening...';
+        
+        try {
+            window.open(suggestionsUrl, '_blank', 'noopener,noreferrer');
+        } catch (err) {
+            alert('Could not open the form. Please check your popup blocker or use the Local Feedback option.');
+        } finally {
+            setTimeout(() => {
+                isRetrying = false;
+                btnText.innerText = originalText;
+            }, 1000);
+        }
     }
 
-    function closeModal() {
-        document.getElementById('modal').classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
+    function openModal() {
 
     function openFeedbackModal() {
         closeModal();

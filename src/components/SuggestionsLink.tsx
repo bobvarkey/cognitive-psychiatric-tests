@@ -9,13 +9,19 @@ interface SuggestionsLinkProps {
 }
 
 export const SuggestionsLink = ({ variant = 'link', className = '' }: SuggestionsLinkProps) => {
+  const [isRetrying, setIsRetrying] = useState(false);
   const suggestionsUrl = 'https://forms.gle/vPqf8m9z5jS2e6S78';
 
-  const openSuggestions = () => {
+  const openSuggestions = async () => {
+    setIsRetrying(true);
     try {
       window.open(suggestionsUrl, '_blank', 'noopener,noreferrer');
+      toast.success("Opening feedback form...");
     } catch (err) {
       toast.error("Could not open feedback form. Please try again.");
+    } finally {
+      // Small delay to show state
+      setTimeout(() => setIsRetrying(false), 500);
     }
   };
 
