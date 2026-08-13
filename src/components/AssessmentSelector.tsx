@@ -742,7 +742,7 @@ export const AssessmentSelector = () => {
           </header>
 
             <main
-            className="flex-1 max-w-4xl w-full mx-auto px-4 py-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8"
+            className="flex-1 w-full mx-auto px-4 py-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8"
             onFocusCapture={() => pulse(section)}
             onInput={() => pulse(section)}
           >
@@ -766,7 +766,9 @@ export const AssessmentSelector = () => {
             {section === 'assessments' && (
               <>
                 {/* Ad Banner for free users */}
-                <AdBanner />
+                <div className="max-w-4xl mx-auto w-full">
+                  <AdBanner />
+                </div>
 
                 {/* Hero banner — only when no search/filter */}
                 {!searchQuery.trim() && activeCategory === 'all' && (
