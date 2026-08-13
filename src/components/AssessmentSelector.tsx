@@ -80,6 +80,7 @@ import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMeta
 import { SsriAdverseEventsAssessment } from '@/components/SsriAdverseEventsAssessment';
 import { OpdPsychEvalAssessment } from '@/components/OpdPsychEvalAssessment';
 import { AdhdOutpatientFlowAssessment } from '@/components/AdhdOutpatientFlowAssessment';
+import { PsychiatricTriageAssessment } from '@/components/PsychiatricTriageAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
@@ -111,7 +112,7 @@ import cognitoHero from '@/assets/cognito-hero.png';
 // Images removed as they are unused and causing build errors
 
 export type AssessmentKey =
-  | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd'
+  | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
   | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
@@ -148,6 +149,7 @@ interface AssessmentInfo {
 }
 
 const assessments: AssessmentInfo[] = [
+  { key: 'triage', name: 'Psychiatric Triage', subtitle: 'Clinical Routing', icon: Shield, gradient: 'from-blue-600 to-indigo-700', category: ['psychosis', 'mood'], description: 'Psychiatric Triage Mini App — Step-by-step clinical decision support for safety, psychosis, mood, anxiety, ADHD, and substance use routing.' },
   { key: 'adhd-outpatient', name: 'ADHD Outpatient Flow', subtitle: 'Treatment Algorithm', icon: Activity, gradient: 'from-blue-600 to-indigo-700', category: ['cognitive'], description: 'Adolescent and adult ADHD outpatient treatment algorithm — capturing patient profile, symptoms, comorbidities, prior treatments, and risks to generate recommended pharmacologic and non-pharmacologic plans.' },
   { key: 'opd-psych-eval', name: 'OPD Psych Evaluation', subtitle: 'Pediatric / SLD Workup', icon: ClipboardList, gradient: 'from-emerald-500 to-teal-600', category: ['cognitive'], description: 'Brief OPD psychological evaluation performa — identification, presenting complaints, clinical observation, prenatal/perinatal/postnatal history, developmental milestones, family history, psychological test results (MISIC, BKT, VSMS, ISAA, NIMHANS SLD, IQ), reading/writing/calculation skills and diagnosis with exportable report.' },
   { key: 'daphne', name: 'DAPHNE', subtitle: 'bvFTD Assessment', icon: Brain, gradient: 'from-purple-500 to-pink-600', category: ['cognitive'], description: 'DAPHNE — Behavioural variant Frontotemporal Dementia screening across disinhibition, apathy, perseveration, hyperorality, neglect and loss of empathy.' },
@@ -541,6 +543,7 @@ export const AssessmentSelector = () => {
       'opd-psych-eval': true,
       'adhd-outpatient': true,
       'pid5-unified': true,
+      triage: true,
     };
 
     if (withOnBack[selectedAssessment]) {
@@ -616,6 +619,7 @@ export const AssessmentSelector = () => {
         fibromyalgia: FibromyalgiaAssessment,
         'opd-psych-eval': OpdPsychEvalAssessment,
         'adhd-outpatient': AdhdOutpatientFlowAssessment,
+        triage: PsychiatricTriageAssessment,
       };
 
       const wrapMap: Record<string, React.ReactNode> = {
