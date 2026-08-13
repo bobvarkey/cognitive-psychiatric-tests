@@ -62,7 +62,7 @@ export const HareResults = ({ results, onReset }: HareResultsProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         <div className="flex justify-between items-center print:hidden">
           <h1 className="text-3xl font-bold text-slate-800">
             {t('assessmentResults') || 'Assessment Results'}

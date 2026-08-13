@@ -312,7 +312,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     <div className="min-h-screen bg-gradient-subtle">
       <LanguageToggle />
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="w-full space-y-6">
           {/* Header */}
           <Card className="shadow-medical">
             <CardHeader className="text-center">

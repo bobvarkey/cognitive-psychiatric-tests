@@ -108,7 +108,7 @@ export const DaphneAssessment = () => {
       <div className="min-h-screen bg-gradient-subtle">
         <LanguageToggle />
         <div className="container mx-auto px-4 py-8">
-          <Card className="max-w-2xl mx-auto shadow-medical">
+          <Card className="shadow-medical">
             <CardHeader className="text-center pb-6">
               <div className="flex items-center justify-center mb-4">
                 <FileText className="h-8 w-8 text-medical-primary mr-3" />
@@ -243,7 +243,7 @@ export const DaphneAssessment = () => {
         </div>
 
         {/* Assessment Item */}
-        <div className="max-w-4xl mx-auto">
+        <div>
           <DaphneItemCard
             item={currentItem}
             currentScore={getCurrentScore(currentItem.id)}

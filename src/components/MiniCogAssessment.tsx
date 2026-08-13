@@ -133,7 +133,7 @@ export const MiniCogAssessment = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Brain className="h-8 w-8 text-blue-600" />

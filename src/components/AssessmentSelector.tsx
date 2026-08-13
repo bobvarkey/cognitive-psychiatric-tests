@@ -465,8 +465,10 @@ export const AssessmentSelector = () => {
             <span className="hidden sm:inline">{t('backToMenu')}</span>
           </Button>
         </div>
-        <div className="flex flex-col items-center">
-          {component}
+        <div className="flex flex-col items-center w-full">
+          <div className="max-w-4xl mx-auto w-full px-4">
+            {component}
+          </div>
         </div>
       </motion.div>
     );
@@ -481,39 +483,31 @@ export const AssessmentSelector = () => {
     };
     if (selectedAssessment in psychosisKeys) {
       return wrapWithBack(
-        <div className="max-w-4xl mx-auto w-full">
-          <PsychosisScaleAssessment
-            scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
-            onBack={handleBackToMenu}
-          />
-        </div>
+        <PsychosisScaleAssessment
+          scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
+          onBack={handleBackToMenu}
+        />
       );
     }
 
     if (selectedAssessment === 'adhdScreener') {
       return wrapWithBack(
-        <div className="max-w-4xl mx-auto w-full">
-          <AdhdScreenerLanding onBack={handleBackToMenu} />
-        </div>
+        <AdhdScreenerLanding onBack={handleBackToMenu} />
       );
     }
 
     if (selectedAssessment === 'dpdr') {
       return wrapWithBack(
-        <div className="max-w-4xl mx-auto w-full">
-          <DpdrLanding onBack={handleBackToMenu} />
-        </div>
+        <DpdrLanding onBack={handleBackToMenu} />
       );
     }
 
     if (selectedAssessment === 'asrs6' || selectedAssessment === 'asrs18' || selectedAssessment === 'vanderbilt') {
       return wrapWithBack(
-        <div className="max-w-4xl mx-auto w-full">
-          <PsychosisScaleAssessment
-            scale={ADHD_SCREENERS[selectedAssessment]}
-            onBack={handleBackToMenu}
-          />
-        </div>
+        <PsychosisScaleAssessment
+          scale={ADHD_SCREENERS[selectedAssessment]}
+          onBack={handleBackToMenu}
+        />
       );
     }
 
@@ -552,9 +546,7 @@ export const AssessmentSelector = () => {
     if (withOnBack[selectedAssessment]) {
       if (selectedAssessment === 'cognitiveSyndromes') {
         return wrapWithBack(
-          <div className="max-w-4xl mx-auto w-full">
-            <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />
-          </div>
+          <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />
         );
       }
       const ComponentMap: Record<string, React.ComponentType<any>> = {
@@ -639,16 +631,12 @@ export const AssessmentSelector = () => {
       const Comp = ComponentMap[selectedAssessment];
       if (Comp) {
         return wrapWithBack(
-          <div className="max-w-4xl mx-auto w-full">
-            <Comp onBack={handleBackToMenu} />
-          </div>
+          <Comp onBack={handleBackToMenu} />
         );
       }
 
       return wrapWithBack(
-        <div className="max-w-4xl mx-auto w-full">
-          {wrapMap[selectedAssessment]}
-        </div>
+        wrapMap[selectedAssessment]
       );
     }
   }

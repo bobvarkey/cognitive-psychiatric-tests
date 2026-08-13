@@ -669,7 +669,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
 
   return (
     <div className="min-h-screen bg-slate-50/50 p-4 md:p-8 pt-16">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className="w-full space-y-6">
         {onBack && (
           <Button variant="ghost" onClick={onBack} className="mb-2">
             <ArrowLeft className="mr-2 h-4 w-4" />
