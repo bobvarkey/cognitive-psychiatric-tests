@@ -479,10 +479,12 @@ export const AssessmentSelector = () => {
     };
     if (selectedAssessment in psychosisKeys) {
       return wrapWithBack(
-        <PsychosisScaleAssessment
-          scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
-          onBack={handleBackToMenu}
-        />
+        <div className="max-w-4xl mx-auto w-full">
+          <PsychosisScaleAssessment
+            scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
+            onBack={handleBackToMenu}
+          />
+        </div>
       );
     }
 
