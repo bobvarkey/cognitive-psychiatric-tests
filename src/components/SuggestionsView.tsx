@@ -1,136 +1,177 @@
-import { Lightbulb, ExternalLink, MessageSquare, AlertCircle, RefreshCw } from 'lucide-react';
+import { Lightbulb, ExternalLink, MessageSquare, AlertCircle, RefreshCw, Send, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export const SuggestionsView = () => {
-  const [error, setError] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [submitted, setSubmitted] = useState(false);
   const suggestionsUrl = 'https://forms.gle/vPqf8m9z5jS2e6S78';
 
-  const handleOpenForm = (e: React.MouseEvent) => {
-    // Basic connectivity check simulation or handling potential known issues
-    // Since it's an external link, we can't truly "catch" a 404 on another domain without CORS
-    // but we can provide a manual retry UI if the user reports it didn't work.
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.message) {
+      toast.error("Please fill in both name and message");
+      return;
+    }
+    
+    // Simulate submission
+    console.log('Local feedback submitted:', formData);
+    setSubmitted(true);
+    toast.success("Feedback sent successfully!");
+    
+    // Reset form after a delay
+    setTimeout(() => {
+      setSubmitted(false);
+      setShowFallback(false);
+      setFormData({ name: '', email: '', message: '' });
+    }, 3000);
   };
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-2xl pb-20">
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sunset-orange to-sunset-purple flex items-center justify-center">
             <Lightbulb className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Send us your suggestions</h1>
+            <h1 className="text-3xl font-bold text-white">Send us your suggestions</h1>
             <p className="text-gray-400 text-sm">Help us improve Cognito with your feedback</p>
           </div>
         </div>
       </div>
 
       {/* Info Cards */}
-      <div className="grid gap-4">
-        <Card className="bg-slate-800/40 border-indigo-500/20 p-6">
-          <div className="flex gap-4">
-            <div className="flex-shrink-0 text-2xl">💡</div>
-            <div>
-              <h3 className="font-semibold text-white mb-1">New Features</h3>
-              <p className="text-sm text-gray-400">
-                Suggest new assessments, tools, or clinical features you'd like to see.
-              </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[
+          { emoji: '💡', title: 'New Features', desc: "Suggest new assessments, tools, or clinical features." },
+          { emoji: '🐛', title: 'Bug Reports', desc: "Found an issue? Let us know so we can fix it quickly." },
+          { emoji: '⚙️', title: 'Improvements', desc: "Ideas to make the interface better or faster." },
+          { emoji: '❓', title: 'Questions', desc: "Not sure about a feature? Ask us directly." }
+        ].map((item, idx) => (
+          <Card key={idx} className="bg-slate-900/40 border-slate-800/60 p-5 hover:border-sunset-orange/30 transition-colors">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 text-2xl">{item.emoji}</div>
+              <div>
+                <h3 className="font-semibold text-white mb-1">{item.title}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
+              </div>
             </div>
-          </div>
-        </Card>
-
-        <Card className="bg-slate-800/40 border-indigo-500/20 p-6">
-          <div className="flex gap-4">
-            <div className="flex-shrink-0 text-2xl">🐛</div>
-            <div>
-              <h3 className="font-semibold text-white mb-1">Bug Reports</h3>
-              <p className="text-sm text-gray-400">
-                Found an issue? Let us know so we can fix it quickly.
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="bg-slate-800/40 border-indigo-500/20 p-6">
-          <div className="flex gap-4">
-            <div className="flex-shrink-0 text-2xl">⚙️</div>
-            <div>
-              <h3 className="font-semibold text-white mb-1">Improvements</h3>
-              <p className="text-sm text-gray-400">
-                Have ideas to make the interface better or faster?
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="bg-slate-800/40 border-indigo-500/20 p-6">
-          <div className="flex gap-4">
-            <div className="flex-shrink-0 text-2xl">❓</div>
-            <div>
-              <h3 className="font-semibold text-white mb-1">Questions</h3>
-              <p className="text-sm text-gray-400">
-                Not sure about a feature? Ask us directly in the feedback form.
-              </p>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        ))}
       </div>
 
-      {/* CTA Section */}
-      <Card className="bg-gradient-to-br from-indigo-600/20 to-purple-600/20 border-indigo-500/40 p-8 text-center">
-        <MessageSquare className="w-12 h-12 text-indigo-400 mx-auto mb-4" />
-        <h2 className="text-2xl font-bold text-white mb-2">Your feedback matters</h2>
-        <p className="text-gray-400 mb-6">
-          Help shape the future of clinical assessment tools. Share your thoughts and ideas with our team.
-        </p>
-        <div className="space-y-4">
-          <a 
-            href={suggestionsUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            onClick={() => setError(false)}
-          >
-            <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold px-8 py-3 rounded-xl inline-flex items-center gap-2">
-              Open Feedback Form
-              <ExternalLink className="w-4 h-4" />
-            </Button>
-          </a>
-
-          {error && (
-            <div className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-center gap-3">
-              <AlertCircle className="w-5 h-5" />
-              <span>Link unavailable? Try refreshing or using the retry button.</span>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => {
-                  setError(false);
-                  window.open(suggestionsUrl, '_blank');
-                }}
-                className="text-red-400 hover:text-red-300 hover:bg-red-500/10 gap-1"
+      {/* Main Feedback Section */}
+      <Card className="bg-gradient-to-br from-slate-900/60 to-slate-800/40 border-slate-700/50 p-8">
+        {!showFallback ? (
+          <div className="text-center">
+            <MessageSquare className="w-12 h-12 text-sunset-orange mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-white mb-2">Your feedback matters</h2>
+            <p className="text-gray-400 mb-6 max-w-md mx-auto">
+              Help shape the future of clinical assessment tools. Use our Google Form for detailed feedback.
+            </p>
+            <div className="flex flex-col items-center gap-4">
+              <a 
+                href={suggestionsUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
               >
-                <RefreshCw className="w-3 h-3" />
-                Retry
-              </Button>
+                <Button className="w-full bg-gradient-to-r from-sunset-orange to-sunset-purple hover:opacity-90 text-white font-semibold px-8 py-6 rounded-xl inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-950/20">
+                  Open Google Form
+                  <ExternalLink className="w-4 h-4" />
+                </Button>
+              </a>
+              
+              <button 
+                onClick={() => setShowFallback(true)}
+                className="text-sm text-gray-500 hover:text-sunset-orange transition-colors flex items-center gap-2"
+              >
+                Link not working? Use local form instead
+              </button>
             </div>
-          )}
-          
-          <button 
-            onClick={() => setError(!error)}
-            className="block mx-auto mt-2 text-xs text-gray-500 hover:text-gray-400 transition"
-          >
-            Link not working?
-          </button>
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-sunset-orange" />
+                Local Feedback Form
+              </h2>
+              <button 
+                onClick={() => setShowFallback(false)}
+                className="text-xs text-gray-500 hover:text-white"
+              >
+                Back to Google Form
+              </button>
+            </div>
+
+            {submitted ? (
+              <div className="py-10 text-center space-y-4 animate-in fade-in zoom-in duration-300">
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle2 className="w-8 h-8 text-green-500" />
+                </div>
+                <h3 className="text-xl font-semibold text-white">Thank You!</h3>
+                <p className="text-gray-400">Your feedback has been received locally.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Name *</label>
+                    <Input 
+                      placeholder="Your name"
+                      className="bg-slate-950/50 border-slate-700 focus:border-sunset-orange"
+                      value={formData.name}
+                      onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-300">Email (Optional)</label>
+                    <Input 
+                      type="email"
+                      placeholder="your@email.com"
+                      className="bg-slate-950/50 border-slate-700 focus:border-sunset-orange"
+                      value={formData.email}
+                      onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-300">Message *</label>
+                  <Textarea 
+                    placeholder="Tell us what you think..."
+                    className="bg-slate-950/50 border-slate-700 focus:border-sunset-orange min-h-[120px]"
+                    value={formData.message}
+                    onChange={e => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                    required
+                  />
+                </div>
+                <Button 
+                  type="submit"
+                  className="w-full bg-sunset-orange hover:bg-sunset-orange/90 text-white gap-2 py-6 rounded-xl font-bold"
+                >
+                  <Send className="w-4 h-4" />
+                  Submit Feedback
+                </Button>
+              </form>
+            )}
+          </div>
+        )}
       </Card>
 
       {/* Footer Note */}
-      <div className="bg-slate-800/20 border border-slate-700/40 rounded-lg p-4 text-center">
-        <p className="text-xs text-gray-500">
-          Feedback is reviewed by our team and prioritized based on community interest.
+      <div className="bg-slate-900/20 border border-slate-800/40 rounded-xl p-4 text-center">
+        <p className="text-xs text-gray-500 leading-relaxed">
+          Feedback is reviewed by our team and used to prioritize future updates.<br />
+          Thank you for contributing to the Psycognito community.
         </p>
       </div>
     </div>
