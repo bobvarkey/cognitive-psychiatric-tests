@@ -68,10 +68,17 @@ export type TriageRecommendedRoute =
   | "neurocognitive_workup"
   | "monitor_and_reassess";
 
+export interface TriageReason {
+  domain: string;
+  trigger: string;
+  finding: string;
+}
+
 export interface TriageResult {
   primaryCategory: TriagePrimaryCategory;
   comorbidCategories: TriageComorbidCategory[];
   riskLevel: TriageRiskLevel;
   recommendedRoute: TriageRecommendedRoute;
   clinicalNotes: string[];
+  rationale: TriageReason[];
 }
