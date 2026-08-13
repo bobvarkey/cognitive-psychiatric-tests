@@ -543,6 +543,7 @@ export const AssessmentSelector = () => {
       'opd-psych-eval': true,
       'adhd-outpatient': true,
       'pid5-unified': true,
+      triage: true,
     };
 
     if (withOnBack[selectedAssessment]) {
