@@ -546,7 +546,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
             </Card>
 
             {/* ADD Specific Management (if applicable) */}
-            {decisionOutputs.addManagement.isPredominantlyInattentive && (
+            {decisionOutputs.addPathway && (
               <Card className="border-2 border-purple-100 shadow-md">
                 <CardHeader className="bg-purple-50/50">
                   <div className="flex items-center gap-2">
@@ -559,13 +559,13 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Preferred Medication Strategy</p>
                       <p className="text-lg font-bold text-purple-900 capitalize">
-                        {decisionOutputs.addManagement.preferredPharmacologicStrategy.replace(/_/g, ' ')}
+                        {decisionOutputs.addPathway.preferredPharmacologicStrategy.replace(/_/g, ' ')}
                       </p>
                     </div>
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Non-Pharmacologic Focus</p>
                       <div className="flex flex-wrap gap-2">
-                        {decisionOutputs.addManagement.addSpecificNonPharmacologicPlan.map((plan: string) => (
+                        {decisionOutputs.addPathway.addSpecificNonPharmacologicPlan.map((plan: string) => (
                           <Badge key={plan} variant="secondary" className="capitalize">
                             {plan.replace(/_/g, ' ')}
                           </Badge>
@@ -580,7 +580,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Cognitive Adjuncts</p>
                       <ul className="space-y-1">
-                        {decisionOutputs.addManagement.cognitiveAdjuncts.map((adj: string) => (
+                        {decisionOutputs.addPathway.cognitiveAdjuncts.map((adj: string) => (
                           <li key={adj} className="text-sm flex items-center gap-2">
                             <div className="w-1 h-1 rounded-full bg-purple-400" />
                             <span className="capitalize">{adj.replace(/_/g, ' ')}</span>
@@ -591,7 +591,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">School/Work Accommodations</p>
                       <ul className="space-y-1">
-                        {decisionOutputs.addManagement.schoolWorkAccommodations.map((acc: string) => (
+                        {decisionOutputs.addPathway.schoolWorkAccommodations.map((acc: string) => (
                           <li key={acc} className="text-sm flex items-center gap-2">
                             <div className="w-1 h-1 rounded-full bg-purple-400" />
                             <span className="capitalize">{acc.replace(/_/g, ' ')}</span>
