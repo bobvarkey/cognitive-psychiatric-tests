@@ -88,6 +88,11 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Kessler RC, Adler L, Ames M, et al. The World Health Organization Adult ADHD Self-Report Scale (ASRS): a short screening scale for use in the general population. Psychol Med. 2005;35(2):245–256.',
     url: 'https://doi.org/10.1017/s0033291704002892',
   },
+  'adhd-outpatient': {
+    citation:
+      'Clinical decision support algorithm for adolescent and adult ADHD outpatient treatment flow. Adapted from NICE [NG87] and CADDRA guidelines.',
+    note: 'Integrates patient demographics, severity, comorbidities, and risk factors into a unified treatment algorithm.',
+  },
   msibpd: {
     citation:
       'Zanarini MC, Vujanovic AA, Parachini EA, Boulanger JL, Frankenburg FR, Hennen J. A screening measure for BPD: the McLean Screening Instrument for Borderline Personality Disorder (MSI-BPD). J Pers Disord. 2003;17(6):568–573.',

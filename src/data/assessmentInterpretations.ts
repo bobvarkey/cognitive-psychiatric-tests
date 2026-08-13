@@ -84,6 +84,10 @@ export const ASSESSMENT_INTERPRETATIONS: Record<string, AssessmentInterpretation
     psychometrics: 'ASRS-v1.1 6-item screener has sensitivity 68.7% and specificity 99.5% against clinician diagnosis (Kessler 2005). Full DSM-5 criteria remain the diagnostic gold standard.',
     clinicalAction: 'Confirm with structured interview (DIVA-5, CAADID). Rule out mimics (sleep disorders, anxiety, mood, substance use, thyroid). First-line: stimulants (methylphenidate, lisdexamfetamine); second-line: atomoxetine, guanfacine. Combine with CBT/coaching and occupational accommodations.',
   },
+  'adhd-outpatient': {
+    interpretation: 'Algorithm-derived treatment recommendations based on diagnostic status, severity, comorbidities, and risk factors. Recommendations align with NICE [NG87] and CADDRA guidelines.',
+    clinicalAction: 'Follow the specific monitoring plan generated: initial follow-up at 4 weeks, titration checks every 2 weeks, and stable monitoring every 6 months. Adjust plan based on patient response and side-effect profile.',
+  },
   adam: {
     interpretation: '≥ 3 "yes" answers (or yes to questions 1 or 7) suggests symptomatic androgen deficiency in the ageing male and warrants morning total testosterone testing.',
     psychometrics: 'ADAM has high sensitivity (~88%) but low specificity (~60%) for biochemical hypogonadism (Morley 2000); use as screening tool only.',
