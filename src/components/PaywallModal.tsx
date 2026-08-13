@@ -261,7 +261,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             </button>
             <span className="text-gray-700">•</span>
             <a
-              href="https://forms.gle/suggestions-link"
+              href="https://forms.gle/vPqf8m9z5jS2e6S78"
               target="_blank"
               rel="noopener noreferrer"
               className="text-magenta-400 hover:text-magenta-300 font-medium text-xs transition"

@@ -6,7 +6,7 @@ interface SuggestionsLinkProps {
 }
 
 export const SuggestionsLink = ({ variant = 'link', className = '' }: SuggestionsLinkProps) => {
-  const suggestionsUrl = 'https://forms.gle/suggestions-psycognito';
+  const suggestionsUrl = 'https://forms.gle/vPqf8m9z5jS2e6S78';
 
   const openSuggestions = () => {
     window.open(suggestionsUrl, '_blank', 'noopener,noreferrer');
