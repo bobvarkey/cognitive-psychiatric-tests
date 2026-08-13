@@ -79,6 +79,7 @@ import { SmdsSfAssessment } from '@/components/SmdsSfAssessment';
 import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMetabolicAssessment';
 import { SsriAdverseEventsAssessment } from '@/components/SsriAdverseEventsAssessment';
 import { OpdPsychEvalAssessment } from '@/components/OpdPsychEvalAssessment';
+import { AdhdOutpatientFlowAssessment } from '@/components/AdhdOutpatientFlowAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
@@ -122,7 +123,7 @@ export type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis' | 'pid5-unified';
+  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis' | 'pid5-unified' | 'adhd-outpatient';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -169,6 +170,7 @@ const assessments: AssessmentInfo[] = [
   { key: 'hare', name: 'Hare PCL-R', subtitle: 'Psychopathy', icon: AlertTriangle, gradient: 'from-orange-500 to-red-600', category: ['personality'], description: 'Hare PCL-R — Psychopathy Checklist–Revised; 20-item interpersonal/affective and antisocial trait rating.' },
   { key: 'adhdScreener', name: 'ADHD Screener', subtitle: 'Age-aware: ASRS / Vanderbilt', icon: Focus, gradient: 'from-blue-600 to-indigo-600', category: ['cognitive'], description: 'Pick patient age range (child / adolescent / adult) and route to the appropriate ADHD screener (Vanderbilt or ASRS-v1.1) with adjusted interpretation and a SOAP-style clinician report.' },
   { key: 'adhd', name: 'ADHD DSM-5-TR', subtitle: 'Diagnostic Criteria', icon: Focus, gradient: 'from-indigo-500 to-blue-600', category: ['cognitive'], description: 'DSM-5-TR ADHD diagnostic criteria checklist (inattention + hyperactivity-impulsivity, criteria B–E).' },
+  { key: 'adhd-outpatient', name: 'ADHD Outpatient Flow', subtitle: 'Treatment Algorithm', icon: Activity, gradient: 'from-blue-600 to-indigo-700', category: ['cognitive'], description: 'Adolescent and adult ADHD outpatient treatment algorithm — capturing patient profile, symptoms, comorbidities, prior treatments, and risks to generate recommended pharmacologic and non-pharmacologic plans.' },
   { key: 'asrs6', name: 'ASRS-v1.1 (6)', subtitle: 'Adult ADHD Screener', icon: Focus, gradient: 'from-blue-500 to-indigo-600', category: ['cognitive'], description: 'WHO/Harvard 6-item adult ADHD screener (Part A). Validated cutoff: ≥4 shaded responses = positive screen.' },
   { key: 'asrs18', name: 'ASRS-v1.1 (18)', subtitle: 'Full Symptom Checklist', icon: ClipboardList, gradient: 'from-indigo-500 to-purple-600', category: ['cognitive'], description: 'Full 18-item ASRS — 9 inattention + 9 hyperactivity-impulsivity items, mapped to DSM-5-TR symptom domains.' },
   { key: 'vanderbilt', name: 'Vanderbilt', subtitle: 'Parent (child 6–12)', icon: ClipboardCheck, gradient: 'from-cyan-500 to-blue-600', category: ['cognitive'], description: 'NICHQ Vanderbilt parent rating scale: inattention, hyperactivity, ODD/conduct, anxiety/depression, performance.' },
