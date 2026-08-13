@@ -582,45 +582,101 @@
                 <span class="footer-separator">•</span>
                 <button class="footer-link">Privacy</button>
                 <span class="footer-separator">•</span>
-                <button onclick="handleSuggestions()" class="footer-link">Suggestions</button>
+                <button onclick="openFeedbackModal()" class="footer-link">Suggestions</button>
             </div>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal" id="feedback-modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <button class="modal-close" onclick="closeFeedbackModal()">✕</button>
+        <div class="modal-header">
+            <h2 class="modal-title">Send Feedback</h2>
+            <p class="modal-subtitle">Help us improve Cognito</p>
+        </div>
+        
+        <form id="feedback-form" style="display: flex; flex-direction: column; gap: 16px; margin: 24px 0;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 600; text-align: left;">Name *</label>
+                <input type="text" id="fb-name" required style="background: rgba(255,255,255,0.05); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px; color: white; outline: none;">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 600; text-align: left;">Email (Optional)</label>
+                <input type="email" id="fb-email" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px; color: white; outline: none;">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 600; text-align: left;">Message *</label>
+                <textarea id="fb-message" required rows="4" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; padding: 12px; color: white; outline: none; resize: none;"></textarea>
+            </div>
+            <button type="submit" class="cta-button" style="margin-bottom: 0;">Submit Feedback</button>
+        </form>
+        
+        <div id="fb-success" style="display: none; text-align: center; padding: 20px;">
+            <div style="font-size: 40px; margin-bottom: 12px;">✅</div>
+            <h3 style="margin-bottom: 8px;">Thank You!</h3>
+            <p style="font-size: 13px; color: #888;">Your feedback has been received locally.</p>
         </div>
     </div>
+</div>
 
-    <script>
-        function openModal() {
-            document.getElementById('modal').classList.add('active');
-        }
+<script>
+    function openModal() {
+        document.getElementById('modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
+    function closeModal() {
+        document.getElementById('modal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
 
-        function selectPlan(element, plan) {
-            document.querySelectorAll('.pricing-option').forEach(el => {
-                el.classList.remove('active');
-            });
-            element.classList.add('active');
-        }
+    function openFeedbackModal() {
+        closeModal();
+        document.getElementById('feedback-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 
-        function handleSuggestions() {
-            const url = "https://forms.gle/vPqf8m9z5jS2e6S78";
-            try {
-                const win = window.open(url, "_blank");
-                if (!win) throw new Error("Blocked");
-            } catch (e) {
-                if (confirm("Feedback form link might be blocked or unavailable. Would you like to try opening it again?")) {
-                    window.open(url, "_blank");
-                }
-            }
-        }
+    function closeFeedbackModal() {
+        document.getElementById('feedback-modal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
 
-        // Close modal when clicking outside
-        document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
+    function selectPlan(element, plan) {
+        document.querySelectorAll('.pricing-option').forEach(el => {
+            el.classList.remove('active');
         });
-    </script>
+        element.classList.add('active');
+    }
+
+    document.getElementById('feedback-form').onsubmit = (e) => {
+        e.preventDefault();
+        const name = document.getElementById('fb-name').value;
+        const email = document.getElementById('fb-email').value;
+        const message = document.getElementById('fb-message').value;
+        
+        console.log('Feedback submitted:', { name, email, message });
+        
+        document.getElementById('feedback-form').style.display = 'none';
+        document.getElementById('fb-success').style.display = 'block';
+        
+        setTimeout(() => {
+            closeFeedbackModal();
+            setTimeout(() => {
+                document.getElementById('feedback-form').style.display = 'flex';
+                document.getElementById('fb-success').style.display = 'none';
+                document.getElementById('feedback-form').reset();
+            }, 300);
+        }, 2000);
+    };
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            closeModal();
+            closeFeedbackModal();
+        }
+    }
+</script>
 </body>
 </html>
