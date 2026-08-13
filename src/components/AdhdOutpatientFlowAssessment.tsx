@@ -498,7 +498,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                   <div className="space-y-2">
                     <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Psychological Adjuncts</p>
                     <div className="flex flex-wrap gap-2">
-                      {decisionOutputs.psychologicalAdjunctsRecommended.map(adj => (
+                      {decisionOutputs.psychologicalAdjunctsRecommended.map((adj: string) => (
                         <Badge key={adj} variant="secondary" className="capitalize">
                           {adj.replace(/_/g, ' ')}
                         </Badge>
@@ -539,7 +539,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                     Parameters to Monitor
                   </p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {decisionOutputs.monitoringPlan.monitoringParameters.map(param => (
+                    {decisionOutputs.monitoringPlan.monitoringParameters.map((param: string) => (
                       <div key={param} className="flex items-center gap-2 p-2 rounded bg-muted/50 text-sm border">
                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                         <span className="capitalize">{param.replace(/_/g, ' ')}</span>
@@ -570,7 +570,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Non-Pharmacologic Focus</p>
                       <div className="flex flex-wrap gap-2">
-                        {decisionOutputs.addManagement.addSpecificNonPharmacologicPlan.map(plan => (
+                        {decisionOutputs.addManagement.addSpecificNonPharmacologicPlan.map((plan: string) => (
                           <Badge key={plan} variant="secondary" className="capitalize">
                             {plan.replace(/_/g, ' ')}
                           </Badge>
@@ -585,7 +585,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Cognitive Adjuncts</p>
                       <ul className="space-y-1">
-                        {decisionOutputs.addManagement.cognitiveAdjuncts.map(adj => (
+                        {decisionOutputs.addManagement.cognitiveAdjuncts.map((adj: string) => (
                           <li key={adj} className="text-sm flex items-center gap-2">
                             <div className="w-1 h-1 rounded-full bg-purple-400" />
                             <span className="capitalize">{adj.replace(/_/g, ' ')}</span>
@@ -596,7 +596,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                     <div className="space-y-2">
                       <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">School/Work Accommodations</p>
                       <ul className="space-y-1">
-                        {decisionOutputs.addManagement.schoolWorkAccommodations.map(acc => (
+                        {decisionOutputs.addManagement.schoolWorkAccommodations.map((acc: string) => (
                           <li key={acc} className="text-sm flex items-center gap-2">
                             <div className="w-1 h-1 rounded-full bg-purple-400" />
                             <span className="capitalize">{acc.replace(/_/g, ' ')}</span>
