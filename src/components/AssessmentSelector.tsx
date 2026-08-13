@@ -531,6 +531,7 @@ export const AssessmentSelector = () => {
       'late-onset-psychosis': true,
       fibromyalgia: true,
       'opd-psych-eval': true,
+      'adhd-outpatient': true,
       'pid5-unified': true,
     };
 
