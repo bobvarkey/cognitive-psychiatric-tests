@@ -130,6 +130,12 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
         isPredominantlyInattentive: true,
         addSpecificNonPharmacologicPlan: ['structured_planning_skills', 'time_management_training', 'environmental_distraction_reduction'] as any,
         preferredPharmacologicStrategy: (formData.patient.ageGroup === 'adult' ? 'lisdexamfetamine' : 'long_acting_methylphenidate') as any,
+        addMedicationStrategy: {
+          addFirstLine: (formData.patient.ageGroup === 'adult' ? 'lisdexamfetamine' : 'long_acting_methylphenidate') as any,
+          addSecondLine: 'atomoxetine' as any,
+          addThirdLine: 'bupropion' as any,
+          addStrategyRationale: stimulantContraindicated ? 'Stimulant contraindications present; non-stimulant focus.' : null
+        },
         cognitiveAdjuncts: ['executive_function_coaching', 'mindfulness_for_inattention'] as any,
         schoolWorkAccommodations: ['extended_time_exams', 'written_instruction_support', 'task_chunking_and_checklists'] as any
       };

@@ -79,6 +79,12 @@ export interface AdhdOutpatientFlow {
     addPathway?: {
       isPredominantlyInattentive: boolean;
       preferredPharmacologicStrategy: 'none' | 'long_acting_methylphenidate' | 'lisdexamfetamine' | 'atomoxetine' | 'bupropion' | 'other_non_stimulant';
+      addMedicationStrategy: {
+        addFirstLine: 'none' | 'long_acting_methylphenidate' | 'lisdexamfetamine';
+        addSecondLine: 'none' | 'atomoxetine' | 'viloxazine_er';
+        addThirdLine: 'none' | 'bupropion' | 'guanfacine_er' | 'clonidine_er' | 'other_non_stimulant';
+        addStrategyRationale?: string | null;
+      };
       addSpecificNonPharmacologicPlan: (
         | 'structured_planning_skills'
         | 'time_management_training'
