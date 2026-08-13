@@ -537,7 +537,11 @@ export const AssessmentSelector = () => {
 
     if (withOnBack[selectedAssessment]) {
       if (selectedAssessment === 'cognitiveSyndromes') {
-        return wrapWithBack(<CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />);
+        return wrapWithBack(
+          <div className="max-w-4xl mx-auto w-full">
+            <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />
+          </div>
+        );
       }
       const ComponentMap: Record<string, React.ComponentType<any>> = {
         adhd: AdhdAssessment,
