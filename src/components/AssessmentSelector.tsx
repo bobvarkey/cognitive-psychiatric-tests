@@ -747,9 +747,21 @@ export const AssessmentSelector = () => {
             onInput={() => pulse(section)}
           >
 
-            {section === 'results' && <ResultsView onOpenAssessment={(k) => openAssessment(k as AssessmentKey)} />}
-            {section === 'settings' && <SettingsView />}
-            {section === 'suggestions' && <SuggestionsView />}
+            {section === 'results' && (
+              <div className="max-w-4xl mx-auto w-full">
+                <ResultsView onOpenAssessment={(k) => openAssessment(k as AssessmentKey)} />
+              </div>
+            )}
+            {section === 'settings' && (
+              <div className="max-w-4xl mx-auto w-full">
+                <SettingsView />
+              </div>
+            )}
+            {section === 'suggestions' && (
+              <div className="max-w-4xl mx-auto w-full">
+                <SuggestionsView />
+              </div>
+            )}
 
             {section === 'assessments' && (
               <>
