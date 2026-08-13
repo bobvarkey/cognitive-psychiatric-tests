@@ -80,6 +80,7 @@ import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMeta
 import { SsriAdverseEventsAssessment } from '@/components/SsriAdverseEventsAssessment';
 import { OpdPsychEvalAssessment } from '@/components/OpdPsychEvalAssessment';
 import { AdhdOutpatientFlowAssessment } from '@/components/AdhdOutpatientFlowAssessment';
+import { PsychiatricTriageAssessment } from '@/components/PsychiatricTriageAssessment';
 import { PSYCHOSIS_SCALES } from '@/data/psychosisScales';
 import { ADHD_SCREENERS } from '@/data/adhdScreenerScales';
 import { ASSESSMENT_REFERENCES } from '@/data/assessmentReferences';
