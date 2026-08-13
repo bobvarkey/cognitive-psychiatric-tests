@@ -10,7 +10,22 @@ export const SuggestionsView = () => {
   const [showFallback, setShowFallback] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
   const suggestionsUrl = 'https://forms.gle/vPqf8m9z5jS2e6S78';
+
+  const handleRetry = async () => {
+    setIsRetrying(true);
+    // Simulate a brief loading state for the retry
+    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      window.open(suggestionsUrl, '_blank', 'noopener,noreferrer');
+      toast.success("Opening feedback form...");
+    } catch (err) {
+      toast.error("Failed to open. You can use the local form below.");
+    } finally {
+      setIsRetrying(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,18 +91,34 @@ export const SuggestionsView = () => {
             <p className="text-gray-400 mb-6 max-w-md mx-auto">
               Help shape the future of clinical assessment tools. Use our Google Form for detailed feedback.
             </p>
-            <div className="flex flex-col items-center gap-4">
-              <a 
-                href={suggestionsUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto"
-              >
-                <Button className="w-full bg-gradient-to-r from-sunset-orange to-sunset-purple hover:opacity-90 text-white font-semibold px-8 py-6 rounded-xl inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-950/20">
-                  Open Google Form
-                  <ExternalLink className="w-4 h-4" />
+            <div className="flex flex-col items-center gap-6">
+              <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
+                <a 
+                  href={suggestionsUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto"
+                >
+                  <Button className="w-full bg-gradient-to-r from-sunset-orange to-sunset-purple hover:opacity-90 text-white font-semibold px-8 py-6 rounded-xl inline-flex items-center justify-center gap-2 shadow-lg shadow-orange-950/20">
+                    Open Google Form
+                    <ExternalLink className="w-4 h-4" />
+                  </Button>
+                </a>
+                
+                <Button 
+                  variant="outline"
+                  onClick={handleRetry}
+                  disabled={isRetrying}
+                  className="border-slate-700 bg-slate-800/40 text-slate-300 hover:text-white hover:bg-slate-700 px-8 py-6 rounded-xl inline-flex items-center justify-center gap-2"
+                >
+                  {isRetrying ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="w-4 h-4" />
+                  )}
+                  {isRetrying ? "Retrying..." : "Try again"}
                 </Button>
-              </a>
+              </div>
               
               <button 
                 onClick={() => setShowFallback(true)}
