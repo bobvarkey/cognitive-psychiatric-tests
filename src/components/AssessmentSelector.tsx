@@ -465,7 +465,9 @@ export const AssessmentSelector = () => {
             <span className="hidden sm:inline">{t('backToMenu')}</span>
           </Button>
         </div>
-        {component}
+        <div className="flex flex-col items-center">
+          {component}
+        </div>
       </motion.div>
     );
 
@@ -479,27 +481,39 @@ export const AssessmentSelector = () => {
     };
     if (selectedAssessment in psychosisKeys) {
       return wrapWithBack(
-        <PsychosisScaleAssessment
-          scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
-          onBack={handleBackToMenu}
-        />
+        <div className="max-w-4xl mx-auto w-full">
+          <PsychosisScaleAssessment
+            scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
+            onBack={handleBackToMenu}
+          />
+        </div>
       );
     }
 
     if (selectedAssessment === 'adhdScreener') {
-      return wrapWithBack(<AdhdScreenerLanding onBack={handleBackToMenu} />);
+      return wrapWithBack(
+        <div className="max-w-4xl mx-auto w-full">
+          <AdhdScreenerLanding onBack={handleBackToMenu} />
+        </div>
+      );
     }
 
     if (selectedAssessment === 'dpdr') {
-      return wrapWithBack(<DpdrLanding onBack={handleBackToMenu} />);
+      return wrapWithBack(
+        <div className="max-w-4xl mx-auto w-full">
+          <DpdrLanding onBack={handleBackToMenu} />
+        </div>
+      );
     }
 
     if (selectedAssessment === 'asrs6' || selectedAssessment === 'asrs18' || selectedAssessment === 'vanderbilt') {
       return wrapWithBack(
-        <PsychosisScaleAssessment
-          scale={ADHD_SCREENERS[selectedAssessment]}
-          onBack={handleBackToMenu}
-        />
+        <div className="max-w-4xl mx-auto w-full">
+          <PsychosisScaleAssessment
+            scale={ADHD_SCREENERS[selectedAssessment]}
+            onBack={handleBackToMenu}
+          />
+        </div>
       );
     }
 
@@ -537,7 +551,11 @@ export const AssessmentSelector = () => {
 
     if (withOnBack[selectedAssessment]) {
       if (selectedAssessment === 'cognitiveSyndromes') {
-        return wrapWithBack(<CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />);
+        return wrapWithBack(
+          <div className="max-w-4xl mx-auto w-full">
+            <CognitiveSyndromesAssessment onBack={handleBackToMenu} initialSearchQuery={deepLinkQuery} />
+          </div>
+        );
       }
       const ComponentMap: Record<string, React.ComponentType<any>> = {
         adhd: AdhdAssessment,
@@ -620,10 +638,18 @@ export const AssessmentSelector = () => {
 
       const Comp = ComponentMap[selectedAssessment];
       if (Comp) {
-        return wrapWithBack(<Comp onBack={handleBackToMenu} />);
+        return wrapWithBack(
+          <div className="max-w-4xl mx-auto w-full">
+            <Comp onBack={handleBackToMenu} />
+          </div>
+        );
       }
 
-      return wrapWithBack(wrapMap[selectedAssessment]);
+      return wrapWithBack(
+        <div className="max-w-4xl mx-auto w-full">
+          {wrapMap[selectedAssessment]}
+        </div>
+      );
     }
   }
 
@@ -680,7 +706,7 @@ export const AssessmentSelector = () => {
         <div className="flex-1 flex flex-col min-w-0">
           {/* Sticky header */}
           <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-2 mb-3">
                 <SidebarTrigger className="shrink-0 hidden md:inline-flex" />
                 <Brain className="h-6 w-6 text-primary shrink-0" />
@@ -715,18 +741,30 @@ export const AssessmentSelector = () => {
             </div>
           </header>
 
-          <main
-            className="flex-1 max-w-6xl w-full mx-auto px-4 py-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8"
+            <main
+            className="flex-1 w-full mx-auto px-4 py-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8 flex flex-col items-center"
             onFocusCapture={() => pulse(section)}
             onInput={() => pulse(section)}
           >
 
-            {section === 'results' && <ResultsView onOpenAssessment={(k) => openAssessment(k as AssessmentKey)} />}
-            {section === 'settings' && <SettingsView />}
-            {section === 'suggestions' && <SuggestionsView />}
+            {section === 'results' && (
+              <div className="w-full max-w-4xl">
+                <ResultsView onOpenAssessment={(k) => openAssessment(k as AssessmentKey)} />
+              </div>
+            )}
+            {section === 'settings' && (
+              <div className="w-full max-w-4xl">
+                <SettingsView />
+              </div>
+            )}
+            {section === 'suggestions' && (
+              <div className="w-full max-w-4xl">
+                <SuggestionsView />
+              </div>
+            )}
 
             {section === 'assessments' && (
-              <>
+              <div className="w-full max-w-4xl space-y-4">
                 {/* Ad Banner for free users */}
                 <AdBanner />
 
@@ -922,7 +960,7 @@ export const AssessmentSelector = () => {
                               activeCategory as Exclude<Category, 'all'>,
                               filteredAssessments.length,
                             )}
-                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                             {filteredAssessments.map((a, idx) => renderTile(a, idx, false))}
                           </div>
                         </>
@@ -938,7 +976,7 @@ export const AssessmentSelector = () => {
                           return (
                             <section key={cat} aria-labelledby={`cat-${cat}`}>
                               {renderCategoryBanner(cat, items.length)}
-                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
                                 {items.map((a, idx) => renderTile(a, idx, false))}
                               </div>
                             </section>
@@ -958,7 +996,7 @@ export const AssessmentSelector = () => {
                     </p>
                   </div>
                 )}
-              </>
+              </div>
             )}
           </main>
         </div>
