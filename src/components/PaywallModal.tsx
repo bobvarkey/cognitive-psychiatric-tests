@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { X, Check, Brain, Star } from 'lucide-react';
+import { X, Check, Brain, Star, RefreshCw, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -260,14 +261,25 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               Privacy
             </button>
             <span className="text-gray-700">•</span>
-            <a
-              href="https://forms.gle/vPqf8m9z5jS2e6S78"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-magenta-400 hover:text-magenta-300 font-medium text-xs transition"
+            <button
+              onClick={() => {
+                try {
+                  const win = window.open("https://forms.gle/vPqf8m9z5jS2e6S78", "_blank", "noopener,noreferrer");
+                  if (!win) throw new Error("Popup blocked");
+                } catch (e) {
+                  toast.error("Feedback form unavailable", {
+                    description: "Link might be blocked. Click to retry.",
+                    action: {
+                      label: "Retry",
+                      onClick: () => window.open("https://forms.gle/vPqf8m9z5jS2e6S78", "_blank")
+                    }
+                  });
+                }
+              }}
+              className="text-magenta-400 hover:text-magenta-300 font-medium text-xs transition flex items-center gap-1"
             >
               Suggestions
-            </a>
+            </button>
           </div>
         </div>
       </div>

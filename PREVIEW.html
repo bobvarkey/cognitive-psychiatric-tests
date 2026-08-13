@@ -582,7 +582,7 @@
                 <span class="footer-separator">•</span>
                 <button class="footer-link">Privacy</button>
                 <span class="footer-separator">•</span>
-                <a href="https://forms.gle/vPqf8m9z5jS2e6S78" target="_blank" class="footer-link" style="text-decoration: none;">Suggestions</a>
+                <button onclick="handleSuggestions()" class="footer-link">Suggestions</button>
             </div>
         </div>
     </div>
@@ -601,6 +601,18 @@
                 el.classList.remove('active');
             });
             element.classList.add('active');
+        }
+
+        function handleSuggestions() {
+            const url = "https://forms.gle/vPqf8m9z5jS2e6S78";
+            try {
+                const win = window.open(url, "_blank");
+                if (!win) throw new Error("Blocked");
+            } catch (e) {
+                if (confirm("Feedback form link might be blocked or unavailable. Would you like to try opening it again?")) {
+                    window.open(url, "_blank");
+                }
+            }
         }
 
         // Close modal when clicking outside
