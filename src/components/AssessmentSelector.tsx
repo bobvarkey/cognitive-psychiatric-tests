@@ -100,7 +100,7 @@ import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { PaywallModal } from './PaywallModal';
 import { AdBanner } from './AdBanner';
-import { SuggestionsView } from './SuggestionsView';
+
 import { LanguageToggle } from './LanguageToggle';
 import { MainSidebar, type Section } from './MainSidebar';
 import { MobileBottomNav } from './MobileBottomNav';
@@ -655,7 +655,6 @@ export const AssessmentSelector = () => {
     assessments: { en: 'Assessments', ml: 'വിലയിരുത്തലുകൾ' },
     results: { en: 'Results', ml: 'ഫലങ്ങൾ' },
     settings: { en: 'Settings', ml: 'ക്രമീകരണങ്ങൾ' },
-    suggestions: { en: 'Suggestions', ml: 'നിർദ്ദേശങ്ങൾ' },
   };
 
   // Read results count for sidebar badge (cheap localStorage read on render)
@@ -742,11 +741,6 @@ export const AssessmentSelector = () => {
             {section === 'settings' && (
               <div className="w-full max-w-4xl">
                 <SettingsView />
-              </div>
-            )}
-            {section === 'suggestions' && (
-              <div className="w-full max-w-4xl">
-                <SuggestionsView />
               </div>
             )}
 

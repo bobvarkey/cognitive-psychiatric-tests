@@ -1,4 +1,4 @@
-import { ClipboardList, FileBarChart, Settings, Lightbulb } from 'lucide-react';
+import { ClipboardList, FileBarChart, Settings } from 'lucide-react';
 import type { Section } from '@/components/MainSidebar';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -12,7 +12,6 @@ interface MobileBottomNavProps {
 const ITEMS: { key: Section; en: string; ml: string; icon: React.ElementType }[] = [
   { key: 'assessments', en: 'Tests', ml: 'ടെസ്റ്റുകൾ', icon: ClipboardList },
   { key: 'results', en: 'Results', ml: 'ഫലങ്ങൾ', icon: FileBarChart },
-  { key: 'suggestions', en: 'Ideas', ml: 'നിർദ്ദേശങ്ങൾ', icon: Lightbulb },
   { key: 'settings', en: 'Settings', ml: 'ക്രമീകരണം', icon: Settings },
 ];
 
@@ -36,7 +35,7 @@ export const MobileBottomNav = ({ section, onSectionChange, resultsCount = 0 }: 
       aria-label="Primary"
       className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-background/95 backdrop-blur-md pb-[env(safe-area-inset-bottom)] print:hidden"
     >
-      <ul className="grid grid-cols-4">
+      <ul className="grid grid-cols-3">
         {ITEMS.map(({ key, en, ml, icon: Icon }) => {
           const active = section === key;
           return (

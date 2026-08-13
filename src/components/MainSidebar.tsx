@@ -19,7 +19,7 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
-export type Section = 'assessments' | 'results' | 'settings' | 'suggestions';
+export type Section = 'assessments' | 'results' | 'settings';
 export type Category = 'all' | 'cognitive' | 'mood' | 'personality' | 'adverse' | 'movement' | 'epilepsy' | 'substance' | 'sleep' | 'psychosis' | 'fibromyalgia' | 'brainfog';
 
 export interface CategoryDef {
@@ -44,7 +44,6 @@ const SECTION_LABELS: Record<Section, { en: string; ml: string; icon: React.Elem
   assessments: { en: 'Assessments', ml: 'വിലയിരുത്തലുകൾ', icon: ClipboardList },
   results: { en: 'Results', ml: 'ഫലങ്ങൾ', icon: FileBarChart },
   settings: { en: 'Settings', ml: 'ക്രമീകരണങ്ങൾ', icon: Settings },
-  suggestions: { en: 'Suggestions', ml: 'നിർദ്ദേശങ്ങൾ', icon: Lightbulb },
 };
 
 export const MainSidebar = ({
