@@ -112,11 +112,33 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
       formData.patient.hasFormalAdhdDiagnosis && 
       (formData.symptomsAndImpairment.severity === 'moderate' || formData.symptomsAndImpairment.severity === 'severe');
 
-    const firstLineMedicationChoice = medicationIndicated 
+    const firstLineMedicationChoice: any = medicationIndicated 
       ? (stimulantContraindicated ? 'atomoxetine' : (formData.patient.ageGroup === 'adult' ? 'lisdexamfetamine' : 'methylphenidate'))
       : 'none';
 
     const nonPharmacologicPlanRecommended = true; // Always recommended as adjunct
+
+    // ADD Management Logic
+    const isPredominantlyInattentive = 
+      formData.symptomsAndImpairment.symptomDomains.includes('inattention') && 
+      !formData.symptomsAndImpairment.symptomDomains.includes('hyperactivity') && 
+      !formData.symptomsAndImpairment.symptomDomains.includes('impulsivity');
+
+    const addManagement = {
+      isPredominantlyInattentive,
+      addSpecificNonPharmacologicPlan: isPredominantlyInattentive 
+        ? ['structured_planning_skills', 'time_management_training', 'environmental_distraction_reduction'] as any
+        : ['none'] as any,
+      preferredPharmacologicStrategy: isPredominantlyInattentive
+        ? (formData.patient.ageGroup === 'adult' ? 'lisdexamfetamine' : 'long_acting_methylphenidate') as any
+        : 'none' as any,
+      cognitiveAdjuncts: isPredominantlyInattentive
+        ? ['executive_function_coaching', 'mindfulness_for_inattention'] as any
+        : ['none'] as any,
+      schoolWorkAccommodations: isPredominantlyInattentive
+        ? ['extended_time_exams', 'written_instruction_support', 'task_chunking_and_checklists'] as any
+        : ['none'] as any
+    };
 
     return {
       needsDiagnosticReferral,
@@ -124,13 +146,15 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
       medicationIndicated,
       stimulantContraindicated,
       firstLineMedicationChoice,
-      psychologicalAdjunctsRecommended: ['adhd_focused_cbt', 'psychoeducation_group'],
+      secondLineMedicationChoice: 'none' as any,
+      psychologicalAdjunctsRecommended: ['adhd_focused_cbt', 'psychoeducation_group'] as any,
       monitoringPlan: {
         initialFollowUpWeeks: 4,
         titrationFollowUpFrequencyWeeks: 2,
         stableFollowUpFrequencyMonths: 6,
-        monitoringParameters: ['bp', 'heart_rate', 'appetite', 'sleep']
-      }
+        monitoringParameters: ['bp', 'heart_rate', 'appetite', 'sleep'] as any
+      },
+      addManagement
     };
   }, [formData]);
 
@@ -525,6 +549,65 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                 </div>
               </CardContent>
             </Card>
+
+            {/* ADD Specific Management (if applicable) */}
+            {decisionOutputs.addManagement.isPredominantlyInattentive && (
+              <Card className="border-2 border-purple-100 shadow-md">
+                <CardHeader className="bg-purple-50/50">
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-5 w-5 text-purple-600" />
+                    <CardTitle className="text-lg">Predominantly Inattentive (ADD) Strategy</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Preferred Medication Strategy</p>
+                      <p className="text-lg font-bold text-purple-900 capitalize">
+                        {decisionOutputs.addManagement.preferredPharmacologicStrategy.replace(/_/g, ' ')}
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Non-Pharmacologic Focus</p>
+                      <div className="flex flex-wrap gap-2">
+                        {decisionOutputs.addManagement.addSpecificNonPharmacologicPlan.map(plan => (
+                          <Badge key={plan} variant="secondary" className="capitalize">
+                            {plan.replace(/_/g, ' ')}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Cognitive Adjuncts</p>
+                      <ul className="space-y-1">
+                        {decisionOutputs.addManagement.cognitiveAdjuncts.map(adj => (
+                          <li key={adj} className="text-sm flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-purple-400" />
+                            <span className="capitalize">{adj.replace(/_/g, ' ')}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">School/Work Accommodations</p>
+                      <ul className="space-y-1">
+                        {decisionOutputs.addManagement.schoolWorkAccommodations.map(acc => (
+                          <li key={acc} className="text-sm flex items-center gap-2">
+                            <div className="w-1 h-1 rounded-full bg-purple-400" />
+                            <span className="capitalize">{acc.replace(/_/g, ' ')}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             <div className="flex justify-center pt-4">
               <Button 
