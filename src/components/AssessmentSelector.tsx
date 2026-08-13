@@ -784,6 +784,39 @@ export const AssessmentSelector = () => {
                   </div>
                 )}
 
+                {/* Featured: Psychiatric Triage Mini-App */}
+                {!searchQuery.trim() && activeCategory === 'all' && (
+                  <div className="relative group overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-blue-600/10 to-indigo-700/10 p-1 transition-all duration-300 hover:border-primary/40 hover:shadow-lg">
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-indigo-700/5 to-transparent animate-pulse pointer-events-none" />
+                    <button
+                      onClick={() => openAssessment('triage')}
+                      className="relative w-full flex flex-col sm:flex-row items-center gap-4 bg-card rounded-xl p-4 sm:p-5 transition-transform duration-200 active:scale-[0.99]"
+                    >
+                      <div className="flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-lg shadow-blue-500/20">
+                        <Shield className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
+                      </div>
+                      <div className="flex-1 text-center sm:text-left">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+                          <h3 className="text-xl font-bold text-foreground leading-tight">
+                            {language === 'en' ? 'Psychiatric Triage' : 'സൈക്യാട്രിക് ട്രയേജ്'}
+                          </h3>
+                          <span className="inline-flex w-fit mx-auto sm:mx-0 items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 uppercase tracking-wider">
+                            {language === 'en' ? 'Featured' : 'ഫീച്ചർ ചെയ്തത്'}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed max-w-2xl">
+                          {language === 'en' 
+                            ? 'Comprehensive clinical decision support for safety, psychosis, mood, anxiety, ADHD, and substance use routing.' 
+                            : 'സുരക്ഷ, സൈക്കോസിസ്, മൂഡ്, ഉത്കണ്ഠ, ADHD, മയക്കുമരുന്ന് ഉപയോഗം എന്നിവയ്ക്കായുള്ള സമഗ്രമായ ക്ലിനിക്കൽ തീരുമാന പിന്തുണ.'}
+                        </p>
+                      </div>
+                      <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted/50 text-muted-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                        <ArrowRight className="h-5 w-5" />
+                      </div>
+                    </button>
+                  </div>
+                )}
+
                 {/* Reference library matches */}
                 {searchQuery.trim() && syndromeMatches.length > 0 && (
                   <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3">
