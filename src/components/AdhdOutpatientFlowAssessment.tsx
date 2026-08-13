@@ -116,29 +116,24 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
       ? (stimulantContraindicated ? 'atomoxetine' : (formData.patient.ageGroup === 'adult' ? 'lisdexamfetamine' : 'methylphenidate'))
       : 'none';
 
-    const nonPharmacologicPlanRecommended = true; // Always recommended as adjunct
+    const nonPharmacologicPlanRecommended = true;
 
-    // ADD Management Logic
-    const isPredominantlyInattentive = 
-      formData.symptomsAndImpairment.symptomDomains.includes('inattention') && 
-      !formData.symptomsAndImpairment.symptomDomains.includes('hyperactivity') && 
-      !formData.symptomsAndImpairment.symptomDomains.includes('impulsivity');
+    // Logic to choose pathway
+    const hasHyperOrImpulsive = formData.symptomsAndImpairment.symptomDomains.includes('hyperactivity') ||
+                              formData.symptomsAndImpairment.symptomDomains.includes('impulsivity');
+    
+    const isPredominantlyInattentive = !hasHyperOrImpulsive && formData.symptomsAndImpairment.symptomDomains.includes('inattention');
 
-    const addManagement = {
-      isPredominantlyInattentive,
-      addSpecificNonPharmacologicPlan: isPredominantlyInattentive 
-        ? ['structured_planning_skills', 'time_management_training', 'environmental_distraction_reduction'] as any
-        : ['none'] as any,
-      preferredPharmacologicStrategy: isPredominantlyInattentive
-        ? (formData.patient.ageGroup === 'adult' ? 'lisdexamfetamine' : 'long_acting_methylphenidate') as any
-        : 'none' as any,
-      cognitiveAdjuncts: isPredominantlyInattentive
-        ? ['executive_function_coaching', 'mindfulness_for_inattention'] as any
-        : ['none'] as any,
-      schoolWorkAccommodations: isPredominantlyInattentive
-        ? ['extended_time_exams', 'written_instruction_support', 'task_chunking_and_checklists'] as any
-        : ['none'] as any
-    };
+    let addPathway = undefined;
+    if (isPredominantlyInattentive) {
+      addPathway = {
+        isPredominantlyInattentive: true,
+        addSpecificNonPharmacologicPlan: ['structured_planning_skills', 'time_management_training', 'environmental_distraction_reduction'] as any,
+        preferredPharmacologicStrategy: (formData.patient.ageGroup === 'adult' ? 'lisdexamfetamine' : 'long_acting_methylphenidate') as any,
+        cognitiveAdjuncts: ['executive_function_coaching', 'mindfulness_for_inattention'] as any,
+        schoolWorkAccommodations: ['extended_time_exams', 'written_instruction_support', 'task_chunking_and_checklists'] as any
+      };
+    }
 
     return {
       needsDiagnosticReferral,
@@ -154,7 +149,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
         stableFollowUpFrequencyMonths: 6,
         monitoringParameters: ['bp', 'heart_rate', 'appetite', 'sleep'] as any
       },
-      addManagement
+      addPathway
     };
   }, [formData]);
 
