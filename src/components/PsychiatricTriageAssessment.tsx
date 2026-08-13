@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle2, ShieldAlert } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle2, ShieldAlert, Info, ListChecks } from "lucide-react";
 import { 
   PsychiatricTriageData, 
   TriageResult, 
@@ -83,7 +83,8 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
       comorbidCategories: [],
       riskLevel: "low",
       recommendedRoute: "monitor_and_reassess",
-      clinicalNotes: []
+      clinicalNotes: [],
+      rationale: []
     };
 
     // Safety
@@ -107,11 +108,21 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
         : "emergency_risk";
       out.recommendedRoute = "urgent_psychiatry_or_ED";
       out.clinicalNotes.push("Immediate safety risk detected. Requires urgent evaluation.");
+      out.rationale.push({ 
+        domain: "Safety", 
+        trigger: highSuicide ? "Active Suicide Risk" : "Violence Risk", 
+        finding: "Urgent psychiatric or Emergency Department routing required due to safety concerns." 
+      });
     } else if (psychosisPresent) {
       out.riskLevel = "moderate";
       out.primaryCategory = "psychosis_or_psychosis_risk";
       out.recommendedRoute = "routine_psychiatry";
       out.clinicalNotes.push("Active psychotic symptoms reported.");
+      out.rationale.push({ 
+        domain: "Psychosis", 
+        trigger: "Hallucinations/Delusions", 
+        finding: "Evidence of psychosis with lack of insight suggests specialized psychiatric routing." 
+      });
     }
 
     // Mood
@@ -127,6 +138,11 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
         out.riskLevel = highSuicide ? "high" : "moderate";
         out.recommendedRoute = "routine_psychiatry";
         out.clinicalNotes.push("Probable bipolar mood disorder.");
+        out.rationale.push({ 
+          domain: "Mood", 
+          trigger: "Positive Bipolar Screen", 
+          finding: "Clinical priority shifted to mood stabilization and specialist referral." 
+        });
       } else if (probableDepression) {
         out.primaryCategory = "unipolar_mood_disorder";
         out.riskLevel = highSuicide ? "high" : "moderate";
@@ -135,6 +151,11 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
             ? "urgent_psychiatry_or_ED"
             : "routine_psychiatry";
         out.clinicalNotes.push("Significant unipolar depressive symptoms.");
+        out.rationale.push({ 
+          domain: "Mood", 
+          trigger: "Moderate/Severe Depression", 
+          finding: "Unipolar mood symptoms reached clinical threshold for triage routing." 
+        });
       }
     }
 
@@ -152,9 +173,19 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
         out.riskLevel = "moderate";
         out.recommendedRoute = "psychology_or_therapy";
         out.clinicalNotes.push("Anxiety, trauma, or OCD symptoms are primary concerns.");
+        out.rationale.push({ 
+          domain: "Anxiety/Trauma/OCD", 
+          trigger: anxietySignificant ? "Severe Anxiety" : ptsdPositive ? "PTSD Screen+" : "OCD Symptoms", 
+          finding: "Routing focused on psychotherapy or trauma-informed care." 
+        });
       }
     } else if (anxietySignificant || ptsdPositive || ocdProminent) {
       out.comorbidCategories.push("anxiety_trauma_or_oCD");
+      out.rationale.push({ 
+        domain: "Co-morbidity", 
+        trigger: "Anxiety/Trauma/OCD Present", 
+        finding: "Secondary symptoms noted for holistic treatment planning." 
+      });
     }
 
     // ADHD / ADD
@@ -170,8 +201,18 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
         out.riskLevel = "low";
         out.recommendedRoute = "routine_psychiatry";
         out.clinicalNotes.push("ADHD/ADD spectrum identified as primary.");
+        out.rationale.push({ 
+          domain: "Developmental/ADHD", 
+          trigger: "Childhood symptoms + Current functional impact", 
+          finding: "Diagnostic pattern consistent with ADHD spectrum." 
+        });
       } else {
         out.comorbidCategories.push("ADHD_add_spectrum");
+        out.rationale.push({ 
+          domain: "Co-morbidity", 
+          trigger: "ADHD Patterns", 
+          finding: "Inattentive/Hyperactive symptoms identified alongside primary diagnosis." 
+        });
       }
     }
 
@@ -295,6 +336,44 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
             </Card>
           )}
         </div>
+        
+        <Card className="border-primary/20 bg-card/50 backdrop-blur-sm shadow-xl mt-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-primary text-lg">
+              <Info className="h-5 w-5" />
+              Clinician Explanation (Routing Logic)
+            </CardTitle>
+            <CardDescription>
+              Detailed rationale for why the algorithm selected specific categories and routes based on clinical inputs.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {result.rationale.length > 0 ? (
+                result.rationale.map((reason, idx) => (
+                  <div key={idx} className="flex flex-col gap-1 p-3 rounded-lg bg-muted/30 border border-border/50">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-primary/20 text-primary">
+                        {reason.domain}
+                      </span>
+                      <span className="text-sm font-semibold text-foreground italic">
+                        "{reason.trigger}"
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed mt-1">
+                      {reason.finding}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <ListChecks className="h-8 w-8 mx-auto mb-2 opacity-20" />
+                  <p className="text-sm">No specific triggers exceeded clinical threshold for rationalized routing.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="flex justify-center mt-8">
           <Button onClick={onBack} size="lg" className="w-full max-w-xs shadow-lg shadow-primary/20">
