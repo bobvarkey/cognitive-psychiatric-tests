@@ -531,6 +531,7 @@ export const AssessmentSelector = () => {
       'late-onset-psychosis': true,
       fibromyalgia: true,
       'opd-psych-eval': true,
+      'adhd-outpatient': true,
       'pid5-unified': true,
     };
 
@@ -606,22 +607,24 @@ export const AssessmentSelector = () => {
         'opd-psych-eval': OpdPsychEvalAssessment,
         'adhd-outpatient': AdhdOutpatientFlowAssessment,
       };
+
+      const wrapMap: Record<string, React.ReactNode> = {
+        daphne: <DaphneAssessment />,
+        minicog: <MiniCogAssessment />,
+        hare: <HareAssessment />,
+        tulia: <TuliaAssessment onBack={handleBackToMenu} />,
+        fab: <FabAssessment />,
+        pcl5: <Pcl5Assessment />,
+        delusions: <DelusionsAssessment />,
+      };
+
       const Comp = ComponentMap[selectedAssessment];
-      return wrapWithBack(<Comp onBack={handleBackToMenu} />);
+      if (Comp) {
+        return wrapWithBack(<Comp onBack={handleBackToMenu} />);
+      }
+
+      return wrapWithBack(wrapMap[selectedAssessment]);
     }
-
-    const wrapMap: Record<string, React.ReactNode> = {
-      daphne: <DaphneAssessment />,
-      
-      minicog: <MiniCogAssessment />,
-      hare: <HareAssessment />,
-      tulia: <TuliaAssessment onBack={handleBackToMenu} />,
-      fab: <FabAssessment />,
-      pcl5: <Pcl5Assessment />,
-      delusions: <DelusionsAssessment />,
-    };
-
-    return wrapWithBack(wrapMap[selectedAssessment]);
   }
 
   // Build category list with live counts
