@@ -3,7 +3,7 @@ export interface PsychiatricTriageData {
     ageYears: number;
   };
   safetyPsychosis: {
-    suicidalThoughtsRecent: boolean;
+    suicidalThoughtsFrequency: "none" | "occasional" | "frequent";
     suicidalPlanOrIntent: boolean;
     homicidalThoughts: boolean;
     recentViolenceOrWeapons: boolean;
@@ -12,30 +12,30 @@ export interface PsychiatricTriageData {
     psychoticExperiencesClearlyReal: boolean;
   };
   mood: {
-    phq9Total: number;
-    phq9Item9Suicidality: number;
-    mdqPositive: boolean;
+    depressionPresence: "none" | "moderate" | "severe";
+    bipolarScreenPositive: boolean;
   };
   anxietyTraumaOcd: {
-    gad7Total: number;
+    anxietyLevel: "none" | "moderate" | "severe";
     ptsdScreenPositive: boolean;
     ocdSymptomsProminent: boolean;
   };
   adhd: {
-    asrsPartAPositive: boolean;
+    inattentionLevel: "none" | "moderate" | "severe";
     adhdSinceChildhood: boolean;
-    adhdCrossSettingImpairment: boolean;
+    adhdFunctionalImpact: "none" | "moderate" | "severe";
   };
   personality: {
-    personalityScreenPositive: boolean;
+    longstandingInterpersonalProblems: boolean;
+    unstableIntenseRelationships: boolean;
+    chronicImpulsivity: boolean;
   };
   substance: {
-    auditTotal: number;
-    dastTotal: number;
-    substanceUseClinicallySignificant: boolean;
+    hazardousAlcoholUse: "likely" | "unlikely";
+    hazardousDrugUse: "likely" | "unlikely";
   };
   cognitive: {
-    cognitiveScreenPositive: boolean;
+    cognitiveConcerns: "none" | "moderate" | "severe";
   };
 }
 

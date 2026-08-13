@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, ArrowLeft, ArrowRight, CheckCircle2, ShieldAlert } from "lucide-react";
 import { 
@@ -22,7 +23,7 @@ interface PsychiatricTriageAssessmentProps {
 const INITIAL_DATA: PsychiatricTriageData = {
   patient: { ageYears: 18 },
   safetyPsychosis: {
-    suicidalThoughtsRecent: false,
+    suicidalThoughtsFrequency: "none",
     suicidalPlanOrIntent: false,
     homicidalThoughts: false,
     recentViolenceOrWeapons: false,
@@ -31,30 +32,30 @@ const INITIAL_DATA: PsychiatricTriageData = {
     psychoticExperiencesClearlyReal: false,
   },
   mood: {
-    phq9Total: 0,
-    phq9Item9Suicidality: 0,
-    mdqPositive: false,
+    depressionPresence: "none",
+    bipolarScreenPositive: false,
   },
   anxietyTraumaOcd: {
-    gad7Total: 0,
+    anxietyLevel: "none",
     ptsdScreenPositive: false,
     ocdSymptomsProminent: false,
   },
   adhd: {
-    asrsPartAPositive: false,
+    inattentionLevel: "none",
     adhdSinceChildhood: false,
-    adhdCrossSettingImpairment: false,
+    adhdFunctionalImpact: "none",
   },
   personality: {
-    personalityScreenPositive: false,
+    longstandingInterpersonalProblems: false,
+    unstableIntenseRelationships: false,
+    chronicImpulsivity: false,
   },
   substance: {
-    auditTotal: 0,
-    dastTotal: 0,
-    substanceUseClinicallySignificant: false,
+    hazardousAlcoholUse: "unlikely",
+    hazardousDrugUse: "unlikely",
   },
   cognitive: {
-    cognitiveScreenPositive: false,
+    cognitiveConcerns: "none",
   },
 };
 
@@ -62,6 +63,7 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
   const [step, setStep] = useState(1);
   const [data, setData] = useState<PsychiatricTriageData>(INITIAL_DATA);
   const [showResult, setShowResult] = useState(false);
+  const [result, setResult] = useState<TriageResult | null>(null);
 
   const totalSteps = 8;
 
@@ -76,7 +78,7 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
   };
 
   const calculateResult = () => {
-    const result: TriageResult = {
+    const out: TriageResult = {
       primaryCategory: "none_or_unclear",
       comorbidCategories: [],
       riskLevel: "low",
@@ -84,73 +86,146 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
       clinicalNotes: []
     };
 
-    // 1. Safety & Risk Check (High Priority)
-    if (data.safetyPsychosis.suicidalPlanOrIntent || 
-        data.safetyPsychosis.homicidalThoughts || 
-        data.safetyPsychosis.recentViolenceOrWeapons ||
-        data.mood.phq9Item9Suicidality >= 2) {
-      result.primaryCategory = "emergency_risk";
-      result.riskLevel = "high";
-      result.recommendedRoute = "urgent_psychiatry_or_ED";
-      result.clinicalNotes.push("Immediate safety risk detected. Requires urgent evaluation.");
-    } 
-    // 2. Psychosis Check
-    else if (data.safetyPsychosis.psychosisHallucinations || data.safetyPsychosis.psychosisDelusions) {
-      result.primaryCategory = "psychosis_or_psychosis_risk";
-      result.riskLevel = data.safetyPsychosis.psychoticExperiencesClearlyReal ? "high" : "moderate";
-      result.recommendedRoute = "urgent_psychiatry_or_ED";
-      result.clinicalNotes.push("Active psychotic symptoms reported.");
-    }
-    // 3. Mood Disorders
-    else if (data.mood.mdqPositive) {
-      result.primaryCategory = "bipolar_mood_disorder";
-      result.riskLevel = "moderate";
-      result.recommendedRoute = "routine_psychiatry";
-    }
-    else if (data.mood.phq9Total >= 10) {
-      result.primaryCategory = "unipolar_mood_disorder";
-      result.riskLevel = "moderate";
-      result.recommendedRoute = "psychology_or_therapy";
-    }
-    // 4. Anxiety/Trauma
-    else if (data.anxietyTraumaOcd.gad7Total >= 10 || data.anxietyTraumaOcd.ptsdScreenPositive || data.anxietyTraumaOcd.ocdSymptomsProminent) {
-      result.primaryCategory = "anxiety_trauma_or_oCD";
-      result.riskLevel = "moderate";
-      result.recommendedRoute = "psychology_or_therapy";
-    }
-    // 5. ADHD
-    else if (data.adhd.asrsPartAPositive && data.adhd.adhdSinceChildhood && data.adhd.adhdCrossSettingImpairment) {
-      result.primaryCategory = "ADHD_add_spectrum";
-      result.riskLevel = "low";
-      result.recommendedRoute = "routine_psychiatry";
-    }
-    // 6. Substance Use
-    else if (data.substance.auditTotal >= 8 || data.substance.dastTotal >= 3 || data.substance.substanceUseClinicallySignificant) {
-      result.primaryCategory = "substance_use_disorder";
-      result.riskLevel = "moderate";
-      result.recommendedRoute = "substance_use_services";
-    }
-    // 7. Cognitive
-    else if (data.cognitive.cognitiveScreenPositive) {
-      result.primaryCategory = "cognitive_disorder_MCI_dementia";
-      result.riskLevel = "moderate";
-      result.recommendedRoute = "neurocognitive_workup";
+    // Safety
+    const highSuicide =
+      data.safetyPsychosis.suicidalPlanOrIntent ||
+      data.safetyPsychosis.suicidalThoughtsFrequency === "frequent";
+
+    const highViolence =
+      data.safetyPsychosis.homicidalThoughts ||
+      data.safetyPsychosis.recentViolenceOrWeapons;
+
+    const psychosisPresent =
+      (data.safetyPsychosis.psychosisHallucinations ||
+       data.safetyPsychosis.psychosisDelusions) &&
+      data.safetyPsychosis.psychoticExperiencesClearlyReal;
+
+    if (highSuicide || highViolence) {
+      out.riskLevel = "high";
+      out.primaryCategory = psychosisPresent
+        ? "psychosis_or_psychosis_risk"
+        : "emergency_risk";
+      out.recommendedRoute = "urgent_psychiatry_or_ED";
+      out.clinicalNotes.push("Immediate safety risk detected. Requires urgent evaluation.");
+    } else if (psychosisPresent) {
+      out.riskLevel = "moderate";
+      out.primaryCategory = "psychosis_or_psychosis_risk";
+      out.recommendedRoute = "routine_psychiatry";
+      out.clinicalNotes.push("Active psychotic symptoms reported.");
     }
 
-    // Comorbidities
-    if (data.personality.personalityScreenPositive) result.comorbidCategories.push("personality_disorder_traits");
-    if (result.primaryCategory !== "substance_use_disorder" && (data.substance.auditTotal >= 8 || data.substance.dastTotal >= 3)) {
-      result.comorbidCategories.push("substance_use_disorder");
-    }
-    if (result.primaryCategory !== "ADHD_add_spectrum" && data.adhd.asrsPartAPositive) {
-      result.comorbidCategories.push("ADHD_add_spectrum");
+    // Mood
+    const probableDepression =
+      data.mood.depressionPresence === "moderate" ||
+      data.mood.depressionPresence === "severe";
+
+    const probableBipolar = data.mood.bipolarScreenPositive;
+
+    if (out.primaryCategory === "none_or_unclear") {
+      if (probableBipolar) {
+        out.primaryCategory = "bipolar_mood_disorder";
+        out.riskLevel = highSuicide ? "high" : "moderate";
+        out.recommendedRoute = "routine_psychiatry";
+        out.clinicalNotes.push("Probable bipolar mood disorder.");
+      } else if (probableDepression) {
+        out.primaryCategory = "unipolar_mood_disorder";
+        out.riskLevel = highSuicide ? "high" : "moderate";
+        out.recommendedRoute =
+          out.riskLevel === "high"
+            ? "urgent_psychiatry_or_ED"
+            : "routine_psychiatry";
+        out.clinicalNotes.push("Significant unipolar depressive symptoms.");
+      }
     }
 
-    setResult(result);
+    // Anxiety / Trauma / OCD
+    const anxietySignificant =
+      data.anxietyTraumaOcd.anxietyLevel === "moderate" ||
+      data.anxietyTraumaOcd.anxietyLevel === "severe";
+
+    const ptsdPositive = data.anxietyTraumaOcd.ptsdScreenPositive;
+    const ocdProminent = data.anxietyTraumaOcd.ocdSymptomsProminent;
+
+    if (out.primaryCategory === "none_or_unclear") {
+      if (anxietySignificant || ptsdPositive || ocdProminent) {
+        out.primaryCategory = "anxiety_trauma_or_oCD";
+        out.riskLevel = "moderate";
+        out.recommendedRoute = "psychology_or_therapy";
+        out.clinicalNotes.push("Anxiety, trauma, or OCD symptoms are primary concerns.");
+      }
+    } else if (anxietySignificant || ptsdPositive || ocdProminent) {
+      out.comorbidCategories.push("anxiety_trauma_or_oCD");
+    }
+
+    // ADHD / ADD
+    const adhdLikely =
+      (data.adhd.inattentionLevel === "moderate" ||
+        data.adhd.inattentionLevel === "severe") &&
+      data.adhd.adhdSinceChildhood &&
+      data.adhd.adhdFunctionalImpact !== "none";
+
+    if (adhdLikely) {
+      if (out.primaryCategory === "none_or_unclear") {
+        out.primaryCategory = "ADHD_add_spectrum";
+        out.riskLevel = "low";
+        out.recommendedRoute = "routine_psychiatry";
+        out.clinicalNotes.push("ADHD/ADD spectrum identified as primary.");
+      } else {
+        out.comorbidCategories.push("ADHD_add_spectrum");
+      }
+    }
+
+    // Substance
+    const substanceLikely =
+      data.substance.hazardousAlcoholUse === "likely" ||
+      data.substance.hazardousDrugUse === "likely";
+
+    if (substanceLikely) {
+      if (out.primaryCategory === "none_or_unclear") {
+        out.primaryCategory = "substance_use_disorder";
+        out.riskLevel = "moderate";
+        out.recommendedRoute = "substance_use_services";
+        out.clinicalNotes.push("Substance use disorder identified as primary.");
+      } else {
+        out.comorbidCategories.push("substance_use_disorder");
+      }
+    }
+
+    // Personality traits
+    const pdTraits =
+      data.personality.longstandingInterpersonalProblems ||
+      data.personality.unstableIntenseRelationships ||
+      data.personality.chronicImpulsivity;
+
+    if (pdTraits) {
+      out.comorbidCategories.push("personality_disorder_traits");
+    }
+
+    // Cognitive
+    const cognitiveSignificant =
+      data.cognitive.cognitiveConcerns === "moderate" ||
+      data.cognitive.cognitiveConcerns === "severe";
+
+    if (cognitiveSignificant) {
+      if (out.primaryCategory === "none_or_unclear") {
+        out.primaryCategory = "cognitive_disorder_MCI_dementia";
+        out.riskLevel = "moderate";
+        out.recommendedRoute = "neurocognitive_workup";
+        out.clinicalNotes.push("Significant cognitive concerns reported.");
+      } else {
+        out.comorbidCategories.push("cognitive_disorder_MCI_dementia");
+      }
+    }
+
+    if (out.primaryCategory === "none_or_unclear") {
+      out.riskLevel = "low";
+      out.recommendedRoute = "monitor_and_reassess";
+      out.clinicalNotes.push("No specific psychiatric diagnosis reached clinical threshold for triage.");
+    }
+
+    setResult(out);
     setShowResult(true);
   };
-
-  const [result, setResult] = useState<TriageResult | null>(null);
 
   if (showResult && result) {
     return (
@@ -166,7 +241,7 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
           <Card className="border-primary/20 bg-card/50 backdrop-blur-sm shadow-xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <ShieldAlert className={result.riskLevel === 'high' ? 'text-destructive' : 'text-warning'} />
+                <ShieldAlert className={result.riskLevel === 'high' ? 'text-destructive' : result.riskLevel === 'moderate' ? 'text-yellow-500' : 'text-green-500'} />
                 Clinical Priority
               </CardTitle>
             </CardHeader>
@@ -251,8 +326,21 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
         return (
           <div className="space-y-4">
             <h3 className="font-semibold text-lg border-b pb-2 mb-4">Safety & Risk</h3>
+            <div className="space-y-2">
+              <Label>Suicidal Thoughts Frequency</Label>
+              <Select 
+                value={data.safetyPsychosis.suicidalThoughtsFrequency} 
+                onValueChange={(val: any) => setData({...data, safetyPsychosis: {...data.safetyPsychosis, suicidalThoughtsFrequency: val}})}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="occasional">Occasional</SelectItem>
+                  <SelectItem value="frequent">Frequent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             {[
-              { key: 'suicidalThoughtsRecent', label: 'Recent Suicidal Thoughts' },
               { key: 'suicidalPlanOrIntent', label: 'Active Plan or Intent' },
               { key: 'homicidalThoughts', label: 'Homicidal Thoughts' },
               { key: 'recentViolenceOrWeapons', label: 'Recent Violence or Weapons Access' },
@@ -297,23 +385,25 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
       case 4:
         return (
           <div className="space-y-6">
-            <h3 className="font-semibold text-lg border-b pb-2">Mood (PHQ-9 & MDQ)</h3>
+            <h3 className="font-semibold text-lg border-b pb-2">Mood</h3>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>PHQ-9 Total Score (0-27)</Label>
-                <Input type="number" min="0" max="27" value={data.mood.phq9Total} 
-                  onChange={(e) => setData({ ...data, mood: { ...data.mood, phq9Total: parseInt(e.target.value) || 0 }})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>PHQ-9 Item 9 (Suicidality 0-3)</Label>
-                <Input type="number" min="0" max="3" value={data.mood.phq9Item9Suicidality} 
-                  onChange={(e) => setData({ ...data, mood: { ...data.mood, phq9Item9Suicidality: parseInt(e.target.value) || 0 }})}
-                />
+                <Label>Depression Presence</Label>
+                <Select 
+                  value={data.mood.depressionPresence} 
+                  onValueChange={(val: any) => setData({...data, mood: {...data.mood, depressionPresence: val}})}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="moderate">Moderate</SelectItem>
+                    <SelectItem value="severe">Severe</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
-                <Label>MDQ Positive (Bipolar Screen)</Label>
-                <Switch checked={data.mood.mdqPositive} onCheckedChange={(checked) => setData({ ...data, mood: { ...data.mood, mdqPositive: checked }})} />
+                <Label>Bipolar Screen Positive</Label>
+                <Switch checked={data.mood.bipolarScreenPositive} onCheckedChange={(checked) => setData({ ...data, mood: { ...data.mood, bipolarScreenPositive: checked }})} />
               </div>
             </div>
           </div>
@@ -324,10 +414,18 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
             <h3 className="font-semibold text-lg border-b pb-2">Anxiety, Trauma & OCD</h3>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label>GAD-7 Total Score (0-21)</Label>
-                <Input type="number" min="0" max="21" value={data.anxietyTraumaOcd.gad7Total} 
-                  onChange={(e) => setData({ ...data, anxietyTraumaOcd: { ...data.anxietyTraumaOcd, gad7Total: parseInt(e.target.value) || 0 }})}
-                />
+                <Label>Anxiety Level</Label>
+                <Select 
+                  value={data.anxietyTraumaOcd.anxietyLevel} 
+                  onValueChange={(val: any) => setData({...data, anxietyTraumaOcd: {...data.anxietyTraumaOcd, anxietyLevel: val}})}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="moderate">Moderate</SelectItem>
+                    <SelectItem value="severe">Severe</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
                 <Label>PTSD Screen Positive</Label>
@@ -345,22 +443,56 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
           <div className="space-y-4">
             <h3 className="font-semibold text-lg border-b pb-2 mb-4">ADHD & Personality</h3>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
-                <Label>ASRS Part A Positive</Label>
-                <Switch checked={data.adhd.asrsPartAPositive} onCheckedChange={(checked) => setData({ ...data, adhd: { ...data.adhd, asrsPartAPositive: checked }})} />
+              <div className="space-y-2">
+                <Label>Inattention Level</Label>
+                <Select 
+                  value={data.adhd.inattentionLevel} 
+                  onValueChange={(val: any) => setData({...data, adhd: {...data.adhd, inattentionLevel: val}})}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="moderate">Moderate</SelectItem>
+                    <SelectItem value="severe">Severe</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
                 <Label>Symptoms since childhood</Label>
                 <Switch checked={data.adhd.adhdSinceChildhood} onCheckedChange={(checked) => setData({ ...data, adhd: { ...data.adhd, adhdSinceChildhood: checked }})} />
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
-                <Label>Cross-setting impairment</Label>
-                <Switch checked={data.adhd.adhdCrossSettingImpairment} onCheckedChange={(checked) => setData({ ...data, adhd: { ...data.adhd, adhdCrossSettingImpairment: checked }})} />
+              <div className="space-y-2">
+                <Label>ADHD Functional Impact</Label>
+                <Select 
+                  value={data.adhd.adhdFunctionalImpact} 
+                  onValueChange={(val: any) => setData({...data, adhd: {...data.adhd, adhdFunctionalImpact: val}})}
+                >
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="moderate">Moderate</SelectItem>
+                    <SelectItem value="severe">Severe</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50 mt-6">
-                <Label className="font-bold">Personality Disorder Screen Positive</Label>
-                <Switch checked={data.personality.personalityScreenPositive} onCheckedChange={(checked) => setData({ ...data, personality: { ...data.personality, personalityScreenPositive: checked }})} />
-              </div>
+              <div className="font-bold border-t pt-4 mt-2">Personality traits</div>
+              {[
+                { key: 'longstandingInterpersonalProblems', label: 'Longstanding Interpersonal Problems' },
+                { key: 'unstableIntenseRelationships', label: 'Unstable/Intense Relationships' },
+                { key: 'chronicImpulsivity', label: 'Chronic Impulsivity' },
+              ].map((item) => (
+                <div key={item.key} className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
+                  <Label htmlFor={item.key} className="flex-1">{item.label}</Label>
+                  <Switch 
+                    id={item.key}
+                    checked={(data.personality as any)[item.key]}
+                    onCheckedChange={(checked) => setData({
+                      ...data,
+                      personality: { ...data.personality, [item.key]: checked }
+                    })}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         );
@@ -369,21 +501,13 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
           <div className="space-y-6">
             <h3 className="font-semibold text-lg border-b pb-2">Substance Use</h3>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>AUDIT Total (Alcohol, 0-40)</Label>
-                <Input type="number" value={data.substance.auditTotal} 
-                  onChange={(e) => setData({ ...data, substance: { ...data.substance, auditTotal: parseInt(e.target.value) || 0 }})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>DAST Total (Drugs, 0-10)</Label>
-                <Input type="number" value={data.substance.dastTotal} 
-                  onChange={(e) => setData({ ...data, substance: { ...data.substance, dastTotal: parseInt(e.target.value) || 0 }})}
-                />
+              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
+                <Label>Hazardous Alcohol Use Likely</Label>
+                <Switch checked={data.substance.hazardousAlcoholUse === 'likely'} onCheckedChange={(checked) => setData({ ...data, substance: { ...data.substance, hazardousAlcoholUse: checked ? 'likely' : 'unlikely' }})} />
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
-                <Label>Clinically Significant Use reported</Label>
-                <Switch checked={data.substance.substanceUseClinicallySignificant} onCheckedChange={(checked) => setData({ ...data, substance: { ...data.substance, substanceUseClinicallySignificant: checked }})} />
+                <Label>Hazardous Drug Use Likely</Label>
+                <Switch checked={data.substance.hazardousDrugUse === 'likely'} onCheckedChange={(checked) => setData({ ...data, substance: { ...data.substance, hazardousDrugUse: checked ? 'likely' : 'unlikely' }})} />
               </div>
             </div>
           </div>
@@ -392,16 +516,20 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
         return (
           <div className="space-y-4">
             <h3 className="font-semibold text-lg border-b pb-2 mb-4">Cognitive</h3>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border/50">
-              <Label className="text-lg">Cognitive Screen Positive (MoCA/MMSE/CCSA)</Label>
-              <Switch 
-                checked={data.cognitive.cognitiveScreenPositive} 
-                onCheckedChange={(checked) => setData({ ...data, cognitive: { ...data.cognitive, cognitiveScreenPositive: checked }})} 
-              />
+            <div className="space-y-2">
+              <Label>Cognitive Concerns</Label>
+              <Select 
+                value={data.cognitive.cognitiveConcerns} 
+                onValueChange={(val: any) => setData({...data, cognitive: {...data.cognitive, cognitiveConcerns: val}})}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="moderate">Moderate</SelectItem>
+                  <SelectItem value="severe">Severe</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <p className="text-xs text-muted-foreground italic mt-2">
-              Check this if objective testing suggests MCI or Dementia.
-            </p>
           </div>
         );
       default:
@@ -410,48 +538,46 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
   };
 
   return (
-    <div className="max-w-4xl mx-auto w-full p-4">
-      <div className="flex items-center gap-4 mb-8">
-        <Button variant="outline" size="icon" onClick={handleBack} className="rounded-full">
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold tracking-tight">Psychiatric Triage</h1>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-            <span>Step {step} of {totalSteps}</span>
-            <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-primary transition-all duration-300" 
-                style={{ width: `${(step / totalSteps) * 100}%` }}
-              />
+    <div className="max-w-4xl mx-auto w-full p-4 space-y-6">
+      <Card className="border-primary/20 bg-card/50 backdrop-blur-sm shadow-2xl">
+        <CardHeader className="text-center pb-2">
+          <div className="flex justify-between items-center mb-4">
+            <Button variant="ghost" size="sm" onClick={handleBack} className="text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {step === 1 ? 'Back to Menu' : 'Previous Step'}
+            </Button>
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
+              Step {step} of {totalSteps}
             </div>
           </div>
-        </div>
-      </div>
-
-      <Card className="border-primary/20 bg-card/50 backdrop-blur-sm shadow-2xl rounded-2xl overflow-hidden border">
-        <CardContent className="pt-8">
+          <CardTitle className="text-3xl font-extrabold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Psychiatric Triage
+          </CardTitle>
+          <CardDescription>Clinical Routing decision support</CardDescription>
+          
+          <div className="w-full bg-muted h-1.5 rounded-full mt-6 overflow-hidden">
+            <div 
+              className="bg-primary h-full transition-all duration-500 ease-in-out" 
+              style={{ width: `${(step / totalSteps) * 100}%` }}
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6">
           {renderStep()}
+          
+          <div className="flex justify-end mt-8">
+            <Button onClick={handleNext} size="lg" className="px-8 shadow-lg shadow-primary/20">
+              {step === totalSteps ? 'Calculate Triage' : 'Next Step'}
+              {step !== totalSteps && <ArrowRight className="ml-2 h-4 w-4" />}
+            </Button>
+          </div>
         </CardContent>
-        <div className="p-6 bg-muted/20 border-t flex justify-between items-center">
-          <Button variant="ghost" onClick={handleBack}>
-            {step === 1 ? 'Cancel' : 'Back'}
-          </Button>
-          <Button onClick={handleNext} className="gap-2 shadow-lg shadow-primary/20">
-            {step === totalSteps ? 'Complete Triage' : 'Next Step'}
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </div>
       </Card>
-
-      <div className="mt-8">
-        <Alert variant="default" className="bg-primary/5 border-primary/20">
-          <AlertCircle className="h-4 w-4 text-primary" />
-          <AlertTitle className="text-primary text-xs uppercase tracking-widest font-bold">Clinical Disclaimer</AlertTitle>
-          <AlertDescription className="text-xs text-muted-foreground">
-            This triage tool is for clinician decision-support only. It does not replace full clinical judgment or face-to-face evaluation. High-risk indicators require immediate psychiatric or emergency department referral.
-          </AlertDescription>
-        </Alert>
+      
+      <div className="text-center">
+        <p className="text-[10px] text-muted-foreground italic">
+          Disclaimer: This is a clinical decision support tool for clinicians. It does not replace professional judgment.
+        </p>
       </div>
     </div>
   );
