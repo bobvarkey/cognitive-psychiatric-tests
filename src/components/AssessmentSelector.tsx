@@ -766,9 +766,7 @@ export const AssessmentSelector = () => {
             {section === 'assessments' && (
               <div className="w-full max-w-4xl space-y-4">
                 {/* Ad Banner for free users */}
-                <div className="max-w-4xl mx-auto w-full">
-                  <AdBanner />
-                </div>
+                <AdBanner />
 
                 {/* Hero banner — only when no search/filter */}
                 {!searchQuery.trim() && activeCategory === 'all' && (
