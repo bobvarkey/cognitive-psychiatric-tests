@@ -76,8 +76,9 @@ export interface AdhdOutpatientFlow {
         | 'diversion_misuse'
       )[];
     };
-    addManagement: {
+    addPathway?: {
       isPredominantlyInattentive: boolean;
+      preferredPharmacologicStrategy: 'none' | 'long_acting_methylphenidate' | 'lisdexamfetamine' | 'atomoxetine' | 'bupropion' | 'other_non_stimulant';
       addSpecificNonPharmacologicPlan: (
         | 'structured_planning_skills'
         | 'time_management_training'
@@ -88,7 +89,6 @@ export interface AdhdOutpatientFlow {
         | 'sleep_hygiene_focus'
         | 'none'
       )[];
-      preferredPharmacologicStrategy: 'none' | 'long_acting_methylphenidate' | 'lisdexamfetamine' | 'atomoxetine' | 'bupropion' | 'other_non_stimulant';
       cognitiveAdjuncts: (
         | 'attention_training_exercises'
         | 'metacognitive_therapy'
