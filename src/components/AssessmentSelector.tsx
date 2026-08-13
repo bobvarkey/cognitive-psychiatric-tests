@@ -625,6 +625,7 @@ export const AssessmentSelector = () => {
 
       return wrapWithBack(wrapMap[selectedAssessment]);
     }
+  }
 
   // Build category list with live counts
   const categoryList = (Object.keys(categoryLabels) as Category[]).map((key) => ({
