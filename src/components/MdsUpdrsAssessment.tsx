@@ -15,9 +15,11 @@ interface MdsUpdrsAssessmentProps {
 export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
 
   const handleResponseChange = (itemId: string, score: number) => {
     setResponses(prev => ({ ...prev, [itemId]: score }));
+    setShowValidationErrors(false);
   };
 
   const calculateTotalItems = () => {
@@ -35,6 +37,10 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const progress = Math.round((filledItems / totalPossibleItems) * 100);
 
   const handleSubmit = () => {
+    if (!isComplete) {
+      setShowValidationErrors(true);
+      return;
+    }
     setShowResults(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -134,7 +140,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsContent value="part1" className="space-y-4 mt-4">
               <h2 className="text-lg font-semibold text-gray-800">Part I: Non-Motor Aspects of Experiences of Daily Living</h2>
               {groupByPart('Part I').map((item) => (
-                <Card key={item.id}>
+                <Card key={item.id} className={showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : ''}>
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div>
@@ -170,7 +176,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsContent value="part2" className="space-y-4 mt-4">
               <h2 className="text-lg font-semibold text-gray-800">Part II: Motor Aspects of Experiences of Daily Living</h2>
               {groupByPart('Part II').map((item) => (
-                <Card key={item.id}>
+                <Card key={item.id} className={showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : ''}>
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div>
@@ -208,7 +214,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                 Physical examination findings. Evaluate through direct observation and clinical testing.
               </p>
               {groupByPart('Part III').map((item) => (
-                <Card key={item.id} className="border-l-4 border-l-blue-500">
+                <Card key={item.id} className={`${item.isLateralized ? 'border-l-4 border-l-blue-500' : ''} ${showValidationErrors && (item.isLateralized ? (responses[`${item.id}_L`] === undefined || responses[`${item.id}_R`] === undefined) : responses[item.id] === undefined) ? 'border-2 border-red-500' : ''}`}>
                   <CardContent className="pt-6">
                     <div className="space-y-6">
                       <div>
@@ -218,7 +224,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
 
                       {item.isLateralized ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <div className="space-y-4">
+                          <div className={`space-y-4 p-2 rounded-lg ${showValidationErrors && responses[`${item.id}_L`] === undefined ? 'bg-red-50 ring-1 ring-red-200' : ''}`}>
                             <h4 className="text-sm font-bold text-blue-600 uppercase tracking-wider flex items-center gap-2">
                               <span className="w-2 h-2 rounded-full bg-blue-600"></span>
                               Left Side
@@ -243,7 +249,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                             </RadioGroup>
                           </div>
 
-                          <div className="space-y-4">
+                          <div className={`space-y-4 p-2 rounded-lg ${showValidationErrors && responses[`${item.id}_R`] === undefined ? 'bg-red-50 ring-1 ring-red-200' : ''}`}>
                             <h4 className="text-sm font-bold text-red-600 uppercase tracking-wider flex items-center gap-2">
                               <span className="w-2 h-2 rounded-full bg-red-600"></span>
                               Right Side
@@ -296,18 +302,25 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             </TabsContent>
           </Tabs>
 
-          <div className="flex gap-4">
-            <Button
-              onClick={handleSubmit}
-              disabled={!isComplete}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Calculate Score
-            </Button>
-            <Button variant="outline" onClick={handleReset}>
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Reset
-            </Button>
+          <div className="flex flex-col gap-4">
+            {showValidationErrors && !isComplete && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2 text-sm">
+                <AlertCircle className="w-4 h-4" />
+                Please complete all items before calculating the score. Missing responses are highlighted below.
+              </div>
+            )}
+            <div className="flex gap-4">
+              <Button
+                onClick={handleSubmit}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Calculate Score
+              </Button>
+              <Button variant="outline" onClick={handleReset}>
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
