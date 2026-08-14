@@ -302,18 +302,25 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             </TabsContent>
           </Tabs>
 
-          <div className="flex gap-4">
-            <Button
-              onClick={handleSubmit}
-              disabled={!isComplete}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              Calculate Score
-            </Button>
-            <Button variant="outline" onClick={handleReset}>
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Reset
-            </Button>
+          <div className="flex flex-col gap-4">
+            {showValidationErrors && !isComplete && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2 text-sm">
+                <AlertCircle className="w-4 h-4" />
+                Please complete all items before calculating the score. Missing responses are highlighted below.
+              </div>
+            )}
+            <div className="flex gap-4">
+              <Button
+                onClick={handleSubmit}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Calculate Score
+              </Button>
+              <Button variant="outline" onClick={handleReset}>
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+            </div>
           </div>
         </div>
       ) : (
