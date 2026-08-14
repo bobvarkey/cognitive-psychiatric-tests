@@ -20,9 +20,19 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
     setResponses(prev => ({ ...prev, [itemId]: score }));
   };
 
+  const calculateTotalItems = () => {
+    return MDS_UPDRS_ITEMS.reduce((acc, item) => acc + (item.isLateralized ? 2 : 1), 0);
+  };
+
+  const calculateFilledItems = () => {
+    return Object.keys(responses).length;
+  };
+
+  const totalPossibleItems = calculateTotalItems();
+  const filledItems = calculateFilledItems();
   const totalScore = Object.values(responses).reduce((sum, score) => sum + score, 0);
-  const isComplete = MDS_UPDRS_ITEMS.length === Object.keys(responses).length;
-  const progress = Math.round((Object.keys(responses).length / MDS_UPDRS_ITEMS.length) * 100);
+  const isComplete = totalPossibleItems === filledItems;
+  const progress = Math.round((filledItems / totalPossibleItems) * 100);
 
   const handleSubmit = () => {
     if (isComplete) {
@@ -179,32 +189,87 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                 Physical examination findings. Evaluate through direct observation and clinical testing.
               </p>
               {groupByPart('Part III').map((item) => (
-                <Card key={item.id}>
+                <Card key={item.id} className="border-l-4 border-l-blue-500">
                   <CardContent className="pt-6">
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       <div>
                         <h3 className="font-semibold text-gray-800">{item.number}. {item.question}</h3>
                         <p className="text-sm text-gray-600 mt-1">{item.description}</p>
                       </div>
-                      <RadioGroup
-                        value={responses[item.id]?.toString() || ''}
-                        onValueChange={(val) => handleResponseChange(item.id, parseInt(val))}
-                      >
-                        <div className="space-y-2">
-                          {Object.keys(item.scoring).map((scoreKey) => {
-                            const score = parseInt(scoreKey);
-                            return (
-                              <div key={score} className="flex items-start space-x-2">
-                                <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} />
-                                <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
-                                  <div className="font-medium text-gray-700">{score}</div>
-                                  <div className="text-sm text-gray-600">{item.scoring[score]}</div>
-                                </Label>
+
+                      {item.isLateralized ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          <div className="space-y-4">
+                            <h4 className="text-sm font-bold text-blue-600 uppercase tracking-wider flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                              Left Side
+                            </h4>
+                            <RadioGroup
+                              value={responses[`${item.id}_L`]?.toString() || ''}
+                              onValueChange={(val) => handleResponseChange(`${item.id}_L`, parseInt(val))}
+                            >
+                              <div className="space-y-2">
+                                {Object.keys(item.scoring).map((scoreKey) => {
+                                  const score = parseInt(scoreKey);
+                                  return (
+                                    <div key={score} className="flex items-start space-x-2 p-1 hover:bg-gray-50 rounded transition-colors">
+                                      <RadioGroupItem value={score.toString()} id={`${item.id}-L-${score}`} />
+                                      <Label htmlFor={`${item.id}-L-${score}`} className="cursor-pointer flex-1">
+                                        <div className="font-medium text-gray-700">{score} - {item.scoring[score]}</div>
+                                      </Label>
+                                    </div>
+                                  );
+                                })}
                               </div>
-                            );
-                          })}
+                            </RadioGroup>
+                          </div>
+
+                          <div className="space-y-4">
+                            <h4 className="text-sm font-bold text-red-600 uppercase tracking-wider flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-red-600"></span>
+                              Right Side
+                            </h4>
+                            <RadioGroup
+                              value={responses[`${item.id}_R`]?.toString() || ''}
+                              onValueChange={(val) => handleResponseChange(`${item.id}_R`, parseInt(val))}
+                            >
+                              <div className="space-y-2">
+                                {Object.keys(item.scoring).map((scoreKey) => {
+                                  const score = parseInt(scoreKey);
+                                  return (
+                                    <div key={score} className="flex items-start space-x-2 p-1 hover:bg-gray-50 rounded transition-colors">
+                                      <RadioGroupItem value={score.toString()} id={`${item.id}-R-${score}`} />
+                                      <Label htmlFor={`${item.id}-R-${score}`} className="cursor-pointer flex-1">
+                                        <div className="font-medium text-gray-700">{score} - {item.scoring[score]}</div>
+                                      </Label>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </RadioGroup>
+                          </div>
                         </div>
-                      </RadioGroup>
+                      ) : (
+                        <RadioGroup
+                          value={responses[item.id]?.toString() || ''}
+                          onValueChange={(val) => handleResponseChange(item.id, parseInt(val))}
+                        >
+                          <div className="space-y-2">
+                            {Object.keys(item.scoring).map((scoreKey) => {
+                              const score = parseInt(scoreKey);
+                              return (
+                                <div key={score} className="flex items-start space-x-2">
+                                  <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} />
+                                  <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
+                                    <div className="font-medium text-gray-700">{score}</div>
+                                    <div className="text-sm text-gray-600">{item.scoring[score]}</div>
+                                  </Label>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </RadioGroup>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

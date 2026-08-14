@@ -5,6 +5,7 @@ export interface MdsUpdrsItem {
   domain: string;
   question: string;
   description: string;
+  isLateralized?: boolean;
   scoring: {
     [key: number]: string;
   };
@@ -210,12 +211,13 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
   },
   // Part III: Motor Examination (Physical Examination)
   {
-    id: 'resting_tremor_right_hand',
+    id: 'resting_tremor_hand',
     number: 14,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Resting tremor: Right hand',
-    description: 'Assess resting tremor of right hand at rest',
+    question: 'Resting tremor amplitude - Hands',
+    description: 'Assess resting tremor of hands at rest',
+    isLateralized: true,
     scoring: {
       0: 'Absent',
       1: 'Slight and infrequently present',
@@ -225,57 +227,61 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
     }
   },
   {
-    id: 'resting_tremor_left_hand',
+    id: 'rigidity_arm',
     number: 15,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Resting tremor: Left hand',
-    description: 'Assess resting tremor of left hand at rest',
+    question: 'Rigidity - Arms',
+    description: 'Assess muscle rigidity of arms during passive movement',
+    isLateralized: true,
     scoring: {
       0: 'Absent',
-      1: 'Slight and infrequently present',
-      2: 'Mild in amplitude and persistent, or moderate in amplitude but present intermittently',
-      3: 'Moderate in amplitude and present most of the time',
-      4: 'Marked in amplitude and present most of the time'
+      1: 'Slight, evident only with activation maneuver',
+      2: 'Mild to moderate',
+      3: 'Moderate to marked',
+      4: 'Severe'
     }
   },
   {
-    id: 'rigidity_right_arm',
+    id: 'finger_tapping',
     number: 16,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Rigidity: Right arm',
-    description: 'Assess muscle rigidity of right arm during passive movement',
+    question: 'Finger tapping',
+    description: 'Ask patient to tap index finger and thumb repeatedly. Assess amplitude and speed.',
+    isLateralized: true,
     scoring: {
-      0: 'Absent',
-      1: 'Slight, evident only with activation maneuver',
-      2: 'Mild to moderate',
-      3: 'Moderate to marked',
-      4: 'Severe'
+      0: 'Normal',
+      1: 'Slight slowing and/or reduction in amplitude',
+      2: 'Mild slowing and reduction in amplitude',
+      3: 'Moderately slowed, small amplitude',
+      4: 'Severely slowed, very small amplitude'
     }
   },
   {
-    id: 'rigidity_left_arm',
+    id: 'hand_grasp',
     number: 17,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Rigidity: Left arm',
-    description: 'Assess muscle rigidity of left arm during passive movement',
+    question: 'Hand movements',
+    description: 'Ask patient to open and close hand in rapid succession. Assess speed and amplitude.',
+    isLateralized: true,
     scoring: {
-      0: 'Absent',
-      1: 'Slight, evident only with activation maneuver',
-      2: 'Mild to moderate',
-      3: 'Moderate to marked',
-      4: 'Severe'
+      0: 'Normal',
+      1: 'Slight slowing and/or reduction in amplitude',
+      2: 'Mild slowing and reduction in amplitude',
+      3: 'Moderately slowed, small amplitude',
+      4: 'Severely slowed, very small amplitude'
     }
   },
   {
-    id: 'finger_tapping_right',
+    id: 'pronation_supination',
     number: 18,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Finger tapping: Right hand',
-    description: 'Ask patient to tap index finger and thumb repeatedly. Assess amplitude and speed.',
+    question: 'Pronation-supination movements',
+    description: 'Assess rapid pronation and supination (turning hand palm up and down) movements.',
+    isLateralized: true,
     scoring: {
       0: 'Normal',
       1: 'Slight slowing and/or reduction in amplitude',
@@ -285,102 +291,13 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
     }
   },
   {
-    id: 'finger_tapping_left',
+    id: 'toe_tapping',
     number: 19,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Finger tapping: Left hand',
-    description: 'Ask patient to tap index finger and thumb repeatedly. Assess amplitude and speed.',
-    scoring: {
-      0: 'Normal',
-      1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
-    }
-  },
-  {
-    id: 'hand_grasp_right',
-    number: 20,
-    part: 'Part III',
-    domain: 'Motor Examination',
-    question: 'Hand movements: Right hand',
-    description: 'Ask patient to open and close hand in rapid succession. Assess speed and amplitude.',
-    scoring: {
-      0: 'Normal',
-      1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
-    }
-  },
-  {
-    id: 'hand_grasp_left',
-    number: 21,
-    part: 'Part III',
-    domain: 'Motor Examination',
-    question: 'Hand movements: Left hand',
-    description: 'Ask patient to open and close hand in rapid succession. Assess speed and amplitude.',
-    scoring: {
-      0: 'Normal',
-      1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
-    }
-  },
-  {
-    id: 'pronation_supination_right',
-    number: 22,
-    part: 'Part III',
-    domain: 'Motor Examination',
-    question: 'Pronation-supination movements: Right hand',
-    description: 'Assess rapid pronation and supination (turning hand palm up and down) movements.',
-    scoring: {
-      0: 'Normal',
-      1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
-    }
-  },
-  {
-    id: 'pronation_supination_left',
-    number: 23,
-    part: 'Part III',
-    domain: 'Motor Examination',
-    question: 'Pronation-supination movements: Left hand',
-    description: 'Assess rapid pronation and supination (turning hand palm up and down) movements.',
-    scoring: {
-      0: 'Normal',
-      1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
-    }
-  },
-  {
-    id: 'toe_tapping_right',
-    number: 24,
-    part: 'Part III',
-    domain: 'Motor Examination',
-    question: 'Toe tapping: Right foot',
+    question: 'Toe tapping',
     description: 'Ask patient to tap foot. Assess amplitude and speed.',
-    scoring: {
-      0: 'Normal',
-      1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
-    }
-  },
-  {
-    id: 'toe_tapping_left',
-    number: 25,
-    part: 'Part III',
-    domain: 'Motor Examination',
-    question: 'Toe tapping: Left foot',
-    description: 'Ask patient to tap foot. Assess amplitude and speed.',
+    isLateralized: true,
     scoring: {
       0: 'Normal',
       1: 'Slight slowing and/or reduction in amplitude',
@@ -391,7 +308,7 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
   },
   {
     id: 'gait',
-    number: 26,
+    number: 20,
     part: 'Part III',
     domain: 'Motor Examination',
     question: 'Gait',
@@ -406,7 +323,7 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
   },
   {
     id: 'postural_stability',
-    number: 27,
+    number: 21,
     part: 'Part III',
     domain: 'Motor Examination',
     question: 'Postural stability',
