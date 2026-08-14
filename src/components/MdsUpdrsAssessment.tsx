@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { MDS_UPDRS_ITEMS, MDS_UPDRS_INTERPRETATION } from '@/data/mdsUpdrsScale';
-import { ArrowLeft, RotateCcw, AlertCircle } from 'lucide-react';
+import { ArrowLeft, RotateCcw, AlertCircle, Brain, Activity, Stethoscope, CheckCircle2 } from 'lucide-react';
 
 interface MdsUpdrsAssessmentProps {
   onBack?: () => void;
@@ -72,6 +72,22 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
     return MDS_UPDRS_ITEMS.filter(item => item.part === part);
   };
 
+  const getPartProgress = (part: string) => {
+    const items = groupByPart(part);
+    const total = items.reduce((acc, item) => acc + (item.isLateralized ? 2 : 1), 0);
+    const filled = items.reduce((acc, item) => {
+      if (item.isLateralized) {
+        return acc + (responses[`${item.id}_L`] !== undefined ? 1 : 0) + (responses[`${item.id}_R`] !== undefined ? 1 : 0);
+      }
+      return acc + (responses[item.id] !== undefined ? 1 : 0);
+    }, 0);
+    return { filled, total, complete: filled === total };
+  };
+
+  const part1Progress = getPartProgress('Part I');
+  const part2Progress = getPartProgress('Part II');
+  const part3Progress = getPartProgress('Part III');
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -116,24 +132,54 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
           </div>
 
           <Tabs defaultValue="part1" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-gray-100/50 p-1 rounded-xl h-12 shadow-inner">
+            <TabsList className="grid w-full grid-cols-3 bg-gray-100/50 p-1 rounded-xl h-auto min-h-[3.5rem] shadow-inner gap-1">
               <TabsTrigger 
                 value="part1" 
-                className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-semibold transition-all"
               >
-                I: Non-Motor
+                <span className="flex items-center gap-1.5">
+                  <Brain className="w-4 h-4" />
+                  I: Non-Motor
+                </span>
+                <span className={`text-[10px] font-medium ${part1Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                  {part1Progress.complete ? (
+                    <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
+                  ) : (
+                    `${part1Progress.filled}/${part1Progress.total}`
+                  )}
+                </span>
               </TabsTrigger>
               <TabsTrigger 
                 value="part2" 
-                className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-purple-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-purple-600 font-semibold transition-all"
               >
-                II: Daily
+                <span className="flex items-center gap-1.5">
+                  <Activity className="w-4 h-4" />
+                  II: Daily
+                </span>
+                <span className={`text-[10px] font-medium ${part2Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                  {part2Progress.complete ? (
+                    <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
+                  ) : (
+                    `${part2Progress.filled}/${part2Progress.total}`
+                  )}
+                </span>
               </TabsTrigger>
               <TabsTrigger 
                 value="part3" 
-                className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-orange-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-orange-600 font-semibold transition-all"
               >
-                III: Exam
+                <span className="flex items-center gap-1.5">
+                  <Stethoscope className="w-4 h-4" />
+                  III: Exam
+                </span>
+                <span className={`text-[10px] font-medium ${part3Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                  {part3Progress.complete ? (
+                    <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
+                  ) : (
+                    `${part3Progress.filled}/${part3Progress.total}`
+                  )}
+                </span>
               </TabsTrigger>
             </TabsList>
 
