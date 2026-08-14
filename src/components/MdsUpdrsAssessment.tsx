@@ -48,7 +48,12 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const getPartScores = () => {
     const part1 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part I').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
     const part2 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part II').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
-    const part3 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part III').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
+    const part3 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part III').reduce((sum, item) => {
+      if (item.isLateralized) {
+        return sum + (responses[`${item.id}_L`] || 0) + (responses[`${item.id}_R`] || 0);
+      }
+      return sum + (responses[item.id] || 0);
+    }, 0);
     return { part1, part2, part3 };
   };
 
@@ -311,21 +316,30 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                      <div className="text-sm text-blue-900 font-semibold">Part I</div>
-                      <div className="text-3xl font-bold text-blue-600 mt-2">{partScores.part1}</div>
-                      <div className="text-xs text-blue-700 mt-1">Non-Motor</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="bg-blue-50/50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200/50 dark:border-blue-800/30 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
+                      <div className="text-sm text-blue-900 dark:text-blue-300 font-semibold flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        Part I
+                      </div>
+                      <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">{partScores.part1}</div>
+                      <div className="text-xs text-blue-700 dark:text-blue-300/70 mt-1">Non-Motor</div>
                     </div>
-                    <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                      <div className="text-sm text-purple-900 font-semibold">Part II</div>
-                      <div className="text-3xl font-bold text-purple-600 mt-2">{partScores.part2}</div>
-                      <div className="text-xs text-purple-700 mt-1">Motor Daily</div>
+                    <div className="bg-purple-50/50 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-200/50 dark:border-purple-800/30 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
+                      <div className="text-sm text-purple-900 dark:text-purple-300 font-semibold flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                        Part II
+                      </div>
+                      <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">{partScores.part2}</div>
+                      <div className="text-xs text-purple-700 dark:text-purple-300/70 mt-1">Motor Daily</div>
                     </div>
-                    <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-                      <div className="text-sm text-orange-900 font-semibold">Part III</div>
-                      <div className="text-3xl font-bold text-orange-600 mt-2">{partScores.part3}</div>
-                      <div className="text-xs text-orange-700 mt-1">Motor Exam</div>
+                    <div className="bg-orange-50/50 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-200/50 dark:border-orange-800/30 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
+                      <div className="text-sm text-orange-900 dark:text-orange-300 font-semibold flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                        Part III
+                      </div>
+                      <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-2">{partScores.part3}</div>
+                      <div className="text-xs text-orange-700 dark:text-orange-300/70 mt-1">Motor Exam</div>
                     </div>
                   </div>
 
