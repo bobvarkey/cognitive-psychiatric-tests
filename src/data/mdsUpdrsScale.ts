@@ -340,18 +340,18 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
 
 export const MDS_UPDRS_INTERPRETATION = {
   mild: {
-    range: '0-30',
+    range: '0-32',
     level: 'Mild Parkinson\'s Disease',
-    description: 'Mild motor and non-motor symptoms.'
+    description: 'Minimal motor and non-motor impairment.'
   },
   moderate: {
-    range: '31-59',
+    range: '33-58',
     level: 'Moderate Parkinson\'s Disease',
-    description: 'Moderate motor and non-motor symptoms affecting function.'
+    description: 'Moderate functional impairment across domains.'
   },
   severe: {
-    range: '>60',
+    range: '≥59',
     level: 'Severe Parkinson\'s Disease',
-    description: 'Severe motor and non-motor symptoms with significant functional impairment.'
+    description: 'Significant functional impairment requiring comprehensive management.'
   }
 };
