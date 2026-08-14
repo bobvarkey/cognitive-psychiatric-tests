@@ -35,9 +35,8 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const progress = Math.round((filledItems / totalPossibleItems) * 100);
 
   const handleSubmit = () => {
-    if (isComplete) {
-      setShowResults(true);
-    }
+    setShowResults(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleReset = () => {
@@ -111,10 +110,25 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
           </div>
 
           <Tabs defaultValue="part1" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="part1">Part I: Non-Motor</TabsTrigger>
-              <TabsTrigger value="part2">Part II: Motor Daily</TabsTrigger>
-              <TabsTrigger value="part3">Part III: Motor Exam</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-3 bg-gray-100/50 p-1 rounded-xl h-12 shadow-inner">
+              <TabsTrigger 
+                value="part1" 
+                className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-semibold transition-all"
+              >
+                I: Non-Motor
+              </TabsTrigger>
+              <TabsTrigger 
+                value="part2" 
+                className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-purple-600 font-semibold transition-all"
+              >
+                II: Daily
+              </TabsTrigger>
+              <TabsTrigger 
+                value="part3" 
+                className="rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-orange-600 font-semibold transition-all"
+              >
+                III: Exam
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="part1" className="space-y-4 mt-4">
