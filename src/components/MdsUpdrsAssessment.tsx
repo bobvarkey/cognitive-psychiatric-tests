@@ -37,6 +37,10 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const progress = Math.round((filledItems / totalPossibleItems) * 100);
 
   const handleSubmit = () => {
+    if (!isComplete) {
+      setShowValidationErrors(true);
+      return;
+    }
     setShowResults(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
