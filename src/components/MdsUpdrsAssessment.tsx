@@ -15,9 +15,11 @@ interface MdsUpdrsAssessmentProps {
 export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
 
   const handleResponseChange = (itemId: string, score: number) => {
     setResponses(prev => ({ ...prev, [itemId]: score }));
+    setShowValidationErrors(false);
   };
 
   const calculateTotalItems = () => {
