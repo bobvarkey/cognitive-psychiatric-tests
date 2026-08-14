@@ -214,7 +214,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                 Physical examination findings. Evaluate through direct observation and clinical testing.
               </p>
               {groupByPart('Part III').map((item) => (
-                <Card key={item.id} className="border-l-4 border-l-blue-500">
+                <Card key={item.id} className={`${item.isLateralized ? 'border-l-4 border-l-blue-500' : ''} ${showValidationErrors && (item.isLateralized ? (responses[`${item.id}_L`] === undefined || responses[`${item.id}_R`] === undefined) : responses[item.id] === undefined) ? 'border-2 border-red-500' : ''}`}>
                   <CardContent className="pt-6">
                     <div className="space-y-6">
                       <div>
