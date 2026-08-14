@@ -224,7 +224,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
 
                       {item.isLateralized ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <div className="space-y-4">
+                          <div className={`space-y-4 p-2 rounded-lg ${showValidationErrors && responses[`${item.id}_L`] === undefined ? 'bg-red-50 ring-1 ring-red-200' : ''}`}>
                             <h4 className="text-sm font-bold text-blue-600 uppercase tracking-wider flex items-center gap-2">
                               <span className="w-2 h-2 rounded-full bg-blue-600"></span>
                               Left Side
