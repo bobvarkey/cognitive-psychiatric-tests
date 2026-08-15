@@ -98,6 +98,7 @@ import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { useDayCounter } from '@/hooks/useDayCounter';
 import { PaywallModal } from './PaywallModal';
 import { AdBanner } from './AdBanner';
 
@@ -310,6 +311,7 @@ export const AssessmentSelector = () => {
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
   const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll } = useSubscription();
+  const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -764,6 +766,14 @@ export const AssessmentSelector = () => {
                           ? 'Neuropsychiatric\nEvaluation Companion'
                           : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}
                       </h2>
+                      <div className="flex items-center gap-3 px-4">
+                        <span className="day-counter">{dayCount}</span>
+                        <span className="text-sm font-semibold text-white/90 drop-shadow max-w-[9rem] leading-tight">
+                          {language === 'en'
+                            ? (dayCount === 1 ? 'day with Cognito' : 'days with Cognito')
+                            : 'Cognito ഉപയോഗിച്ച ദിവസങ്ങൾ'}
+                        </span>
+                      </div>
                       <Button
                         onClick={() => openAssessment('triage')}
                         className="bg-primary hover:bg-primary/90 text-white font-bold rounded-full px-8 py-6 h-auto shadow-2xl transition-transform active:scale-95 flex items-center gap-2 group border-2 border-white/20"
