@@ -211,129 +211,282 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
   },
   // Part III: Motor Examination (Physical Examination)
   {
-    id: 'resting_tremor_hand',
+    id: 'speech',
     number: 14,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Resting tremor amplitude - Hands',
-    description: 'Assess resting tremor of hands at rest',
-    isLateralized: true,
+    question: 'Speech',
+    description: 'Assess volume, inflection, and clarity.',
     scoring: {
-      0: 'Absent',
-      1: 'Slight and infrequently present',
-      2: 'Mild in amplitude and persistent, or moderate in amplitude but present intermittently',
-      3: 'Moderate in amplitude and present most of the time',
-      4: 'Marked in amplitude and present most of the time'
+      0: 'Normal',
+      1: 'Slight loss of expression, diction and/or volume',
+      2: 'Monotone, slurred but understandable; moderately impaired',
+      3: 'Marked impairment, difficult to understand',
+      4: 'Unintelligible'
     }
   },
   {
-    id: 'rigidity_arm',
+    id: 'facial_expression',
     number: 15,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Rigidity - Arms',
-    description: 'Assess muscle rigidity of arms during passive movement',
-    isLateralized: true,
+    question: 'Facial expression',
+    description: 'Observe for masked face (hypomimia).',
+    scoring: {
+      0: 'Normal',
+      1: 'Minimal hypomimia, could be normal "poker face"',
+      2: 'Slight but definitely abnormal diminution of facial expression',
+      3: 'Moderate hypomimia; lips parted some of the time',
+      4: 'Masked or fixed expression with severe or complete loss of facial expression; lips parted 1/4 inch or more'
+    }
+  },
+  {
+    id: 'rigidity',
+    number: 16,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Rigidity',
+    description: 'Assess major joints (Neck, RUE, LUE, RLE, LLE) with patient relaxed in sitting position.',
+    isLateralized: true, // Special handling for Neck + 4 limbs
     scoring: {
       0: 'Absent',
-      1: 'Slight, evident only with activation maneuver',
+      1: 'Slight or detectable only when activated by mirror or other movements',
       2: 'Mild to moderate',
-      3: 'Moderate to marked',
-      4: 'Severe'
+      3: 'Marked, but full range of motion easily achieved',
+      4: 'Severe, range of motion achieved with difficulty'
     }
   },
   {
     id: 'finger_tapping',
-    number: 16,
-    part: 'Part III',
-    domain: 'Motor Examination',
-    question: 'Finger tapping',
-    description: 'Ask patient to tap index finger and thumb repeatedly. Assess amplitude and speed.',
-    isLateralized: true,
-    scoring: {
-      0: 'Normal',
-      1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
-    }
-  },
-  {
-    id: 'hand_grasp',
     number: 17,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Hand movements',
-    description: 'Ask patient to open and close hand in rapid succession. Assess speed and amplitude.',
+    question: 'Finger Tapping',
+    description: 'Tap index finger on thumb 10 times as quickly and widely as possible.',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight slowing and/or reduction in amplitude (1-2 taps interrupted)',
+      2: 'Mild slowing and/or reduction in amplitude (3-5 taps interrupted)',
+      3: 'Moderate slowing and/or reduction in amplitude (6-9 taps interrupted)',
+      4: 'Severe slowing, can barely perform the task'
+    }
+  },
+  {
+    id: 'hand_movements',
+    number: 18,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Hand Movements',
+    description: 'Make a tight fist with the arm bent at the elbow so that the palm faces the examiner. Have the patient open the hand 10 times as fully and as quickly as possible.',
     isLateralized: true,
     scoring: {
       0: 'Normal',
       1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
+      2: 'Mild slowing and/or reduction in amplitude',
+      3: 'Moderate slowing and/or reduction in amplitude',
+      4: 'Severe slowing, can barely perform the task'
     }
   },
   {
     id: 'pronation_supination',
-    number: 18,
+    number: 19,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Pronation-supination movements',
-    description: 'Assess rapid pronation and supination (turning hand palm up and down) movements.',
+    question: 'Pronation-supination movements of hands',
+    description: 'Arm outstretched, palm down. Patient should tap index finger on thumb 10 times as quickly and widely as possible.',
     isLateralized: true,
     scoring: {
       0: 'Normal',
       1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
+      2: 'Mild slowing and/or reduction in amplitude',
+      3: 'Moderate slowing and/or reduction in amplitude',
+      4: 'Severe slowing, can barely perform the task'
     }
   },
   {
     id: 'toe_tapping',
-    number: 19,
+    number: 20,
     part: 'Part III',
     domain: 'Motor Examination',
-    question: 'Toe tapping',
-    description: 'Ask patient to tap foot. Assess amplitude and speed.',
+    question: 'Toe Tapping',
+    description: 'Have the patient tap the ball of the foot 10 times as quickly and widely as possible.',
     isLateralized: true,
     scoring: {
       0: 'Normal',
       1: 'Slight slowing and/or reduction in amplitude',
-      2: 'Mild slowing and reduction in amplitude',
-      3: 'Moderately slowed, small amplitude',
-      4: 'Severely slowed, very small amplitude'
+      2: 'Mild slowing and/or reduction in amplitude',
+      3: 'Moderate slowing and/or reduction in amplitude',
+      4: 'Severe slowing, can barely perform the task'
+    }
+  },
+  {
+    id: 'leg_agility',
+    number: 21,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Leg Agility',
+    description: 'Have the patient tap the heel on the ground 10 times as quickly and widely as possible.',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight slowing and/or reduction in amplitude',
+      2: 'Mild slowing and/or reduction in amplitude',
+      3: 'Moderate slowing and/or reduction in amplitude',
+      4: 'Severe slowing, can barely perform the task'
+    }
+  },
+  {
+    id: 'arising_from_chair',
+    number: 22,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Arising from chair',
+    description: 'Patient attempts to rise from a straight-back chair with arms folded across chest.',
+    scoring: {
+      0: 'Normal',
+      1: 'Slow or may need more than one attempt',
+      2: 'Pushes self up from arms of chair',
+      3: 'Tends to fall back and may have to try more than once, but can get up without help',
+      4: 'Unable to arise without help'
     }
   },
   {
     id: 'gait',
-    number: 20,
+    number: 23,
     part: 'Part III',
     domain: 'Motor Examination',
     question: 'Gait',
     description: 'Observe walking pattern. Assess stride length, arm swing, and posture.',
     scoring: {
       0: 'Normal',
-      1: 'Slight slowness, or reduction in arm swing',
-      2: 'Mild reduction in speed or amplitude of movement',
-      3: 'Moderate slowing of gait or mild difficulty',
-      4: 'Severe gait impairment'
+      1: 'Walks slowly, may shuffle with short steps, but no festination or propulsion',
+      2: 'Walks with difficulty, but requires little or no assistance',
+      3: 'Severe disturbance of gait, requiring assistance',
+      4: 'Cannot walk at all, even with assistance'
+    }
+  },
+  {
+    id: 'freezing_of_gait',
+    number: 24,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Freezing of gait',
+    description: 'Assess for hesitation or freezing during walking.',
+    scoring: {
+      0: 'Normal',
+      1: 'Freezing on turning only',
+      2: 'Occasional freezing when walking',
+      3: 'Frequent freezing when walking',
+      4: 'Cannot walk because of freezing'
     }
   },
   {
     id: 'postural_stability',
-    number: 21,
+    number: 25,
     part: 'Part III',
     domain: 'Motor Examination',
     question: 'Postural stability',
     description: 'Use pull test: stand behind patient and gently pull backward at shoulders.',
     scoring: {
       0: 'Normal - Recovers quickly',
-      1: 'Mild - Pulls back but recovers with few steps',
-      2: 'Moderate - Pulls back and falls backward without catching self',
-      3: 'Marked - Severely impaired',
-      4: 'Severe - Unable to stand independently'
+      1: 'Retropulsion, but recovers unaided',
+      2: 'Absence of postural response; would fall if not caught by examiner',
+      3: 'Very unstable, tends to lose balance spontaneously',
+      4: 'Unable to stand without assistance'
+    }
+  },
+  {
+    id: 'posture',
+    number: 26,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Posture',
+    description: 'Observe patient standing.',
+    scoring: {
+      0: 'Normal erect',
+      1: 'Not quite erect, slightly stooped posture; could be normal for older person',
+      2: 'Moderately stooped posture, definitely abnormal; can be slightly leaning to one side',
+      3: 'Severely stooped posture with kyphosis; can be moderately leaning to one side',
+      4: 'Marked flexion with extreme abnormality of posture'
+    }
+  },
+  {
+    id: 'global_bradykinesia',
+    number: 27,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Global spontaneity of movement (Bradykinesia)',
+    description: 'Based on global observation during the examination.',
+    scoring: {
+      0: 'Normal',
+      1: 'Slight slowness and poverty of movement',
+      2: 'Mild slowness and poverty of movement',
+      3: 'Moderate slowness and poverty of movement',
+      4: 'Marked slowness and poverty of movement'
+    }
+  },
+  {
+    id: 'postural_tremor_hands',
+    number: 28,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Postural tremor of hands',
+    description: 'Arms outstretched, palms down.',
+    isLateralized: true,
+    scoring: {
+      0: 'Absent',
+      1: 'Slight; present with action',
+      2: 'Mild in amplitude; present with action',
+      3: 'Moderate in amplitude; present with action',
+      4: 'Marked in amplitude; present with action'
+    }
+  },
+  {
+    id: 'kinetic_tremor_hands',
+    number: 29,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Kinetic tremor of hands',
+    description: 'Finger-to-nose testing.',
+    isLateralized: true,
+    scoring: {
+      0: 'Absent',
+      1: 'Slight; present with action',
+      2: 'Mild in amplitude; present with action',
+      3: 'Moderate in amplitude; present with action',
+      4: 'Marked in amplitude; present with action'
+    }
+  },
+  {
+    id: 'resting_tremor_amplitude',
+    number: 30,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Resting tremor amplitude',
+    description: 'Assess Lip/Jaw, RUE, LUE, RLE, LLE.',
+    isLateralized: true, // Special handling for Lip/Jaw + 4 limbs
+    scoring: {
+      0: 'Absent',
+      1: 'Slight (<1 cm) and infrequently present',
+      2: 'Mild (>1 cm but <3 cm) and persistent',
+      3: 'Moderate (3-10 cm) and present most of the time',
+      4: 'Marked (>10 cm) and present most of the time'
+    }
+  },
+  {
+    id: 'resting_tremor_constancy',
+    number: 31,
+    part: 'Part III',
+    domain: 'Motor Examination',
+    question: 'Constancy of rest tremor',
+    description: 'Global observation during examination.',
+    scoring: {
+      0: 'Absent',
+      1: 'Tremor at rest is present <=25% of the time',
+      2: 'Tremor at rest is present 26-50% of the time',
+      3: 'Tremor at rest is present 51-75% of the time',
+      4: 'Tremor at rest is present 76-100% of the time'
     }
   }
 ];
