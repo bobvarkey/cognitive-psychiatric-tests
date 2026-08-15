@@ -8,59 +8,63 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    /* Warm cream background */
+    --background: 40 40% 96%;
+    --foreground: 30 8% 22%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 42 50% 99%;
+    --card-foreground: 30 8% 22%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 42 50% 99%;
+    --popover-foreground: 30 8% 22%;
 
-    --primary: 210 100% 40%;
-    --primary-foreground: 0 0% 100%;
+    /* Terracotta accent */
+    --primary: 18 52% 54%;
+    --primary-foreground: 40 50% 98%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 40 30% 92%;
+    --secondary-foreground: 30 8% 22%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 222 20% 30%;
+    --muted: 40 30% 92%;
+    --muted-foreground: 30 6% 45%;
 
-    --accent: 210 40% 94%;
-    --accent-foreground: 222 47% 11%;
+    /* Sage accent */
+    --accent: 90 15% 88%;
+    --accent-foreground: 30 8% 22%;
 
-    --destructive: 0 84% 50%;
+    --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 88%;
-    --input: 214 32% 88%;
-    --ring: 210 100% 45%;
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 18 52% 54%;
 
-    /* Medical theme colors */
-    --medical-primary: 210 100% 45%;
-    --medical-secondary: 210 40% 96%;
-    --medical-accent: 210 100% 95%;
-    --medical-success: 142 71% 45%;
-    --medical-warning: 38 92% 50%;
+    /* Medical theme colors — warm, calm, non-clinical */
+    --medical-primary: 18 52% 54%;
+    --medical-secondary: 40 30% 92%;
+    --medical-accent: 90 15% 88%;
+    --medical-success: 90 20% 45%;
+    --medical-warning: 40 45% 55%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 45%), hsl(210 100% 55%));
-    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 96%));
+    --gradient-primary: linear-gradient(135deg, hsl(18 52% 54%), hsl(18 45% 60%));
+    --gradient-subtle: linear-gradient(180deg, hsl(42 50% 99%), hsl(40 40% 96%));
 
-    /* Shadows */
-    --shadow-medical: 0 4px 12px -2px hsl(210 100% 45% / 0.08);
-    --shadow-card: 0 2px 8px -1px hsl(210 40% 8% / 0.08);
+    /* Very soft shadows only */
+    --shadow-medical: 0 4px 16px -6px hsl(30 8% 22% / 0.10);
+    --shadow-card: 0 2px 10px -4px hsl(30 8% 22% / 0.08);
 
-    --radius: 0.5rem;
+    /* 20px card radius */
+    --radius: 1.25rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 210 100% 40%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 94%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 88%;
-    --sidebar-ring: 210 100% 45%;
+    --sidebar-background: 42 50% 99%;
+    --sidebar-foreground: 30 8% 22%;
+    --sidebar-primary: 18 52% 54%;
+    --sidebar-primary-foreground: 40 50% 98%;
+    --sidebar-accent: 90 15% 88%;
+    --sidebar-accent-foreground: 30 8% 22%;
+    --sidebar-border: 40 20% 88%;
+    --sidebar-ring: 18 52% 54%;
   }
 
 
@@ -145,14 +149,11 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     position: relative;
-    background-color: hsl(0 0% 100%);
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
-    background-attachment: fixed;
+    background-color: hsl(40 40% 96%);
+    background-image: none;
     min-height: 100vh;
-    color: #000;
+    color: hsl(30 8% 22%);
+    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
   }
 
   /* Enable dark mode for specific containers while keeping standard text defaults */
@@ -222,6 +223,20 @@ All colors MUST be HSL.
   }
   .safe-area-pb {
     padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* 64px bold rule for the day counter */
+  .day-counter {
+    font-size: 4rem;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: hsl(18 52% 54%);
+  }
+
+  /* Pill buttons */
+  .btn-pill {
+    border-radius: 9999px;
   }
 
   /* Rotating soft pastel palette for question lists.
