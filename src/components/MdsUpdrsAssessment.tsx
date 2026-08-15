@@ -548,6 +548,28 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                       })}
                     </div>
                   </div>
+
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-purple-500" />
+                      Part II: Motor Aspects of Daily Living Breakdown
+                    </h3>
+                    <div className="space-y-4">
+                      {groupByPart('Part II').map((item) => {
+                        const score = responses[item.id];
+                        if (score === undefined) return null;
+                        return (
+                          <div key={item.id} className="flex justify-between items-center text-sm py-1 border-b border-gray-100 last:border-0">
+                            <span className="text-gray-700 font-medium">{item.number}. {item.question}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-gray-500 italic">{item.scoring[score]}</span>
+                              <span className="font-bold text-purple-600">+{score}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               );
             })()}
