@@ -231,7 +231,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsContent value="part1" className="space-y-4 mt-4">
               <h2 className="text-lg font-semibold text-gray-800">Part I: Non-Motor Aspects of Experiences of Daily Living</h2>
               {groupByPart('Part I').map((item) => (
-                <Card key={item.id} className={showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : ''}>
+                <Card key={item.id} className={`${showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : 'border-l-4 border-l-blue-400'}`}>
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div>
