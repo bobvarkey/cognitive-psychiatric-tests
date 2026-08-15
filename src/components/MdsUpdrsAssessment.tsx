@@ -196,7 +196,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               </TabsTrigger>
               <TabsTrigger 
                 value="part2" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-purple-50"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-purple-50 border border-transparent data-[state=active]:border-purple-400"
               >
                 <span className="flex items-center gap-1.5">
                   <Activity className="w-4 h-4" />
