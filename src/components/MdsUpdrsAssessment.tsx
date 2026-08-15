@@ -180,7 +180,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsList className="grid w-full grid-cols-3 bg-gray-100/50 p-1 rounded-xl h-auto min-h-[3.5rem] shadow-inner gap-1">
               <TabsTrigger 
                 value="part1" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-blue-50"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-blue-50 border border-transparent data-[state=active]:border-blue-400"
               >
                 <span className="flex items-center gap-1.5">
                   <Brain className="w-4 h-4" />
