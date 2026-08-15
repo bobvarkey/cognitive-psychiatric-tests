@@ -281,7 +281,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                           {Object.keys(item.scoring).map((scoreKey) => {
                             const score = parseInt(scoreKey);
                             return (
-                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group border border-transparent hover:border-gray-200">
                                 <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
                                 <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
                                   <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
