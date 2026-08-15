@@ -180,13 +180,13 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsList className="grid w-full grid-cols-3 bg-gray-100/50 p-1 rounded-xl h-auto min-h-[3.5rem] shadow-inner gap-1">
               <TabsTrigger 
                 value="part1" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-blue-50"
               >
                 <span className="flex items-center gap-1.5">
                   <Brain className="w-4 h-4" />
                   I: Non-Motor
                 </span>
-                <span className={`text-[10px] font-medium ${part1Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part1Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
                   {part1Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
@@ -196,13 +196,13 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               </TabsTrigger>
               <TabsTrigger 
                 value="part2" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-purple-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-purple-50"
               >
                 <span className="flex items-center gap-1.5">
                   <Activity className="w-4 h-4" />
                   II: Daily
                 </span>
-                <span className={`text-[10px] font-medium ${part2Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part2Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
                   {part2Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
@@ -212,13 +212,13 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               </TabsTrigger>
               <TabsTrigger 
                 value="part3" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-orange-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-orange-50"
               >
                 <span className="flex items-center gap-1.5">
                   <Stethoscope className="w-4 h-4" />
                   III: Exam
                 </span>
-                <span className={`text-[10px] font-medium ${part3Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part3Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
                   {part3Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
@@ -456,6 +456,75 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                         ? 'Moderate Parkinson\'s disease. Review medication efficacy and consider optimization. Monitor for complications.'
                         : 'Severe Parkinson\'s disease. Comprehensive medication review, consider specialist consultation, evaluate for advanced therapies (deep brain stimulation, pump therapies).'}
                     </p>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 border border-gray-200">
+                    <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                      <Stethoscope className="w-5 h-5 text-orange-500" />
+                      Part III: Motor Examination Breakdown
+                    </h3>
+                    <div className="space-y-4">
+                      {groupByPart('Part III').map((item) => {
+                        if (!item.isLateralized) {
+                          const score = responses[item.id];
+                          if (score === undefined) return null;
+                          return (
+                            <div key={item.id} className="flex justify-between items-center text-sm py-1 border-b border-gray-100 last:border-0">
+                              <span className="text-gray-700 font-medium">{item.number}. {item.question}</span>
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs text-gray-500 italic">{item.scoring[score]}</span>
+                                <span className="font-bold text-orange-600">+{score}</span>
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Lateralized items
+                        let subItems: { label: string; id: string }[] = [];
+                        if (item.id === 'rigidity') {
+                          subItems = [
+                            { label: 'Neck', id: `${item.id}_Neck` },
+                            { label: 'RUE', id: `${item.id}_RUE` },
+                            { label: 'LUE', id: `${item.id}_LUE` },
+                            { label: 'RLE', id: `${item.id}_RLE` },
+                            { label: 'LLE', id: `${item.id}_LLE` },
+                          ];
+                        } else if (item.id === 'resting_tremor_amplitude') {
+                          subItems = [
+                            { label: 'Lip/Jaw', id: `${item.id}_LipJaw` },
+                            { label: 'RUE', id: `${item.id}_RUE` },
+                            { label: 'LUE', id: `${item.id}_LUE` },
+                            { label: 'RLE', id: `${item.id}_RLE` },
+                            { label: 'LLE', id: `${item.id}_LLE` },
+                          ];
+                        } else {
+                          subItems = [
+                            { label: 'Left', id: `${item.id}_L` },
+                            { label: 'Right', id: `${item.id}_R` },
+                          ];
+                        }
+
+                        return (
+                          <div key={item.id} className="py-2 border-b border-gray-100 last:border-0">
+                            <div className="text-sm font-semibold text-gray-800 mb-1">{item.number}. {item.question}</div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 pl-4">
+                              {subItems.map((sub) => {
+                                const score = responses[sub.id];
+                                if (score === undefined) return null;
+                                return (
+                                  <div key={sub.id} className="flex flex-col bg-gray-50 p-2 rounded border border-gray-100">
+                                    <span className="text-[10px] text-gray-500 uppercase font-bold">{sub.label}</span>
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-[10px] text-gray-600 truncate mr-1" title={item.scoring[score]}>{item.scoring[score]}</span>
+                                      <span className="font-bold text-orange-600">+{score}</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               );
