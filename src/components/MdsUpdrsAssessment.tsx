@@ -107,7 +107,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const part3Progress = getPartProgress('Part III');
 
   const renderLateralizedRadios = (item: any, id: string, label: string, color: string) => (
-    <div className={`space-y-4 p-3 rounded-lg border bg-white shadow-sm ${showValidationErrors && responses[id] === undefined ? 'ring-2 ring-red-500 border-red-500' : 'border-gray-100'}`}>
+    <div className={`space-y-4 p-3 rounded-lg border bg-white shadow-sm ${showValidationErrors && responses[id] === undefined ? 'ring-2 ring-red-500 border-red-500' : 'border-gray-100'} hover:border-blue-200 transition-colors`}>
       <h4 className={`text-sm font-bold ${color} uppercase tracking-wider flex items-center gap-2`}>
         <span className={`w-2 h-2 rounded-full ${color.replace('text-', 'bg-')}`}></span>
         {label}
@@ -120,7 +120,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
           {Object.keys(item.scoring).map((scoreKey) => {
             const score = parseInt(scoreKey);
             return (
-              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group border border-transparent hover:border-gray-200">
                 <RadioGroupItem value={score.toString()} id={`${id}-${score}`} className="mt-1" />
                 <Label htmlFor={`${id}-${score}`} className="cursor-pointer flex-1">
                   <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
@@ -180,7 +180,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsList className="grid w-full grid-cols-3 bg-gray-100/50 p-1 rounded-xl h-auto min-h-[3.5rem] shadow-inner gap-1">
               <TabsTrigger 
                 value="part1" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-blue-50"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-600 data-[state=active]:to-blue-700 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-blue-50 border border-transparent data-[state=active]:border-blue-400"
               >
                 <span className="flex items-center gap-1.5">
                   <Brain className="w-4 h-4" />
@@ -196,7 +196,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               </TabsTrigger>
               <TabsTrigger 
                 value="part2" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-purple-50"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-600 data-[state=active]:to-purple-700 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-purple-50 border border-transparent data-[state=active]:border-purple-400"
               >
                 <span className="flex items-center gap-1.5">
                   <Activity className="w-4 h-4" />
@@ -212,7 +212,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               </TabsTrigger>
               <TabsTrigger 
                 value="part3" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-orange-50"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-orange-50 border border-transparent data-[state=active]:border-orange-400"
               >
                 <span className="flex items-center gap-1.5">
                   <Stethoscope className="w-4 h-4" />
@@ -231,7 +231,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsContent value="part1" className="space-y-4 mt-4">
               <h2 className="text-lg font-semibold text-gray-800">Part I: Non-Motor Aspects of Experiences of Daily Living</h2>
               {groupByPart('Part I').map((item) => (
-                <Card key={item.id} className={showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : ''}>
+                <Card key={item.id} className={`${showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : 'border-l-4 border-l-blue-400'}`}>
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div>
@@ -247,7 +247,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                           {Object.keys(item.scoring).map((scoreKey) => {
                             const score = parseInt(scoreKey);
                             return (
-                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group border border-transparent hover:border-gray-200">
                                 <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
                                 <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
                                   <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
@@ -266,7 +266,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsContent value="part2" className="space-y-4 mt-4">
               <h2 className="text-lg font-semibold text-gray-800">Part II: Motor Aspects of Experiences of Daily Living</h2>
               {groupByPart('Part II').map((item) => (
-                <Card key={item.id} className={showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : ''}>
+                <Card key={item.id} className={`${showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : 'border-l-4 border-l-purple-400'}`}>
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div>
@@ -281,7 +281,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                           {Object.keys(item.scoring).map((scoreKey) => {
                             const score = parseInt(scoreKey);
                             return (
-                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group border border-transparent hover:border-gray-200">
                                 <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
                                 <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
                                   <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
@@ -349,7 +349,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                             {Object.keys(item.scoring).map((scoreKey) => {
                               const score = parseInt(scoreKey);
                               return (
-                                <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+                                <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group border border-transparent hover:border-gray-200">
                                   <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
                                   <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
                                     <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
