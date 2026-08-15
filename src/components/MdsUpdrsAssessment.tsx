@@ -107,7 +107,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const part3Progress = getPartProgress('Part III');
 
   const renderLateralizedRadios = (item: any, id: string, label: string, color: string) => (
-    <div className={`space-y-4 p-3 rounded-lg border bg-white shadow-sm ${showValidationErrors && responses[id] === undefined ? 'ring-2 ring-red-500 border-red-500' : 'border-gray-100'}`}>
+    <div className={`space-y-4 p-3 rounded-lg border bg-white shadow-sm ${showValidationErrors && responses[id] === undefined ? 'ring-2 ring-red-500 border-red-500' : 'border-gray-100'} hover:border-blue-200 transition-colors`}>
       <h4 className={`text-sm font-bold ${color} uppercase tracking-wider flex items-center gap-2`}>
         <span className={`w-2 h-2 rounded-full ${color.replace('text-', 'bg-')}`}></span>
         {label}
