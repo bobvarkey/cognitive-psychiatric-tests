@@ -180,13 +180,13 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsList className="grid w-full grid-cols-3 bg-gray-100/50 p-1 rounded-xl h-auto min-h-[3.5rem] shadow-inner gap-1">
               <TabsTrigger 
                 value="part1" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-blue-50"
               >
                 <span className="flex items-center gap-1.5">
                   <Brain className="w-4 h-4" />
                   I: Non-Motor
                 </span>
-                <span className={`text-[10px] font-medium ${part1Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part1Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
                   {part1Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
@@ -196,13 +196,13 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               </TabsTrigger>
               <TabsTrigger 
                 value="part2" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-purple-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-purple-50"
               >
                 <span className="flex items-center gap-1.5">
                   <Activity className="w-4 h-4" />
                   II: Daily
                 </span>
-                <span className={`text-[10px] font-medium ${part2Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part2Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
                   {part2Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
@@ -212,13 +212,13 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               </TabsTrigger>
               <TabsTrigger 
                 value="part3" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-orange-600 font-semibold transition-all"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-orange-50"
               >
                 <span className="flex items-center gap-1.5">
                   <Stethoscope className="w-4 h-4" />
                   III: Exam
                 </span>
-                <span className={`text-[10px] font-medium ${part3Progress.complete ? 'text-green-600' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part3Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
                   {part3Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
