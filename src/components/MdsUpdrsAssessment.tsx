@@ -212,7 +212,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               </TabsTrigger>
               <TabsTrigger 
                 value="part3" 
-                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-orange-50"
+                className="flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white data-[state=active]:shadow-md font-semibold transition-all hover:bg-orange-50 border border-transparent data-[state=active]:border-orange-400"
               >
                 <span className="flex items-center gap-1.5">
                   <Stethoscope className="w-4 h-4" />
