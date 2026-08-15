@@ -23,7 +23,12 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   };
 
   const calculateTotalItems = () => {
-    return MDS_UPDRS_ITEMS.reduce((acc, item) => acc + (item.isLateralized ? 2 : 1), 0);
+    return MDS_UPDRS_ITEMS.reduce((acc, item) => {
+      if (!item.isLateralized) return acc + 1;
+      if (item.id === 'resting_tremor_amplitude') return acc + 5; // Lip/Jaw, RUE, LUE, RLE, LLE
+      if (item.id === 'rigidity') return acc + 5; // Neck, RUE, LUE, RLE, LLE
+      return acc + 2; // Default lateralized (R/L)
+    }, 0);
   };
 
   const calculateFilledItems = () => {
@@ -54,10 +59,14 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
     const part1 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part I').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
     const part2 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part II').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
     const part3 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part III').reduce((sum, item) => {
-      if (item.isLateralized) {
-        return sum + (responses[`${item.id}_L`] || 0) + (responses[`${item.id}_R`] || 0);
+      if (!item.isLateralized) {
+        return sum + (responses[item.id] || 0);
       }
-      return sum + (responses[item.id] || 0);
+      if (item.id === 'resting_tremor_amplitude' || item.id === 'rigidity') {
+        const suffixes = item.id === 'rigidity' ? ['Neck', 'RUE', 'LUE', 'RLE', 'LLE'] : ['LipJaw', 'RUE', 'LUE', 'RLE', 'LLE'];
+        return sum + suffixes.reduce((s, suffix) => s + (responses[`${item.id}_${suffix}`] || 0), 0);
+      }
+      return sum + (responses[`${item.id}_L`] || 0) + (responses[`${item.id}_R`] || 0);
     }, 0);
     return { part1, part2, part3 };
   };
@@ -74,12 +83,21 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
 
   const getPartProgress = (part: string) => {
     const items = groupByPart(part);
-    const total = items.reduce((acc, item) => acc + (item.isLateralized ? 2 : 1), 0);
+    const total = items.reduce((acc, item) => {
+      if (!item.isLateralized) return acc + 1;
+      if (item.id === 'resting_tremor_amplitude') return acc + 5;
+      if (item.id === 'rigidity') return acc + 5;
+      return acc + 2;
+    }, 0);
     const filled = items.reduce((acc, item) => {
-      if (item.isLateralized) {
-        return acc + (responses[`${item.id}_L`] !== undefined ? 1 : 0) + (responses[`${item.id}_R`] !== undefined ? 1 : 0);
+      if (!item.isLateralized) {
+        return acc + (responses[item.id] !== undefined ? 1 : 0);
       }
-      return acc + (responses[item.id] !== undefined ? 1 : 0);
+      if (item.id === 'resting_tremor_amplitude' || item.id === 'rigidity') {
+        const suffixes = item.id === 'rigidity' ? ['Neck', 'RUE', 'LUE', 'RLE', 'LLE'] : ['LipJaw', 'RUE', 'LUE', 'RLE', 'LLE'];
+        return acc + suffixes.reduce((s, suffix) => s + (responses[`${item.id}_${suffix}`] !== undefined ? 1 : 0), 0);
+      }
+      return acc + (responses[`${item.id}_L`] !== undefined ? 1 : 0) + (responses[`${item.id}_R`] !== undefined ? 1 : 0);
     }, 0);
     return { filled, total, complete: filled === total };
   };
@@ -87,6 +105,33 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
   const part1Progress = getPartProgress('Part I');
   const part2Progress = getPartProgress('Part II');
   const part3Progress = getPartProgress('Part III');
+
+  const renderLateralizedRadios = (item: any, id: string, label: string, color: string) => (
+    <div className={`space-y-4 p-3 rounded-lg border bg-white shadow-sm ${showValidationErrors && responses[id] === undefined ? 'ring-2 ring-red-500 border-red-500' : 'border-gray-100'}`}>
+      <h4 className={`text-sm font-bold ${color} uppercase tracking-wider flex items-center gap-2`}>
+        <span className={`w-2 h-2 rounded-full ${color.replace('text-', 'bg-')}`}></span>
+        {label}
+      </h4>
+      <RadioGroup
+        value={responses[id]?.toString() || ''}
+        onValueChange={(val) => handleResponseChange(id, parseInt(val))}
+      >
+        <div className="space-y-2">
+          {Object.keys(item.scoring).map((scoreKey) => {
+            const score = parseInt(scoreKey);
+            return (
+              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+                <RadioGroupItem value={score.toString()} id={`${id}-${score}`} className="mt-1" />
+                <Label htmlFor={`${id}-${score}`} className="cursor-pointer flex-1">
+                  <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
+                </Label>
+              </div>
+            );
+          })}
+        </div>
+      </RadioGroup>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -114,8 +159,8 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
           <div className="flex gap-2">
             <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-amber-900">
-              <strong>Instructions:</strong> This comprehensive scale assesses motor and non-motor symptoms
-              of Parkinson's disease. Complete all three parts: Non-Motor, Motor Aspects of Daily Living, and Motor Examination.
+              <strong>Instructions:</strong> Complete all sections. Part III (Motor Exam) requires physical examination. 
+              Asymmetrical symptoms must be scored separately for each limb or side.
             </div>
           </div>
         </CardContent>
@@ -202,11 +247,10 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                           {Object.keys(item.scoring).map((scoreKey) => {
                             const score = parseInt(scoreKey);
                             return (
-                              <div key={score} className="flex items-start space-x-2">
-                                <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} />
+                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+                                <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
                                 <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
-                                  <div className="font-medium text-gray-700">{score}</div>
-                                  <div className="text-sm text-gray-600">{item.scoring[score]}</div>
+                                  <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
                                 </Label>
                               </div>
                             );
@@ -237,11 +281,10 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                           {Object.keys(item.scoring).map((scoreKey) => {
                             const score = parseInt(scoreKey);
                             return (
-                              <div key={score} className="flex items-start space-x-2">
-                                <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} />
+                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+                                <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
                                 <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
-                                  <div className="font-medium text-gray-700">{score}</div>
-                                  <div className="text-sm text-gray-600">{item.scoring[score]}</div>
+                                  <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
                                 </Label>
                               </div>
                             );
@@ -260,7 +303,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                 Physical examination findings. Evaluate through direct observation and clinical testing.
               </p>
               {groupByPart('Part III').map((item) => (
-                <Card key={item.id} className={`${item.isLateralized ? 'border-l-4 border-l-blue-500' : ''} ${showValidationErrors && (item.isLateralized ? (responses[`${item.id}_L`] === undefined || responses[`${item.id}_R`] === undefined) : responses[item.id] === undefined) ? 'border-2 border-red-500' : ''}`}>
+                <Card key={item.id} className={`${item.isLateralized ? 'border-l-4 border-l-blue-500 bg-blue-50/10' : ''} ${showValidationErrors && (item.isLateralized ? (item.id === 'rigidity' || item.id === 'resting_tremor_amplitude' ? false : (responses[`${item.id}_L`] === undefined || responses[`${item.id}_R`] === undefined)) : responses[item.id] === undefined) ? 'border-2 border-red-500' : ''}`}>
                   <CardContent className="pt-6">
                     <div className="space-y-6">
                       <div>
@@ -269,57 +312,34 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                       </div>
 
                       {item.isLateralized ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <div className={`space-y-4 p-2 rounded-lg ${showValidationErrors && responses[`${item.id}_L`] === undefined ? 'bg-red-50 ring-1 ring-red-200' : ''}`}>
-                            <h4 className="text-sm font-bold text-blue-600 uppercase tracking-wider flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-blue-600"></span>
-                              Left Side
-                            </h4>
-                            <RadioGroup
-                              value={responses[`${item.id}_L`]?.toString() || ''}
-                              onValueChange={(val) => handleResponseChange(`${item.id}_L`, parseInt(val))}
-                            >
-                              <div className="space-y-2">
-                                {Object.keys(item.scoring).map((scoreKey) => {
-                                  const score = parseInt(scoreKey);
-                                  return (
-                                    <div key={score} className="flex items-start space-x-2 p-1 hover:bg-gray-50 rounded transition-colors">
-                                      <RadioGroupItem value={score.toString()} id={`${item.id}-L-${score}`} />
-                                      <Label htmlFor={`${item.id}-L-${score}`} className="cursor-pointer flex-1">
-                                        <div className="font-medium text-gray-700">{score} - {item.scoring[score]}</div>
-                                      </Label>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </RadioGroup>
-                          </div>
-
-                          <div className={`space-y-4 p-2 rounded-lg ${showValidationErrors && responses[`${item.id}_R`] === undefined ? 'bg-red-50 ring-1 ring-red-200' : ''}`}>
-                            <h4 className="text-sm font-bold text-red-600 uppercase tracking-wider flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                              Right Side
-                            </h4>
-                            <RadioGroup
-                              value={responses[`${item.id}_R`]?.toString() || ''}
-                              onValueChange={(val) => handleResponseChange(`${item.id}_R`, parseInt(val))}
-                            >
-                              <div className="space-y-2">
-                                {Object.keys(item.scoring).map((scoreKey) => {
-                                  const score = parseInt(scoreKey);
-                                  return (
-                                    <div key={score} className="flex items-start space-x-2 p-1 hover:bg-gray-50 rounded transition-colors">
-                                      <RadioGroupItem value={score.toString()} id={`${item.id}-R-${score}`} />
-                                      <Label htmlFor={`${item.id}-R-${score}`} className="cursor-pointer flex-1">
-                                        <div className="font-medium text-gray-700">{score} - {item.scoring[score]}</div>
-                                      </Label>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            </RadioGroup>
-                          </div>
-                        </div>
+                        <>
+                          {(item.id === 'rigidity' || item.id === 'resting_tremor_amplitude') ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {item.id === 'rigidity' ? (
+                                <>
+                                  {renderLateralizedRadios(item, `${item.id}_Neck`, 'Neck', 'text-slate-600')}
+                                  {renderLateralizedRadios(item, `${item.id}_RUE`, 'Right Upper Extremity', 'text-red-600')}
+                                  {renderLateralizedRadios(item, `${item.id}_LUE`, 'Left Upper Extremity', 'text-blue-600')}
+                                  {renderLateralizedRadios(item, `${item.id}_RLE`, 'Right Lower Extremity', 'text-red-600')}
+                                  {renderLateralizedRadios(item, `${item.id}_LLE`, 'Left Lower Extremity', 'text-blue-600')}
+                                </>
+                              ) : (
+                                <>
+                                  {renderLateralizedRadios(item, `${item.id}_LipJaw`, 'Lip/Jaw', 'text-slate-600')}
+                                  {renderLateralizedRadios(item, `${item.id}_RUE`, 'Right Upper Extremity', 'text-red-600')}
+                                  {renderLateralizedRadios(item, `${item.id}_LUE`, 'Left Upper Extremity', 'text-blue-600')}
+                                  {renderLateralizedRadios(item, `${item.id}_RLE`, 'Right Lower Extremity', 'text-red-600')}
+                                  {renderLateralizedRadios(item, `${item.id}_LLE`, 'Left Lower Extremity', 'text-blue-600')}
+                                </>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                              {renderLateralizedRadios(item, `${item.id}_L`, 'Left Side', 'text-blue-600')}
+                              {renderLateralizedRadios(item, `${item.id}_R`, 'Right Side', 'text-red-600')}
+                            </div>
+                          )}
+                        </>
                       ) : (
                         <RadioGroup
                           value={responses[item.id]?.toString() || ''}
@@ -329,11 +349,10 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                             {Object.keys(item.scoring).map((scoreKey) => {
                               const score = parseInt(scoreKey);
                               return (
-                                <div key={score} className="flex items-start space-x-2">
-                                  <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} />
+                                <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group">
+                                  <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
                                   <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
-                                    <div className="font-medium text-gray-700">{score}</div>
-                                    <div className="text-sm text-gray-600">{item.scoring[score]}</div>
+                                    <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
                                   </Label>
                                 </div>
                               );
