@@ -406,12 +406,15 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               const partScores = getPartScores();
               return (
                 <div className="space-y-4">
-                  <div className="bg-white rounded-lg p-4 border border-green-200">
+                  <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/20 rounded-2xl border border-green-200 dark:border-green-800/50 shadow-lg">
                     <div className="text-center">
-                      <div className="text-5xl font-bold text-green-600 mb-2">
+                      <div className="text-sm font-bold text-green-800 dark:text-green-300 uppercase tracking-widest mb-1">MDS-UPDRS Total</div>
+                      <div className="text-7xl font-black text-green-600 dark:text-green-400 tabular-nums drop-shadow-sm leading-none">
                         {totalScore}
                       </div>
-                      <div className="text-sm text-gray-600">Total Score</div>
+                      <div className="mt-4 px-4 py-1.5 bg-green-200/50 dark:bg-green-800/40 rounded-full text-green-900 dark:text-green-200 text-sm font-bold">
+                        {interpretation.level}
+                      </div>
                     </div>
                   </div>
 
@@ -435,10 +438,10 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                     <div className="bg-orange-50/50 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-200/50 dark:border-orange-800/30 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
                       <div className="text-sm text-orange-900 dark:text-orange-300 font-semibold flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                        Part III
+                        Part III (Motor Examination)
                       </div>
-                      <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-2">{partScores.part3}</div>
-                      <div className="text-xs text-orange-700 dark:text-orange-300/70 mt-1">Motor Exam</div>
+                      <div className="text-4xl font-black text-orange-600 dark:text-orange-400 mt-2 tabular-nums">{partScores.part3}</div>
+                      <div className="text-xs text-orange-700 dark:text-orange-300/70 mt-1 uppercase font-bold tracking-tighter">Motor Score Only</div>
                     </div>
                   </div>
 
