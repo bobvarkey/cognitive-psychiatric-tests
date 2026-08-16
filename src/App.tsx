@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { PatientInfoProvider } from "@/contexts/PatientInfoContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import CategoryBrowser from "./pages/CategoryBrowser";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -37,9 +38,10 @@ const App = () => (
     <ThemeInitializer />
     <TooltipProvider>
       <SubscriptionProvider>
-        <PatientInfoProvider>
-          <Toaster />
-          <Sonner />
+        <LanguageProvider>
+          <PatientInfoProvider>
+            <Toaster />
+            <Sonner />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -53,7 +55,8 @@ const App = () => (
             </Routes>
             <NavigationButtons />
           </BrowserRouter>
-        </PatientInfoProvider>
+          </PatientInfoProvider>
+        </LanguageProvider>
       </SubscriptionProvider>
     </TooltipProvider>
   </QueryClientProvider>
