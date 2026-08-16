@@ -119,22 +119,16 @@ export type AssessmentKey =
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
   | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
-      | 'bprs' | 'sapsSans' | 'crdpss' | 'sops' | 'psyrats' | 'vagus'
-      | 'asrs6' | 'asrs18' | 'vanderbilt' | 'adhdScreener'
-      | 'bdi' | 'ybocs' | 'ipde' | 'cage' | 'cows' | 'simpsonAngus' | 'eprs' | 'panss'
-      | 'mds-updrs' | 'hoehn-yahr' | 'aims' | 'twstrs' | 'epworth' | 'stop-bang'
-      | 'ilae-seizure-classification' | 'laep' | 'esgs' | 'cases' | 'engel'
-      | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
-      | 'sudep-7' | 'sudep-safety'
-      | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-      | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis' | 'pid5-unified' | 'adhd-outpatient'
-      | 'cdr' | 'fast' | 'ciwa-ar' | 'sds'
-      | 'mini-ace' | 'mse' | 'adhd' | 'daphne' | 'fab' | 'tulia' | 'cognitive-syndromes'
-      | 'callosal' | 'hare' | 'dpdr' | 'hamd' | 'hama' | 'mmpi' | 'bprs' | 'crdpss' | 'dementia'
-      | 'catatonia' | 'hunter' | 'consciousness' | 'mds-updrs' | 'eprs' | 'aims'
-      | 'asrs6' | 'asrs18' | 'vanderbilt' | 'adhdScreener' | 'substance' | 'sops'
-      | 'psyrats' | 'vagus' | 'sapsSans' | 'panss' | 'ipde' | 'ybocs' | 'moca'
-      | 'twstrs' | 'epworth' | 'ilae-seizure-classification' | 'engel' | 'sudep-7';
+  | 'bprs' | 'sapsSans' | 'crdpss' | 'sops' | 'psyrats' | 'vagus'
+  | 'asrs6' | 'asrs18' | 'vanderbilt' | 'adhdScreener'
+  | 'bdi' | 'ybocs' | 'ipde' | 'cage' | 'cows' | 'simpsonAngus' | 'eprs' | 'panss'
+  | 'mds-updrs' | 'hoehn-yahr' | 'aims' | 'twstrs' | 'epworth' | 'stop-bang'
+  | 'ilae-seizure-classification' | 'laep' | 'esgs' | 'cases' | 'engel'
+  | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
+  | 'sudep-7' | 'sudep-safety'
+  | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
+  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis' | 'pid5-unified' | 'adhd-outpatient'
+  | 'cdr' | 'fast' | 'ciwa-ar' | 'sds';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
