@@ -258,42 +258,6 @@ const assessments: AssessmentInfo[] = [
   { key: 'brain-fog', name: 'Brain Fog', subtitle: 'Clinical Algorithm', icon: Cloud, gradient: 'from-slate-500 to-indigo-600', category: ['brainfog'], description: 'Structured 8-step diagnostic algorithm for brain fog — confirm symptom, screen red flags, characterize history, categorize cause, order investigations, and generate an exportable clinical note.' },
 ];
 
-
-
-  // ─── Movement Disorders ───
-  { key: 'mds-updrs', name: 'MDS-UPDRS', subtitle: 'Parkinson\'s Assessment', icon: Activity, gradient: 'from-blue-500 to-cyan-600', category: ['movement'], description: 'MDS-UPDRS — Gold-standard comprehensive assessment for motor and non-motor symptoms in Parkinson\'s disease. 27 items across three parts.' },
-  { key: 'hoehn-yahr', name: 'Hoehn & Yahr', subtitle: 'Parkinson\'s Staging', icon: Gauge, gradient: 'from-indigo-500 to-purple-600', category: ['movement'], description: 'Hoehn and Yahr Scale — Stages Parkinson\'s disease severity from 0 (no signs) to 5 (confined to bed/wheelchair).' },
-  { key: 'aims', name: 'AIMS', subtitle: 'Dyskinesia Assessment', icon: Activity, gradient: 'from-orange-500 to-red-600', category: ['movement'], description: 'AIMS — Abnormal Involuntary Movement Scale; evaluates dyskinesia severity and involuntary movements across body regions.' },
-  { key: 'twstrs', name: 'TWSTRS', subtitle: 'Cervical Dystonia', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['movement'], description: 'TWSTRS — Toronto Western Spasmodic Torticollis Rating Scale; assesses cervical dystonia severity and disability.' },
-
-  // ─── Sleep Disorders ───
-  { key: 'epworth', name: 'Epworth Scale', subtitle: 'Daytime Sleepiness', icon: Pause, gradient: 'from-indigo-500 to-blue-600', category: ['sleep'], description: 'ESS — Epworth Sleepiness Scale; 8-item self-report of daytime sleepiness likelihood in various situations.' },
-  { key: 'stop-bang', name: 'STOP-BANG', subtitle: 'Sleep Apnea Screening', icon: AlertTriangle, gradient: 'from-amber-500 to-orange-600', category: ['sleep'], description: 'STOP-BANG — Obstructive sleep apnea risk screening tool; 8 yes/no questions for rapid OSA risk assessment.' },
-  { key: 'isi', name: 'ISI', subtitle: 'Insomnia Severity Index', icon: Pause, gradient: 'from-violet-500 to-purple-600', category: ['sleep'], description: 'ISI — Insomnia Severity Index; 7-item self-report measuring severity of insomnia symptoms, sleep dissatisfaction, and daytime interference.' },
-  { key: 'berlin', name: 'Berlin', subtitle: 'Sleep Apnea Questionnaire', icon: AlertTriangle, gradient: 'from-rose-500 to-red-600', category: ['sleep'], description: 'Berlin Questionnaire — 11-item OSA screening across snoring, daytime sleepiness, and hypertension/BMI categories. High/low risk stratification.' },
-  { key: 'psqi', name: 'PSQI', subtitle: 'Pittsburgh Sleep Quality Index', icon: Pause, gradient: 'from-sky-500 to-indigo-600', category: ['sleep'], description: 'PSQI — Pittsburgh Sleep Quality Index; 19-item self-report across 7 components assessing sleep quality over the past month. PSQI > 5 = poor sleep quality.' },
-  { key: 'fosq', name: 'FOSQ', subtitle: 'Functional Outcomes of Sleep', icon: Activity, gradient: 'from-emerald-500 to-teal-600', category: ['sleep'], description: 'FOSQ — Functional Outcomes of Sleep Questionnaire; 30 items across 5 subscales measuring the impact of sleepiness on daily functioning.' },
-  { key: 'irls', name: 'IRLS', subtitle: 'Restless Legs Scale', icon: Footprints, gradient: 'from-purple-500 to-violet-600', category: ['sleep'], description: 'IRLS — International Restless Legs Scale; 10-item clinician-rated scale assessing RLS symptom severity, frequency, and impact on sleep and mood.' },
-  { key: 'asrs-sleep', name: 'ASRS', subtitle: 'Augmentation Severity', icon: TrendingUp, gradient: 'from-red-500 to-rose-600', category: ['sleep'], description: 'ASRS — Augmentation Severity Rating Scale for RLS patients on dopaminergic therapy. Assesses earlier onset, intensity increase, and symptom spread.' },
-  { key: 'cataplexy', name: 'Cataplexy', subtitle: 'Narcolepsy Screening', icon: Zap, gradient: 'from-indigo-500 to-purple-600', category: ['sleep'], description: 'Cataplexy Questionnaire — 12-item screening for cataplexy in narcolepsy evaluation: emotional triggers, episode characteristics, and associated features.' },
-  { key: 'sdq', name: 'SDQ', subtitle: 'Sleep Disorders Questionnaire', icon: ClipboardList, gradient: 'from-teal-500 to-cyan-600', category: ['sleep'], description: 'SDQ — Sleep Disorders Questionnaire; 30-item comprehensive screen across 5 domains: sleep apnea, insomnia, narcolepsy, parasomnias, and RLS/PLMD.' },
-
-  // ─── Epilepsy & Seizures ───
-  { key: 'ilae-seizure-classification', name: 'ILAE Seizure Classification', subtitle: '2025 Updated Guidelines', icon: Zap, gradient: 'from-fuchsia-500 to-cyan-500', category: ['epilepsy'], description: 'ILAE 2025 — Interactive guide to the updated classification of epileptic seizures with full taxonomic hierarchy, clinical descriptors, and diagnostic guidelines.' },
-  { key: 'laep', name: 'LAEP', subtitle: 'Medication Side Effects', icon: Pill, gradient: 'from-cyan-500 to-blue-600', category: ['epilepsy'], description: 'LAEP — Likelihood of Adverse Effects Profile; self-report tool measuring side effects of antiseizure medications.' },
-  { key: 'esgs', name: 'ESGS', subtitle: 'Surgery Outcome Prediction', icon: TrendingUp, gradient: 'from-emerald-500 to-teal-600', category: ['epilepsy'], description: 'ESGS — Epilepsy Surgery Grading Scale; predicts likelihood of seizure freedom after resective surgery for drug-resistant focal epilepsy.' },
-  { key: 'cases', name: 'CASES Tool', subtitle: 'Surgery Appropriateness', icon: Search, gradient: 'from-purple-500 to-pink-600', category: ['epilepsy'], description: 'CASES — Clinical Appropriateness Scores; screening instrument to identify patients for specialized epilepsy surgery evaluation.' },
-  { key: 'engel', name: 'Engel Scale', subtitle: 'Post-Surgical Outcome', icon: Activity, gradient: 'from-amber-500 to-orange-600', category: ['epilepsy'], description: 'Engel Scale — Standard classification for assessing seizure outcomes after epilepsy surgery.' },
-  { key: 'sudep-7', name: 'SUDEP-7 Inventory', subtitle: 'SUDEP Risk Assessment', icon: AlertTriangle, gradient: 'from-red-500 to-orange-600', category: ['epilepsy'], description: 'SUDEP-7 Inventory — Risk stratification tool for Sudden Unexpected Death in Epilepsy based on 7 evidence-based factors.' },
-  { key: 'sudep-safety', name: 'SUDEP Safety Checklist', subtitle: 'Risk Reduction Measures', icon: CheckCircle, gradient: 'from-orange-500 to-amber-600', category: ['epilepsy'], description: 'SUDEP Safety Checklist — Comprehensive implementation guide for evidence-based SUDEP risk reduction across 6 clinical domains.' },
-
-  // ─── Parkinson's Disease - Advanced ───
-  { key: 'five-two-one', name: '5-2-1 Criteria', subtitle: 'Advanced PD Identification', icon: AlertTriangle, gradient: 'from-purple-500 to-pink-500', category: ['movement'], description: '5-2-1 Criteria — Rule of thumb for identifying advanced PD: ≥5 levodopa doses, ≥2h off-time, or ≥1h dyskinesia daily.' },
-  { key: 'anage-pd', name: 'ANAGE-PD', subtitle: 'Advanced PD Management', icon: Stethoscope, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'ANAGE-PD — Clinician-based tool for timely identification and treatment of advanced PD with suboptimal symptom control.' },
-  { key: 'd-dats', name: 'D-DATS', subtitle: 'DAT Eligibility Screening', icon: Gauge, gradient: 'from-emerald-500 to-green-600', category: ['movement'], description: 'D-DATS — Dutch DAT Screening Tool; identifies PD patients eligible for Device-Aided Therapy (DBS, LCIG, CSAI, LECIG).' },
-  { key: 'stimulus-dbs', name: 'Stimulus DBS', subtitle: 'DBS Appropriateness', icon: Brain, gradient: 'from-amber-500 to-orange-600', category: ['movement'], description: 'Stimulus 2 — Evidence-based decision support for assessing appropriateness of Deep Brain Stimulation referral in PD.' },
-];
-
 const referenceKeyByAssessment: Partial<Record<AssessmentKey, string>> = {
   'mds-updrs': 'mdsUpdrs',
   'hoehn-yahr': 'hoehnYahr',
