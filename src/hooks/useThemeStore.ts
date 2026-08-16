@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type AppTheme = 'sunset' | 'midnight';
+export type AppTheme = 'sunset' | 'midnight' | 'forest';
 
 interface ThemeStore {
   mode: 'light' | 'dark';

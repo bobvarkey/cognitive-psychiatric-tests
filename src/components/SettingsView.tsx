@@ -31,6 +31,7 @@ export const SettingsView = () => {
   const themes: { id: AppTheme; label: string; colors: string[] }[] = [
     { id: 'sunset', label: 'Sunset Blaze', colors: ['bg-[#ff4500]', 'bg-[#ff00ff]'] },
     { id: 'midnight', label: 'Midnight', colors: ['bg-[#007acc]', 'bg-[#00ffff]'] },
+    { id: 'forest', label: 'Forest', colors: ['bg-[#22c55e]', 'bg-[#10b981]'] },
   ];
 
 
