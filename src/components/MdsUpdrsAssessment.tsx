@@ -57,18 +57,36 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
 
   const getPartScores = () => {
     const part1 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part I').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
-    const part2 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part II').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
+    
+    // Part II with lateralization
+    const part2Items = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part II');
+    let part2L = 0;
+    let part2R = 0;
+    let part2NonLat = 0;
+    
+    part2Items.forEach(item => {
+      if (item.isLateralized) {
+        part2L += (responses[`${item.id}_L`] || 0);
+        part2R += (responses[`${item.id}_R`] || 0);
+      } else {
+        part2NonLat += (responses[item.id] || 0);
+      }
+    });
+    
+    const part2 = part2NonLat + part2L + part2R;
+
     const part3 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part III').reduce((sum, item) => {
       if (!item.isLateralized) {
         return sum + (responses[item.id] || 0);
       }
-      if (item.id === 'resting_tremor_amplitude' || item.id === 'rigidity') {
+      if (item.id === 'resting_tremor_amplitude' || (item.id === 'rigidity' && item.part === 'Part III')) {
         const suffixes = item.id === 'rigidity' ? ['Neck', 'RUE', 'LUE', 'RLE', 'LLE'] : ['LipJaw', 'RUE', 'LUE', 'RLE', 'LLE'];
         return sum + suffixes.reduce((s, suffix) => s + (responses[`${item.id}_${suffix}`] || 0), 0);
       }
       return sum + (responses[`${item.id}_L`] || 0) + (responses[`${item.id}_R`] || 0);
     }, 0);
-    return { part1, part2, part3 };
+    
+    return { part1, part2, part2L, part2R, part2NonLat, part3 };
   };
 
   const getInterpretation = () => {
@@ -86,14 +104,14 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
     const total = items.reduce((acc, item) => {
       if (!item.isLateralized) return acc + 1;
       if (item.id === 'resting_tremor_amplitude') return acc + 5;
-      if (item.id === 'rigidity') return acc + 5;
+      if (item.id === 'rigidity' && item.part === 'Part III') return acc + 5;
       return acc + 2;
     }, 0);
     const filled = items.reduce((acc, item) => {
       if (!item.isLateralized) {
         return acc + (responses[item.id] !== undefined ? 1 : 0);
       }
-      if (item.id === 'resting_tremor_amplitude' || item.id === 'rigidity') {
+      if (item.id === 'resting_tremor_amplitude' || (item.id === 'rigidity' && item.part === 'Part III')) {
         const suffixes = item.id === 'rigidity' ? ['Neck', 'RUE', 'LUE', 'RLE', 'LLE'] : ['LipJaw', 'RUE', 'LUE', 'RLE', 'LLE'];
         return acc + suffixes.reduce((s, suffix) => s + (responses[`${item.id}_${suffix}`] !== undefined ? 1 : 0), 0);
       }
@@ -433,7 +451,13 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                         Part II
                       </div>
                       <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">{partScores.part2}</div>
-                      <div className="text-xs text-purple-700 dark:text-purple-300/70 mt-1">Motor Daily</div>
+                      <div className="flex flex-col gap-0.5 mt-1">
+                        <span className="text-[10px] text-purple-700 dark:text-purple-300/70 uppercase font-bold tracking-tight">Daily Living Activities</span>
+                        <div className="flex gap-2 text-[9px] font-black">
+                          <span className="text-blue-600 dark:text-blue-400">L: {partScores.part2L}</span>
+                          <span className="text-red-600 dark:text-red-400">R: {partScores.part2R}</span>
+                        </div>
+                      </div>
                     </div>
                     <div className="bg-orange-50/50 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-200/50 dark:border-orange-800/30 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
                       <div className="text-sm text-orange-900 dark:text-orange-300 font-semibold flex items-center gap-2">

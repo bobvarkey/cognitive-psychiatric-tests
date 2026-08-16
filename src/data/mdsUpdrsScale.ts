@@ -165,51 +165,236 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
   },
   // Part II: Motor Aspects of Experiences of Daily Living
   {
-    id: 'tremor_daily',
+    id: 'speech_daily',
     number: 11,
     part: 'Part II',
     domain: 'Motor Aspects of Daily Living',
-    question: 'Tremor',
-    description: 'How much does tremor interfere with your daily activities?',
+    question: 'Speech',
+    description: 'Over the past week, have you had problems with your speech?',
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Speech is soft, slurred or uneven, but no difficulty being understood',
+      2: 'Mild - Speech is difficult to understand, but only occasionally',
+      3: 'Moderate - Speech is difficult to understand most of the time',
+      4: 'Severe - Speech is unintelligible most of the time'
+    }
+  },
+  {
+    id: 'saliva_daily',
+    number: 12,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Saliva & Drooling',
+    description: 'Over the past week, have you had too much saliva in your mouth or drooling?',
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Saliva builds up but no drooling',
+      2: 'Mild - Rare drooling (e.g., while sleeping)',
+      3: 'Moderate - Occasional drooling while awake',
+      4: 'Severe - Persistent drooling'
+    }
+  },
+  {
+    id: 'swallowing_daily',
+    number: 13,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Chewing and Swallowing',
+    description: 'Over the past week, have you had trouble chewing or swallowing food or drink?',
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Rare choking or need to cut food small',
+      2: 'Mild - Occasionally need to cut food small or avoid certain foods',
+      3: 'Moderate - Require soft food or liquids are difficult',
+      4: 'Severe - Require feeding tube or significant assistance'
+    }
+  },
+  {
+    id: 'eating_daily',
+    number: 14,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Eating Tasks',
+    description: 'Over the past week, have you had trouble handling your food (e.g., cutting meat, using utensils)?',
     isLateralized: true,
     scoring: {
-      0: 'Normal - No interference',
-      1: 'Mild - Slight interference',
-      2: 'Mild-moderate - Noticeable interference',
-      3: 'Moderate - Significant interference',
-      4: 'Severe - Severe interference with activities'
+      0: 'Normal',
+      1: 'Slight - Slow but no help needed',
+      2: 'Mild - Occasionally need help with difficult tasks',
+      3: 'Moderate - Frequently need help with eating',
+      4: 'Severe - Need to be fed most of the time'
+    }
+  },
+  {
+    id: 'dressing_daily',
+    number: 15,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Dressing',
+    description: 'Over the past week, have you had trouble dressing (e.g., buttons, laces)?',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Slow but no help needed',
+      2: 'Mild - Occasionally need help',
+      3: 'Moderate - Frequently need help',
+      4: 'Severe - Need help most of the time'
+    }
+  },
+  {
+    id: 'hygiene_daily',
+    number: 16,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Hygiene',
+    description: 'Over the past week, have you had trouble with bathing, brushing teeth, or combing hair?',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Slow but no help needed',
+      2: 'Mild - Occasionally need help',
+      3: 'Moderate - Frequently need help',
+      4: 'Severe - Need help most of the time'
+    }
+  },
+  {
+    id: 'handwriting_daily',
+    number: 17,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Handwriting',
+    description: 'Over the past week, have your handwriting or typing become smaller or difficult?',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Slow or slightly smaller',
+      2: 'Mild - Noticeably smaller or illegible in parts',
+      3: 'Moderate - Frequently illegible',
+      4: 'Severe - Unable to write or type'
+    }
+  },
+  {
+    id: 'hobbies_daily',
+    number: 18,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Hobbies and Other Activities',
+    description: 'Over the past week, have you had trouble with your hobbies or other activities?',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Slow or slightly less involvement',
+      2: 'Mild - Noticeable interference',
+      3: 'Moderate - Significantly less involvement',
+      4: 'Severe - Unable to participate'
+    }
+  },
+  {
+    id: 'turning_in_bed_daily',
+    number: 19,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Turning in Bed',
+    description: 'Over the past week, have you had trouble turning over in bed?',
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Slow but no help needed',
+      2: 'Mild - Occasionally need help',
+      3: 'Moderate - Frequently need help',
+      4: 'Severe - Need help most of the time'
+    }
+  },
+  {
+    id: 'tremor_daily',
+    number: 20,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Tremor',
+    description: 'Over the past week, have you had shaking or tremor?',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Present but not interfering',
+      2: 'Mild - Interferes with some activities',
+      3: 'Moderate - Interferes with many activities',
+      4: 'Severe - Interferes with most activities'
+    }
+  },
+  {
+    id: 'getting_out_of_bed_daily',
+    number: 21,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Getting Out of Bed or Chair',
+    description: 'Over the past week, have you had trouble getting out of bed or a chair?',
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Slow but no help needed',
+      2: 'Mild - Occasionally need help',
+      3: 'Moderate - Frequently need help',
+      4: 'Severe - Need help most of the time'
+    }
+  },
+  {
+    id: 'walking_daily',
+    number: 22,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Walking and Balance',
+    description: 'Over the past week, have you had trouble with walking or balance?',
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Slightly slow or clumsy',
+      2: 'Mild - Occasionally lose balance or trip',
+      3: 'Moderate - Frequently lose balance or trip',
+      4: 'Severe - Unable to walk without help'
+    }
+  },
+  {
+    id: 'freezing_daily',
+    number: 23,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Freezing',
+    description: 'Over the past week, have you had freezing (feet feel glued to the floor)?',
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Occasional freezing while walking',
+      2: 'Mild - Frequent freezing while walking',
+      3: 'Moderate - Freezing happens frequently',
+      4: 'Severe - Freezing prevents walking'
     }
   },
   {
     id: 'rigidity_daily',
-    number: 12,
+    number: 24,
     part: 'Part II',
     domain: 'Motor Aspects of Daily Living',
     question: 'Rigidity',
-    description: 'How much does muscle stiffness interfere with your daily activities?',
+    description: 'Over the past week, have you had stiffness in your muscles?',
     isLateralized: true,
     scoring: {
-      0: 'Normal - No interference',
-      1: 'Mild - Slight interference',
-      2: 'Mild-moderate - Noticeable interference',
-      3: 'Moderate - Significant interference',
-      4: 'Severe - Severe interference with activities'
+      0: 'Normal',
+      1: 'Slight - Present but not interfering',
+      2: 'Mild - Interferes with some activities',
+      3: 'Moderate - Interferes with many activities',
+      4: 'Severe - Interferes with most activities'
     }
   },
   {
     id: 'bradykinesia_daily',
-    number: 13,
+    number: 25,
     part: 'Part II',
     domain: 'Motor Aspects of Daily Living',
-    question: 'Bradykinesia (slowness of movement)',
-    description: 'How much does slowness of movement interfere with your daily activities?',
+    question: 'Bradykinesia',
+    description: 'Over the past week, have you had slowness in your movements?',
     isLateralized: true,
     scoring: {
-      0: 'Normal - No interference',
-      1: 'Mild - Slight interference',
-      2: 'Mild-moderate - Noticeable interference',
-      3: 'Moderate - Significant interference',
-      4: 'Severe - Severe interference with activities'
+      0: 'Normal',
+      1: 'Slight - Present but not interfering',
+      2: 'Mild - Interferes with some activities',
+      3: 'Moderate - Interferes with many activities',
+      4: 'Severe - Interferes with most activities'
     }
   },
   // Part III: Motor Examination (Physical Examination)
