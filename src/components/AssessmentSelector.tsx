@@ -314,6 +314,8 @@ const referenceKeyByAssessment: Partial<Record<AssessmentKey, string>> = {
   cataplexy: 'cataplexy',
   sdq: 'sdq',
   audit: 'audit',
+  'ciwa-ar': 'ciwaAr',
+  sds: 'sds',
 };
 
 const getAssessmentReference = (key: AssessmentKey) =>
@@ -590,6 +592,8 @@ export const AssessmentSelector = () => {
       triage: true,
       cdr: true,
       fast: true,
+      'ciwa-ar': true,
+      sds: true,
     };
 
     if (withOnBack[selectedAssessment]) {
