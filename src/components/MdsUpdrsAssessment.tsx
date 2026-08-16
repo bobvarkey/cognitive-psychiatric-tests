@@ -563,14 +563,43 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                     </h3>
                     <div className="space-y-4">
                       {groupByPart('Part II').map((item) => {
-                        const score = responses[item.id];
-                        if (score === undefined) return null;
+                        if (!item.isLateralized) {
+                          const score = responses[item.id];
+                          if (score === undefined) return null;
+                          return (
+                            <div key={item.id} className="flex justify-between items-center text-sm py-1 border-b border-gray-100 last:border-0">
+                              <span className="text-gray-700 font-medium">{item.number}. {item.question}</span>
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs text-gray-500 italic">{item.scoring[score]}</span>
+                                <span className="font-bold text-purple-600">+{score}</span>
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        // Lateralized Part II items
+                        const subItems = [
+                          { label: 'Left', id: `${item.id}_L` },
+                          { label: 'Right', id: `${item.id}_R` },
+                        ];
+
                         return (
-                          <div key={item.id} className="flex justify-between items-center text-sm py-1 border-b border-gray-100 last:border-0">
-                            <span className="text-gray-700 font-medium">{item.number}. {item.question}</span>
-                            <div className="flex items-center gap-3">
-                              <span className="text-xs text-gray-500 italic">{item.scoring[score]}</span>
-                              <span className="font-bold text-purple-600">+{score}</span>
+                          <div key={item.id} className="py-2 border-b border-gray-100 last:border-0">
+                            <div className="text-sm font-semibold text-gray-800 mb-1">{item.number}. {item.question}</div>
+                            <div className="grid grid-cols-2 gap-2 pl-4">
+                              {subItems.map((sub) => {
+                                const score = responses[sub.id];
+                                if (score === undefined) return null;
+                                return (
+                                  <div key={sub.id} className="flex flex-col bg-gray-50 p-2 rounded border border-gray-100">
+                                    <span className="text-[10px] text-gray-500 uppercase font-bold">{sub.label}</span>
+                                    <div className="flex justify-between items-center">
+                                      <span className="text-[10px] text-gray-600 truncate mr-1" title={item.scoring[score]}>{item.scoring[score]}</span>
+                                      <span className="font-bold text-purple-600">+{score}</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
                         );
