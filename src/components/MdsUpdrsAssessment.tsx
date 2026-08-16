@@ -104,7 +104,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
     const total = items.reduce((acc, item) => {
       if (!item.isLateralized) return acc + 1;
       if (item.id === 'resting_tremor_amplitude') return acc + 5;
-      if (item.id === 'rigidity') return acc + 5;
+      if (item.id === 'rigidity' && item.part === 'Part III') return acc + 5;
       return acc + 2;
     }, 0);
     const filled = items.reduce((acc, item) => {
