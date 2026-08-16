@@ -187,8 +187,9 @@ All colors MUST be HSL.
   }
 
   .dark .text-muted-foreground {
-    color: hsl(240 5% 70%) !important;
+    color: hsl(240 5% 85%) !important;
   }
+
 
   /* Reset forced white/black overrides to respect themes */
   .bg-slate-900, .bg-slate-800, .bg-slate-700,
