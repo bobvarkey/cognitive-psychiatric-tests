@@ -37,7 +37,26 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
   const [selectedTests, setSelectedTests] = useState<Set<string>>(new Set());
   const [notes, setNotes] = useState('');
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [showResults, setShowResults] = useState(false);
+
+  const highlightText = (text: string, highlight: string) => {
+    if (!highlight.trim()) return text;
+    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+    return (
+      <>
+        {parts.map((part, i) =>
+          part.toLowerCase() === highlight.toLowerCase() ? (
+            <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-black dark:text-white rounded-sm px-0.5">
+              {part}
+            </mark>
+          ) : (
+            part
+          )
+        )}
+      </>
+    );
+  };
 
   const toggleSyndrome = (id: string) => {
     setSelectedSyndromes(prev => {
@@ -108,22 +127,25 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
     });
   };
 
-  // Group syndromes by category
-  const categories = Array.from(new Set(cognitiveSyndromes.map(s => s.category)));
+  const categories = ['All', ...Array.from(new Set(cognitiveSyndromes.map(s => s.category)))];
+  const testDomains = ['All', ...Array.from(new Set(frontalLobeTests.map(t => t.domain)))];
 
-  const filteredSyndromes = searchQuery.trim()
-    ? cognitiveSyndromes.filter(s =>
-        s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        s.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : cognitiveSyndromes;
+  const filteredSyndromes = cognitiveSyndromes.filter(s => {
+    const matchesSearch = !searchQuery.trim() || 
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || s.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-  const filteredTests = searchQuery.trim()
-    ? frontalLobeTests.filter(t =>
-        t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        t.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : frontalLobeTests;
+  const filteredTests = frontalLobeTests.filter(t => {
+    const matchesSearch = !searchQuery.trim() || 
+      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDomain = selectedCategory === 'All' || t.domain === selectedCategory || testDomains.includes(selectedCategory) ? (selectedCategory === 'All' || t.domain === selectedCategory) : true;
+    // For simplicity, if a syndrome category is selected, we show all tests unless the user is specifically filtering by domain
+    return matchesSearch && (selectedCategory === 'All' || t.domain === selectedCategory || !testDomains.includes(selectedCategory));
+  });
 
   if (showResults) {
     const presentSyndromes = cognitiveSyndromes.filter(s => selectedSyndromes.has(s.id));
@@ -249,33 +271,51 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
 
       <PatientInfoForm />
 
-      {/* Search */}
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          placeholder="Search syndromes…"
-          className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-        />
-        {searchQuery && (
-          <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-            <X className="h-4 w-4" />
-          </button>
-        )}
+      {/* Advanced Search & Filter */}
+      <div className="space-y-3 mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search by keyword (e.g. 'frontal', 'memory')…"
+            className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-input bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+                selectedCategory === cat
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-card text-muted-foreground border-border hover:border-primary/50'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Cognitive Syndromes */}
-      <Accordion type="multiple" defaultValue={categories} className="space-y-2">
-        {categories.map(cat => {
+      <Accordion type="multiple" defaultValue={categories.filter(c => c !== 'All')} className="space-y-2">
+        {categories.filter(c => c !== 'All').map(cat => {
           const items = filteredSyndromes.filter(s => s.category === cat);
           if (items.length === 0) return null;
           return (
             <AccordionItem key={cat} value={cat} className="border rounded-lg px-4">
               <AccordionTrigger className="hover:no-underline">
                 <div className="flex items-center gap-2">
-                  <Badge className={categoryColors[cat]} variant="secondary">{cat}</Badge>
+                  <Badge className={categoryColors[cat as CognitiveSyndromeCategory]} variant="secondary">{cat}</Badge>
                   <span className="text-xs text-muted-foreground">({items.length})</span>
                 </div>
               </AccordionTrigger>
@@ -300,7 +340,7 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <Label className="font-semibold text-foreground cursor-pointer">
-                              {syndrome.name}
+                              {highlightText(syndrome.name, searchQuery)}
                             </Label>
                             {language === 'ml' && (
                               <span className="text-xs text-muted-foreground">{syndrome.nameMl}</span>
@@ -310,7 +350,9 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
                             <p className="text-xs text-primary/70 italic mt-0.5">{syndrome.etymology}</p>
                           )}
                           <p className="text-sm text-muted-foreground mt-1">
-                            {language === 'en' ? syndrome.description : syndrome.descriptionMl}
+                            {language === 'en' 
+                              ? highlightText(syndrome.description, searchQuery) 
+                              : highlightText(syndrome.descriptionMl, searchQuery)}
                           </p>
                           {syndrome.clinicalNote && (
                             <p className="text-xs text-primary mt-1 flex items-center gap-1">
@@ -355,11 +397,15 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <Label className="font-semibold text-foreground cursor-pointer">{test.name}</Label>
+                    <Label className="font-semibold text-foreground cursor-pointer">
+                      {highlightText(test.name, searchQuery)}
+                    </Label>
                     <Badge variant="outline" className="text-xs">{test.domain}</Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {language === 'en' ? test.description : test.descriptionMl}
+                    {language === 'en' 
+                      ? highlightText(test.description, searchQuery) 
+                      : highlightText(test.descriptionMl, searchQuery)}
                   </p>
                 </div>
               </div>
