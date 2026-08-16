@@ -12,11 +12,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert } from 'lucide-react';
+import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert, Palette, Moon, Sun } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { useThemeStore, AppTheme } from '@/hooks/useThemeStore';
+
 
 export const SettingsView = () => {
   const { language, setLanguage } = useLanguage();
@@ -24,6 +26,13 @@ export const SettingsView = () => {
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
   const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
+  const { mode, toggleMode, theme, setTheme } = useThemeStore();
+
+  const themes: { id: AppTheme; label: string; colors: string[] }[] = [
+    { id: 'sunset', label: 'Sunset Blaze', colors: ['bg-[#ff4500]', 'bg-[#ff00ff]'] },
+    { id: 'midnight', label: 'Midnight', colors: ['bg-[#007acc]', 'bg-[#00ffff]'] },
+  ];
+
 
   return (
     <div className="space-y-4">
@@ -74,6 +83,53 @@ export const SettingsView = () => {
               })}
             </div>
           </section>
+
+          {/* Appearance & Theme */}
+          <section>
+            <div className="flex items-center gap-2 mb-3">
+              <Palette className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold">{isMl ? 'രൂപഘടന' : 'Appearance'}</h3>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between rounded-xl border border-border p-3">
+                <div className="flex items-center gap-2">
+                  {mode === 'dark' ? <Moon className="h-4 w-4 text-primary" /> : <Sun className="h-4 w-4 text-primary" />}
+                  <span className="text-sm font-medium">{isMl ? 'ഡാർക്ക് മോഡ്' : 'Dark Mode'}</span>
+                </div>
+                <Switch
+                  checked={mode === 'dark'}
+                  onCheckedChange={toggleMode}
+                  aria-label="Toggle dark mode"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {themes.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTheme(t.id)}
+                    className={`flex flex-col gap-2 rounded-xl border p-3 text-left transition-all ${
+                      theme === t.id
+                        ? 'border-primary bg-primary/5'
+                        : 'border-border bg-card hover:border-primary/40'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center w-full">
+                      <span className="text-xs font-semibold">{t.label}</span>
+                      {theme === t.id && <Check className="h-3 w-3 text-primary" />}
+                    </div>
+                    <div className="flex gap-1">
+                      {t.colors.map((c, i) => (
+                        <div key={i} className={`h-3 w-6 rounded-full ${c}`} />
+                      ))}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
 
           {/* Access mode */}
           <section>

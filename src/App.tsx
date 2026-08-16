@@ -9,11 +9,32 @@ import CategoryBrowser from "./pages/CategoryBrowser";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { NavigationButtons } from "@/components/NavigationButtons";
+import { useEffect } from "react";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const queryClient = new QueryClient();
 
+const ThemeInitializer = () => {
+  const { mode, theme } = useThemeStore();
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    const body = window.document.body;
+
+    root.classList.remove("light", "dark");
+    root.classList.add(mode);
+
+    body.classList.remove("theme-sunset", "theme-midnight");
+    body.classList.add(`theme-${theme}`);
+  }, [mode, theme]);
+
+  return null;
+};
+
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <ThemeInitializer />
     <TooltipProvider>
       <SubscriptionProvider>
         <PatientInfoProvider>

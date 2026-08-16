@@ -71,63 +71,71 @@ All colors MUST be HSL.
   .dark {
     --background: 240 10% 4%;
     --foreground: 0 0% 100%;
-
     --card: 240 10% 6%;
     --card-foreground: 0 0% 100%;
-
     --popover: 240 10% 6%;
     --popover-foreground: 0 0% 100%;
-
-    /* Sunset Blaze Primary: Deep Orange/Red */
-    --primary: 15 100% 60%;
-    --primary-foreground: 0 0% 100%;
-
     --secondary: 240 10% 10%;
     --secondary-foreground: 0 0% 100%;
-
     --muted: 240 10% 10%;
     --muted-foreground: 240 5% 70%;
-
-    --accent: 340 100% 60%;
-    --accent-foreground: 0 0% 100%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
     --border: 240 10% 12%;
     --input: 240 10% 12%;
-    --ring: 15 100% 60%;
+  }
 
-    /* Medical theme colors for Sunset Blaze - Warm & Vibrant */
+  /* Sunset Blaze Theme (Default Dark) */
+  .theme-sunset.dark {
+    --primary: 15 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 15 100% 60%;
+    --accent: 340 100% 60%;
+    --accent-foreground: 0 0% 100%;
     --medical-primary: 20 100% 60%;
     --medical-secondary: 240 10% 10%;
     --medical-accent: 330 100% 65%;
     --medical-success: 145 80% 60%;
     --medical-warning: 45 100% 60%;
-    
-    /* Sunset Blaze Gradients: Deep Purple to Vibrant Orange */
     --gradient-primary: linear-gradient(135deg, hsl(320 100% 50%), hsl(20 100% 60%));
     --gradient-subtle: linear-gradient(180deg, hsl(240 10% 4%), hsl(240 10% 2%));
     --gradient-sunset: linear-gradient(135deg, hsl(320 100% 50%) 0%, hsl(350 100% 60%) 40%, hsl(20 100% 60%) 100%);
-    
-    /* Shadows */
     --shadow-medical: 0 8px 24px -4px hsl(20 100% 60% / 0.2);
-    --shadow-card: 0 4px 12px -2px hsl(0 0% 0% / 0.4);
+    --sidebar-primary: 15 100% 60%;
+    --sidebar-ring: 15 100% 60%;
+  }
 
+  /* Midnight Theme (Deep Blue/Cyan) */
+  .theme-midnight.dark {
+    --primary: 199 89% 48%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 199 89% 48%;
+    --accent: 180 100% 50%;
+    --accent-foreground: 222 47% 11%;
+    --medical-primary: 199 89% 48%;
+    --medical-secondary: 222 47% 11%;
+    --medical-accent: 180 100% 50%;
+    --medical-success: 160 84% 39%;
+    --medical-warning: 45 93% 47%;
+    --gradient-primary: linear-gradient(135deg, hsl(222 47% 11%), hsl(199 89% 48%));
+    --gradient-subtle: linear-gradient(180deg, hsl(222 47% 11%), hsl(222 47% 8%));
+    --gradient-sunset: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(200 100% 30%) 40%, hsl(199 89% 48%) 100%);
+    --shadow-medical: 0 8px 24px -4px hsl(199 89% 48% / 0.2);
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-ring: 199 89% 48%;
+  }
+
+  .dark {
     --sidebar-background: 240 10% 5%;
     --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 15 100% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 10% 12%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 240 10% 12%;
-    --sidebar-ring: 15 100% 60%;
   }
 }
 
 @layer base {
-  /* Dynamic Background Grid for Sunset Blaze */
-  body.dark {
+  body.dark.theme-sunset {
     background-color: hsl(240 10% 4%);
     background-image: 
       radial-gradient(at 0% 0%, hsla(320, 100%, 50%, 0.12) 0px, transparent 50%),
@@ -135,11 +143,23 @@ All colors MUST be HSL.
       radial-gradient(at 50% 100%, hsla(15, 100%, 60%, 0.08) 0px, transparent 50%),
       linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 52px 52px, 52px 52px;
+    background-attachment: fixed;
+  }
+
+  body.dark.theme-midnight {
+    background-color: hsl(222 47% 4%);
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(200, 100%, 30%, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(199, 89%, 48%, 0.15) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, hsla(180, 100%, 50%, 0.08) 0px, transparent 50%),
+      linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 100% 100%, 52px 52px, 52px 52px;
     background-attachment: fixed;
   }
 }
+
 
 @layer base {
   * {
