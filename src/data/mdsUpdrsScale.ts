@@ -365,6 +365,38 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
       4: 'Severe - Freezing prevents walking'
     }
   },
+  {
+    id: 'rigidity_daily',
+    number: 24,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Rigidity',
+    description: 'Over the past week, have you had stiffness in your muscles?',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Present but not interfering',
+      2: 'Mild - Interferes with some activities',
+      3: 'Moderate - Interferes with many activities',
+      4: 'Severe - Interferes with most activities'
+    }
+  },
+  {
+    id: 'bradykinesia_daily',
+    number: 25,
+    part: 'Part II',
+    domain: 'Motor Aspects of Daily Living',
+    question: 'Bradykinesia',
+    description: 'Over the past week, have you had slowness in your movements?',
+    isLateralized: true,
+    scoring: {
+      0: 'Normal',
+      1: 'Slight - Present but not interfering',
+      2: 'Mild - Interferes with some activities',
+      3: 'Moderate - Interferes with many activities',
+      4: 'Severe - Interferes with most activities'
+    }
+  },
   // Part III: Motor Examination (Physical Examination)
   {
     id: 'speech',
