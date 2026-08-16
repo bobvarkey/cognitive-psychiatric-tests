@@ -167,25 +167,47 @@ export const MainSidebar = ({
                           );
 
                           return (
-                            <SidebarMenuSubItem key={cat.key}>
-                            <SidebarMenuSubButton
-                                onClick={() => {
-                                  onCategorySelect(cat.key);
-                                  if (location.pathname !== '/') navigate('/');
-                                }}
-                                isActive={isActive}
-                                size="md"
-                                className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all hover:bg-sidebar-accent/50 group/item ${
-                                  isHighlighted ? 'ring-1 ring-primary/50 bg-primary/5' : ''
-                                } ${!isActive && catSearch && !isHighlighted ? 'opacity-40 blur-[0.5px]' : ''}`}
-                              >
-                                <CatIcon className={`h-4 w-4 shrink-0 transition-transform group-hover/item:scale-110 ${isActive ? 'text-primary' : 'text-muted-foreground group-hover/item:text-foreground'}`} />
-                                <span className="flex-1 text-left truncate">{isMl ? cat.label.ml : cat.label.en}</span>
-                                <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-sidebar-accent/80 text-sidebar-foreground tabular-nums shrink-0">
-                                  {cat.count}
-                                </span>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
+                            <Collapsible key={cat.key} className="group/cat-collapsible">
+                              <SidebarMenuItem>
+                                <CollapsibleTrigger asChild>
+                                  <SidebarMenuSubButton
+                                    isActive={isActive}
+                                    size="md"
+                                    className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all hover:bg-sidebar-accent/50 group/item ${
+                                      isHighlighted ? 'ring-1 ring-primary/50 bg-primary/5' : ''
+                                    } ${!isActive && catSearch && !isHighlighted ? 'opacity-40 blur-[0.5px]' : ''}`}
+                                  >
+                                    <CatIcon className={`h-4 w-4 shrink-0 transition-transform group-hover/item:scale-110 ${isActive ? 'text-primary' : 'text-muted-foreground group-hover/item:text-foreground'}`} />
+                                    <span className="flex-1 text-left truncate">{isMl ? cat.label.ml : cat.label.en}</span>
+                                    <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded bg-sidebar-accent/80 text-sidebar-foreground tabular-nums shrink-0">
+                                      {cat.count}
+                                    </span>
+                                  </SidebarMenuSubButton>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent className="animate-in fade-in slide-in-from-top-1 duration-200">
+                                  <SidebarMenuSub className="border-l border-sidebar-border/30 ml-4 pl-2 mt-1 space-y-0.5">
+                                    {assessments
+                                      .filter(a => a.category.includes(cat.key))
+                                      .map(a => (
+                                        <SidebarMenuSubItem key={a.key}>
+                                          <SidebarMenuSubButton
+                                            size="sm"
+                                            className="text-[12px] h-8 text-muted-foreground hover:text-foreground transition-colors"
+                                            onClick={() => {
+                                              onAssessmentSelect(a.key);
+                                              onCategorySelect(cat.key);
+                                              if (location.pathname !== '/') navigate('/');
+                                            }}
+                                          >
+                                            {a.name}
+                                          </SidebarMenuSubButton>
+                                        </SidebarMenuSubItem>
+                                      ))
+                                    }
+                                  </SidebarMenuSub>
+                                </CollapsibleContent>
+                              </SidebarMenuItem>
+                            </Collapsible>
                           );
                         })}
                         {filteredCategories.length === 0 && (
