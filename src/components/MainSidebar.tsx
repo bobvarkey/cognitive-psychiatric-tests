@@ -171,14 +171,14 @@ export const MainSidebar = ({
                         <div className="relative group">
                           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                           <Input
-                            placeholder="Filter categories..."
-                            value={catSearch}
-                            onChange={(e) => setCatSearch(e.target.value)}
+                            placeholder={isMl ? "തിരയുക..." : "Search assessments..."}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="h-8 pl-7 pr-7 text-xs bg-sidebar-accent/50 border-transparent focus:bg-sidebar-background transition-all"
                           />
-                          {catSearch && (
+                          {searchQuery && (
                             <button 
-                              onClick={() => setCatSearch('')}
+                              onClick={() => setSearchQuery('')}
                               className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                             >
                               <X className="h-3 w-3" />
@@ -190,21 +190,32 @@ export const MainSidebar = ({
                         {filteredCategories.map((cat) => {
                           const CatIcon = cat.icon;
                           const isActive = activeCategory === cat.key;
-                          const isHighlighted = catSearch && (
-                            cat.label.en.toLowerCase().includes(catSearch.toLowerCase()) ||
-                            cat.label.ml.toLowerCase().includes(catSearch.toLowerCase())
+                          const isOpen = expandedCategories.has(cat.key);
+                          
+                          const filteredAssessments = assessments.filter(a => 
+                            a.category.includes(cat.key) && 
+                            (!searchQuery || 
+                             a.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                             (a.description && a.description.toLowerCase().includes(searchQuery.toLowerCase())))
                           );
 
+                          if (searchQuery && filteredAssessments.length === 0) return null;
+
                           return (
-                            <Collapsible key={cat.key} className="group/cat-collapsible">
+                            <Collapsible 
+                              key={cat.key} 
+                              open={isOpen}
+                              onOpenChange={() => toggleCategory(cat.key)}
+                              className="group/cat-collapsible"
+                            >
                               <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>
                                   <SidebarMenuSubButton
                                     isActive={isActive}
                                     size="md"
                                     className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all hover:bg-sidebar-accent/50 group/item ${
-                                      isHighlighted ? 'ring-1 ring-primary/50 bg-primary/5' : ''
-                                    } ${!isActive && catSearch && !isHighlighted ? 'opacity-40 blur-[0.5px]' : ''}`}
+                                      searchQuery ? 'ring-1 ring-primary/20 bg-primary/5' : ''
+                                    }`}
                                   >
                                     <CatIcon className={`h-4 w-4 shrink-0 transition-transform group-hover/item:scale-110 ${isActive ? 'text-primary' : 'text-muted-foreground group-hover/item:text-foreground'}`} />
                                     <span className="flex-1 text-left truncate">{isMl ? cat.label.ml : cat.label.en}</span>
@@ -215,9 +226,7 @@ export const MainSidebar = ({
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="animate-in fade-in slide-in-from-top-1 duration-200">
                                   <SidebarMenuSub className="border-l border-sidebar-border/30 ml-4 pl-2 mt-1 space-y-0.5">
-                                    {assessments
-                                      .filter(a => a.category.includes(cat.key))
-                                      .map(a => (
+                                    {filteredAssessments.map(a => (
                                         <SidebarMenuSubItem key={a.key}>
                                           <SidebarMenuSubButton
                                             size="sm"
