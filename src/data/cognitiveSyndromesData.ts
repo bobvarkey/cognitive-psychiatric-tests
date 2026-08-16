@@ -352,6 +352,22 @@ export const cognitiveSyndromes: CognitiveSyndrome[] = [
     description: 'Involuntarily assisting with passive movements — the patient actively assists the examiner\'s attempts to move a limb.',
     descriptionMl: 'നിഷ്ക്രിയ ചലനങ്ങളിൽ അനിച്ഛാപൂർവ്വം സഹായിക്കുന്നു — ഒരു അവയവം ചലിപ്പിക്കാൻ പരീക്ഷകനെ രോഗി സജീവമായി സഹായിക്കുന്നു.',
   },
+  {
+    id: 'palilalia',
+    name: 'Palilalia',
+    nameMl: 'പാലിലാലിയ',
+    category: 'Attention & Psychomotor',
+    description: 'Repetition of syllables, words, or phrases that were just said.',
+    descriptionMl: 'ഇപ്പോൾ പറഞ്ഞ അക്ഷരങ്ങൾ, വാക്കുകൾ അല്ലെങ്കിൽ ശൈലികൾ ആവർത്തിക്കുന്നത്.',
+  },
+  {
+    id: 'echolalia',
+    name: 'Echolalia',
+    nameMl: 'എക്കോലാലിയ',
+    category: 'Attention & Psychomotor',
+    description: 'Repetition of words said by others, usually immediately.',
+    descriptionMl: 'മറ്റുള്ളവർ പറയുന്ന വാക്കുകൾ സാധാരണയായി ഉടൻ തന്നെ ആവർത്തിക്കുന്നത്.',
+  },
 ];
 
 export const frontalLobeTests: FrontalLobeTest[] = [
