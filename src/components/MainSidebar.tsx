@@ -36,8 +36,9 @@ interface MainSidebarProps {
   activeCategory: Category;
   onCategorySelect: (cat: Category) => void;
   resultsCount: number;
-  /** Sections currently being interacted with — show pulse indicator */
   pulseSections?: Set<Section>;
+  assessments: any[];
+  onAssessmentSelect: (key: string) => void;
 }
 
 const SECTION_LABELS: Record<Section, { en: string; ml: string; icon: React.ElementType }> = {
