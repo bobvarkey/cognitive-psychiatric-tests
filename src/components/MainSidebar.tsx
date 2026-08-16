@@ -64,12 +64,41 @@ export const MainSidebar = ({
   const collapsed = state === 'collapsed';
   const { language } = useLanguage();
   const isMl = language === 'ml';
-  const [catSearch, setCatSearch] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
-  const filteredCategories = categories.filter(cat => 
-    cat.label.en.toLowerCase().includes(catSearch.toLowerCase()) ||
-    cat.label.ml.toLowerCase().includes(catSearch.toLowerCase())
-  );
+  const filteredCategories = categories.filter(cat => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    
+    // Match category itself
+    if (cat.label.en.toLowerCase().includes(query) || cat.label.ml.toLowerCase().includes(query)) return true;
+    
+    // Match any assessment within this category
+    return assessments.some(a => 
+      a.category.includes(cat.key) && 
+      (a.name.toLowerCase().includes(query) || a.description?.toLowerCase().includes(query))
+    );
+  });
+
+  // Automatically expand categories when searching
+  useEffect(() => {
+    if (searchQuery) {
+      const newExpanded = new Set(filteredCategories.map(c => c.key));
+      setExpandedCategories(newExpanded);
+    } else {
+      setExpandedCategories(new Set());
+    }
+  }, [searchQuery]);
+
+  const toggleCategory = (key: string) => {
+    setExpandedCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
 
   const renderSectionRow = (key: Section, badge?: number | string) => {
     const def = SECTION_LABELS[key];
