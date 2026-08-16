@@ -12,7 +12,7 @@ import { TwstrsAssessment } from '@/components/TwstrsAssessment';
 import { MdsUpdrsAssessment } from '@/components/MdsUpdrsAssessment';
 import { CdrAssessment } from '@/components/CdrAssessment';
 import { FastAssessment } from '@/components/FastAssessment';
-
+import { DementiaConsolidatedResults } from '@/components/DementiaConsolidatedResults';
 import { HareAssessment } from '@/components/HareAssessment';
 import { AdhdAssessment } from '@/components/AdhdAssessment';
 import { TuliaAssessment } from '@/components/TuliaAssessment';
@@ -322,6 +322,8 @@ export const AssessmentSelector = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deepLinkQuery, setDeepLinkQuery] = useState('');
   const [section, setSection] = useState<Section>('assessments');
+  const [cdrScores, setCdrScores] = useState<Record<string, number>>({});
+  const [fastStage, setFastStage] = useState<number | null>(null);
 
   // Handle routing for deep links
   useEffect(() => {
@@ -624,8 +626,20 @@ export const AssessmentSelector = () => {
         'opd-psych-eval': OpdPsychEvalAssessment,
         'adhd-outpatient': AdhdOutpatientFlowAssessment,
         triage: PsychiatricTriageAssessment,
-        cdr: CdrAssessment,
-        fast: FastAssessment,
+        cdr: (props: any) => (
+          <CdrAssessment 
+            {...props} 
+            fastStage={fastStage} 
+            onScoresChange={setCdrScores} 
+          />
+        ),
+        fast: (props: any) => (
+          <FastAssessment 
+            {...props} 
+            cdrScores={cdrScores} 
+            onStageChange={setFastStage} 
+          />
+        ),
       };
 
       const wrapMap: Record<string, React.ReactNode> = {
