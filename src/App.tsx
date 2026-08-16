@@ -42,19 +42,19 @@ const App = () => (
           <PatientInfoProvider>
             <Toaster />
             <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/history" element={<Index />} />
-              <Route path="/settings" element={<Index />} />
-              <Route path="/glossary" element={<Index />} />
-              <Route path="/category/:category" element={<CategoryBrowser />} />
-              <Route path="/assessment/:id" element={<Index />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <NavigationButtons />
-          </BrowserRouter>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/history" element={<Index />} />
+                <Route path="/settings" element={<Index />} />
+                <Route path="/glossary" element={<Index />} />
+                <Route path="/category/:category" element={<CategoryBrowser />} />
+                <Route path="/assessment/:id" element={<Index />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <NavigationButtons />
+            </BrowserRouter>
           </PatientInfoProvider>
         </LanguageProvider>
       </SubscriptionProvider>
