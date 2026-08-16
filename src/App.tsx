@@ -50,7 +50,6 @@ const App = () => (
                 <Route path="/glossary" element={<Index />} />
                 <Route path="/category/:category" element={<CategoryBrowser />} />
                 <Route path="/assessment/:id" element={<Index />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <NavigationButtons />
