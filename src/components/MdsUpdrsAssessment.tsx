@@ -438,10 +438,10 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                     <div className="bg-orange-50/50 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-200/50 dark:border-orange-800/30 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
                       <div className="text-sm text-orange-900 dark:text-orange-300 font-semibold flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                        Part III
+                        Part III (Motor Examination)
                       </div>
-                      <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mt-2">{partScores.part3}</div>
-                      <div className="text-xs text-orange-700 dark:text-orange-300/70 mt-1">Motor Exam</div>
+                      <div className="text-4xl font-black text-orange-600 dark:text-orange-400 mt-2 tabular-nums">{partScores.part3}</div>
+                      <div className="text-xs text-orange-700 dark:text-orange-300/70 mt-1 uppercase font-bold tracking-tighter">Motor Score Only</div>
                     </div>
                   </div>
 
