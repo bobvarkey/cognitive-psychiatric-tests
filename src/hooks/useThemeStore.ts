@@ -13,12 +13,12 @@ interface ThemeStore {
 
 export const useThemeStore = create<ThemeStore>()(
   persist(
-    (set) => ({
+    (set: (fn: (state: ThemeStore) => Partial<ThemeStore>) => void) => ({
       mode: 'dark',
       theme: 'sunset',
-      setMode: (mode) => set({ mode }),
-      setTheme: (theme) => set({ theme }),
-      toggleMode: () => set((state) => ({ mode: state.mode === 'light' ? 'dark' : 'light' })),
+      setMode: (mode: 'light' | 'dark') => set(() => ({ mode })),
+      setTheme: (theme: AppTheme) => set(() => ({ theme })),
+      toggleMode: () => set((state: ThemeStore) => ({ mode: state.mode === 'light' ? 'dark' : 'light' })),
     }),
     {
       name: 'cognito-theme-storage',
