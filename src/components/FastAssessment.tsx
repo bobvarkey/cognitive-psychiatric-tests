@@ -3,19 +3,44 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Clock } from 'lucide-react';
+import { ArrowLeft, Clock, LayoutDashboard } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FAST_ITEMS } from '@/data/fastScale';
+import { DementiaConsolidatedResults } from './DementiaConsolidatedResults';
 
-interface FastAssessmentProps { onBack?: () => void; }
+interface FastAssessmentProps { 
+  onBack?: () => void;
+  cdrScores?: Record<string, number>;
+}
 
-export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack }) => {
+export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScores }) => {
   const { language } = useLanguage();
   const [selectedStage, setSelectedStage] = useState<number | null>(null);
+  const [showConsolidated, setShowConsolidated] = useState(false);
+
+  if (showConsolidated) {
+    return <DementiaConsolidatedResults 
+      cdrScores={cdrScores ?? {}} 
+      fastStage={selectedStage} 
+      onBack={() => setShowConsolidated(false)} 
+    />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
-      {onBack && <Button variant="ghost" onClick={onBack}><ArrowLeft className="mr-2" /> Back</Button>}
+      <div className="flex items-center justify-between">
+        {onBack && <Button variant="ghost" onClick={onBack}><ArrowLeft className="mr-2" /> Back</Button>}
+        {selectedStage !== null && (
+          <Button 
+            variant="outline" 
+            className="bg-primary/5 border-primary/20 text-primary hover:bg-primary/10"
+            onClick={() => setShowConsolidated(true)}
+          >
+            <LayoutDashboard className="mr-2 h-4 w-4" />
+            Consolidated View
+          </Button>
+        )}
+      </div>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Clock /> FAST (Functional Assessment Staging)</CardTitle>
