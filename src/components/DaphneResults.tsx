@@ -414,6 +414,50 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                   </p>
                 </div>
               </div>
+
+              <Separator />
+
+              <div className="space-y-6">
+                <h4 className="font-semibold text-lg flex items-center">
+                  <TrendingUp className="h-5 w-5 mr-2 text-medical-primary" />
+                  Domain-Specific Interpretations
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {domainDetails.map((domain) => {
+                    const responses = results.responses.filter((r) => {
+                      const it = getDaphneScaleItems('en').find((i) => i.id === r.itemId);
+                      return it?.domain === domain.key;
+                    });
+                    const sum = responses.reduce((a, r) => a + r.score, 0);
+                    const involved = sum > 0;
+                    
+                    const getInterpretation = (dKey: string, isPositive: boolean) => {
+                      if (!isPositive) return "No significant behavioral abnormalities noted in this domain.";
+                      switch (dKey) {
+                        case 'disinhibition': return "Suggests loss of social decorum, impulsivity, or socially inappropriate behaviors.";
+                        case 'apathy': return "Indicates a loss of motivation, initiative, or emotional indifference.";
+                        case 'empathy': return "Reflects a decline in social interpersonal awareness or emotional resonance with others.";
+                        case 'perseverations': return "Repetitive, ritualistic, or stereotyped behaviors often seen in frontal lobe dysfunction.";
+                        case 'hyperorality': return "Alterations in food preferences or oral exploration, common in bvFTD.";
+                        case 'neglect': return "Decline in personal hygiene or grooming standards.";
+                        default: return "Behavioral changes detected.";
+                      }
+                    };
+
+                    return (
+                      <div key={domain.key} className={`p-4 rounded-xl border ${involved ? 'bg-card border-medical-primary/30' : 'bg-muted/20 border-border opacity-80'}`}>
+                        <div className="flex justify-between items-start mb-2">
+                          <h5 className="font-bold text-medical-primary">{domain.name}</h5>
+                          <span className="text-xs font-mono">{sum} pts</span>
+                        </div>
+                        <p className="text-xs leading-relaxed text-muted-foreground">
+                          {getInterpretation(domain.key, involved)}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </CardContent>
           </Card>
 

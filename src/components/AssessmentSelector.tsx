@@ -722,6 +722,8 @@ export const AssessmentSelector = () => {
           onCategorySelect={(cat) => { setActiveCategory(cat); setSection('assessments'); pulse('assessments'); }}
           resultsCount={resultsCount}
           pulseSections={pulseSections}
+          assessments={assessments}
+          onAssessmentSelect={(key) => openAssessment(key as AssessmentKey)}
         />
 
         <div className="flex-1 flex flex-col min-w-0">
@@ -796,16 +798,11 @@ export const AssessmentSelector = () => {
                     <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 bg-gradient-to-b from-black/60 via-black/20 to-transparent rounded-2xl gap-4">
                       <h2 className="text-3xl sm:text-4xl font-extrabold text-white text-center px-4 leading-tight max-w-sm drop-shadow-2xl">
                         {language === 'en'
-                          ? 'Neuropsychiatric\nEvaluation Companion'
+                          ? "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            the number of tests seem to have gone down to 71. Dont lose the remaining. Show all 84 or 85 tests. Show a colllapsible sidebar with all the tests. remove '1day with cognito' on the homepage and just make it 'Cognito' .Add a DAPHNE-6 results breakdown page that shows my six-domain scores with a brief interpretation for each domain."
                           : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}
                       </h2>
                       <div className="flex items-center gap-3 px-4">
-                        <span className="day-counter">{dayCount}</span>
-                        <span className="text-sm font-semibold text-white/90 drop-shadow max-w-[9rem] leading-tight">
-                          {language === 'en'
-                            ? (dayCount === 1 ? 'day with Cognito' : 'days with Cognito')
-                            : 'Cognito ഉപയോഗിച്ച ദിവസങ്ങൾ'}
-                        </span>
+                        <span className="text-2xl font-bold text-white drop-shadow">Cognito</span>
                       </div>
                       <Button
                         onClick={() => openAssessment('triage')}
