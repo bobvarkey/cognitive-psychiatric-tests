@@ -313,7 +313,7 @@ export const cognitiveSyndromes: CognitiveSyndrome[] = [
     name: 'Witzelsucht',
     nameMl: 'വിറ്റ്‌സൽസുക്ത്',
     category: 'Frontal Lobe Signs',
-    description: 'Pathological joking — tendency to make inappropriate jokes or pointless stories inappropriate to the situation. Associated with orbitofrontal lesions.',
+    description: 'Witzelsucht is a rare neurological syndrome characterized by a compulsive need to tell inappropriate jokes, puns, and pointless stories, often accompanied by child-like euphoria (moria).',
     descriptionMl: 'രോഗാത്മക തമാശ — സാഹചര്യത്തിന് അനുചിതമായ തമാശകളോ അർത്ഥമില്ലാത്ത കഥകളോ പറയാനുള്ള പ്രവണത. ഓർബിറ്റോഫ്രണ്ടൽ പ്രദേശത്തെ ക്ഷതങ്ങളുമായി ബന്ധപ്പെട്ടത്.',
     clinicalNote: 'Associated with orbitofrontal lesions',
     clinicalNoteMl: 'ഓർബിറ്റോഫ്രണ്ടൽ ക്ഷതങ്ങളുമായി ബന്ധപ്പെട്ടത്',
@@ -367,6 +367,23 @@ export const cognitiveSyndromes: CognitiveSyndrome[] = [
     category: 'Attention & Psychomotor',
     description: 'Repetition of words said by others, usually immediately.',
     descriptionMl: 'മറ്റുള്ളവർ പറയുന്ന വാക്കുകൾ സാധാരണയായി ഉടൻ തന്നെ ആവർത്തിക്കുന്നത്.',
+  },
+  {
+    id: 'egocentric_disorientation',
+    name: 'Egocentric Disorientation',
+    nameMl: 'ഇഗോസെൻട്രിക് ഡിസോറിയന്റേഷൻ',
+    category: 'Perceptual Disorders',
+    description: "Egocentric disorientation is the inability to locate objects relative to one's own body. One of two distinct forms of topographical disorientation caused by brain damage.",
+    descriptionMl: 'സ്വന്തം ശരീരവുമായി ബന്ധപ്പെട്ട് വസ്തുക്കളുടെ സ്ഥാനം കണ്ടെത്താനുള്ള കഴിവില്ലായ്മ.',
+  },
+  {
+    id: 'allocentric_disorientation',
+    name: 'Allocentric Disorientation',
+    nameMl: 'അലോസെൻട്രിക് ഡിസോറിയന്റേഷൻ',
+    category: 'Perceptual Disorders',
+    description: "Allocentric disorientation is the inability to process spatial relations between landmarks or objects in the environment. One of two distinct forms of topographical disorientation caused by brain damage.",
+    descriptionMl: 'പരിസ്ഥിതിയിലെ അടയാളങ്ങൾ അല്ലെങ്കിൽ വസ്തുക്കൾ തമ്മിലുള്ള സ്പേഷ്യൽ ബന്ധങ്ങൾ പ്രോസസ്സ് ചെയ്യാനുള്ള കഴിവില്ലായ്മ.',
+    clinicalNote: 'Reference: [1, 2, 3, 4]',
   },
 ];
 
