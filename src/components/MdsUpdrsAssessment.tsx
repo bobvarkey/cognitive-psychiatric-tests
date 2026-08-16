@@ -57,7 +57,24 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
 
   const getPartScores = () => {
     const part1 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part I').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
-    const part2 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part II').reduce((sum, item) => sum + (responses[item.id] || 0), 0);
+    
+    // Part II with lateralization
+    const part2Items = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part II');
+    let part2L = 0;
+    let part2R = 0;
+    let part2NonLat = 0;
+    
+    part2Items.forEach(item => {
+      if (item.isLateralized) {
+        part2L += (responses[`${item.id}_L`] || 0);
+        part2R += (responses[`${item.id}_R`] || 0);
+      } else {
+        part2NonLat += (responses[item.id] || 0);
+      }
+    });
+    
+    const part2 = part2NonLat + part2L + part2R;
+
     const part3 = MDS_UPDRS_ITEMS.filter(item => item.part === 'Part III').reduce((sum, item) => {
       if (!item.isLateralized) {
         return sum + (responses[item.id] || 0);
@@ -68,7 +85,8 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
       }
       return sum + (responses[`${item.id}_L`] || 0) + (responses[`${item.id}_R`] || 0);
     }, 0);
-    return { part1, part2, part3 };
+    
+    return { part1, part2, part2L, part2R, part2NonLat, part3 };
   };
 
   const getInterpretation = () => {
@@ -433,7 +451,13 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                         Part II
                       </div>
                       <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">{partScores.part2}</div>
-                      <div className="text-xs text-purple-700 dark:text-purple-300/70 mt-1">Motor Daily</div>
+                      <div className="flex flex-col gap-0.5 mt-1">
+                        <span className="text-[10px] text-purple-700 dark:text-purple-300/70 uppercase font-bold tracking-tight">Daily Living Activities</span>
+                        <div className="flex gap-2 text-[9px] font-black">
+                          <span className="text-blue-600 dark:text-blue-400">L: {partScores.part2L}</span>
+                          <span className="text-red-600 dark:text-red-400">R: {partScores.part2R}</span>
+                        </div>
+                      </div>
                     </div>
                     <div className="bg-orange-50/50 dark:bg-orange-900/20 rounded-xl p-4 border border-orange-200/50 dark:border-orange-800/30 backdrop-blur-sm shadow-sm transition-all hover:shadow-md">
                       <div className="text-sm text-orange-900 dark:text-orange-300 font-semibold flex items-center gap-2">
