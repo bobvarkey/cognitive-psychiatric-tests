@@ -285,7 +285,7 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
 };
 
-const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'mood', 'personality', 'adverse', 'movement', 'epilepsy', 'substance', 'sleep', 'psychosis', 'fibromyalgia', 'brainfog'];
+const categoryOrder: Exclude<Category, 'all'>[] = ['cognitive', 'psychosis', 'mood', 'personality', 'substance', 'movement', 'epilepsy', 'sleep', 'adverse', 'fibromyalgia', 'brainfog'];
 
 const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
   cognitive: 'from-sky-400/10 to-indigo-400/5',
