@@ -171,6 +171,7 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
     domain: 'Motor Aspects of Daily Living',
     question: 'Tremor',
     description: 'How much does tremor interfere with your daily activities?',
+    isLateralized: true,
     scoring: {
       0: 'Normal - No interference',
       1: 'Mild - Slight interference',
@@ -186,6 +187,7 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
     domain: 'Motor Aspects of Daily Living',
     question: 'Rigidity',
     description: 'How much does muscle stiffness interfere with your daily activities?',
+    isLateralized: true,
     scoring: {
       0: 'Normal - No interference',
       1: 'Mild - Slight interference',
@@ -201,6 +203,7 @@ export const MDS_UPDRS_ITEMS: MdsUpdrsItem[] = [
     domain: 'Motor Aspects of Daily Living',
     question: 'Bradykinesia (slowness of movement)',
     description: 'How much does slowness of movement interfere with your daily activities?',
+    isLateralized: true,
     scoring: {
       0: 'Normal - No interference',
       1: 'Mild - Slight interference',

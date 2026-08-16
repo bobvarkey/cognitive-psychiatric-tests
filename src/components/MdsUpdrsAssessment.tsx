@@ -266,31 +266,38 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
             <TabsContent value="part2" className="space-y-4 mt-4">
               <h2 className="text-lg font-semibold text-gray-800">Part II: Motor Aspects of Experiences of Daily Living</h2>
               {groupByPart('Part II').map((item) => (
-                <Card key={item.id} className={`${showValidationErrors && responses[item.id] === undefined ? 'border-2 border-red-500' : 'border-l-4 border-l-purple-400'}`}>
+                <Card key={item.id} className={`${item.isLateralized ? 'border-l-4 border-l-purple-400 bg-purple-50/10' : 'border-l-4 border-l-purple-400'} ${showValidationErrors && (item.isLateralized ? (responses[`${item.id}_L`] === undefined || responses[`${item.id}_R`] === undefined) : responses[item.id] === undefined) ? 'border-2 border-red-500' : ''}`}>
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div>
                         <h3 className="font-semibold text-gray-800">{item.number}. {item.question}</h3>
                         <p className="text-sm text-gray-600 mt-1">{item.description}</p>
                       </div>
-                      <RadioGroup
-                        value={responses[item.id]?.toString() || ''}
-                        onValueChange={(val) => handleResponseChange(item.id, parseInt(val))}
-                      >
-                        <div className="space-y-2">
-                          {Object.keys(item.scoring).map((scoreKey) => {
-                            const score = parseInt(scoreKey);
-                            return (
-                              <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group border border-transparent hover:border-gray-200">
-                                <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
-                                <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
-                                  <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
-                                </Label>
-                              </div>
-                            );
-                          })}
+                      {item.isLateralized ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {renderLateralizedRadios(item, `${item.id}_R`, 'Right Side', 'text-red-600')}
+                          {renderLateralizedRadios(item, `${item.id}_L`, 'Left Side', 'text-blue-600')}
                         </div>
-                      </RadioGroup>
+                      ) : (
+                        <RadioGroup
+                          value={responses[item.id]?.toString() || ''}
+                          onValueChange={(val) => handleResponseChange(item.id, parseInt(val))}
+                        >
+                          <div className="space-y-2">
+                            {Object.keys(item.scoring).map((scoreKey) => {
+                              const score = parseInt(scoreKey);
+                              return (
+                                <div key={score} className="flex items-start space-x-2 p-1.5 hover:bg-gray-50 rounded transition-colors group border border-transparent hover:border-gray-200">
+                                  <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} className="mt-1" />
+                                  <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer flex-1">
+                                    <div className="font-medium text-gray-800 text-sm">{score} - {item.scoring[score]}</div>
+                                  </Label>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </RadioGroup>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
