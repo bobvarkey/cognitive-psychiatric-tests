@@ -315,7 +315,7 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
             <AccordionItem key={cat} value={cat} className="border rounded-lg px-4">
               <AccordionTrigger className="hover:no-underline">
                 <div className="flex items-center gap-2">
-                  <Badge className={categoryColors[cat]} variant="secondary">{cat}</Badge>
+                  <Badge className={categoryColors[cat as CognitiveSyndromeCategory]} variant="secondary">{cat}</Badge>
                   <span className="text-xs text-muted-foreground">({items.length})</span>
                 </div>
               </AccordionTrigger>
