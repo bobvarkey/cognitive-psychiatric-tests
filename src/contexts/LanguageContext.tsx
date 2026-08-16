@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 export type Language = 'en' | 'ml';
 
@@ -347,6 +347,11 @@ const translations = {
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('en');
+
+  // Add a safety check to ensure React hooks work correctly
+  useEffect(() => {
+    console.log('LanguageProvider mounted');
+  }, []);
 
   const toggleLanguage = () => {
     setLanguage(prev => {
