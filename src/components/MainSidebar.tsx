@@ -55,6 +55,8 @@ export const MainSidebar = ({
   onCategorySelect,
   resultsCount,
   pulseSections,
+  assessments,
+  onAssessmentSelect,
 }: MainSidebarProps) => {
   const { state } = useSidebar();
   const navigate = useNavigate();
