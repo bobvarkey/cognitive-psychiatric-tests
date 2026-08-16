@@ -722,6 +722,8 @@ export const AssessmentSelector = () => {
           onCategorySelect={(cat) => { setActiveCategory(cat); setSection('assessments'); pulse('assessments'); }}
           resultsCount={resultsCount}
           pulseSections={pulseSections}
+          assessments={assessments}
+          onAssessmentSelect={(key) => openAssessment(key as AssessmentKey)}
         />
 
         <div className="flex-1 flex flex-col min-w-0">
