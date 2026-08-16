@@ -128,7 +128,7 @@ export type AssessmentKey =
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
   | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis' | 'pid5-unified' | 'adhd-outpatient'
-  | 'cdr' | 'fast';
+  | 'cdr' | 'fast' | 'ciwa-ar' | 'sds';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
