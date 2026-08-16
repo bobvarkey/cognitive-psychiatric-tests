@@ -10,6 +10,8 @@ import { StopBangAssessment } from '@/components/StopBangAssessment';
 import { AimsAssessment } from '@/components/AimsAssessment';
 import { TwstrsAssessment } from '@/components/TwstrsAssessment';
 import { MdsUpdrsAssessment } from '@/components/MdsUpdrsAssessment';
+import { CdrAssessment } from '@/components/CdrAssessment';
+import { FastAssessment } from '@/components/FastAssessment';
 
 import { HareAssessment } from '@/components/HareAssessment';
 import { AdhdAssessment } from '@/components/AdhdAssessment';
@@ -91,7 +93,7 @@ import {
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
   ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
-  Cloud,
+  Cloud, Clock,
 } from 'lucide-react';
 import { MiniAppSearch, GlossaryDialog } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
@@ -125,7 +127,8 @@ export type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis' | 'pid5-unified' | 'adhd-outpatient';
+  | 'audit' | 'fibromyalgia' | 'alcohol-units' | 'brain-fog' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse' | 'opd-psych-eval' | 'late-onset-psychosis' | 'pid5-unified' | 'adhd-outpatient'
+  | 'cdr' | 'fast';
 
 // Pro-only assessments (not available in Lite tier) - 40 Pro, 25 Lite
 const PRO_ONLY_ASSESSMENTS: AssessmentKey[] = [
@@ -179,7 +182,9 @@ const assessments: AssessmentInfo[] = [
   { key: 'mmpi', name: 'MMPI', subtitle: 'OPD Screener', icon: ClipboardList, gradient: 'from-violet-600 to-indigo-600', category: ['personality'], description: 'MMPI — Minnesota Multiphasic Personality Inventory; ultra-short OPD somatization screener.' },
   { key: 'hare', name: 'Hare PCL-R', subtitle: 'Psychopathy', icon: Shield, gradient: 'from-orange-500 to-red-600', category: ['personality'], description: 'Hare PCL-R — Psychopathy Checklist–Revised; 20-item interpersonal/affective and antisocial trait rating.' },
   { key: 'delusions', name: 'Delusions', subtitle: 'Hallucinations', icon: Eye, gradient: 'from-violet-500 to-purple-700', category: ['personality'], description: 'Structured checklist for delusion themes and hallucination modalities with clinical context.' },
-  { key: 'dementia', name: 'Dementia', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['cognitive'], description: 'BEHAV5+ behavioural screen plus localising neurological signs in dementia.' },
+  { key: 'dementia', name: 'Dementia Screen', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['cognitive'], description: 'BEHAV5+ behavioural screen plus localising neurological signs in dementia.' },
+  { key: 'cdr', name: 'CDR', subtitle: 'Clinical Dementia Rating', icon: Gauge, gradient: 'from-blue-600 to-indigo-700', category: ['cognitive'], description: 'Clinical Dementia Rating (CDR) Scale — specialized 6-domain assessment for dementia staging (Memory, Orientation, Judgment, Community, Home, Personal Care).' },
+  { key: 'fast', name: 'FAST', subtitle: 'Functional Staging', icon: Clock, gradient: 'from-teal-500 to-blue-600', category: ['cognitive'], description: 'Functional Assessment Staging (FAST) — 7-stage scale for monitoring functional decline in Alzheimer\'s and related dementias.' },
   { key: 'catatonia', name: 'Catatonia', subtitle: 'BFCRS + DSM-5', icon: Pause, gradient: 'from-cyan-500 to-teal-600', category: ['movement'], description: 'BFCRS — Bush-Francis Catatonia Rating Scale plus DSM-5 catatonia criteria.' },
   { key: 'nms', name: 'NMS', subtitle: 'Malignant Syndrome', icon: ThermometerSun, gradient: 'from-red-600 to-rose-700', category: ['adverse'], description: 'NMS — Neuroleptic Malignant Syndrome assessment (rigidity, hyperthermia, autonomic instability, altered mental state).' },
   { key: 'hunter', name: 'Hunter Criteria', subtitle: 'Serotonin Syndrome', icon: FlaskConical, gradient: 'from-rose-500 to-pink-600', category: ['adverse'], description: 'Hunter Serotonin Toxicity Criteria — diagnostic decision rule for serotonin syndrome.' },
