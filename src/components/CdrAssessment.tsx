@@ -10,12 +10,19 @@ import { DementiaConsolidatedResults } from './DementiaConsolidatedResults';
 interface CdrAssessmentProps { 
   onBack?: () => void;
   fastStage?: number | null;
+  onScoresChange?: (scores: Record<string, number>) => void;
 }
 
-export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage }) => {
+export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage, onScoresChange }) => {
   const { language } = useLanguage();
   const [scores, setScores] = useState<Record<string, number>>({});
   const [showConsolidated, setShowConsolidated] = useState(false);
+
+  const handleScoreChange = (id: string, value: number) => {
+    const newScores = { ...scores, [id]: value };
+    setScores(newScores);
+    if (onScoresChange) onScoresChange(newScores);
+  };
 
   const domains = [
     { id: 'memory', name: 'Memory', nameMl: 'ഓർമ്മ' },
@@ -63,7 +70,7 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage 
               <Slider 
                 min={0} max={3} step={0.5} 
                 value={[scores[d.id] ?? 0]} 
-                onValueChange={(v) => setScores({...scores, [d.id]: v[0]})}
+                onValueChange={(v) => handleScoreChange(d.id, v[0])}
               />
             </div>
           ))}

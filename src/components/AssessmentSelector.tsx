@@ -322,6 +322,8 @@ export const AssessmentSelector = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deepLinkQuery, setDeepLinkQuery] = useState('');
   const [section, setSection] = useState<Section>('assessments');
+  const [cdrScores, setCdrScores] = useState<Record<string, number>>({});
+  const [fastStage, setFastStage] = useState<number | null>(null);
 
   // Handle routing for deep links
   useEffect(() => {

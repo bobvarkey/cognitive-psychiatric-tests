@@ -11,12 +11,19 @@ import { DementiaConsolidatedResults } from './DementiaConsolidatedResults';
 interface FastAssessmentProps { 
   onBack?: () => void;
   cdrScores?: Record<string, number>;
+  onStageChange?: (stage: number | null) => void;
 }
 
-export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScores }) => {
+export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScores, onStageChange }) => {
   const { language } = useLanguage();
   const [selectedStage, setSelectedStage] = useState<number | null>(null);
   const [showConsolidated, setShowConsolidated] = useState(false);
+
+  const handleStageChange = (val: string) => {
+    const stage = parseInt(val);
+    setSelectedStage(stage);
+    if (onStageChange) onStageChange(stage);
+  };
 
   if (showConsolidated) {
     return <DementiaConsolidatedResults 
@@ -47,7 +54,7 @@ export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScore
           <CardDescription>Assess functional progression in dementia.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <RadioGroup onValueChange={(val) => setSelectedStage(parseInt(val))}>
+          <RadioGroup onValueChange={handleStageChange}>
             {FAST_ITEMS.map(item => (
               <div key={item.id} className="flex items-center space-x-2 p-2 border rounded">
                 <RadioGroupItem value={item.stage.toString()} id={item.id} />
