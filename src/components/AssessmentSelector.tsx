@@ -561,6 +561,8 @@ export const AssessmentSelector = () => {
       cdr: true,
       fast: true,
       'ciwa-ar': true,
+      daphne: true, minicog: true, hare: true, tulia: true,
+      fab: true, pcl5: true, delusions: true,
       sds: true,
     };
 
