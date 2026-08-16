@@ -624,6 +624,8 @@ export const AssessmentSelector = () => {
         'opd-psych-eval': OpdPsychEvalAssessment,
         'adhd-outpatient': AdhdOutpatientFlowAssessment,
         triage: PsychiatricTriageAssessment,
+        cdr: CdrAssessment,
+        fast: FastAssessment,
       };
 
       const wrapMap: Record<string, React.ReactNode> = {
