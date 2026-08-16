@@ -546,6 +546,8 @@ export const AssessmentSelector = () => {
       'adhd-outpatient': true,
       'pid5-unified': true,
       triage: true,
+      cdr: true,
+      fast: true,
     };
 
     if (withOnBack[selectedAssessment]) {
