@@ -737,7 +737,7 @@ export const AssessmentSelector = () => {
           <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-2 mb-3">
-                <SidebarTrigger className="shrink-0 hidden md:inline-flex" />
+                <SidebarTrigger className="shrink-0" />
                 <Brain className="h-6 w-6 text-primary shrink-0" />
                 <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
                   {language === 'en' ? sectionTitles[section].en : sectionTitles[section].ml}
@@ -749,22 +749,13 @@ export const AssessmentSelector = () => {
                 )}
               </div>
 
-              {/* Search — only on Assessments */}
+              {/* Quick search — jump straight to an assessment or cognitive syndrome */}
               {section === 'assessments' && (
-                <div className="space-y-3">
-                  <div className="flex flex-col sm:flex-row gap-3 items-center">
-                    <MiniAppSearch onSearch={(q) => { setSearchQuery(q); pulse('assessments'); }} />
-                    <div className="flex items-center gap-2 shrink-0">
-                      <GlossaryDialog />
-                    </div>
+                <div className="flex flex-col sm:flex-row gap-3 items-center">
+                  <MiniAppSearch onSearch={(q) => { setSearchQuery(q); pulse('assessments'); }} />
+                  <div className="flex items-center gap-2 shrink-0">
+                    <GlossaryDialog />
                   </div>
-
-                  {/* Scrollable category chips — phones & tablets */}
-                  <CategoryChips
-                    categories={categoryList}
-                    activeCategory={activeCategory}
-                    onSelect={(cat) => { setActiveCategory(cat); pulse('assessments'); }}
-                  />
                 </div>
               )}
             </div>
