@@ -111,7 +111,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
       if (!item.isLateralized) {
         return acc + (responses[item.id] !== undefined ? 1 : 0);
       }
-      if (item.id === 'resting_tremor_amplitude' || item.id === 'rigidity') {
+      if (item.id === 'resting_tremor_amplitude' || (item.id === 'rigidity' && item.part === 'Part III')) {
         const suffixes = item.id === 'rigidity' ? ['Neck', 'RUE', 'LUE', 'RLE', 'LLE'] : ['LipJaw', 'RUE', 'LUE', 'RLE', 'LLE'];
         return acc + suffixes.reduce((s, suffix) => s + (responses[`${item.id}_${suffix}`] !== undefined ? 1 : 0), 0);
       }
