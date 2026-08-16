@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SubstanceAssessmentProps {
   onBack?: () => void;
+  initialTab?: 'ciwa' | 'sds';
 }
 
 type Bilingual = { en: string; ml: string };
@@ -207,7 +208,7 @@ const sdsInterpretation = (total: number) => {
   return { en: 'Probable dependence (opioid/cocaine cut-off ≥4–5)', ml: 'ആശ്രിതത്വം പ്രബലം', tone: 'destructive' as const };
 };
 
-export const SubstanceAssessment = ({ onBack }: SubstanceAssessmentProps) => {
+export const SubstanceAssessment = ({ onBack, initialTab = 'ciwa' }: SubstanceAssessmentProps) => {
   const { language } = useLanguage();
   const isMl = language === 'ml';
   const tr = (b: Bilingual) => (isMl ? b.ml : b.en);
@@ -251,7 +252,7 @@ export const SubstanceAssessment = ({ onBack }: SubstanceAssessmentProps) => {
           </CardHeader>
         </Card>
 
-        <Tabs defaultValue="ciwa" className="w-full">
+        <Tabs defaultValue={initialTab} className="w-full">
           <TabsList className="grid grid-cols-2 w-full">
             <TabsTrigger value="ciwa">CIWA-Ar</TabsTrigger>
             <TabsTrigger value="sds">SDS</TabsTrigger>

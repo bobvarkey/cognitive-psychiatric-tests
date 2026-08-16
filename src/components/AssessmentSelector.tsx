@@ -634,6 +634,8 @@ export const AssessmentSelector = () => {
         'opd-psych-eval': OpdPsychEvalAssessment,
         'adhd-outpatient': AdhdOutpatientFlowAssessment,
         triage: PsychiatricTriageAssessment,
+        'ciwa-ar': (props: any) => <SubstanceAssessment {...props} initialTab="ciwa" />,
+        sds: (props: any) => <SubstanceAssessment {...props} initialTab="sds" />,
         cdr: (props: any) => (
           <CdrAssessment 
             {...props} 
