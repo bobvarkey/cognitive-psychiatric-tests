@@ -25,7 +25,7 @@ const ThemeInitializer = () => {
     root.classList.remove("light", "dark");
     root.classList.add(mode);
 
-    body.classList.remove("theme-sunset", "theme-midnight");
+    body.classList.remove("theme-sunset", "theme-midnight", "theme-forest");
     body.classList.add(`theme-${theme}`);
   }, [mode, theme]);
 
