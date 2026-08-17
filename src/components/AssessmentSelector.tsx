@@ -717,7 +717,7 @@ export const AssessmentSelector = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-secondary overflow-x-hidden"
+          className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-background overflow-x-hidden"
         >
         <LanguageToggle />
         <MainSidebar
