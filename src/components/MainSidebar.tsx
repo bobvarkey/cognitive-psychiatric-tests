@@ -69,7 +69,7 @@ export const MainSidebar = ({
   const isMl = language === 'ml';
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
-  const activeItemRef = useRef<HTMLButtonElement | null>(null);
+  const activeItemRef = useRef<HTMLElement | null>(null);
 
   // Automatically expand category and scroll to active assessment
   useEffect(() => {
@@ -258,7 +258,7 @@ export const MainSidebar = ({
                                         <SidebarMenuSubItem key={a.key}>
                                           <SidebarMenuSubButton
                                             size="sm"
-                                            ref={isAssessmentActive ? activeItemRef : null}
+                                            ref={(el: any) => { if (isAssessmentActive) activeItemRef.current = el; }}
                                             isActive={isAssessmentActive}
                                             className={cn(
                                               "text-[12px] h-8 transition-colors",
