@@ -77,8 +77,8 @@ All colors MUST be HSL.
     --popover-foreground: 0 0% 100%;
     --secondary: 240 10% 10%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 240 10% 10%;
-    --muted-foreground: 240 5% 80%;
+    --muted: 240 10% 12%;
+    --muted-foreground: 240 5% 90%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 240 10% 12%;
