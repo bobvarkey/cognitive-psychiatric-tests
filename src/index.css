@@ -477,4 +477,9 @@ html {
 }
 body {
   overscroll-behavior-y: none;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
