@@ -732,9 +732,9 @@ export const AssessmentSelector = () => {
           onAssessmentSelect={(key) => openAssessment(key as AssessmentKey)}
         />
 
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
           {/* Sticky header */}
-          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
+          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 w-full">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-2 mb-3">
                 <SidebarTrigger className="shrink-0" />
