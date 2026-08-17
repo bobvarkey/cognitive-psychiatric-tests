@@ -186,13 +186,12 @@ export const MainSidebar = ({
         <SidebarGroup className="flex flex-col min-h-0 py-0">
           <SidebarGroupContent className="flex flex-col min-h-0">
             <SidebarMenu className="flex flex-col min-h-0">
-              <Collapsible open className="group/collapsible flex flex-col min-h-0 grow">
+              <div className="flex flex-col min-h-0 grow">
                 <SidebarMenuItem className="flex flex-col min-h-0 grow">
-                  <CollapsibleTrigger asChild>
-                    {renderSectionRow('assessments')}
-                  </CollapsibleTrigger>
-                  {true && (
-                    <CollapsibleContent forceMount className={cn("animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col min-h-0 grow overflow-hidden", (collapsed || section !== 'assessments') && "hidden")}>
+                  {renderSectionRow('assessments')}
+                  <div className={cn("flex flex-col min-h-0 grow overflow-hidden", (collapsed || section !== 'assessments') && "hidden")}>
+
+
                       <div className="px-3 py-2">
                         <div className="relative group">
                           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -293,10 +292,10 @@ export const MainSidebar = ({
                           </div>
                         )}
                       </SidebarMenuSub>
-                    </CollapsibleContent>
-                  )}
+                    </div>
                 </SidebarMenuItem>
-              </Collapsible>
+              </div>
+
 
               <SidebarMenuItem>{renderSectionRow('results', resultsCount)}</SidebarMenuItem>
               <SidebarMenuItem>{renderSectionRow('settings')}</SidebarMenuItem>
