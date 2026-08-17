@@ -14,7 +14,7 @@ interface ThemeStore {
 export const useThemeStore = create<ThemeStore>()(
   persist(
     (set) => ({
-      mode: 'dark',
+      mode: 'light',
       theme: 'sunset',
       setMode: (mode: 'light' | 'dark') => set({ mode }),
       setTheme: (theme: AppTheme) => set({ theme }),
