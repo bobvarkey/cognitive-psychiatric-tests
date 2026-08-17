@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Search, Book, X } from 'lucide-react';
+import { Search, Book, X, Sun, Moon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useThemeStore } from '@/hooks/useThemeStore';
 
 export const MiniAppSearch = ({ onSearch }: { onSearch: (q: string) => void }) => {
   const [query, setQuery] = useState('');
@@ -31,6 +32,26 @@ export const MiniAppSearch = ({ onSearch }: { onSearch: (q: string) => void }) =
         </button>
       )}
     </div>
+  );
+};
+
+export const ModeToggle = () => {
+  const { mode, toggleMode } = useThemeStore();
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={toggleMode}
+      className="h-10 w-10 rounded-xl hover:bg-accent transition-colors"
+      title={mode === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+    >
+      {mode === 'light' ? (
+        <Moon className="h-5 w-5 text-slate-700" />
+      ) : (
+        <Sun className="h-5 w-5 text-amber-400" />
+      )}
+    </Button>
   );
 };
 

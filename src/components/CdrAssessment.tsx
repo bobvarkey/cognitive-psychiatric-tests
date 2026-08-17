@@ -126,7 +126,7 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
         <CardContent className="space-y-8">
           <TooltipProvider>
             {domains.map(d => (
-              <div key={d.id} className="space-y-4 p-4 border rounded-lg bg-accent/5">
+              <div key={d.id} className="space-y-4 p-4 border rounded-lg bg-card dark:bg-card">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Label className="text-base font-semibold">{language === 'ml' ? d.nameMl : d.name}</Label>

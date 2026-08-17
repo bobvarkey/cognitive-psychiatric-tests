@@ -58,7 +58,7 @@ export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScore
           <TooltipProvider>
             <RadioGroup onValueChange={handleStageChange}>
               {FAST_ITEMS.map(item => (
-                <div key={item.id} className="group relative flex items-start space-x-2 p-3 border rounded-lg hover:bg-accent/5 transition-colors">
+                <div key={item.id} className="group relative flex items-start space-x-2 p-3 border rounded-lg bg-card dark:bg-card hover:bg-accent/5 transition-colors">
                   <RadioGroupItem value={item.stage.toString()} id={item.id} className="mt-1" />
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center gap-2">

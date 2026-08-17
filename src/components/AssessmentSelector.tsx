@@ -95,7 +95,7 @@ import {
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
   Cloud, Clock,
 } from 'lucide-react';
-import { MiniAppSearch, GlossaryDialog } from './ThemeExtras';
+import { MiniAppSearch, GlossaryDialog, ModeToggle } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
@@ -717,7 +717,7 @@ export const AssessmentSelector = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-secondary"
+          className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-background overflow-x-hidden"
         >
         <LanguageToggle />
         <MainSidebar
@@ -732,9 +732,9 @@ export const AssessmentSelector = () => {
           onAssessmentSelect={(key) => openAssessment(key as AssessmentKey)}
         />
 
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
           {/* Sticky header */}
-          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3">
+          <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 w-full">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-2 mb-3">
                 <SidebarTrigger className="shrink-0" />
@@ -753,7 +753,8 @@ export const AssessmentSelector = () => {
               {section === 'assessments' && (
                 <div className="flex flex-col sm:flex-row gap-3 items-center">
                   <MiniAppSearch onSearch={(q) => { setSearchQuery(q); pulse('assessments'); }} />
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                    <ModeToggle />
                     <GlossaryDialog />
                   </div>
                 </div>
