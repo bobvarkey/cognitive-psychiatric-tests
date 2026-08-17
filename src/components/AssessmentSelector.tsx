@@ -95,7 +95,7 @@ import {
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
   Cloud, Clock,
 } from 'lucide-react';
-import { MiniAppSearch, GlossaryDialog } from './ThemeExtras';
+import { MiniAppSearch, GlossaryDialog, ModeToggle } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
@@ -753,7 +753,8 @@ export const AssessmentSelector = () => {
               {section === 'assessments' && (
                 <div className="flex flex-col sm:flex-row gap-3 items-center">
                   <MiniAppSearch onSearch={(q) => { setSearchQuery(q); pulse('assessments'); }} />
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                    <ModeToggle />
                     <GlossaryDialog />
                   </div>
                 </div>
