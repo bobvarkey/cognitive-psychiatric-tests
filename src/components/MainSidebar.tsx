@@ -217,6 +217,8 @@ export const MainSidebar = ({
                           const CatIcon = cat.icon;
                           const isActive = activeCategory === cat.key;
                           const isOpen = expandedCategories.has(cat.key);
+                          const isCategoryOfActiveAssessment = selectedAssessmentId && assessments.find(a => a.key === selectedAssessmentId)?.category.includes(cat.key);
+
                           
                           const filteredAssessments = assessments.filter(a => 
                             a.category.includes(cat.key) && 
@@ -240,8 +242,9 @@ export const MainSidebar = ({
                                     isActive={isActive}
                                     size="md"
                                     className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all hover:bg-sidebar-accent/50 group/item ${
-                                      searchQuery ? 'ring-1 ring-primary/20 bg-primary/5' : ''
+                                      searchQuery || isCategoryOfActiveAssessment ? 'ring-1 ring-primary/20 bg-primary/5' : ''
                                     }`}
+
                                   >
                                     <CatIcon className={`h-4 w-4 shrink-0 transition-transform group-hover/item:scale-110 ${isActive ? 'text-primary' : 'text-muted-foreground group-hover/item:text-foreground'}`} />
                                     <span className="flex-1 text-left truncate">{isMl ? cat.label.ml : cat.label.en}</span>
