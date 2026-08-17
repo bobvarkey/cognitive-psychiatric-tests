@@ -192,7 +192,7 @@ export const MainSidebar = ({
                     {renderSectionRow('assessments')}
                   </CollapsibleTrigger>
                   {true && (
-                    <CollapsibleContent forceMount className={cn("animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col min-h-0 grow overflow-hidden", (collapsed || section !== 'assessments') && "hidden-manually")}>
+                    <CollapsibleContent forceMount className={cn("animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col min-h-0 grow overflow-hidden", (collapsed || section !== 'assessments') && "invisible h-0 overflow-hidden")}>
 
                       <div className="px-3 py-2">
                         <div className="relative group">
