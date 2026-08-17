@@ -1,4 +1,5 @@
 import { ClipboardList, FileBarChart, Settings, Brain, Lightbulb, Search, X } from 'lucide-react';
+import { cn } from "@/lib/utils";
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
@@ -155,18 +156,18 @@ export const MainSidebar = ({
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="flex flex-col min-h-0">
         {/* ───── Assessments (with category sub-items) ───── */}
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <Collapsible defaultOpen className="group/collapsible">
-                <SidebarMenuItem>
+        <SidebarGroup className="flex flex-col min-h-0 py-0">
+          <SidebarGroupContent className="flex flex-col min-h-0">
+            <SidebarMenu className="flex flex-col min-h-0">
+              <Collapsible open className="group/collapsible flex flex-col min-h-0 grow">
+                <SidebarMenuItem className="flex flex-col min-h-0 grow">
                   <CollapsibleTrigger asChild>
                     {renderSectionRow('assessments')}
                   </CollapsibleTrigger>
-                  {!collapsed && section === 'assessments' && (
-                    <CollapsibleContent className="animate-in fade-in slide-in-from-top-2 duration-200">
+                  {true && (
+                    <CollapsibleContent forceMount className={cn("animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col min-h-0 grow overflow-hidden", (collapsed || section !== 'assessments') && "hidden")}>
                       <div className="px-3 py-2">
                         <div className="relative group">
                           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
@@ -186,7 +187,7 @@ export const MainSidebar = ({
                           )}
                         </div>
                       </div>
-                      <SidebarMenuSub className="border-l-0 ml-0 px-1.5">
+                      <SidebarMenuSub className="border-l-0 ml-0 px-1.5 flex-1 overflow-y-auto">
                         {filteredCategories.map((cat) => {
                           const CatIcon = cat.icon;
                           const isActive = activeCategory === cat.key;
