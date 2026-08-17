@@ -332,6 +332,11 @@ export const AssessmentSelector = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deepLinkQuery, setDeepLinkQuery] = useState('');
   const [section, setSection] = useState<Section>('assessments');
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    const saved = localStorage.getItem('sidebar_expanded');
+    return saved === null ? window.innerWidth >= 1024 : saved === 'true';
+  });
   const [cdrScores, setCdrScores] = useState<Record<string, number>>({});
   const [fastStage, setFastStage] = useState<number | null>(null);
 
@@ -365,6 +370,7 @@ export const AssessmentSelector = () => {
   const [pulseSections, setPulseSections] = useState<Set<Section>>(new Set());
 
   const handleToggleSidebar = (open: boolean) => {
+    setSidebarOpen(open);
     localStorage.setItem('sidebar_expanded', String(open));
   };
 
@@ -707,7 +713,7 @@ export const AssessmentSelector = () => {
 
   return (
     <SidebarProvider
-      defaultOpen={typeof window === 'undefined' ? true : window.innerWidth >= 1024}
+      open={sidebarOpen}
       onOpenChange={handleToggleSidebar}
       style={{ ['--sidebar-width' as any]: '17rem' }}
     >

@@ -61,10 +61,10 @@ export const MainSidebar = ({
   onAssessmentSelect,
   selectedAssessmentId,
 }: MainSidebarProps) => {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const navigate = useNavigate();
   const location = useLocation();
-  const collapsed = state === 'collapsed';
+  const collapsed = !isMobile && state === 'collapsed';
   const { language } = useLanguage();
   const isMl = language === 'ml';
   const [searchQuery, setSearchQuery] = useState('');
@@ -271,6 +271,7 @@ export const MainSidebar = ({
                                             onClick={() => {
                                               onAssessmentSelect(a.key);
                                               onCategorySelect(cat.key);
+                                               if (isMobile) setOpenMobile(false);
                                               if (location.pathname !== '/') navigate('/');
                                             }}
                                           >
