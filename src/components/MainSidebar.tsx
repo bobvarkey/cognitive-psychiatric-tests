@@ -161,12 +161,12 @@ export const MainSidebar = ({
         <SidebarGroup className="flex flex-col min-h-0 py-0">
           <SidebarGroupContent className="flex flex-col min-h-0">
             <SidebarMenu className="flex flex-col min-h-0">
-              <Collapsible defaultOpen className="group/collapsible flex flex-col min-h-0 grow">
+              <Collapsible open className="group/collapsible flex flex-col min-h-0 grow">
                 <SidebarMenuItem className="flex flex-col min-h-0 grow">
                   <CollapsibleTrigger asChild>
                     {renderSectionRow('assessments')}
                   </CollapsibleTrigger>
-                  {section === 'assessments' && (
+                  {true && (
                     <CollapsibleContent forceMount className={cn("animate-in fade-in slide-in-from-top-2 duration-200 flex flex-col min-h-0 grow overflow-hidden", collapsed ? "hidden" : "block")}>
                       <div className="px-3 py-2">
                         <div className="relative group">
