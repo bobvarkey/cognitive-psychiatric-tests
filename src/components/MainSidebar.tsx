@@ -1,6 +1,6 @@
 import { ClipboardList, FileBarChart, Settings, Brain, Lightbulb, Search, X } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import {
@@ -40,6 +40,7 @@ interface MainSidebarProps {
   pulseSections?: Set<Section>;
   assessments: any[];
   onAssessmentSelect: (key: string) => void;
+  selectedAssessmentId?: string | null;
 }
 
 const SECTION_LABELS: Record<Section, { en: string; ml: string; icon: React.ElementType }> = {
@@ -58,6 +59,7 @@ export const MainSidebar = ({
   pulseSections,
   assessments,
   onAssessmentSelect,
+  selectedAssessmentId,
 }: MainSidebarProps) => {
   const { state } = useSidebar();
   const navigate = useNavigate();
@@ -67,6 +69,29 @@ export const MainSidebar = ({
   const isMl = language === 'ml';
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const activeItemRef = useRef<HTMLButtonElement | null>(null);
+
+  // Automatically expand category and scroll to active assessment
+  useEffect(() => {
+    if (selectedAssessmentId) {
+      const assessment = assessments.find(a => a.key === selectedAssessmentId);
+      if (assessment) {
+        setExpandedCategories(prev => {
+          const next = new Set(prev);
+          assessment.category.forEach((catKey: string) => next.add(catKey));
+          return next;
+        });
+
+        // Small delay to allow Collapsible to animate/render before scrolling
+        setTimeout(() => {
+          activeItemRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+          });
+        }, 300);
+      }
+    }
+  }, [selectedAssessmentId]);
 
   const filteredCategories = categories.filter(cat => {
     if (!searchQuery) return true;
@@ -227,11 +252,20 @@ export const MainSidebar = ({
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="animate-in fade-in slide-in-from-top-1 duration-200">
                                   <SidebarMenuSub className="border-l border-sidebar-border/30 ml-4 pl-2 mt-1 space-y-0.5">
-                                    {filteredAssessments.map(a => (
+                                    {filteredAssessments.map(a => {
+                                      const isAssessmentActive = selectedAssessmentId === a.key;
+                                      return (
                                         <SidebarMenuSubItem key={a.key}>
                                           <SidebarMenuSubButton
                                             size="sm"
-                                            className="text-[12px] h-8 text-muted-foreground hover:text-foreground transition-colors"
+                                            ref={isAssessmentActive ? activeItemRef : null}
+                                            isActive={isAssessmentActive}
+                                            className={cn(
+                                              "text-[12px] h-8 transition-colors",
+                                              isAssessmentActive 
+                                                ? "text-primary font-bold bg-primary/5 ring-1 ring-primary/20" 
+                                                : "text-muted-foreground hover:text-foreground"
+                                            )}
                                             onClick={() => {
                                               onAssessmentSelect(a.key);
                                               onCategorySelect(cat.key);
@@ -241,7 +275,8 @@ export const MainSidebar = ({
                                             {a.name}
                                           </SidebarMenuSubButton>
                                         </SidebarMenuSubItem>
-                                      ))
+                                      );
+                                    })
                                     }
                                   </SidebarMenuSub>
                                 </CollapsibleContent>
