@@ -292,10 +292,10 @@ export const MainSidebar = ({
                           </div>
                         )}
                       </SidebarMenuSub>
-                    </CollapsibleContent>
-                  )}
+                    </div>
                 </SidebarMenuItem>
-              </Collapsible>
+              </div>
+
 
               <SidebarMenuItem>{renderSectionRow('results', resultsCount)}</SidebarMenuItem>
               <SidebarMenuItem>{renderSectionRow('settings')}</SidebarMenuItem>
