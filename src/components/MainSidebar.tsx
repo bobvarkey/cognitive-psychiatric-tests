@@ -145,7 +145,7 @@ export const MainSidebar = ({
         isActive={isActive}
         tooltip={isMl ? def.ml : def.en}
         size="lg"
-        className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-semibold relative gap-3 text-[15px] py-2.5"
+        className="data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground data-[active=true]:font-bold relative gap-3 text-[16px] py-2.5"
       >
         <Icon className="h-5 w-5 shrink-0" />
         {!collapsed && (
@@ -199,7 +199,7 @@ export const MainSidebar = ({
                             placeholder={isMl ? "തിരയുക..." : "Search assessments..."}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="h-8 pl-7 pr-7 text-xs bg-sidebar-accent/50 border-transparent focus:bg-sidebar-background transition-all"
+                            className="h-9 pl-7 pr-7 text-sm bg-sidebar-accent/50 border-transparent focus:bg-sidebar-background transition-all"
                           />
                           {searchQuery && (
                             <button 
@@ -240,7 +240,7 @@ export const MainSidebar = ({
                                   <SidebarMenuSubButton
                                     isActive={isActive}
                                     size="md"
-                                    className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-9 text-[14px] rounded-lg transition-all hover:bg-sidebar-accent/50 group/item ${
+                                    className={`data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-bold gap-2.5 h-10 text-[15px] rounded-lg transition-all hover:bg-sidebar-accent/50 group/item ${
                                       searchQuery || isCategoryOfActiveAssessment ? 'ring-1 ring-primary/20 bg-primary/5' : ''
                                     }`}
 
@@ -263,7 +263,7 @@ export const MainSidebar = ({
                                             ref={(el: any) => { if (isAssessmentActive) activeItemRef.current = el; }}
                                             isActive={isAssessmentActive}
                                             className={cn(
-                                              "text-[12px] h-8 transition-colors",
+                                              "text-[13px] h-9 transition-colors",
                                               isAssessmentActive 
                                                 ? "text-primary font-bold bg-primary/5 ring-1 ring-primary/20" 
                                                 : "text-muted-foreground hover:text-foreground"
