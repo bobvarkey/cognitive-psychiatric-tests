@@ -939,7 +939,7 @@ export const AssessmentSelector = () => {
                                 {a.subtitle}
                               </span>
                               {reference && (
-                                <span className="relative mt-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                                <span className="relative mt-1 inline-flex items-center gap-1 rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary dark:text-primary-foreground dark:bg-primary">
                                   <BookOpen className="h-3 w-3" />
                                   Verified citation
                                 </span>
