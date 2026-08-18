@@ -42,7 +42,7 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
             <TrendingUp className="w-6 h-6 text-amber-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-white">Stimulus DBS Tool</CardTitle>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Decision Support for Deep Brain Stimulation Appropriateness
               </p>
             </div>
@@ -51,10 +51,10 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
       </Card>
 
       {/* Appropriateness Scale */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-lg text-amber-400">DBS Appropriateness Assessment</CardTitle>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             Rate overall appropriateness for DBS referral (1-9 scale)
           </p>
         </CardHeader>
@@ -62,7 +62,7 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
           {/* Scale Display */}
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-400 w-16">Score</div>
+              <div className="text-sm text-muted-foreground w-16">Score</div>
               <input
                 type="range"
                 min="1"
@@ -80,15 +80,15 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
             <div className="grid grid-cols-3 gap-2 text-xs">
               <div className="text-left">
                 <div className="text-red-400 font-semibold">1-3</div>
-                <div className="text-gray-500">Not Appropriate</div>
+                <div className="text-muted-foreground">Not Appropriate</div>
               </div>
               <div className="text-center">
                 <div className="text-yellow-400 font-semibold">4-6</div>
-                <div className="text-gray-500">Uncertain</div>
+                <div className="text-muted-foreground">Uncertain</div>
               </div>
               <div className="text-right">
                 <div className="text-green-400 font-semibold">7-9</div>
-                <div className="text-gray-500">Appropriate</div>
+                <div className="text-muted-foreground">Appropriate</div>
               </div>
             </div>
           </div>
@@ -110,12 +110,12 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
       {/* Candidacy Criteria */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Favorable */}
-        <Card className="bg-slate-900/30 border-slate-800 border-green-500/20">
+        <Card className="bg-card border-border border-green-500/20">
           <CardHeader>
             <CardTitle className="text-sm text-green-400">Favorable Factors</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm text-gray-400">
+            <ul className="space-y-2 text-sm text-muted-foreground">
               {DBS_CANDIDACY_CRITERIA.favorable.map((factor, idx) => (
                 <li key={idx} className="flex gap-2">
                   <span className="text-green-400 font-bold mt-0.5">+</span>
@@ -127,12 +127,12 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
         </Card>
 
         {/* Unfavorable */}
-        <Card className="bg-slate-900/30 border-slate-800 border-red-500/20">
+        <Card className="bg-card border-border border-red-500/20">
           <CardHeader>
             <CardTitle className="text-sm text-red-400">Unfavorable Factors</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm text-gray-400">
+            <ul className="space-y-2 text-sm text-muted-foreground">
               {DBS_CANDIDACY_CRITERIA.unfavorable.map((factor, idx) => (
                 <li key={idx} className="flex gap-2">
                   <span className="text-red-400 font-bold mt-0.5">−</span>
@@ -145,14 +145,14 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
       </div>
 
       {/* Clinical Information */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-sm text-amber-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-400">
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
             <span className="font-semibold text-white">Stimulus Tool Purpose:</span> Evidence-based decision support system
             developed using the RAND/UCLA Appropriateness method (modified Delphi) with international DBS expert panel.
@@ -169,7 +169,7 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
             <span className="font-semibold text-white">Key Variables:</span> Disease duration, age, levodopa response, motor
             complications, cognition, psychiatric status, and motor phenotype.
           </p>
-          <div className="p-3 rounded bg-slate-800/50 border border-slate-700 mt-3">
+          <div className="p-3 rounded bg-muted/60 border border-border mt-3">
             <p className="text-xs">
               <span className="font-semibold">Access:</span> Stimulus 2 available at www.earlystimulus.eu
             </p>

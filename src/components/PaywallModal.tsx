@@ -63,7 +63,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 z-10 transition"
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10 transition"
         >
           <X className="w-6 h-6" />
         </button>
@@ -79,7 +79,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                 <Star key={i} className="w-5 h-5 star-pulse fill-yellow-400 text-yellow-400" />
               ))}
             </div>
-            <p className="text-sm text-gray-300">49 stars • 1,000+ reviews</p>
+            <p className="text-sm text-foreground/90">49 stars • 1,000+ reviews</p>
           </div>
 
           {/* Icon */}
@@ -96,10 +96,10 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           <h2 className="text-3xl font-bold text-white mb-2 relative z-10">
             Upgrade to Cognito Pro
           </h2>
-          <p className="text-gray-300 text-sm relative z-10 mb-3">
+          <p className="text-foreground/90 text-sm relative z-10 mb-3">
             Unlock double the features, get priority support
           </p>
-          <div className="relative z-10 space-y-2 text-xs text-gray-400 bg-black/30 rounded-lg p-3">
+          <div className="relative z-10 space-y-2 text-xs text-muted-foreground bg-black/30 rounded-lg p-3">
             <div className="flex justify-between">
               <span>Lite: 20 core assessments</span>
               <span>Pro: All 54 assessments</span>
@@ -111,7 +111,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
         <div className="relative z-10 px-6 py-8 space-y-6">
           {/* Tier Selection */}
           <div className="space-y-2">
-            <p className="text-xs text-gray-400 uppercase tracking-wide">Choose your plan</p>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide">Choose your plan</p>
             <div className="grid grid-cols-2 gap-3">
               {(['lite', 'pro'] as const).map((tier) => (
                 <button
@@ -120,19 +120,19 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                   className={`p-4 rounded-2xl transition-all duration-300 text-center ${
                     selectedTier === tier
                       ? 'bg-gradient-to-r from-magenta-600/40 to-cyan-600/40 border border-magenta-400/60 shadow-[0_0_20px_rgba(255,0,255,0.3)]'
-                      : 'bg-slate-800/40 border border-slate-700/40 hover:border-magenta-400/40'
+                      : 'bg-slate-800/40 border border-border/40 hover:border-magenta-400/40'
                   }`}
                 >
                   <div className="font-bold text-white capitalize mb-1">{tierPlans[tier].name}</div>
-                  <div className="text-xs text-gray-400">{tierPlans[tier].description}</div>
+                  <div className="text-xs text-muted-foreground">{tierPlans[tier].description}</div>
                 </button>
               ))}
             </div>
           </div>
 
           {/* Features Comparison Table */}
-          <div className="relative z-10 space-y-1 text-xs text-gray-400 bg-black/30 rounded-xl p-4">
-            <div className="grid grid-cols-3 gap-2 text-center font-semibold text-gray-300 mb-2">
+          <div className="relative z-10 space-y-1 text-xs text-muted-foreground bg-black/30 rounded-xl p-4">
+            <div className="grid grid-cols-3 gap-2 text-center font-semibold text-foreground/90 mb-2">
               <span className="text-left">Feature</span><span>Lite</span><span>Pro</span>
             </div>
             {[
@@ -142,7 +142,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               ['Patient History', '—', '✓'],
             ].map(([feature, lite, pro]) => (
               <div key={feature} className="grid grid-cols-3 gap-2 text-center py-1 border-t border-white/5">
-                <span className="text-left text-gray-500">{feature}</span>
+                <span className="text-left text-muted-foreground">{feature}</span>
                 <span className={lite === '—' ? 'text-gray-600' : 'text-cyan-400'}>{lite}</span>
                 <span className={pro === '—' ? 'text-gray-600' : 'text-fuchsia-400'}>{pro}</span>
               </div>
@@ -152,7 +152,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           {/* Features Pills */}
           <div className="flex flex-wrap gap-2">
             {tierPlans[selectedTier].features.map((f, i) => (
-              <span key={i} className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full text-gray-200 border ${
+              <span key={i} className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full text-foreground border ${
                 selectedTier === 'pro' ? 'bg-fuchsia-600/20 border-fuchsia-500/30' : 'bg-cyan-600/20 border-cyan-500/30'
               }`}>
                 <Check className={`w-3 h-3 ${selectedTier === 'pro' ? 'text-fuchsia-400' : 'text-cyan-400'}`} />
@@ -169,7 +169,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               className={`w-full relative p-4 rounded-2xl transition-all duration-300 ${
                 selectedPlan === 'yearly'
                   ? 'bg-gradient-to-r from-magenta-600/40 to-cyan-600/40 border border-magenta-400/60 shadow-[0_0_20px_rgba(255,0,255,0.3)]'
-                  : 'bg-slate-800/40 border border-slate-700/40 hover:border-magenta-400/40'
+                  : 'bg-slate-800/40 border border-border/40 hover:border-magenta-400/40'
               }`}
             >
               <div className="flex items-center justify-between relative z-10">
@@ -180,7 +180,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                       First year
                     </span>
                   </div>
-                  <div className="text-gray-400 text-xs">
+                  <div className="text-muted-foreground text-xs">
                     Then ${tierPlans[selectedTier].yearly.renewal}/year
                   </div>
                 </div>
@@ -188,7 +188,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                   <div className="text-3xl font-bold text-white">
                     ${tierPlans[selectedTier].yearly.price}
                   </div>
-                  <div className="text-gray-400 text-xs">per year</div>
+                  <div className="text-muted-foreground text-xs">per year</div>
                 </div>
               </div>
               {selectedPlan === 'yearly' && (
@@ -206,13 +206,13 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               className={`w-full relative p-4 rounded-2xl transition-all duration-300 ${
                 selectedPlan === 'monthly'
                   ? 'bg-gradient-to-r from-magenta-600/40 to-cyan-600/40 border border-magenta-400/60 shadow-[0_0_20px_rgba(255,0,255,0.3)]'
-                  : 'bg-slate-800/40 border border-slate-700/40 hover:border-magenta-400/40'
+                  : 'bg-slate-800/40 border border-border/40 hover:border-magenta-400/40'
               }`}
             >
               <div className="flex items-center justify-between relative z-10">
                 <div className="text-left">
                   <div className="font-bold text-white mb-1">Monthly</div>
-                  <div className="text-gray-400 text-xs">
+                  <div className="text-muted-foreground text-xs">
                     Billed monthly
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                   <div className="text-3xl font-bold text-white">
                     ${tierPlans[selectedTier].monthly.price}
                   </div>
-                  <div className="text-gray-400 text-xs">per month</div>
+                  <div className="text-muted-foreground text-xs">per month</div>
                 </div>
               </div>
               {selectedPlan === 'monthly' && (
@@ -253,11 +253,11 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               Restore Purchase
             </button>
             <span className="text-gray-700">•</span>
-            <button className="text-gray-500 hover:text-gray-400 text-xs transition">
+            <button className="text-muted-foreground hover:text-muted-foreground text-xs transition">
               Terms
             </button>
             <span className="text-gray-700">•</span>
-            <button className="text-gray-500 hover:text-gray-400 text-xs transition">
+            <button className="text-muted-foreground hover:text-muted-foreground text-xs transition">
               Privacy
             </button>
             <span className="text-gray-700">•</span>

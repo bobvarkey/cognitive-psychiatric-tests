@@ -172,7 +172,7 @@ export const IpdeAssessment = ({ onBack }: Props) => {
                     {[true, false].map(v => (
                       <button key={String(v)} type="button" onClick={() => setResponses(p => ({ ...p, [item.id]: v }))}
                         className={cn('text-xs font-semibold px-3 py-1.5 rounded-md border-2 transition-all',
-                          ans === v ? (v ? 'bg-rose-500 border-rose-600 text-white' : 'bg-slate-500 border-slate-600 text-white')
+                          ans === v ? (v ? 'bg-rose-500 border-rose-600 text-white' : 'bg-slate-500 border-input text-white')
                                     : 'bg-white border-slate-200 text-slate-700 hover:border-rose-400')}>
                         {v ? 'True' : 'False'}
                       </button>

@@ -57,7 +57,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
             <CheckCircle2 className="w-6 h-6 text-emerald-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-white">D-DATS</CardTitle>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Dutch DAT Screening Tool for Advanced Parkinson's Disease
               </p>
             </div>
@@ -66,7 +66,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
       </Card>
 
       <Tabs defaultValue="screening" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-slate-900/50 border border-slate-800">
+        <TabsList className="grid w-full grid-cols-2 bg-muted border border-border">
           <TabsTrigger value="screening">DAT Eligibility</TabsTrigger>
           <TabsTrigger value="dats">Available DATs</TabsTrigger>
         </TabsList>
@@ -75,10 +75,10 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
         <TabsContent value="screening">
           <div className="space-y-4">
             {/* Criteria */}
-            <Card className="bg-slate-900/30 border-slate-800">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="text-lg text-emerald-400">Eligibility Criteria</CardTitle>
-                <p className="text-sm text-gray-400 mt-2">
+                <p className="text-sm text-muted-foreground mt-2">
                   All REQUIRED criteria must be met. Optional criteria enhance candidacy.
                 </p>
               </CardHeader>
@@ -88,14 +88,14 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                   const isMet = responses[criterion.id] === true;
 
                   return (
-                    <div key={criterion.id} className={`p-4 rounded-lg border ${isMet ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-slate-700/50 bg-slate-800/20'}`}>
+                    <div key={criterion.id} className={`p-4 rounded-lg border ${isMet ? 'border-emerald-500/50 bg-emerald-500/10' : 'border-border bg-muted/40'}`}>
                       <div className="flex items-start gap-3">
                         <button
                           onClick={() => handleResponse(criterion.id, !isMet)}
                           className={`w-6 h-6 rounded border-2 flex-shrink-0 flex items-center justify-center mt-1 transition ${
                             isMet
                               ? 'bg-emerald-500/30 border-emerald-400'
-                              : 'border-slate-600 hover:border-slate-500'
+                              : 'border-input hover:border-primary/60'
                           }`}
                         >
                           {isMet && <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
@@ -109,7 +109,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                               </span>
                             )}
                           </div>
-                          <p className="text-sm text-gray-400 mt-1">{criterion.description}</p>
+                          <p className="text-sm text-muted-foreground mt-1">{criterion.description}</p>
                         </div>
                       </div>
                     </div>
@@ -120,7 +120,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
 
             {/* Results */}
             {Object.keys(responses).length > 0 && (
-              <Card className={`bg-slate-900/30 border-slate-800 ${eligibleForDat ? 'border-emerald-500/30' : 'border-yellow-500/30'}`}>
+              <Card className={`bg-card border-border ${eligibleForDat ? 'border-emerald-500/30' : 'border-yellow-500/30'}`}>
                 <CardHeader>
                   <CardTitle className="text-lg text-white flex items-center gap-2">
                     <span className={`w-3 h-3 rounded-full ${eligibleForDat ? 'bg-emerald-400' : 'bg-yellow-400'}`} />
@@ -129,19 +129,19 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-3 gap-4">
-                    <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
-                      <div className="text-sm text-gray-400 mb-1">Total Met</div>
+                    <div className="p-3 rounded-lg bg-muted/60 border border-border">
+                      <div className="text-sm text-muted-foreground mb-1">Total Met</div>
                       <div className="text-2xl font-bold text-emerald-400">{totalMet}/6</div>
                     </div>
-                    <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
-                      <div className="text-sm text-gray-400 mb-1">Required Met</div>
+                    <div className="p-3 rounded-lg bg-muted/60 border border-border">
+                      <div className="text-sm text-muted-foreground mb-1">Required Met</div>
                       <div className={`text-2xl font-bold ${requiredMet ? 'text-emerald-400' : 'text-red-400'}`}>
                         {D_DATS_CRITERIA.filter(c => c.required && responses[c.id] === true).length}/4
                       </div>
                     </div>
-                    <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
-                      <div className="text-sm text-gray-400 mb-1">Eligible</div>
-                      <div className={`text-xl font-bold ${eligibleForDat ? 'text-emerald-400' : 'text-gray-400'}`}>
+                    <div className="p-3 rounded-lg bg-muted/60 border border-border">
+                      <div className="text-sm text-muted-foreground mb-1">Eligible</div>
+                      <div className={`text-xl font-bold ${eligibleForDat ? 'text-emerald-400' : 'text-muted-foreground'}`}>
                         {eligibleForDat ? 'YES' : 'NO'}
                       </div>
                     </div>
@@ -158,7 +158,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                         <div className={`font-semibold ${eligibleForDat ? 'text-emerald-300' : 'text-yellow-300'}`}>
                           {eligibleForDat ? 'Eligible for DAT Referral' : 'Not Yet Eligible'}
                         </div>
-                        <p className="text-sm text-gray-300 mt-2">
+                        <p className="text-sm text-foreground/90 mt-2">
                           {eligibleForDat
                             ? 'Patient meets all required criteria. Proceed with DAT evaluation and selection.'
                             : 'All required criteria must be met. Continue optimizing standard medical therapy.'}
@@ -174,7 +174,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
 
         {/* DATs Tab */}
         <TabsContent value="dats">
-          <Card className="bg-slate-900/30 border-slate-800">
+          <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="text-lg text-emerald-400">Available Device-Aided Therapies</CardTitle>
             </CardHeader>
@@ -186,19 +186,19 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                   className={`w-full p-4 rounded-lg border text-left transition ${
                     selectedDats[dat.id]
                       ? 'border-emerald-500/50 bg-emerald-500/10'
-                      : 'border-slate-700 bg-slate-800/20 hover:border-slate-600'
+                      : 'border-border bg-muted/40 hover:border-primary/60'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <div
                       className={`w-6 h-6 rounded border-2 mt-0.5 flex-shrink-0 ${
-                        selectedDats[dat.id] ? 'bg-emerald-500/30 border-emerald-400' : 'border-slate-600'
+                        selectedDats[dat.id] ? 'bg-emerald-500/30 border-emerald-400' : 'border-input'
                       }`}
                     />
                     <div className="flex-1">
                       <div className="font-semibold text-white">{dat.name}</div>
-                      <div className="text-sm text-gray-400 mt-1">{dat.description}</div>
-                      <div className="text-xs text-gray-500 mt-2">Abbreviation: {dat.abbreviation}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{dat.description}</div>
+                      <div className="text-xs text-muted-foreground mt-2">Abbreviation: {dat.abbreviation}</div>
                     </div>
                   </div>
                 </button>
@@ -209,14 +209,14 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
       </Tabs>
 
       {/* Clinical Information */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-sm text-emerald-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-400">
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
             <span className="font-semibold text-white">Purpose:</span> The Dutch DAT Screening Tool (D-DATS) supports general
             neurologists in determining whether a PD patient is eligible for referral to specialized centers offering Device-Aided Therapy.
@@ -229,7 +229,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
             <span className="font-semibold text-white">Clinical Value:</span> Standardizes decision-making for advanced therapy
             referrals, ensuring appropriate patient selection and optimal resource utilization.
           </p>
-          <p className="italic text-gray-500">Source: Moes et al. 2023 (Groningen)</p>
+          <p className="italic text-muted-foreground">Source: Moes et al. 2023 (Groningen)</p>
         </CardContent>
       </Card>
     </div>

@@ -56,7 +56,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
             <AlertCircle className="w-6 h-6 text-cyan-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-white">LAEP Assessment</CardTitle>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Likelihood of Adverse Effects Profile for Antiseizure Medications
               </p>
             </div>
@@ -65,10 +65,10 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
       </Card>
 
       {/* Assessment Items */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-lg text-cyan-400">Reported Side Effects</CardTitle>
-          <p className="text-sm text-gray-400 mt-2">Select all side effects currently experienced</p>
+          <p className="text-sm text-muted-foreground mt-2">Select all side effects currently experienced</p>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[400px] pr-4">
@@ -76,7 +76,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
               {LAEP_ITEMS.map(item => (
                 <div
                   key={item.id}
-                  className="p-4 rounded-lg border border-slate-700/50 hover:border-cyan-500/30 transition cursor-pointer bg-slate-800/20"
+                  className="p-4 rounded-lg border border-border hover:border-cyan-500/30 transition cursor-pointer bg-muted/40"
                   onClick={() => handleToggle(item.id, !responses[item.id])}
                 >
                   <div className="flex items-start gap-3">
@@ -84,7 +84,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
                       className={`w-6 h-6 rounded border-2 mt-0.5 flex items-center justify-center transition ${
                         responses[item.id]
                           ? 'bg-cyan-500/20 border-cyan-400'
-                          : 'border-slate-600'
+                          : 'border-input'
                       }`}
                     >
                       {responses[item.id] && (
@@ -93,7 +93,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
                     </div>
                     <div className="flex-1">
                       <div className="font-semibold text-white">{item.name}</div>
-                      <div className="text-sm text-gray-400 mt-1">{item.description}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{item.description}</div>
                     </div>
                   </div>
                 </div>
@@ -104,7 +104,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
       </Card>
 
       {/* Results */}
-      <Card className={`bg-slate-900/30 border-slate-800 ${severity.bg}`}>
+      <Card className={`bg-card border-border ${severity.bg}`}>
         <CardHeader>
           <CardTitle className="text-lg text-white flex items-center gap-2">
             <span className={`w-3 h-3 rounded-full ${severity.color.replace('text', 'bg')}`} />
@@ -115,23 +115,23 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
               <div className="text-3xl font-bold text-cyan-400">{sideEffectsCount}</div>
-              <div className="text-sm text-gray-400 mt-1">Effects Reported</div>
+              <div className="text-sm text-muted-foreground mt-1">Effects Reported</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-cyan-400">{percentage}%</div>
-              <div className="text-sm text-gray-400 mt-1">Of Total Items</div>
+              <div className="text-sm text-muted-foreground mt-1">Of Total Items</div>
             </div>
             <div className="text-center">
               <div className={`text-2xl font-bold ${severity.color}`}>{severity.level}</div>
-              <div className="text-sm text-gray-400 mt-1">Severity Level</div>
+              <div className="text-sm text-muted-foreground mt-1">Severity Level</div>
             </div>
           </div>
 
-          <div className="border-t border-slate-700/50 pt-4">
-            <p className="text-sm text-gray-300">
+          <div className="border-t border-border pt-4">
+            <p className="text-sm text-foreground/90">
               <span className="font-semibold text-white">Clinical Interpretation:</span>
             </p>
-            <p className="text-sm text-gray-400 mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               {sideEffectsCount === 0 &&
                 'Patient reports no current adverse effects from antiseizure medication. Continue current regimen with monitoring.'}
               {sideEffectsCount > 0 && sideEffectsCount <= 2 &&
@@ -146,14 +146,14 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
       </Card>
 
       {/* Information Box */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-sm text-cyan-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Notes
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-400">
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
             <span className="font-semibold text-white">LAEP Purpose:</span> The Likelihood of Adverse Effects Profile (LAEP) is
             a self-report tool for systematically measuring and tracking side effects of antiseizure medications (ASMs).

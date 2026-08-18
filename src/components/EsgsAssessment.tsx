@@ -54,7 +54,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
             <TrendingUp className="w-6 h-6 text-fuchsia-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-white">Epilepsy Surgery Grading Scale</CardTitle>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Prediction of seizure-free outcome after resective surgery for drug-resistant focal epilepsy
               </p>
             </div>
@@ -63,7 +63,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
       </Card>
 
       <Tabs defaultValue="scoring" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-slate-900/50 border border-slate-800">
+        <TabsList className="grid w-full grid-cols-2 bg-muted border border-border">
           <TabsTrigger value="scoring">ESGS Scoring</TabsTrigger>
           <TabsTrigger value="components">Components</TabsTrigger>
         </TabsList>
@@ -72,7 +72,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
         <TabsContent value="scoring">
           <div className="space-y-4">
             {/* Score Inputs */}
-            <Card className="bg-slate-900/30 border-slate-800">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="text-lg text-cyan-400">Score Components</CardTitle>
               </CardHeader>
@@ -83,7 +83,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
                     <div key={key} className="space-y-3">
                       <div>
                         <label className="font-semibold text-white">{component.name}</label>
-                        <p className="text-sm text-gray-400 mt-1">{component.description}</p>
+                        <p className="text-sm text-muted-foreground mt-1">{component.description}</p>
                       </div>
                       <div className="flex items-center gap-4">
                         <input
@@ -102,7 +102,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
                         />
                         <div className="text-2xl font-bold text-cyan-400 w-12 text-right">{value}</div>
                       </div>
-                      <p className="text-xs text-gray-500">{component.scoring}</p>
+                      <p className="text-xs text-muted-foreground">{component.scoring}</p>
                     </div>
                   );
                 })}
@@ -110,34 +110,34 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
             </Card>
 
             {/* Total Score & Grade */}
-            <Card className={`bg-slate-900/30 border-slate-800 ${gradeColor.replace('text', 'border')}`}>
+            <Card className={`bg-card border-border ${gradeColor.replace('text', 'border')}`}>
               <CardHeader>
                 <CardTitle className="text-lg text-white">ESGS Result</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-lg bg-slate-800/50 border border-slate-700">
-                    <div className="text-sm text-gray-400 mb-1">Total ESGS Score</div>
+                  <div className="p-4 rounded-lg bg-muted/60 border border-border">
+                    <div className="text-sm text-muted-foreground mb-1">Total ESGS Score</div>
                     <div className={`text-4xl font-bold ${gradeColor}`}>{totalScore.toFixed(1)}</div>
                   </div>
-                  <div className="p-4 rounded-lg bg-slate-800/50 border border-slate-700">
-                    <div className="text-sm text-gray-400 mb-1">Grade Assignment</div>
+                  <div className="p-4 rounded-lg bg-muted/60 border border-border">
+                    <div className="text-sm text-muted-foreground mb-1">Grade Assignment</div>
                     <div className={`text-2xl font-bold ${gradeColor}`}>{grade.name}</div>
                   </div>
                 </div>
 
                 <div className={`p-4 rounded-lg ${gradeColor.replace('text', 'bg').replace('400', '500/10')} border ${gradeColor.replace('text', 'border')} ${gradeColor.replace('text', 'border')}/30`}>
                   <div className="font-semibold text-white mb-2">Predicted Outcome</div>
-                  <div className="text-sm text-gray-300 space-y-1">
+                  <div className="text-sm text-foreground/90 space-y-1">
                     <p><span className="font-semibold">Probability:</span> {grade.probability}</p>
                     <p><span className="font-semibold">Prognosis:</span> {grade.description}</p>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-700/50 pt-4">
-                  <div className="text-sm text-gray-300">
+                <div className="border-t border-border pt-4">
+                  <div className="text-sm text-foreground/90">
                     <span className="font-semibold">Clinical Interpretation:</span>
-                    <p className="mt-2 text-gray-400">
+                    <p className="mt-2 text-muted-foreground">
                       {totalScore >= 7.5 &&
                         'Grade 1 (Most Favorable): Patient has excellent potential for seizure-free outcome. Surgical evaluation and counseling recommended.'}
                       {totalScore > 4 && totalScore < 7.5 &&
@@ -154,20 +154,20 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
 
         {/* Components Tab */}
         <TabsContent value="components">
-          <Card className="bg-slate-900/30 border-slate-800">
+          <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="text-lg text-cyan-400">ESGS Components Overview</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {Object.entries(ESGS_COMPONENTS).map(([key, component]) => (
-                <div key={key} className="p-4 rounded-lg border border-slate-700/50 bg-slate-800/20">
+                <div key={key} className="p-4 rounded-lg border border-border bg-muted/40">
                   <div className="font-semibold text-white mb-2">{component.name}</div>
-                  <p className="text-sm text-gray-400 mb-2">{component.description}</p>
-                  <p className="text-xs text-gray-500 mb-2">
+                  <p className="text-sm text-muted-foreground mb-2">{component.description}</p>
+                  <p className="text-xs text-muted-foreground mb-2">
                     <span className="font-semibold">Scoring:</span> {component.scoring}
                   </p>
                   {component.example && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       <span className="font-semibold">Example:</span> {component.example}
                     </p>
                   )}
@@ -179,14 +179,14 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
       </Tabs>
 
       {/* Clinical Notes */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-sm text-cyan-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-400">
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
             <span className="font-semibold text-white">Purpose:</span> The Epilepsy Surgery Grading Scale (ESGS) is an empirically derived
             tool designed to predict likelihood of seizure freedom after resective surgery in drug-resistant focal epilepsy.
@@ -199,7 +199,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
             <span className="font-semibold text-white">Clinical Use:</span> Helps stratify patients and guide surgical counseling,
             particularly for patients with drug-resistant focal epilepsy considering resective surgery.
           </p>
-          <p className="italic text-gray-500">Source: National Institutes of Health (.gov)</p>
+          <p className="italic text-muted-foreground">Source: National Institutes of Health (.gov)</p>
         </CardContent>
       </Card>
     </div>

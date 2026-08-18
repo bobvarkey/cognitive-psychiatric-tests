@@ -53,7 +53,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
             <AlertCircle className="w-6 h-6 text-orange-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-white">SUDEP Safety Checklist</CardTitle>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Comprehensive Risk Reduction and Safety Measures for Epilepsy Patients
               </p>
             </div>
@@ -62,7 +62,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
       </Card>
 
       {/* Progress */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardContent className="pt-6">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -75,7 +75,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
                 style={{ width: `${completionPercentage}%` }}
               />
             </div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-muted-foreground">
               {checkedCount} of {totalItems} measures implemented
             </div>
           </div>
@@ -89,11 +89,11 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
           const categoryTotal = category.items.length;
 
           return (
-            <Card key={category.id} className="bg-slate-900/30 border-slate-800">
+            <Card key={category.id} className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="text-lg text-orange-400 flex items-center justify-between">
                   <span>{category.category}</span>
-                  <span className="text-sm text-gray-400 font-normal">
+                  <span className="text-sm text-muted-foreground font-normal">
                     {categoryChecked}/{categoryTotal}
                   </span>
                 </CardTitle>
@@ -110,7 +110,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
                       className={`w-full p-3 rounded-lg border text-left transition ${
                         isChecked
                           ? 'border-orange-500/50 bg-orange-500/10'
-                          : 'border-slate-700/50 bg-slate-800/20 hover:border-slate-600'
+                          : 'border-border bg-muted/40 hover:border-primary/60'
                       }`}
                     >
                       <div className="flex items-start gap-3">
@@ -118,14 +118,14 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
                           className={`w-5 h-5 rounded border-2 mt-0.5 flex items-center justify-center flex-shrink-0 transition ${
                             isChecked
                               ? 'bg-orange-500/30 border-orange-400'
-                              : 'border-slate-600'
+                              : 'border-input'
                           }`}
                         >
                           {isChecked && <CheckCircle2 className="w-4 h-4 text-orange-400" />}
                         </div>
                         <div className="flex-1">
                           <div className="font-semibold text-white text-sm">{item.name}</div>
-                          <p className="text-xs text-gray-400 mt-1">{item.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
                         </div>
                       </div>
                     </button>
@@ -138,7 +138,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
       </div>
 
       {/* Summary Card */}
-      <Card className={`bg-slate-900/30 border-slate-800 ${completionPercentage >= 80 ? 'border-green-500/30' : 'border-orange-500/30'}`}>
+      <Card className={`bg-card border-border ${completionPercentage >= 80 ? 'border-green-500/30' : 'border-orange-500/30'}`}>
         <CardHeader>
           <CardTitle className="text-lg text-white flex items-center gap-2">
             <span className={`w-3 h-3 rounded-full ${completionPercentage >= 80 ? 'bg-green-400' : 'bg-orange-400'}`} />
@@ -146,7 +146,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-300">
+          <p className="text-sm text-foreground/90">
             {completionPercentage >= 80
               ? '✓ Comprehensive SUDEP risk reduction measures are largely in place. Continue regular monitoring and adherence.'
               : completionPercentage >= 50
@@ -157,7 +157,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
       </Card>
 
       {/* Prevention Strategies */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-sm text-orange-400">Evidence-Based SUDEP Prevention</CardTitle>
         </CardHeader>
@@ -166,7 +166,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
             {SUDEP_PREVENTION_STRATEGIES.map((strategy, idx) => (
               <div key={idx} className="flex gap-3 text-sm">
                 <span className="text-orange-400 font-bold flex-shrink-0">•</span>
-                <span className="text-gray-300">{strategy}</span>
+                <span className="text-foreground/90">{strategy}</span>
               </div>
             ))}
           </div>
@@ -174,14 +174,14 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
       </Card>
 
       {/* Clinical Notes */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-sm text-orange-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-400">
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
             <span className="font-semibold text-white">SUDEP Overview:</span> Sudden Unexpected Death in Epilepsy (SUDEP) is a
             rare but serious complication affecting primarily young people with uncontrolled seizures. Annual SUDEP risk ranges from

@@ -47,7 +47,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
             <Lightbulb className="w-6 h-6 text-emerald-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-white">CASES Tool</CardTitle>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Clinical Appropriateness Scores for Epilepsy Surgery
               </p>
             </div>
@@ -56,19 +56,19 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
       </Card>
 
       {/* Screening Items */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-lg text-emerald-400">Surgical Evaluation Criteria</CardTitle>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             Assess patient appropriateness for specialized epilepsy surgical evaluation
           </p>
         </CardHeader>
         <CardContent className="space-y-3">
           {CASES_SCREENING_ITEMS.map(item => (
-            <div key={item.id} className="p-4 rounded-lg border border-slate-700/50 hover:border-emerald-500/30 transition bg-slate-800/20">
+            <div key={item.id} className="p-4 rounded-lg border border-border hover:border-emerald-500/30 transition bg-muted/40">
               <div className="mb-3">
                 <label className="font-semibold text-white text-sm">{item.name}</label>
-                <p className="text-xs text-gray-400 mt-1">{item.description}</p>
+                <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
               </div>
               <div className="flex gap-2">
                 <button
@@ -76,7 +76,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
                   className={`flex-1 px-3 py-2 rounded text-sm font-semibold transition ${
                     responses[item.id] === true
                       ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-500'
-                      : 'bg-slate-700/50 text-gray-300 border border-slate-600 hover:bg-slate-600/50'
+                      : 'bg-slate-700/50 text-foreground/90 border border-input hover:bg-slate-600/50'
                   }`}
                 >
                   Yes
@@ -86,7 +86,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
                   className={`flex-1 px-3 py-2 rounded text-sm font-semibold transition ${
                     responses[item.id] === false
                       ? 'bg-red-500/30 text-red-300 border border-red-500'
-                      : 'bg-slate-700/50 text-gray-300 border border-slate-600 hover:bg-slate-600/50'
+                      : 'bg-slate-700/50 text-foreground/90 border border-input hover:bg-slate-600/50'
                   }`}
                 >
                   No
@@ -99,7 +99,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
 
       {/* Results */}
       {totalAnswered > 0 && (
-        <Card className={`bg-slate-900/30 border-slate-800 ${isAppropriate ? 'border-emerald-500/30' : 'border-yellow-500/30'}`}>
+        <Card className={`bg-card border-border ${isAppropriate ? 'border-emerald-500/30' : 'border-yellow-500/30'}`}>
           <CardHeader>
             <CardTitle className="text-lg text-white flex items-center gap-2">
               <span className={`w-3 h-3 rounded-full ${isAppropriate ? 'bg-emerald-500' : 'bg-yellow-500'}`} />
@@ -108,19 +108,19 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-3 rounded-lg bg-slate-800/50 border border-slate-700">
+              <div className="text-center p-3 rounded-lg bg-muted/60 border border-border">
                 <div className="text-2xl font-bold text-emerald-400">{totalYes}</div>
-                <div className="text-xs text-gray-400 mt-1">Positive Items</div>
+                <div className="text-xs text-muted-foreground mt-1">Positive Items</div>
               </div>
-              <div className="text-center p-3 rounded-lg bg-slate-800/50 border border-slate-700">
+              <div className="text-center p-3 rounded-lg bg-muted/60 border border-border">
                 <div className="text-2xl font-bold text-cyan-400">{totalAnswered}</div>
-                <div className="text-xs text-gray-400 mt-1">Answered</div>
+                <div className="text-xs text-muted-foreground mt-1">Answered</div>
               </div>
-              <div className="text-center p-3 rounded-lg bg-slate-800/50 border border-slate-700">
+              <div className="text-center p-3 rounded-lg bg-muted/60 border border-border">
                 <div className={`text-2xl font-bold ${isAppropriate ? 'text-emerald-400' : 'text-yellow-400'}`}>
                   {Math.round((totalYes / totalItems) * 100)}%
                 </div>
-                <div className="text-xs text-gray-400 mt-1">Criteria Met</div>
+                <div className="text-xs text-muted-foreground mt-1">Criteria Met</div>
               </div>
             </div>
 
@@ -135,7 +135,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
                   <div className={`font-semibold ${isAppropriate ? 'text-emerald-300' : 'text-yellow-300'}`}>
                     {isAppropriate ? 'Appropriate for Surgical Referral' : 'Marginal or Not Appropriate'}
                   </div>
-                  <p className="text-sm text-gray-300 mt-2">
+                  <p className="text-sm text-foreground/90 mt-2">
                     {isAppropriate
                       ? `Patient meets criteria for referral to specialized epilepsy surgery center. ${totalYes} of 6 criteria satisfied.`
                       : `Patient does not clearly meet criteria for surgical evaluation. Only ${totalYes} of 6 criteria satisfied. Consider further optimization of medical management.`}
@@ -148,14 +148,14 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
       )}
 
       {/* Clinical Notes */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
           <CardTitle className="text-sm text-emerald-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-400">
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
             <span className="font-semibold text-white">Purpose:</span> The CASES tool is an online screening instrument designed
             to help neurologists identify patients who may be appropriate for specialized surgical evaluation.
@@ -167,7 +167,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
           <p>
             <span className="font-semibold text-white">Key Criteria:</span>
           </p>
-          <ul className="ml-4 space-y-1 text-gray-400">
+          <ul className="ml-4 space-y-1 text-muted-foreground">
             <li>• Drug-resistant epilepsy (failed ≥2 ASM trials)</li>
             <li>• Focal seizure onset on EEG/imaging</li>
             <li>• Localizable to specific brain lobe</li>
