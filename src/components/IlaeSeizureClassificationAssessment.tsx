@@ -51,7 +51,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
         >
           <div className="flex items-start gap-3">
             {isExpandable && (
-              <div className="mt-1 text-cyan-400">
+              <div className="mt-1 text-cyan-700 dark:text-cyan-400">
                 {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               </div>
             )}
@@ -111,7 +111,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
         <TabsContent value="classification">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-cyan-400">Seizure Type Hierarchy</CardTitle>
+              <CardTitle className="text-lg text-cyan-700 dark:text-cyan-400">Seizure Type Hierarchy</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Click on categories to expand and view subcategories
               </p>
@@ -132,7 +132,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
         <TabsContent value="descriptors">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-cyan-400">Seizure Descriptors</CardTitle>
+              <CardTitle className="text-lg text-cyan-700 dark:text-cyan-400">Seizure Descriptors</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -143,7 +143,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
                 <div className="space-y-2 ml-4">
                   {DESCRIPTORS.BASIC.items.map((item, i) => (
                     <div key={i} className="flex gap-3">
-                      <span className="text-cyan-400 mt-1">•</span>
+                      <span className="text-cyan-700 dark:text-cyan-400 mt-1">•</span>
                       <span className="text-foreground/90">{item}</span>
                     </div>
                   ))}
@@ -178,7 +178,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
         <TabsContent value="clinical">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-cyan-400">{CLINICAL_CONTEXT.title}</CardTitle>
+              <CardTitle className="text-lg text-cyan-700 dark:text-cyan-400">{CLINICAL_CONTEXT.title}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               {CLINICAL_CONTEXT.sections.map((section, idx) => (
@@ -190,7 +190,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
                   <ul className="space-y-2 ml-4">
                     {section.content.map((item, i) => (
                       <li key={i} className="flex gap-3">
-                        <span className="text-cyan-400 mt-1">→</span>
+                        <span className="text-cyan-700 dark:text-cyan-400 mt-1">→</span>
                         <span className="text-foreground/90">{item}</span>
                       </li>
                     ))}
@@ -205,7 +205,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
         <TabsContent value="notes">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-cyan-400">Important Notes</CardTitle>
+              <CardTitle className="text-lg text-cyan-700 dark:text-cyan-400">Important Notes</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -218,7 +218,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
 
                 <div className="mt-6 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
                   <p className="text-sm text-foreground/90">
-                    <span className="font-semibold text-cyan-400">Citation: </span>
+                    <span className="font-semibold text-cyan-700 dark:text-cyan-400">Citation: </span>
                     Beniczky S., Trinka E., Wirrell E., et al. Updated classification of epileptic seizures: A position
                     paper by the International League Against Epilepsy. <em>Epilepsia</em>. 2025; online ahead of print.
                   </p>

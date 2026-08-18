@@ -44,7 +44,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
       <Card className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border-emerald-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <Lightbulb className="w-6 h-6 text-emerald-400 mt-1" />
+            <Lightbulb className="w-6 h-6 text-emerald-700 dark:text-emerald-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-foreground">CASES Tool</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -58,7 +58,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
       {/* Screening Items */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-emerald-400">Surgical Evaluation Criteria</CardTitle>
+          <CardTitle className="text-lg text-emerald-700 dark:text-emerald-400">Surgical Evaluation Criteria</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">
             Assess patient appropriateness for specialized epilepsy surgical evaluation
           </p>
@@ -75,7 +75,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
                   onClick={() => handleResponse(item.id, true)}
                   className={`flex-1 px-3 py-2 rounded text-sm font-semibold transition ${
                     responses[item.id] === true
-                      ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-500'
+                      ? 'bg-emerald-500/30 text-emerald-700 dark:text-emerald-300 border border-emerald-500'
                       : 'bg-slate-700/50 text-foreground/90 border border-input hover:bg-slate-600/50'
                   }`}
                 >
@@ -85,7 +85,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
                   onClick={() => handleResponse(item.id, false)}
                   className={`flex-1 px-3 py-2 rounded text-sm font-semibold transition ${
                     responses[item.id] === false
-                      ? 'bg-red-500/30 text-red-300 border border-red-500'
+                      ? 'bg-red-500/30 text-red-700 dark:text-red-300 border border-red-500'
                       : 'bg-slate-700/50 text-foreground/90 border border-input hover:bg-slate-600/50'
                   }`}
                 >
@@ -109,15 +109,15 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center p-3 rounded-lg bg-muted/60 border border-border">
-                <div className="text-2xl font-bold text-emerald-400">{totalYes}</div>
+                <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{totalYes}</div>
                 <div className="text-xs text-muted-foreground mt-1">Positive Items</div>
               </div>
               <div className="text-center p-3 rounded-lg bg-muted/60 border border-border">
-                <div className="text-2xl font-bold text-cyan-400">{totalAnswered}</div>
+                <div className="text-2xl font-bold text-cyan-700 dark:text-cyan-400">{totalAnswered}</div>
                 <div className="text-xs text-muted-foreground mt-1">Answered</div>
               </div>
               <div className="text-center p-3 rounded-lg bg-muted/60 border border-border">
-                <div className={`text-2xl font-bold ${isAppropriate ? 'text-emerald-400' : 'text-yellow-400'}`}>
+                <div className={`text-2xl font-bold ${isAppropriate ? 'text-emerald-700 dark:text-emerald-400' : 'text-yellow-700 dark:text-yellow-400'}`}>
                   {Math.round((totalYes / totalItems) * 100)}%
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">Criteria Met</div>
@@ -127,12 +127,12 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
             <div className={`p-4 rounded-lg border ${isAppropriate ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-yellow-500/10 border-yellow-500/30'}`}>
               <div className="flex items-start gap-3">
                 {isAppropriate ? (
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-emerald-700 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                 ) : (
-                  <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                  <AlertTriangle className="w-5 h-5 text-yellow-700 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
                 )}
                 <div>
-                  <div className={`font-semibold ${isAppropriate ? 'text-emerald-300' : 'text-yellow-300'}`}>
+                  <div className={`font-semibold ${isAppropriate ? 'text-emerald-700 dark:text-emerald-300' : 'text-yellow-700 dark:text-yellow-300'}`}>
                     {isAppropriate ? 'Appropriate for Surgical Referral' : 'Marginal or Not Appropriate'}
                   </div>
                   <p className="text-sm text-foreground/90 mt-2">
@@ -150,7 +150,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
       {/* Clinical Notes */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-emerald-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>

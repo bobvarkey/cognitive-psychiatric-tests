@@ -69,7 +69,7 @@ export const Footer = ({ dark = false }: FooterProps) => {
             {/* Version & Status */}
             <div className={`text-right text-xs ${dark ? 'text-gray-600' : 'text-muted-foreground'}`}>
               <p>Version 2.0 - Production</p>
-              <p className="text-green-400 mt-1">✓ HIPAA Compliant</p>
+              <p className="text-green-700 dark:text-green-400 mt-1">✓ HIPAA Compliant</p>
             </div>
           </div>
         </div>

@@ -50,7 +50,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
       <Card className="bg-gradient-to-r from-orange-600/20 to-red-600/20 border-orange-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-6 h-6 text-orange-400 mt-1" />
+            <AlertCircle className="w-6 h-6 text-orange-700 dark:text-orange-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-foreground">SUDEP Safety Checklist</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -67,7 +67,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-foreground">Safety Implementation Progress</span>
-              <span className="text-sm font-bold text-orange-400">{completionPercentage}%</span>
+              <span className="text-sm font-bold text-orange-700 dark:text-orange-400">{completionPercentage}%</span>
             </div>
             <div className="w-full bg-slate-700 rounded-full h-3">
               <div
@@ -91,7 +91,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
           return (
             <Card key={category.id} className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-lg text-orange-400 flex items-center justify-between">
+                <CardTitle className="text-lg text-orange-700 dark:text-orange-400 flex items-center justify-between">
                   <span>{category.category}</span>
                   <span className="text-sm text-muted-foreground font-normal">
                     {categoryChecked}/{categoryTotal}
@@ -121,7 +121,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
                               : 'border-input'
                           }`}
                         >
-                          {isChecked && <CheckCircle2 className="w-4 h-4 text-orange-400" />}
+                          {isChecked && <CheckCircle2 className="w-4 h-4 text-orange-700 dark:text-orange-400" />}
                         </div>
                         <div className="flex-1">
                           <div className="font-semibold text-foreground text-sm">{item.name}</div>
@@ -159,13 +159,13 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
       {/* Prevention Strategies */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-orange-400">Evidence-Based SUDEP Prevention</CardTitle>
+          <CardTitle className="text-sm text-orange-700 dark:text-orange-400">Evidence-Based SUDEP Prevention</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {SUDEP_PREVENTION_STRATEGIES.map((strategy, idx) => (
               <div key={idx} className="flex gap-3 text-sm">
-                <span className="text-orange-400 font-bold flex-shrink-0">•</span>
+                <span className="text-orange-700 dark:text-orange-400 font-bold flex-shrink-0">•</span>
                 <span className="text-foreground/90">{strategy}</span>
               </div>
             ))}
@@ -176,7 +176,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
       {/* Clinical Notes */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-orange-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-orange-700 dark:text-orange-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>

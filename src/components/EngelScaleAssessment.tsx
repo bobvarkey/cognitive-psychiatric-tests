@@ -25,10 +25,10 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
   const getOutcomeColor = (classId: string) => {
     const outcome = getOutcomeCategory(classId);
     if (!outcome) return 'text-muted-foreground';
-    if (outcome.category === 'excellent') return 'text-green-400';
-    if (outcome.category === 'good') return 'text-cyan-400';
-    if (outcome.category === 'moderate') return 'text-yellow-400';
-    return 'text-red-400';
+    if (outcome.category === 'excellent') return 'text-green-700 dark:text-green-400';
+    if (outcome.category === 'good') return 'text-cyan-700 dark:text-cyan-400';
+    if (outcome.category === 'moderate') return 'text-yellow-700 dark:text-yellow-400';
+    return 'text-red-700 dark:text-red-400';
   };
 
   return (
@@ -51,7 +51,7 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
       <Card className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border-green-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <TrendingUp className="w-6 h-6 text-green-400 mt-1" />
+            <TrendingUp className="w-6 h-6 text-green-700 dark:text-green-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-foreground">Engel Scale</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -65,7 +65,7 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
       {/* Scale Selection */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-green-400">Seizure Freedom Outcome</CardTitle>
+          <CardTitle className="text-lg text-green-700 dark:text-green-400">Seizure Freedom Outcome</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">Select the patient's post-surgical seizure status</p>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -184,13 +184,13 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
       {/* Scale Overview */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-green-400">Engel Scale Summary</CardTitle>
+          <CardTitle className="text-lg text-green-700 dark:text-green-400">Engel Scale Summary</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Favorable Outcomes */}
             <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/20">
-              <div className="font-semibold text-green-400 text-sm mb-2">Favorable Outcomes (Class I-II)</div>
+              <div className="font-semibold text-green-700 dark:text-green-400 text-sm mb-2">Favorable Outcomes (Class I-II)</div>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>• Ia: Completely seizure-free</li>
                 <li>• Ib: Only auras</li>
@@ -202,7 +202,7 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
 
             {/* Unfavorable Outcomes */}
             <div className="p-3 rounded-lg bg-red-500/5 border border-red-500/20">
-              <div className="font-semibold text-red-400 text-sm mb-2">Unfavorable Outcomes (Class III-IV)</div>
+              <div className="font-semibold text-red-700 dark:text-red-400 text-sm mb-2">Unfavorable Outcomes (Class III-IV)</div>
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>{`• III: >90% reduction but not free`}</li>
                 <li>• IV: No improvement or worse</li>
@@ -217,7 +217,7 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
       {/* Clinical Notes */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-green-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>

@@ -44,7 +44,7 @@ export const FiveTwoOneCriteriaAssessment = ({ onBack }: FiveTwoOneCriteriaAsses
       <Card className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 border-purple-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-6 h-6 text-purple-400 mt-1" />
+            <AlertCircle className="w-6 h-6 text-purple-700 dark:text-purple-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-foreground">5-2-1 Criteria</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -58,7 +58,7 @@ export const FiveTwoOneCriteriaAssessment = ({ onBack }: FiveTwoOneCriteriaAsses
       {/* Criteria Checklist */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-purple-400">Advanced PD Indicators</CardTitle>
+          <CardTitle className="text-lg text-purple-700 dark:text-purple-400">Advanced PD Indicators</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">Select criteria that apply to the patient</p>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -96,7 +96,7 @@ export const FiveTwoOneCriteriaAssessment = ({ onBack }: FiveTwoOneCriteriaAsses
                       : 'border-input'
                   }`}
                 >
-                  {criteria[item.id] && <CheckCircle2 className="w-5 h-5 text-purple-400" />}
+                  {criteria[item.id] && <CheckCircle2 className="w-5 h-5 text-purple-700 dark:text-purple-400" />}
                 </div>
                 <div className="flex-1">
                   <div className="font-semibold text-foreground">{item.title}</div>
@@ -117,13 +117,13 @@ export const FiveTwoOneCriteriaAssessment = ({ onBack }: FiveTwoOneCriteriaAsses
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 rounded-lg bg-muted/60 border border-border">
               <div className="text-sm text-muted-foreground mb-1">Criteria Met</div>
-              <div className={`text-3xl font-bold ${isAdvanced ? 'text-purple-400' : 'text-blue-400'}`}>
+              <div className={`text-3xl font-bold ${isAdvanced ? 'text-purple-700 dark:text-purple-400' : 'text-blue-700 dark:text-blue-400'}`}>
                 {metCriteria}/3
               </div>
             </div>
             <div className="p-4 rounded-lg bg-muted/60 border border-border">
               <div className="text-sm text-muted-foreground mb-1">Classification</div>
-              <div className={`text-xl font-bold ${isAdvanced ? 'text-purple-400' : 'text-blue-400'}`}>
+              <div className={`text-xl font-bold ${isAdvanced ? 'text-purple-700 dark:text-purple-400' : 'text-blue-700 dark:text-blue-400'}`}>
                 {isAdvanced ? 'Advanced PD' : 'Early-Mid PD'}
               </div>
             </div>
@@ -143,7 +143,7 @@ export const FiveTwoOneCriteriaAssessment = ({ onBack }: FiveTwoOneCriteriaAsses
       {/* Clinical Notes */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-purple-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-purple-700 dark:text-purple-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
@@ -170,7 +170,7 @@ export const FiveTwoOneCriteriaAssessment = ({ onBack }: FiveTwoOneCriteriaAsses
       {/* Quick Reference */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-purple-400">Quick Reference</CardTitle>
+          <CardTitle className="text-sm text-purple-700 dark:text-purple-400">Quick Reference</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 text-sm text-muted-foreground">

@@ -233,10 +233,10 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
           </CardHeader>
           <CardContent>
             <Alert className="bg-slate-800 border-input text-white">
-              <Info className="h-4 w-4 text-rose-300" />
+              <Info className="h-4 w-4 text-rose-700 dark:text-rose-300" />
               <AlertDescription className="text-sm text-foreground">
-                Diagnosis requires <strong className="text-rose-300">recent serotonergic exposure</strong> PLUS{' '}
-                <strong className="text-rose-300">at least one</strong> of the five clinical findings below.
+                Diagnosis requires <strong className="text-rose-700 dark:text-rose-300">recent serotonergic exposure</strong> PLUS{' '}
+                <strong className="text-rose-700 dark:text-rose-300">at least one</strong> of the five clinical findings below.
               </AlertDescription>
             </Alert>
           </CardContent>
@@ -246,7 +246,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-              <Pill className="h-5 w-5 text-rose-400" />
+              <Pill className="h-5 w-5 text-rose-700 dark:text-rose-400" />
               Step 1 — Recent serotonergic exposure?
             </CardTitle>
             <CardDescription className="text-slate-300 text-base">
@@ -291,7 +291,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-              <AlertTriangle className="h-5 w-5 text-amber-400" />
+              <AlertTriangle className="h-5 w-5 text-amber-700 dark:text-amber-400" />
               Step 2 — Clinical criteria (≥ 1 required)
             </CardTitle>
           </CardHeader>
@@ -321,7 +321,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-              <Pill className="h-5 w-5 text-indigo-400" />
+              <Pill className="h-5 w-5 text-indigo-700 dark:text-indigo-400" />
               Implicated serotonergic agent(s) — tick all that apply
             </CardTitle>
             <CardDescription className="text-slate-300 text-base">
@@ -406,7 +406,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
             <CardTitle className="text-xl flex items-center gap-2 text-foreground">
               {meetsHunter ? (
                 <>
-                  <AlertTriangle className="h-5 w-5 text-rose-300" />
+                  <AlertTriangle className="h-5 w-5 text-rose-700 dark:text-rose-300" />
                   Hunter Criteria MET — Serotonin Syndrome likely
                 </>
               ) : exposure === null ? (
@@ -416,7 +416,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-300" />
+                  <CheckCircle2 className="h-5 w-5 text-emerald-700 dark:text-emerald-300" />
                   Hunter Criteria NOT met
                 </>
               )}
@@ -446,7 +446,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-              <Stethoscope className="h-5 w-5 text-emerald-400" />
+              <Stethoscope className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
               Treatment options by severity
             </CardTitle>
             <CardDescription className="text-slate-300 text-base">

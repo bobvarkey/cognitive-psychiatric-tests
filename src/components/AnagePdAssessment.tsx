@@ -41,7 +41,7 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
       <Card className="bg-gradient-to-r from-cyan-600/20 to-teal-600/20 border-cyan-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <CheckCircle className="w-6 h-6 text-cyan-400 mt-1" />
+            <CheckCircle className="w-6 h-6 text-cyan-700 dark:text-cyan-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-foreground">ANAGE-PD</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -57,7 +57,7 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
         {ANAGE_PD_DOMAINS.map(domain => (
           <Card key={domain.id} className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-cyan-400">{domain.name}</CardTitle>
+              <CardTitle className="text-lg text-cyan-700 dark:text-cyan-400">{domain.name}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {domain.items.map((item, idx) => {
@@ -102,11 +102,11 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 rounded-lg bg-muted/60 border border-border">
               <div className="text-sm text-muted-foreground mb-1">Concerns Identified</div>
-              <div className="text-3xl font-bold text-cyan-400">{totalConcerns}</div>
+              <div className="text-3xl font-bold text-cyan-700 dark:text-cyan-400">{totalConcerns}</div>
             </div>
             <div className="p-4 rounded-lg bg-muted/60 border border-border">
               <div className="text-sm text-muted-foreground mb-1">Management Status</div>
-              <div className={`text-lg font-bold ${requiresIntervention ? 'text-amber-400' : 'text-green-400'}`}>
+              <div className={`text-lg font-bold ${requiresIntervention ? 'text-amber-700 dark:text-amber-400' : 'text-green-700 dark:text-green-400'}`}>
                 {requiresIntervention ? 'Needs Review' : 'Optimized'}
               </div>
             </div>
@@ -126,7 +126,7 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
       {/* Clinical Information */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-cyan-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-cyan-700 dark:text-cyan-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>

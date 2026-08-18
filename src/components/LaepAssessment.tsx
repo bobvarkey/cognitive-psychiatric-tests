@@ -25,10 +25,10 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
   const percentage = totalItems > 0 ? Math.round((sideEffectsCount / totalItems) * 100) : 0;
 
   const getSeverityLevel = () => {
-    if (sideEffectsCount === 0) return { level: 'None', color: 'text-green-400', bg: 'bg-green-500/10' };
-    if (sideEffectsCount <= 2) return { level: 'Mild', color: 'text-blue-400', bg: 'bg-blue-500/10' };
-    if (sideEffectsCount <= 4) return { level: 'Moderate', color: 'text-yellow-400', bg: 'bg-yellow-500/10' };
-    return { level: 'Severe', color: 'text-red-400', bg: 'bg-red-500/10' };
+    if (sideEffectsCount === 0) return { level: 'None', color: 'text-green-700 dark:text-green-400', bg: 'bg-green-500/10' };
+    if (sideEffectsCount <= 2) return { level: 'Mild', color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-500/10' };
+    if (sideEffectsCount <= 4) return { level: 'Moderate', color: 'text-yellow-700 dark:text-yellow-400', bg: 'bg-yellow-500/10' };
+    return { level: 'Severe', color: 'text-red-700 dark:text-red-400', bg: 'bg-red-500/10' };
   };
 
   const severity = getSeverityLevel();
@@ -53,7 +53,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
       <Card className="bg-gradient-to-r from-cyan-600/20 to-blue-600/20 border-cyan-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-6 h-6 text-cyan-400 mt-1" />
+            <AlertCircle className="w-6 h-6 text-cyan-700 dark:text-cyan-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-foreground">LAEP Assessment</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -67,7 +67,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
       {/* Assessment Items */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-cyan-400">Reported Side Effects</CardTitle>
+          <CardTitle className="text-lg text-cyan-700 dark:text-cyan-400">Reported Side Effects</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">Select all side effects currently experienced</p>
         </CardHeader>
         <CardContent>
@@ -88,7 +88,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
                       }`}
                     >
                       {responses[item.id] && (
-                        <CheckCircle className="w-5 h-5 text-cyan-400" />
+                        <CheckCircle className="w-5 h-5 text-cyan-700 dark:text-cyan-400" />
                       )}
                     </div>
                     <div className="flex-1">
@@ -114,11 +114,11 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
-              <div className="text-3xl font-bold text-cyan-400">{sideEffectsCount}</div>
+              <div className="text-3xl font-bold text-cyan-700 dark:text-cyan-400">{sideEffectsCount}</div>
               <div className="text-sm text-muted-foreground mt-1">Effects Reported</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-cyan-400">{percentage}%</div>
+              <div className="text-3xl font-bold text-cyan-700 dark:text-cyan-400">{percentage}%</div>
               <div className="text-sm text-muted-foreground mt-1">Of Total Items</div>
             </div>
             <div className="text-center">
@@ -148,7 +148,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
       {/* Information Box */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-cyan-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-cyan-700 dark:text-cyan-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Notes
           </CardTitle>

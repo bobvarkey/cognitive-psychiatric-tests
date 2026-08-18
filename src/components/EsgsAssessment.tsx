@@ -27,9 +27,9 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
 
   const grade = getGrade();
   const gradeColor =
-    totalScore >= 7.5 ? 'text-green-400' :
-    totalScore > 4 ? 'text-yellow-400' :
-    'text-red-400';
+    totalScore >= 7.5 ? 'text-green-700 dark:text-green-400' :
+    totalScore > 4 ? 'text-yellow-700 dark:text-yellow-400' :
+    'text-red-700 dark:text-red-400';
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-4">
@@ -74,7 +74,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
             {/* Score Inputs */}
             <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-lg text-cyan-400">Score Components</CardTitle>
+                <CardTitle className="text-lg text-cyan-700 dark:text-cyan-400">Score Components</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {Object.entries(scores).map(([key, value]) => {
@@ -100,7 +100,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
                           }
                           className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
                         />
-                        <div className="text-2xl font-bold text-cyan-400 w-12 text-right">{value}</div>
+                        <div className="text-2xl font-bold text-cyan-700 dark:text-cyan-400 w-12 text-right">{value}</div>
                       </div>
                       <p className="text-xs text-muted-foreground">{component.scoring}</p>
                     </div>
@@ -156,7 +156,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
         <TabsContent value="components">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-cyan-400">ESGS Components Overview</CardTitle>
+              <CardTitle className="text-lg text-cyan-700 dark:text-cyan-400">ESGS Components Overview</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {Object.entries(ESGS_COMPONENTS).map(([key, component]) => (
@@ -181,7 +181,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
       {/* Clinical Notes */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-cyan-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-cyan-700 dark:text-cyan-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>

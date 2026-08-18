@@ -76,7 +76,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           <div className="relative mb-4">
             <div className="flex justify-center gap-1 mb-2">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 star-pulse fill-yellow-400 text-yellow-400" />
+                <Star key={i} className="w-5 h-5 star-pulse fill-yellow-400 text-yellow-700 dark:text-yellow-400" />
               ))}
             </div>
             <p className="text-sm text-foreground/90">49 stars • 1,000+ reviews</p>
@@ -143,7 +143,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             ].map(([feature, lite, pro]) => (
               <div key={feature} className="grid grid-cols-3 gap-2 text-center py-1 border-t border-white/5">
                 <span className="text-left text-muted-foreground">{feature}</span>
-                <span className={lite === '—' ? 'text-gray-600' : 'text-cyan-400'}>{lite}</span>
+                <span className={lite === '—' ? 'text-gray-600' : 'text-cyan-700 dark:text-cyan-400'}>{lite}</span>
                 <span className={pro === '—' ? 'text-gray-600' : 'text-fuchsia-400'}>{pro}</span>
               </div>
             ))}
@@ -155,7 +155,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               <span key={i} className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full text-foreground border ${
                 selectedTier === 'pro' ? 'bg-fuchsia-600/20 border-fuchsia-500/30' : 'bg-cyan-600/20 border-cyan-500/30'
               }`}>
-                <Check className={`w-3 h-3 ${selectedTier === 'pro' ? 'text-fuchsia-400' : 'text-cyan-400'}`} />
+                <Check className={`w-3 h-3 ${selectedTier === 'pro' ? 'text-fuchsia-400' : 'text-cyan-700 dark:text-cyan-400'}`} />
                 {f}
               </span>
             ))}

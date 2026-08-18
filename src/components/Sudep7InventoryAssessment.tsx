@@ -23,10 +23,10 @@ export const Sudep7InventoryAssessment = ({ onBack }: Sudep7InventoryAssessmentP
   const allAnswered = answeredItems === SUDEP_7_ITEMS.length;
 
   const getRiskLevel = () => {
-    if (totalScore <= 3) return { level: 'low', ...SUDEP_7_RISK_LEVELS.low, color: 'text-green-400' };
-    if (totalScore <= 7) return { level: 'moderate', ...SUDEP_7_RISK_LEVELS.moderate, color: 'text-yellow-400' };
-    if (totalScore <= 13) return { level: 'high', ...SUDEP_7_RISK_LEVELS.high, color: 'text-orange-400' };
-    return { level: 'veryhigh', ...SUDEP_7_RISK_LEVELS.veryhigh, color: 'text-red-400' };
+    if (totalScore <= 3) return { level: 'low', ...SUDEP_7_RISK_LEVELS.low, color: 'text-green-700 dark:text-green-400' };
+    if (totalScore <= 7) return { level: 'moderate', ...SUDEP_7_RISK_LEVELS.moderate, color: 'text-yellow-700 dark:text-yellow-400' };
+    if (totalScore <= 13) return { level: 'high', ...SUDEP_7_RISK_LEVELS.high, color: 'text-orange-700 dark:text-orange-400' };
+    return { level: 'veryhigh', ...SUDEP_7_RISK_LEVELS.veryhigh, color: 'text-red-700 dark:text-red-400' };
   };
 
   const riskLevel = allAnswered ? getRiskLevel() : null;
@@ -51,7 +51,7 @@ export const Sudep7InventoryAssessment = ({ onBack }: Sudep7InventoryAssessmentP
       <Card className="bg-gradient-to-r from-red-600/20 to-orange-600/20 border-red-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-6 h-6 text-red-400 mt-1" />
+            <AlertTriangle className="w-6 h-6 text-red-700 dark:text-red-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-foreground">SUDEP-7 Inventory</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -65,7 +65,7 @@ export const Sudep7InventoryAssessment = ({ onBack }: Sudep7InventoryAssessmentP
       {/* Assessment Items */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-red-400">Risk Factor Assessment</CardTitle>
+          <CardTitle className="text-lg text-red-700 dark:text-red-400">Risk Factor Assessment</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">
             Score each item (0-3 scale)
           </p>
@@ -85,7 +85,7 @@ export const Sudep7InventoryAssessment = ({ onBack }: Sudep7InventoryAssessmentP
                     onClick={() => handleScoreChange(item.id, option.value)}
                     className={`px-3 py-2 rounded text-sm font-semibold transition ${
                       scores[item.id] === option.value
-                        ? 'bg-red-500/30 text-red-300 border border-red-500'
+                        ? 'bg-red-500/30 text-red-700 dark:text-red-300 border border-red-500'
                         : 'bg-slate-700/50 text-foreground/90 border border-input hover:bg-slate-600/50'
                     }`}
                   >
@@ -156,7 +156,7 @@ export const Sudep7InventoryAssessment = ({ onBack }: Sudep7InventoryAssessmentP
       {/* Clinical Notes */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-red-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-red-700 dark:text-red-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
@@ -184,28 +184,28 @@ export const Sudep7InventoryAssessment = ({ onBack }: Sudep7InventoryAssessmentP
       {/* Risk Reduction */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-red-400">Key Prevention Strategies</CardTitle>
+          <CardTitle className="text-sm text-red-700 dark:text-red-400">Key Prevention Strategies</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li className="flex gap-2">
-              <span className="text-red-400 font-bold">•</span>
+              <span className="text-red-700 dark:text-red-400 font-bold">•</span>
               <span>Optimize antiepileptic drug therapy and ensure medication adherence</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-red-400 font-bold">•</span>
+              <span className="text-red-700 dark:text-red-400 font-bold">•</span>
               <span>Evaluate for epilepsy surgery or neuromodulation in drug-resistant cases</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-red-400 font-bold">•</span>
+              <span className="text-red-700 dark:text-red-400 font-bold">•</span>
               <span>Position sleeping patient on side and monitor during sleep</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-red-400 font-bold">•</span>
+              <span className="text-red-700 dark:text-red-400 font-bold">•</span>
               <span>Have rescue medications available and educate caregivers on CPR</span>
             </li>
             <li className="flex gap-2">
-              <span className="text-red-400 font-bold">•</span>
+              <span className="text-red-700 dark:text-red-400 font-bold">•</span>
               <span>Promote seizure avoidance through lifestyle modifications</span>
             </li>
           </ul>

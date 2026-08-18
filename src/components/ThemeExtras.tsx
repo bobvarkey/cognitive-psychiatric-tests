@@ -49,7 +49,7 @@ export const ModeToggle = () => {
       {mode === 'light' ? (
         <Moon className="h-5 w-5 text-slate-700" />
       ) : (
-        <Sun className="h-5 w-5 text-amber-400" />
+        <Sun className="h-5 w-5 text-amber-700 dark:text-amber-400" />
       )}
     </Button>
   );

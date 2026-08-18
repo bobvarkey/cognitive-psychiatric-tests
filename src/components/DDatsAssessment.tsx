@@ -54,7 +54,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
       <Card className="bg-gradient-to-r from-emerald-600/20 to-green-600/20 border-emerald-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <CheckCircle2 className="w-6 h-6 text-emerald-400 mt-1" />
+            <CheckCircle2 className="w-6 h-6 text-emerald-700 dark:text-emerald-400 mt-1" />
             <div>
               <CardTitle className="text-2xl text-foreground">D-DATS</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
@@ -77,7 +77,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
             {/* Criteria */}
             <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="text-lg text-emerald-400">Eligibility Criteria</CardTitle>
+                <CardTitle className="text-lg text-emerald-700 dark:text-emerald-400">Eligibility Criteria</CardTitle>
                 <p className="text-sm text-muted-foreground mt-2">
                   All REQUIRED criteria must be met. Optional criteria enhance candidacy.
                 </p>
@@ -98,13 +98,13 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                               : 'border-input hover:border-primary/60'
                           }`}
                         >
-                          {isMet && <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
+                          {isMet && <CheckCircle2 className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />}
                         </button>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <div className="font-semibold text-foreground">{criterion.name}</div>
                             {isRequired && (
-                              <span className="text-xs font-bold text-red-400 bg-red-500/20 px-2 py-0.5 rounded">
+                              <span className="text-xs font-bold text-red-700 dark:text-red-400 bg-red-500/20 px-2 py-0.5 rounded">
                                 REQUIRED
                               </span>
                             )}
@@ -131,17 +131,17 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                   <div className="grid grid-cols-3 gap-4">
                     <div className="p-3 rounded-lg bg-muted/60 border border-border">
                       <div className="text-sm text-muted-foreground mb-1">Total Met</div>
-                      <div className="text-2xl font-bold text-emerald-400">{totalMet}/6</div>
+                      <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{totalMet}/6</div>
                     </div>
                     <div className="p-3 rounded-lg bg-muted/60 border border-border">
                       <div className="text-sm text-muted-foreground mb-1">Required Met</div>
-                      <div className={`text-2xl font-bold ${requiredMet ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <div className={`text-2xl font-bold ${requiredMet ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}`}>
                         {D_DATS_CRITERIA.filter(c => c.required && responses[c.id] === true).length}/4
                       </div>
                     </div>
                     <div className="p-3 rounded-lg bg-muted/60 border border-border">
                       <div className="text-sm text-muted-foreground mb-1">Eligible</div>
-                      <div className={`text-xl font-bold ${eligibleForDat ? 'text-emerald-400' : 'text-muted-foreground'}`}>
+                      <div className={`text-xl font-bold ${eligibleForDat ? 'text-emerald-700 dark:text-emerald-400' : 'text-muted-foreground'}`}>
                         {eligibleForDat ? 'YES' : 'NO'}
                       </div>
                     </div>
@@ -150,12 +150,12 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                   <div className={`p-4 rounded-lg border ${eligibleForDat ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-yellow-500/10 border-yellow-500/30'}`}>
                     <div className="flex items-start gap-3">
                       {eligibleForDat ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                        <CheckCircle2 className="w-5 h-5 text-emerald-700 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
                       ) : (
-                        <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                        <AlertTriangle className="w-5 h-5 text-yellow-700 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
                       )}
                       <div>
-                        <div className={`font-semibold ${eligibleForDat ? 'text-emerald-300' : 'text-yellow-300'}`}>
+                        <div className={`font-semibold ${eligibleForDat ? 'text-emerald-700 dark:text-emerald-300' : 'text-yellow-700 dark:text-yellow-300'}`}>
                           {eligibleForDat ? 'Eligible for DAT Referral' : 'Not Yet Eligible'}
                         </div>
                         <p className="text-sm text-foreground/90 mt-2">
@@ -176,7 +176,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
         <TabsContent value="dats">
           <Card className="bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-lg text-emerald-400">Available Device-Aided Therapies</CardTitle>
+              <CardTitle className="text-lg text-emerald-700 dark:text-emerald-400">Available Device-Aided Therapies</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {DAT_TYPES.map(dat => (
@@ -211,7 +211,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
       {/* Clinical Information */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-emerald-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
