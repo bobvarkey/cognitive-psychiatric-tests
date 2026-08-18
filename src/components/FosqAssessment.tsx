@@ -182,7 +182,7 @@ export const FosqAssessment = ({ onBack }: FosqAssessmentProps) => {
           <h1 className="text-3xl font-bold">Functional Outcomes of Sleep Questionnaire</h1>
           <p className="text-gray-600 text-sm mt-1">FOSQ — Assess impact of sleepiness on daily functioning</p>
           {(patientInfo.name || patientInfo.mrNumber) && (
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {[patientInfo.name, patientInfo.age ? `Age: ${patientInfo.age}` : '', patientInfo.mrNumber ? `MR: ${patientInfo.mrNumber}` : ''].filter(Boolean).join(' | ')}
             </p>
           )}

@@ -164,7 +164,7 @@ export const IsiAssessment = ({ onBack }: IsiAssessmentProps) => {
           <h1 className="text-3xl font-bold">Insomnia Severity Index</h1>
           <p className="text-gray-600 text-sm mt-1">ISI — Assess insomnia severity</p>
           {(patientInfo.name || patientInfo.mrNumber) && (
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {[patientInfo.name, patientInfo.age ? `Age: ${patientInfo.age}` : '', patientInfo.mrNumber ? `MR: ${patientInfo.mrNumber}` : ''].filter(Boolean).join(' | ')}
             </p>
           )}

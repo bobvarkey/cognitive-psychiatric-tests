@@ -28,7 +28,7 @@ export const ResultsView = ({ onOpenAssessment }: ResultsViewProps) => {
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
-              <FileBarChart className="h-5 w-5 text-white" />
+              <FileBarChart className="h-5 w-5 text-foreground" />
             </div>
             <div>
               <CardTitle className="text-lg">

@@ -238,7 +238,7 @@ export const SubstanceAssessment = ({ onBack, initialTab = 'ciwa' }: SubstanceAs
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-md">
-                <FlaskConical className="h-6 w-6 text-white" />
+                <FlaskConical className="h-6 w-6 text-foreground" />
               </div>
               <div>
                 <CardTitle className="text-xl">

@@ -77,7 +77,7 @@ export const CallosalAssessment = ({ onBack }: CallosalAssessmentProps) => {
 
         <div className="flex items-center gap-3 mb-4">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-            <Brain className="h-6 w-6 text-white" />
+            <Brain className="h-6 w-6 text-foreground" />
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground">

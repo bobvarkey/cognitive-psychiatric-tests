@@ -683,7 +683,7 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
           <CardHeader className="bg-gradient-to-r from-blue-700 to-indigo-800 text-white p-8">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-3 bg-white/20 rounded-xl">
-                <Brain className="h-8 w-8 text-white" />
+                <Brain className="h-8 w-8 text-foreground" />
               </div>
               <div>
                 <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight">ADHD Outpatient Flow</CardTitle>

@@ -25,11 +25,11 @@ export const Header = ({ onMenuToggle, showSearch = true, onSearch, dark = false
         {/* Logo & Branding */}
         <Link to="/" className="flex items-center gap-3 font-bold text-lg">
           <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${dark ? 'from-fuchsia-600 to-cyan-500' : 'from-blue-500 to-blue-600'}`}>
-            <span className="text-white text-lg">🧠</span>
+            <span className="text-foreground text-lg">🧠</span>
           </div>
           <div>
-            <div className={`text-sm font-bold ${dark ? 'text-white' : 'text-gray-900'}`}>Cognito</div>
-            <div className={`text-xs ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Clinical Assessments</div>
+            <div className={`text-sm font-bold ${dark ? 'text-foreground' : 'text-gray-900'}`}>Cognito</div>
+            <div className={`text-xs ${dark ? 'text-muted-foreground' : 'text-muted-foreground'}`}>Clinical Assessments</div>
           </div>
         </Link>
 
@@ -37,10 +37,10 @@ export const Header = ({ onMenuToggle, showSearch = true, onSearch, dark = false
         {showSearch && (
           <div className="hidden md:flex flex-1 mx-8">
             <div className="relative w-full max-w-md">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search assessments..."
-                className={`pl-10 rounded-full ${dark ? 'border-white/10 bg-white/5 text-white placeholder:text-gray-500' : 'border-gray-300 bg-gray-50'}`}
+                className={`pl-10 rounded-full ${dark ? 'border-white/10 bg-white/5 text-foreground placeholder:text-muted-foreground' : 'border-gray-300 bg-gray-50'}`}
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
               />
@@ -53,7 +53,7 @@ export const Header = ({ onMenuToggle, showSearch = true, onSearch, dark = false
           {/* Mobile Search Button */}
           {showSearch && (
             <button
-              className={`md:hidden p-2 rounded-lg ${dark ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-900'}`}
+              className={`md:hidden p-2 rounded-lg ${dark ? 'hover:bg-white/10 text-foreground' : 'hover:bg-gray-100 text-gray-900'}`}
               onClick={() => setSearchOpen(!searchOpen)}
             >
               {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
@@ -62,7 +62,7 @@ export const Header = ({ onMenuToggle, showSearch = true, onSearch, dark = false
 
           {/* Menu Button */}
           <button
-            className={`md:hidden p-2 rounded-lg ${dark ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-900'}`}
+            className={`md:hidden p-2 rounded-lg ${dark ? 'hover:bg-white/10 text-foreground' : 'hover:bg-gray-100 text-gray-900'}`}
             onClick={onMenuToggle}
           >
             <Menu className="h-5 w-5" />
@@ -74,10 +74,10 @@ export const Header = ({ onMenuToggle, showSearch = true, onSearch, dark = false
       {showSearch && searchOpen && (
         <div className={`border-t px-4 py-3 md:hidden ${dark ? 'bg-black/80 border-white/10' : 'bg-gray-50'}`}>
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search assessments..."
-              className={`pl-10 rounded-full ${dark ? 'border-white/10 bg-white/5 text-white placeholder:text-gray-500' : 'border-gray-300'}`}
+              className={`pl-10 rounded-full ${dark ? 'border-white/10 bg-white/5 text-foreground placeholder:text-muted-foreground' : 'border-gray-300'}`}
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               autoFocus

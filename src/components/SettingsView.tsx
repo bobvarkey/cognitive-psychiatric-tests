@@ -48,7 +48,7 @@ export const SettingsView = () => {
         <CardHeader>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-500 to-zinc-600 flex items-center justify-center shadow-md">
-              <SettingsIcon className="h-5 w-5 text-white" />
+              <SettingsIcon className="h-5 w-5 text-foreground" />
             </div>
             <div>
               <CardTitle className="text-lg">

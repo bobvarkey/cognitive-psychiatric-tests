@@ -138,7 +138,7 @@ export const MiniCogItemCard = ({ item, currentScore, onScoreChange }: MiniCogIt
         <CardTitle className="text-2xl">
           {item.title}
         </CardTitle>
-        <p className="text-white/90 text-sm mt-2">{item.description}</p>
+        <p className="text-foreground/90 text-sm mt-2">{item.description}</p>
       </CardHeader>
       <CardContent className="p-6 space-y-4">
         <div className="bg-slate-50 p-4 rounded-lg">

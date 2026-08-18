@@ -96,7 +96,7 @@ export function FallRiskResults({ result }: FallRiskResultsProps) {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
-            <Badge className={`${getOverallRiskColor()} text-white text-lg px-4 py-2`}>
+            <Badge className={`${getOverallRiskColor()} text-foreground text-lg px-4 py-2`}>
               {getOverallRiskLabel()}
             </Badge>
           </div>

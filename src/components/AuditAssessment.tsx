@@ -229,19 +229,19 @@ export const AuditAssessment = ({ onBack }: AuditAssessmentProps) => {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div className="bg-white border rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500 uppercase mb-1">Consumption</div>
+                      <div className="text-xs text-muted-foreground uppercase mb-1">Consumption</div>
                       <div className="text-2xl font-bold text-blue-600">
                         {AUDIT_ITEMS.slice(0, 3).reduce((s, item) => s + (responses[item.id] ?? 0), 0)}/12
                       </div>
                     </div>
                     <div className="bg-white border rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500 uppercase mb-1">Dependence</div>
+                      <div className="text-xs text-muted-foreground uppercase mb-1">Dependence</div>
                       <div className={`text-2xl font-bold ${depScore >= 4 ? 'text-red-600' : 'text-green-600'}`}>
                         {depScore}/12
                       </div>
                     </div>
                     <div className="bg-white border rounded-lg p-3 text-center">
-                      <div className="text-xs text-gray-500 uppercase mb-1">Problems</div>
+                      <div className="text-xs text-muted-foreground uppercase mb-1">Problems</div>
                       <div className={`text-2xl font-bold ${probScore >= 4 ? 'text-red-600' : 'text-green-600'}`}>
                         {probScore}/16
                       </div>

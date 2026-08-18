@@ -223,7 +223,7 @@ export const CataplexyAssessment = ({ onBack }: CataplexyAssessmentProps) => {
           <div className="space-y-4">
             <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">
               Part 1: Emotional Trigger Screening
-              <span className="text-sm font-normal text-gray-500 ml-2">(Scoring: 0=No, 1=Unsure, 2=Yes)</span>
+              <span className="text-sm font-normal text-muted-foreground ml-2">(Scoring: 0=No, 1=Unsure, 2=Yes)</span>
             </h2>
             {triggerItems.map((item) => (
               <Card key={item.id}>
@@ -482,7 +482,7 @@ export const CataplexyAssessment = ({ onBack }: CataplexyAssessmentProps) => {
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-700">Duration</span>
-                          <span className={`text-sm font-semibold ${durationBrief ? 'text-green-600' : durationValue !== undefined ? 'text-orange-600' : 'text-gray-400'}`}>
+                          <span className={`text-sm font-semibold ${durationBrief ? 'text-green-600' : durationValue !== undefined ? 'text-orange-600' : 'text-muted-foreground'}`}>
                             {CATAPLEXY_DURATION_OPTIONS[durationValue] || 'N/A'}
                             {durationBrief && ' (consistent with cataplexy)'}
                           </span>

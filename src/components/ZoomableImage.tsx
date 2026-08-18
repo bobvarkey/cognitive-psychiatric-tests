@@ -21,7 +21,7 @@ export const ZoomableImage = ({ src, alt, className }: ZoomableImageProps) => {
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-            <Maximize2 className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
+            <Maximize2 className="h-8 w-8 text-foreground opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-lg" />
           </div>
         </div>
       </DialogTrigger>

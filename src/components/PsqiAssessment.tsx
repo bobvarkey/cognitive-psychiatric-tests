@@ -291,7 +291,7 @@ export const PsqiAssessment = ({ onBack }: PsqiAssessmentProps) => {
           <h1 className="text-3xl font-bold">Pittsburgh Sleep Quality Index</h1>
           <p className="text-gray-600 text-sm mt-1">PSQI — Comprehensive sleep quality assessment</p>
           {(patientInfo.name || patientInfo.mrNumber) && (
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {[patientInfo.name, patientInfo.age ? `Age: ${patientInfo.age}` : '', patientInfo.mrNumber ? `MR: ${patientInfo.mrNumber}` : ''].filter(Boolean).join(' | ')}
             </p>
           )}
@@ -326,7 +326,7 @@ export const PsqiAssessment = ({ onBack }: PsqiAssessmentProps) => {
                     <h3 className="font-semibold text-gray-800">
                       {idx + 1}. {item.question}
                     </h3>
-                    <p className="text-xs text-gray-400 mt-0.5">Component {item.component}: {COMPONENT_NAMES[item.component]}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Component {item.component}: {COMPONENT_NAMES[item.component]}</p>
                   </div>
                   <Input
                     type={item.type === 'time' ? 'time' : 'text'}
@@ -348,7 +348,7 @@ export const PsqiAssessment = ({ onBack }: PsqiAssessmentProps) => {
                     <h3 className="font-semibold text-gray-800">
                       {getInputItems().length + idx + 1}. {item.question}
                     </h3>
-                    <p className="text-xs text-gray-400 mt-0.5">Component {item.component}: {COMPONENT_NAMES[item.component]}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Component {item.component}: {COMPONENT_NAMES[item.component]}</p>
                   </div>
                   <RadioGroup
                     value={responses[item.id]?.toString() || ''}

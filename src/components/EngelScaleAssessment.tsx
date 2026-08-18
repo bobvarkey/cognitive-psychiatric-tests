@@ -24,11 +24,11 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
 
   const getOutcomeColor = (classId: string) => {
     const outcome = getOutcomeCategory(classId);
-    if (!outcome) return 'text-gray-400';
-    if (outcome.category === 'excellent') return 'text-green-400';
-    if (outcome.category === 'good') return 'text-cyan-400';
-    if (outcome.category === 'moderate') return 'text-yellow-400';
-    return 'text-red-400';
+    if (!outcome) return 'text-muted-foreground';
+    if (outcome.category === 'excellent') return 'text-green-700 dark:text-green-400';
+    if (outcome.category === 'good') return 'text-cyan-700 dark:text-cyan-400';
+    if (outcome.category === 'moderate') return 'text-yellow-700 dark:text-yellow-400';
+    return 'text-red-700 dark:text-red-400';
   };
 
   return (
@@ -51,10 +51,10 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
       <Card className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border-green-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
-            <TrendingUp className="w-6 h-6 text-green-400 mt-1" />
+            <TrendingUp className="w-6 h-6 text-green-700 dark:text-green-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">Engel Scale</CardTitle>
-              <p className="text-sm text-gray-400 mt-2">
+              <CardTitle className="text-2xl text-foreground">Engel Scale</CardTitle>
+              <p className="text-sm text-muted-foreground mt-2">
                 Post-Surgical Outcome Assessment in Epilepsy
               </p>
             </div>
@@ -63,10 +63,10 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
       </Card>
 
       {/* Scale Selection */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-green-400">Seizure Freedom Outcome</CardTitle>
-          <p className="text-sm text-gray-400 mt-2">Select the patient's post-surgical seizure status</p>
+          <CardTitle className="text-lg text-green-700 dark:text-green-400">Seizure Freedom Outcome</CardTitle>
+          <p className="text-sm text-muted-foreground mt-2">Select the patient's post-surgical seizure status</p>
         </CardHeader>
         <CardContent className="space-y-3">
           {ENGEL_SCALE.map(item => (
@@ -76,7 +76,7 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
               className={`w-full p-4 rounded-lg border-2 text-left transition ${
                 selectedClass === item.id
                   ? `border-green-500 bg-green-500/10`
-                  : `border-slate-700 bg-slate-800/20 hover:border-slate-600`
+                  : `border-border bg-muted/40 hover:border-primary/60`
               }`}
             >
               <div className="flex items-start gap-3">
@@ -84,12 +84,12 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
                   className={`w-5 h-5 rounded-full border-2 mt-0.5 flex-shrink-0 ${
                     selectedClass === item.id
                       ? 'bg-green-500 border-green-500'
-                      : 'border-slate-600'
+                      : 'border-input'
                   }`}
                 />
                 <div className="flex-1">
                   <div className={`font-semibold ${getOutcomeColor(item.id)}`}>{item.name}</div>
-                  <p className="text-sm text-gray-400 mt-1">{item.description}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
                 </div>
               </div>
             </button>
@@ -99,37 +99,37 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
 
       {/* Results */}
       {selectedClass && selectedOutcome && (
-        <Card className={`bg-slate-900/30 border-slate-800`}>
+        <Card className={`bg-card border-border`}>
           <CardHeader>
-            <CardTitle className="text-lg text-white flex items-center gap-2">
+            <CardTitle className="text-lg text-foreground flex items-center gap-2">
               <span className={`w-3 h-3 rounded-full ${getOutcomeColor(selectedClass).replace('text', 'bg')}`} />
               Post-Surgical Outcome
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Outcome Category */}
-            <div className="p-4 rounded-lg bg-slate-800/50 border border-slate-700">
-              <div className="text-sm text-gray-400 mb-2">Outcome Category</div>
+            <div className="p-4 rounded-lg bg-muted/60 border border-border">
+              <div className="text-sm text-muted-foreground mb-2">Outcome Category</div>
               <div className={`text-2xl font-bold ${getOutcomeColor(selectedClass)}`}>
                 {selectedOutcome.category.charAt(0).toUpperCase() + selectedOutcome.category.slice(1)}
               </div>
-              <p className="text-sm text-gray-400 mt-2">{selectedOutcome.description}</p>
+              <p className="text-sm text-muted-foreground mt-2">{selectedOutcome.description}</p>
             </div>
 
             {/* Detailed Interpretation */}
-            <div className="border-t border-slate-700/50 pt-4">
+            <div className="border-t border-border pt-4">
               <div className="space-y-3">
                 {selectedClass === 'ia' && (
                   <>
                     <div>
-                      <span className="font-semibold text-white">Best Outcome:</span>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <span className="font-semibold text-foreground">Best Outcome:</span>
+                      <p className="text-sm text-muted-foreground mt-1">
                         Patient is completely seizure-free since surgery. This is the ideal surgical outcome.
                       </p>
                     </div>
                     <div>
-                      <span className="font-semibold text-white">Management:</span>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <span className="font-semibold text-foreground">Management:</span>
+                      <p className="text-sm text-muted-foreground mt-1">
                         Continue current AED regimen. Some patients may eventually taper or discontinue medications under supervision.
                       </p>
                     </div>
@@ -138,8 +138,8 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
                 {selectedClass === 'ib' && (
                   <>
                     <div>
-                      <span className="font-semibold text-white">Excellent Outcome:</span>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <span className="font-semibold text-foreground">Excellent Outcome:</span>
+                      <p className="text-sm text-muted-foreground mt-1">
                         Only auras without motor or observable seizures. Functionally equivalent to seizure-free.
                       </p>
                     </div>
@@ -148,8 +148,8 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
                 {selectedClass === 'ii' && (
                   <>
                     <div>
-                      <span className="font-semibold text-white">Good Outcome:</span>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <span className="font-semibold text-foreground">Good Outcome:</span>
+                      <p className="text-sm text-muted-foreground mt-1">
                         Patient experiencing rare seizures (≤3 per month). Significant improvement from pre-surgical baseline.
                       </p>
                     </div>
@@ -158,8 +158,8 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
                 {selectedClass === 'iii' && (
                   <>
                     <div>
-                      <span className="font-semibold text-white">Moderate Outcome:</span>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <span className="font-semibold text-foreground">Moderate Outcome:</span>
+                      <p className="text-sm text-muted-foreground mt-1">
                         Greater than 90% reduction in seizures but not seizure-free. Still constitutes worthwhile improvement.
                       </p>
                     </div>
@@ -168,8 +168,8 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
                 {selectedClass === 'iv' && (
                   <>
                     <div>
-                      <span className="font-semibold text-white">Poor Outcome:</span>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <span className="font-semibold text-foreground">Poor Outcome:</span>
+                      <p className="text-sm text-muted-foreground mt-1">
                         No worthwhile improvement or worsening of seizure control. May require reassessment of surgical indication.
                       </p>
                     </div>
@@ -182,16 +182,16 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
       )}
 
       {/* Scale Overview */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg text-green-400">Engel Scale Summary</CardTitle>
+          <CardTitle className="text-lg text-green-700 dark:text-green-400">Engel Scale Summary</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Favorable Outcomes */}
             <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/20">
-              <div className="font-semibold text-green-400 text-sm mb-2">Favorable Outcomes (Class I-II)</div>
-              <ul className="text-xs text-gray-400 space-y-1">
+              <div className="font-semibold text-green-700 dark:text-green-400 text-sm mb-2">Favorable Outcomes (Class I-II)</div>
+              <ul className="text-xs text-muted-foreground space-y-1">
                 <li>• Ia: Completely seizure-free</li>
                 <li>• Ib: Only auras</li>
                 <li>• Ic: Seizures only in sleep</li>
@@ -202,8 +202,8 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
 
             {/* Unfavorable Outcomes */}
             <div className="p-3 rounded-lg bg-red-500/5 border border-red-500/20">
-              <div className="font-semibold text-red-400 text-sm mb-2">Unfavorable Outcomes (Class III-IV)</div>
-              <ul className="text-xs text-gray-400 space-y-1">
+              <div className="font-semibold text-red-700 dark:text-red-400 text-sm mb-2">Unfavorable Outcomes (Class III-IV)</div>
+              <ul className="text-xs text-muted-foreground space-y-1">
                 <li>{`• III: >90% reduction but not free`}</li>
                 <li>• IV: No improvement or worse</li>
                 <li>• Success rate varies by pathology</li>
@@ -215,24 +215,24 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
       </Card>
 
       {/* Clinical Notes */}
-      <Card className="bg-slate-900/30 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-sm text-green-400 flex items-center gap-2">
+          <CardTitle className="text-sm text-green-700 dark:text-green-400 flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
             Clinical Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-400">
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            <span className="font-semibold text-white">Purpose:</span> The Engel Scale is the standard classification system for
+            <span className="font-semibold text-foreground">Purpose:</span> The Engel Scale is the standard classification system for
             assessing seizure outcomes after epilepsy surgery. Allows comparison of surgical success rates across different centers.
           </p>
           <p>
-            <span className="font-semibold text-white">Follow-up Assessment:</span> Typically assessed at 1 year post-surgery,
+            <span className="font-semibold text-foreground">Follow-up Assessment:</span> Typically assessed at 1 year post-surgery,
             though assessment can be done at any time point post-operatively.
           </p>
           <p>
-            <span className="font-semibold text-white">Prognostic Factors:</span> Success depends on etiology, seizure type,
+            <span className="font-semibold text-foreground">Prognostic Factors:</span> Success depends on etiology, seizure type,
             presurgical evaluation accuracy, and surgical technique.
           </p>
         </CardContent>

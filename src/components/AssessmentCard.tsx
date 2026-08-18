@@ -22,7 +22,7 @@ export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => 
             <h3 className="font-semibold text-foreground text-sm leading-tight">
               {assessment.name}
             </h3>
-            <p className="text-xs text-gray-500 mt-1">{assessment.abbreviation}</p>
+            <p className="text-xs text-muted-foreground mt-1">{assessment.abbreviation}</p>
           </div>
         </div>
       </div>
@@ -33,7 +33,7 @@ export const AssessmentCard = ({ assessment, onClick }: AssessmentCardProps) => 
       </p>
 
       {/* Metadata */}
-      <div className="flex items-center gap-4 mb-4 text-xs text-gray-500">
+      <div className="flex items-center gap-4 mb-4 text-xs text-muted-foreground">
         <div className="flex items-center gap-1">
           <Clock className="h-3 w-3" />
           <span>{assessment.duration}</span>

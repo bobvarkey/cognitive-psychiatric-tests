@@ -79,7 +79,7 @@ export const Sidebar = ({ isOpen = true, onClose, activeCategory }: SidebarProps
 
           {/* Quick Links */}
           <div className="space-y-2">
-            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase">
+            <h3 className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase">
               Quick Actions
             </h3>
             <a

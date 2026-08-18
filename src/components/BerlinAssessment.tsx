@@ -171,7 +171,7 @@ export const BerlinAssessment = ({ onBack }: BerlinAssessmentProps) => {
           <h1 className="text-3xl font-bold">Berlin Questionnaire</h1>
           <p className="text-gray-600 text-sm mt-1">OSA Risk Screening Tool</p>
           {(patientInfo.name || patientInfo.mrNumber) && (
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {[patientInfo.name, patientInfo.age ? `Age: ${patientInfo.age}` : '', patientInfo.mrNumber ? `MR: ${patientInfo.mrNumber}` : ''].filter(Boolean).join(' | ')}
             </p>
           )}
@@ -190,7 +190,7 @@ export const BerlinAssessment = ({ onBack }: BerlinAssessmentProps) => {
               <div key={catId} className="bg-white p-2 rounded border border-blue-200">
                 <div className="font-semibold text-center text-blue-800">Category {catId}</div>
                 <div className="text-center text-gray-600">{def.name}</div>
-                <div className="text-center text-gray-500 mt-1">Threshold: &ge; {def.positiveThreshold}</div>
+                <div className="text-center text-muted-foreground mt-1">Threshold: &ge; {def.positiveThreshold}</div>
               </div>
             ))}
           </div>
@@ -300,7 +300,7 @@ export const BerlinAssessment = ({ onBack }: BerlinAssessmentProps) => {
                               <span className="text-sm font-semibold text-gray-700">Category {catId}: {def.name}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="text-xs text-gray-500">Score: {score}/{def.items.length * 2}</span>
+                              <span className="text-xs text-muted-foreground">Score: {score}/{def.items.length * 2}</span>
                               <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${positive ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
                                 {positive ? 'POSITIVE' : 'NEGATIVE'}
                               </span>

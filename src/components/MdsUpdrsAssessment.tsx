@@ -204,7 +204,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                   <Brain className="w-4 h-4" />
                   I: Non-Motor
                 </span>
-                <span className={`text-[10px] font-medium transition-colors ${part1Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part1Progress.complete ? 'text-green-500' : 'text-muted-foreground'}`}>
                   {part1Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
@@ -220,7 +220,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                   <Activity className="w-4 h-4" />
                   II: Daily
                 </span>
-                <span className={`text-[10px] font-medium transition-colors ${part2Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part2Progress.complete ? 'text-green-500' : 'text-muted-foreground'}`}>
                   {part2Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
@@ -236,7 +236,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                   <Stethoscope className="w-4 h-4" />
                   III: Exam
                 </span>
-                <span className={`text-[10px] font-medium transition-colors ${part3Progress.complete ? 'text-green-500' : 'text-gray-400'}`}>
+                <span className={`text-[10px] font-medium transition-colors ${part3Progress.complete ? 'text-green-500' : 'text-muted-foreground'}`}>
                   {part3Progress.complete ? (
                     <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" />Complete</span>
                   ) : (
@@ -505,7 +505,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                             <div key={item.id} className="flex justify-between items-center text-sm py-1 border-b border-gray-100 last:border-0">
                               <span className="text-gray-700 font-medium">{item.number}. {item.question}</span>
                               <div className="flex items-center gap-3">
-                                <span className="text-xs text-gray-500 italic">{item.scoring[score]}</span>
+                                <span className="text-xs text-muted-foreground italic">{item.scoring[score]}</span>
                                 <span className="font-bold text-orange-600">+{score}</span>
                               </div>
                             </div>
@@ -546,7 +546,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                                 if (score === undefined) return null;
                                 return (
                                   <div key={sub.id} className="flex flex-col bg-gray-50 p-2 rounded border border-gray-100">
-                                    <span className="text-[10px] text-gray-500 uppercase font-bold">{sub.label}</span>
+                                    <span className="text-[10px] text-muted-foreground uppercase font-bold">{sub.label}</span>
                                     <div className="flex justify-between items-center">
                                       <span className="text-[10px] text-gray-600 truncate mr-1" title={item.scoring[score]}>{item.scoring[score]}</span>
                                       <span className="font-bold text-orange-600">+{score}</span>
@@ -574,7 +574,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                           <div key={item.id} className="flex justify-between items-center text-sm py-1 border-b border-gray-100 last:border-0">
                             <span className="text-gray-700 font-medium">{item.number}. {item.domain}</span>
                             <div className="flex items-center gap-3">
-                              <span className="text-xs text-gray-500 italic">{item.scoring[score]}</span>
+                              <span className="text-xs text-muted-foreground italic">{item.scoring[score]}</span>
                               <span className="font-bold text-blue-600">+{score}</span>
                             </div>
                           </div>
@@ -597,7 +597,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                             <div key={item.id} className="flex justify-between items-center text-sm py-1 border-b border-gray-100 last:border-0">
                               <span className="text-gray-700 font-medium">{item.number}. {item.question}</span>
                               <div className="flex items-center gap-3">
-                                <span className="text-xs text-gray-500 italic">{item.scoring[score]}</span>
+                                <span className="text-xs text-muted-foreground italic">{item.scoring[score]}</span>
                                 <span className="font-bold text-purple-600">+{score}</span>
                               </div>
                             </div>
@@ -619,7 +619,7 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
                                 if (score === undefined) return null;
                                 return (
                                   <div key={sub.id} className="flex flex-col bg-gray-50 p-2 rounded border border-gray-100">
-                                    <span className="text-[10px] text-gray-500 uppercase font-bold">{sub.label}</span>
+                                    <span className="text-[10px] text-muted-foreground uppercase font-bold">{sub.label}</span>
                                     <div className="flex justify-between items-center">
                                       <span className="text-[10px] text-gray-600 truncate mr-1" title={item.scoring[score]}>{item.scoring[score]}</span>
                                       <span className="font-bold text-purple-600">+{score}</span>
