@@ -19,14 +19,14 @@ All colors MUST be HSL.
     --popover-foreground: 30 8% 22%;
 
     /* Terracotta accent */
-    --primary: 18 52% 54%;
+    --primary: 18 52% 38%;
     --primary-foreground: 40 50% 98%;
 
     --secondary: 40 30% 92%;
     --secondary-foreground: 30 8% 22%;
 
     --muted: 40 30% 92%;
-    --muted-foreground: 30 6% 45%;
+    --muted-foreground: 30 6% 35%;
 
     /* Sage accent */
     --accent: 90 15% 88%;
