@@ -16,8 +16,8 @@ import { useThemeStore } from "@/hooks/useThemeStore";
 const queryClient = new QueryClient();
 
 const ThemeInitializer = () => {
-  const { mode, theme } = useThemeStore();
-
+  const { mode, theme, fontSize } = useThemeStore();
+  
   useEffect(() => {
     const root = window.document.documentElement;
     const body = window.document.body;
@@ -27,7 +27,11 @@ const ThemeInitializer = () => {
 
     body.classList.remove("theme-sunset", "theme-midnight", "theme-forest");
     body.classList.add(`theme-${theme}`);
-  }, [mode, theme]);
+    
+    // Apply font size class to root
+    root.classList.remove("font-size-small", "font-size-medium", "font-size-large", "font-size-xlarge");
+    root.classList.add(`font-size-${fontSize}`);
+  }, [mode, theme, fontSize]);
 
   return null;
 };
