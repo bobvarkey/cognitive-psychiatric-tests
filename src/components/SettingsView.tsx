@@ -12,12 +12,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert, Palette, Moon, Sun } from 'lucide-react';
+import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert, Palette, Moon, Sun, Type } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
-import { useThemeStore, AppTheme } from '@/hooks/useThemeStore';
+import { useThemeStore, AppTheme, FontSize } from '@/hooks/useThemeStore';
 
 
 export const SettingsView = () => {
@@ -26,12 +26,19 @@ export const SettingsView = () => {
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
   const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
-  const { mode, toggleMode, theme, setTheme } = useThemeStore();
+  const { mode, toggleMode, theme, setTheme, fontSize, setFontSize } = useThemeStore();
 
   const themes: { id: AppTheme; label: string; colors: string[] }[] = [
     { id: 'sunset', label: 'Sunset Blaze', colors: ['bg-[#ff4500]', 'bg-[#ff00ff]'] },
     { id: 'midnight', label: 'Midnight', colors: ['bg-[#007acc]', 'bg-[#00ffff]'] },
     { id: 'forest', label: 'Forest', colors: ['bg-[#22c55e]', 'bg-[#10b981]'] },
+  ];
+
+  const fontSizes: { id: FontSize; label: string; malayalam: string }[] = [
+    { id: 'small', label: 'Small', malayalam: 'ചെറുത്' },
+    { id: 'medium', label: 'Medium', malayalam: 'സാധാരണം' },
+    { id: 'large', label: 'Large', malayalam: 'വലുത്' },
+    { id: 'xlarge', label: 'X-Large', malayalam: 'ഏറ്റവും വലുത്' },
   ];
 
 
@@ -127,6 +134,35 @@ export const SettingsView = () => {
                     </div>
                   </button>
                 ))}
+              </div>
+              <div className="pt-4 border-t border-border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Type className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-semibold">{isMl ? 'ഫോണ്ട് സൈസ്' : 'Font Size'}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {fontSizes.map((f) => (
+                    <button
+                      key={f.id}
+                      onClick={() => setFontSize(f.id)}
+                      className={`flex items-center justify-between rounded-xl border px-3 py-2 text-left transition-all ${
+                        fontSize === f.id
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border bg-card hover:border-primary/40'
+                      }`}
+                    >
+                      <span className={`font-medium ${
+                        f.id === 'small' ? 'text-xs' : 
+                        f.id === 'medium' ? 'text-sm' : 
+                        f.id === 'large' ? 'text-base' : 
+                        'text-lg'
+                      }`}>
+                        {isMl ? f.malayalam : f.label}
+                      </span>
+                      {fontSize === f.id && <Check className="h-4 w-4 text-primary" />}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
