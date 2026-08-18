@@ -25,16 +25,16 @@ export const AdBanner = () => {
           aria-label="Upgrade to Cognito Pro"
         >
           <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-[0_0_15px_rgba(255,0,255,0.5)]">
-            <Zap className="w-5 h-5 text-white drop-shadow-[0_0_4px_rgba(255,0,255,0.8)]" />
+            <Zap className="w-5 h-5 text-foreground drop-shadow-[0_0_4px_rgba(255,0,255,0.8)]" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-black text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.6)' }}>Upgrade to Cognito Pro</p>
-            <p className="text-xs font-bold text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.6)' }}>Unlock double the features, get priority support</p>
+            <p className="text-sm font-black text-foreground" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.6)' }}>Upgrade to Cognito Pro</p>
+            <p className="text-xs font-bold text-foreground" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.6)' }}>Unlock double the features, get priority support</p>
           </div>
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); setIsDismissed(true); }}
-          className="flex-shrink-0 text-white hover:bg-white/20 p-2 rounded-lg transition backdrop-blur-sm"
+          className="flex-shrink-0 text-foreground hover:bg-white/20 p-2 rounded-lg transition backdrop-blur-sm"
         >
           <X className="w-4 h-4" />
         </button>

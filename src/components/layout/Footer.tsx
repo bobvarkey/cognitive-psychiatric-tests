@@ -14,7 +14,7 @@ export const Footer = ({ dark = false }: FooterProps) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* About */}
           <div>
-            <h3 className={`text-sm font-semibold mb-3 ${dark ? 'text-white' : 'text-gray-900'}`}>About</h3>
+            <h3 className={`text-sm font-semibold mb-3 ${dark ? 'text-foreground' : 'text-gray-900'}`}>About</h3>
             <p className={`text-sm ${dark ? 'text-muted-foreground' : 'text-gray-600'}`}>
               Cognito is a comprehensive clinical assessment tool designed for mental health professionals.
             </p>
@@ -22,7 +22,7 @@ export const Footer = ({ dark = false }: FooterProps) => {
 
           {/* Quick Links */}
           <div>
-            <h3 className={`text-sm font-semibold mb-3 ${dark ? 'text-white' : 'text-gray-900'}`}>Resources</h3>
+            <h3 className={`text-sm font-semibold mb-3 ${dark ? 'text-foreground' : 'text-gray-900'}`}>Resources</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="#help" className={`flex items-center gap-2 ${dark ? 'text-muted-foreground hover:text-fuchsia-400' : 'text-gray-600 hover:text-blue-600'}`}>
@@ -47,7 +47,7 @@ export const Footer = ({ dark = false }: FooterProps) => {
 
           {/* Contact */}
           <div>
-            <h3 className={`text-sm font-semibold mb-3 ${dark ? 'text-white' : 'text-gray-900'}`}>Contact</h3>
+            <h3 className={`text-sm font-semibold mb-3 ${dark ? 'text-foreground' : 'text-gray-900'}`}>Contact</h3>
             <ul className={`space-y-2 text-sm ${dark ? 'text-muted-foreground' : 'text-gray-600'}`}>
               <li>support@psycognito.com</li>
               <li>Clinical Advisory: clinical@psycognito.com</li>

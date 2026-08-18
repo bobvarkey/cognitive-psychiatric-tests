@@ -47,7 +47,7 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
       <>
         {parts.map((part, i) =>
           part.toLowerCase() === highlight.toLowerCase() ? (
-            <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-black dark:text-white rounded-sm px-0.5">
+            <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 text-black dark:text-foreground rounded-sm px-0.5">
               {part}
             </mark>
           ) : (

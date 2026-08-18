@@ -46,7 +46,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
           <div className="flex items-start gap-3">
             <Lightbulb className="w-6 h-6 text-emerald-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">CASES Tool</CardTitle>
+              <CardTitle className="text-2xl text-foreground">CASES Tool</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Clinical Appropriateness Scores for Epilepsy Surgery
               </p>
@@ -67,7 +67,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
           {CASES_SCREENING_ITEMS.map(item => (
             <div key={item.id} className="p-4 rounded-lg border border-border hover:border-emerald-500/30 transition bg-muted/40">
               <div className="mb-3">
-                <label className="font-semibold text-white text-sm">{item.name}</label>
+                <label className="font-semibold text-foreground text-sm">{item.name}</label>
                 <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
               </div>
               <div className="flex gap-2">
@@ -101,7 +101,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
       {totalAnswered > 0 && (
         <Card className={`bg-card border-border ${isAppropriate ? 'border-emerald-500/30' : 'border-yellow-500/30'}`}>
           <CardHeader>
-            <CardTitle className="text-lg text-white flex items-center gap-2">
+            <CardTitle className="text-lg text-foreground flex items-center gap-2">
               <span className={`w-3 h-3 rounded-full ${isAppropriate ? 'bg-emerald-500' : 'bg-yellow-500'}`} />
               Surgical Appropriateness
             </CardTitle>
@@ -157,15 +157,15 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            <span className="font-semibold text-white">Purpose:</span> The CASES tool is an online screening instrument designed
+            <span className="font-semibold text-foreground">Purpose:</span> The CASES tool is an online screening instrument designed
             to help neurologists identify patients who may be appropriate for specialized surgical evaluation.
           </p>
           <p>
-            <span className="font-semibold text-white">Typical Thresholds:</span> Patients meeting ≥4 of 6 criteria are generally
+            <span className="font-semibold text-foreground">Typical Thresholds:</span> Patients meeting ≥4 of 6 criteria are generally
             considered appropriate candidates for referral to an epilepsy surgery center.
           </p>
           <p>
-            <span className="font-semibold text-white">Key Criteria:</span>
+            <span className="font-semibold text-foreground">Key Criteria:</span>
           </p>
           <ul className="ml-4 space-y-1 text-muted-foreground">
             <li>• Drug-resistant epilepsy (failed ≥2 ASM trials)</li>

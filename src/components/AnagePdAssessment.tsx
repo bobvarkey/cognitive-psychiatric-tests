@@ -43,7 +43,7 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
           <div className="flex items-start gap-3">
             <CheckCircle className="w-6 h-6 text-cyan-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">ANAGE-PD</CardTitle>
+              <CardTitle className="text-2xl text-foreground">ANAGE-PD</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Making Informed Decisions to Aid Timely Management of Advanced PD
               </p>
@@ -93,7 +93,7 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
       {/* Results */}
       <Card className={`bg-card border-border ${requiresIntervention ? 'border-cyan-500/30' : 'border-border'}`}>
         <CardHeader>
-          <CardTitle className="text-lg text-white flex items-center gap-2">
+          <CardTitle className="text-lg text-foreground flex items-center gap-2">
             <span className={`w-3 h-3 rounded-full ${requiresIntervention ? 'bg-cyan-400' : 'bg-gray-500'}`} />
             Clinical Assessment
           </CardTitle>
@@ -113,7 +113,7 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
           </div>
 
           <div className={`p-4 rounded-lg border ${requiresIntervention ? 'bg-amber-500/10 border-amber-500/30' : 'bg-green-500/10 border-green-500/30'}`}>
-            <div className="font-semibold text-white mb-2">Recommendation</div>
+            <div className="font-semibold text-foreground mb-2">Recommendation</div>
             <p className="text-sm text-foreground/90">
               {requiresIntervention
                 ? 'Multiple concerns identified. Patient warrants evaluation for advanced therapeutics or treatment optimization. Consider consultation at specialized movement disorders center.'
@@ -133,15 +133,15 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            <span className="font-semibold text-white">Purpose:</span> ANAGE-PD is a clinician-based decision support tool
+            <span className="font-semibold text-foreground">Purpose:</span> ANAGE-PD is a clinician-based decision support tool
             designed to facilitate timely identification and treatment of advanced PD patients with suboptimal symptom control.
           </p>
           <p>
-            <span className="font-semibold text-white">Key Domains:</span> Evaluates motor complications, non-motor symptoms,
+            <span className="font-semibold text-foreground">Key Domains:</span> Evaluates motor complications, non-motor symptoms,
             and current therapy status to comprehensively assess treatment burden and identify intervention opportunities.
           </p>
           <p>
-            <span className="font-semibold text-white">Clinical Use:</span> Helps structure clinical decision-making for
+            <span className="font-semibold text-foreground">Clinical Use:</span> Helps structure clinical decision-making for
             considering advanced therapies including DBS, LCIG, CSAI, or other Device-Aided Therapies.
           </p>
           <div className="p-3 rounded bg-muted/60 border border-border mt-3">

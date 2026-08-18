@@ -60,7 +60,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-bold text-fuchsia-400 text-sm">{type.code}</span>
-                <span className="font-semibold text-white">{type.name}</span>
+                <span className="font-semibold text-foreground">{type.name}</span>
               </div>
               <p className="text-sm text-muted-foreground">{type.description}</p>
             </div>
@@ -86,7 +86,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
           <div className="flex items-start gap-3">
             <BookOpen className="w-6 h-6 text-fuchsia-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">ILAE Seizure Classification</CardTitle>
+              <CardTitle className="text-2xl text-foreground">ILAE Seizure Classification</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Updated Classification of Epileptic Seizures (2025)
               </p>
@@ -136,7 +136,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                   <span className="w-2 h-2 bg-fuchsia-400 rounded-full" />
                   {DESCRIPTORS.BASIC.title}
                 </h3>
@@ -154,7 +154,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
               </div>
 
               <div className="border-t border-border pt-6">
-                <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+                <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                   <span className="w-2 h-2 bg-cyan-400 rounded-full" />
                   {DESCRIPTORS.EXPANDED.title}
                 </h3>
@@ -183,7 +183,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
             <CardContent className="space-y-6">
               {CLINICAL_CONTEXT.sections.map((section, idx) => (
                 <div key={idx} className={idx > 0 ? 'border-t border-border pt-6' : ''}>
-                  <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                     <span className="w-2 h-2 bg-fuchsia-400 rounded-full" />
                     {section.heading}
                   </h3>

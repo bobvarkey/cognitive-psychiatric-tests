@@ -56,7 +56,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
           <div className="flex items-start gap-3">
             <CheckCircle2 className="w-6 h-6 text-emerald-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">D-DATS</CardTitle>
+              <CardTitle className="text-2xl text-foreground">D-DATS</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Dutch DAT Screening Tool for Advanced Parkinson's Disease
               </p>
@@ -102,7 +102,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                         </button>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <div className="font-semibold text-white">{criterion.name}</div>
+                            <div className="font-semibold text-foreground">{criterion.name}</div>
                             {isRequired && (
                               <span className="text-xs font-bold text-red-400 bg-red-500/20 px-2 py-0.5 rounded">
                                 REQUIRED
@@ -122,7 +122,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
             {Object.keys(responses).length > 0 && (
               <Card className={`bg-card border-border ${eligibleForDat ? 'border-emerald-500/30' : 'border-yellow-500/30'}`}>
                 <CardHeader>
-                  <CardTitle className="text-lg text-white flex items-center gap-2">
+                  <CardTitle className="text-lg text-foreground flex items-center gap-2">
                     <span className={`w-3 h-3 rounded-full ${eligibleForDat ? 'bg-emerald-400' : 'bg-yellow-400'}`} />
                     DAT Eligibility Status
                   </CardTitle>
@@ -196,7 +196,7 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                       }`}
                     />
                     <div className="flex-1">
-                      <div className="font-semibold text-white">{dat.name}</div>
+                      <div className="font-semibold text-foreground">{dat.name}</div>
                       <div className="text-sm text-muted-foreground mt-1">{dat.description}</div>
                       <div className="text-xs text-muted-foreground mt-2">Abbreviation: {dat.abbreviation}</div>
                     </div>
@@ -218,15 +218,15 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            <span className="font-semibold text-white">Purpose:</span> The Dutch DAT Screening Tool (D-DATS) supports general
+            <span className="font-semibold text-foreground">Purpose:</span> The Dutch DAT Screening Tool (D-DATS) supports general
             neurologists in determining whether a PD patient is eligible for referral to specialized centers offering Device-Aided Therapy.
           </p>
           <p>
-            <span className="font-semibold text-white">DAT Options:</span> DBS (surgical), LCIG (intestinal infusion), CSAI
+            <span className="font-semibold text-foreground">DAT Options:</span> DBS (surgical), LCIG (intestinal infusion), CSAI
             (subcutaneous apomorphine), and LECIG (intestinal levodopa-etacapone).
           </p>
           <p>
-            <span className="font-semibold text-white">Clinical Value:</span> Standardizes decision-making for advanced therapy
+            <span className="font-semibold text-foreground">Clinical Value:</span> Standardizes decision-making for advanced therapy
             referrals, ensuring appropriate patient selection and optimal resource utilization.
           </p>
           <p className="italic text-muted-foreground">Source: Moes et al. 2023 (Groningen)</p>

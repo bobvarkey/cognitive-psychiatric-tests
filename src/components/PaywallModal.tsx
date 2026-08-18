@@ -87,13 +87,13 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-magenta-600 to-cyan-500 rounded-3xl blur-xl opacity-60" />
               <div className="relative w-20 h-20 bg-gradient-to-br from-magenta-600 to-cyan-500 rounded-3xl flex items-center justify-center shadow-[0_0_30px_rgba(255,0,255,0.5),0_0_60px_rgba(0,255,255,0.3)]">
-                <Brain className="w-10 h-10 text-white drop-shadow-[0_0_8px_rgba(255,0,255,0.8)]" />
+                <Brain className="w-10 h-10 text-foreground drop-shadow-[0_0_8px_rgba(255,0,255,0.8)]" />
               </div>
             </div>
           </div>
 
           {/* Title */}
-          <h2 className="text-3xl font-bold text-white mb-2 relative z-10">
+          <h2 className="text-3xl font-bold text-foreground mb-2 relative z-10">
             Upgrade to Cognito Pro
           </h2>
           <p className="text-foreground/90 text-sm relative z-10 mb-3">
@@ -123,7 +123,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                       : 'bg-slate-800/40 border border-border/40 hover:border-magenta-400/40'
                   }`}
                 >
-                  <div className="font-bold text-white capitalize mb-1">{tierPlans[tier].name}</div>
+                  <div className="font-bold text-foreground capitalize mb-1">{tierPlans[tier].name}</div>
                   <div className="text-xs text-muted-foreground">{tierPlans[tier].description}</div>
                 </button>
               ))}
@@ -175,7 +175,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               <div className="flex items-center justify-between relative z-10">
                 <div className="text-left">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-white">Yearly</span>
+                    <span className="font-bold text-foreground">Yearly</span>
                     <span className="bg-gradient-to-r from-magenta-500 to-cyan-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-[0_0_10px_rgba(255,0,255,0.5)]">
                       First year
                     </span>
@@ -185,7 +185,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-white">
+                  <div className="text-3xl font-bold text-foreground">
                     ${tierPlans[selectedTier].yearly.price}
                   </div>
                   <div className="text-muted-foreground text-xs">per year</div>
@@ -194,7 +194,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               {selectedPlan === 'yearly' && (
                 <div className="absolute right-4 top-4">
                   <div className="w-6 h-6 bg-gradient-to-r from-magenta-500 to-cyan-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(255,0,255,0.5)]">
-                    <Check className="w-4 h-4 text-white" />
+                    <Check className="w-4 h-4 text-foreground" />
                   </div>
                 </div>
               )}
@@ -211,13 +211,13 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             >
               <div className="flex items-center justify-between relative z-10">
                 <div className="text-left">
-                  <div className="font-bold text-white mb-1">Monthly</div>
+                  <div className="font-bold text-foreground mb-1">Monthly</div>
                   <div className="text-muted-foreground text-xs">
                     Billed monthly
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold text-white">
+                  <div className="text-3xl font-bold text-foreground">
                     ${tierPlans[selectedTier].monthly.price}
                   </div>
                   <div className="text-muted-foreground text-xs">per month</div>
@@ -226,7 +226,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               {selectedPlan === 'monthly' && (
                 <div className="absolute right-4 top-4">
                   <div className="w-6 h-6 bg-gradient-to-r from-magenta-500 to-cyan-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(255,0,255,0.5)]">
-                    <Check className="w-4 h-4 text-white" />
+                    <Check className="w-4 h-4 text-foreground" />
                   </div>
                 </div>
               )}
@@ -237,7 +237,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           <button
             onClick={() => onSelectPlan(selectedPlan, selectedTier)}
             disabled={isLoading}
-            className="w-full relative py-3.5 px-6 rounded-2xl font-bold text-lg text-white transition-all duration-300 overflow-hidden group"
+            className="w-full relative py-3.5 px-6 rounded-2xl font-bold text-lg text-foreground transition-all duration-300 overflow-hidden group"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-magenta-600 to-cyan-600" />
             <div className="absolute inset-0 bg-gradient-to-r from-magenta-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />

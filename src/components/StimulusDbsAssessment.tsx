@@ -41,7 +41,7 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
           <div className="flex items-start gap-3">
             <TrendingUp className="w-6 h-6 text-amber-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">Stimulus DBS Tool</CardTitle>
+              <CardTitle className="text-2xl text-foreground">Stimulus DBS Tool</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Decision Support for Deep Brain Stimulation Appropriateness
               </p>
@@ -95,7 +95,7 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
 
           {/* Current Assessment */}
           <div className={`p-4 rounded-lg border ${level.color.includes('red') ? 'bg-red-500/10 border-red-500/30' : level.color.includes('yellow') ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-green-500/10 border-green-500/30'}`}>
-            <div className="font-semibold text-white mb-2">Assessment Result</div>
+            <div className="font-semibold text-foreground mb-2">Assessment Result</div>
             <p className={`text-sm ${level.color}`}>
               {level.level}: {
                 appropriateness <= 3 ? 'DBS not recommended for this patient profile.'
@@ -154,19 +154,19 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            <span className="font-semibold text-white">Stimulus Tool Purpose:</span> Evidence-based decision support system
+            <span className="font-semibold text-foreground">Stimulus Tool Purpose:</span> Evidence-based decision support system
             developed using the RAND/UCLA Appropriateness method (modified Delphi) with international DBS expert panel.
           </p>
           <p>
-            <span className="font-semibold text-white">Development:</span> Initial Stimulus tool (2009) assessed 1,728 patient
+            <span className="font-semibold text-foreground">Development:</span> Initial Stimulus tool (2009) assessed 1,728 patient
             profiles using 9 variables. Updated Stimulus 2 (2016) refined to 7 key variables and 972 profiles.
           </p>
           <p>
-            <span className="font-semibold text-white">Appropriateness Definition:</span> "Benefits of referral far outweigh
+            <span className="font-semibold text-foreground">Appropriateness Definition:</span> "Benefits of referral far outweigh
             possible disadvantages" (9-point expert panel rating converted to binary).
           </p>
           <p>
-            <span className="font-semibold text-white">Key Variables:</span> Disease duration, age, levodopa response, motor
+            <span className="font-semibold text-foreground">Key Variables:</span> Disease duration, age, levodopa response, motor
             complications, cognition, psychiatric status, and motor phenotype.
           </p>
           <div className="p-3 rounded bg-muted/60 border border-border mt-3">

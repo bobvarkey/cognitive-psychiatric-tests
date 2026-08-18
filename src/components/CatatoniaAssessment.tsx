@@ -210,7 +210,7 @@ export const CatatoniaAssessment = ({ onBack }: CatatoniaAssessmentProps) => {
                 <Button 
                   variant="secondary" 
                   onClick={onBack}
-                  className="bg-white/20 hover:bg-white/30 text-white border-0"
+                  className="bg-white/20 hover:bg-white/30 text-foreground border-0"
                 >
                   <Home className="h-4 w-4 mr-2" />
                   {t('backToMenu')}

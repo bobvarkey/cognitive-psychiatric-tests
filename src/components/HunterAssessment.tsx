@@ -222,7 +222,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
                 <FlaskConical className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <CardTitle className="text-2xl md:text-3xl text-white">
+                <CardTitle className="text-2xl md:text-3xl text-foreground">
                   Hunter Toxicity Criteria Decision Rules
                 </CardTitle>
                 <CardDescription className="mt-1 text-slate-300 text-base">
@@ -234,7 +234,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
           <CardContent>
             <Alert className="bg-slate-800 border-input text-white">
               <Info className="h-4 w-4 text-rose-300" />
-              <AlertDescription className="text-sm text-white">
+              <AlertDescription className="text-sm text-foreground">
                 Diagnosis requires <strong className="text-rose-300">recent serotonergic exposure</strong> PLUS{' '}
                 <strong className="text-rose-300">at least one</strong> of the five clinical findings below.
               </AlertDescription>
@@ -245,7 +245,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         {/* Step 1: Exposure */}
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-white">
+            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
               <Pill className="h-5 w-5 text-rose-400" />
               Step 1 — Recent serotonergic exposure?
             </CardTitle>
@@ -274,7 +274,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
             </div>
 
             <div className="rounded-lg border border-border bg-slate-800/60 p-4">
-              <p className="text-sm font-semibold mb-2 text-white">Exposure clarifications</p>
+              <p className="text-sm font-semibold mb-2 text-foreground">Exposure clarifications</p>
               <ul className="list-disc pl-5 space-y-1 text-sm text-slate-200">
                 {exposureClarifications.map((c) => (
                   <li key={c}>{c}</li>
@@ -290,7 +290,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         {/* Step 2: Clinical criteria */}
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-white">
+            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
               <AlertTriangle className="h-5 w-5 text-amber-400" />
               Step 2 — Clinical criteria (≥ 1 required)
             </CardTitle>
@@ -309,7 +309,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
                     onCheckedChange={() => toggleCriterion(c.key)}
                     className="mt-0.5 border-slate-400 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600"
                   />
-                  <span className="text-base font-medium leading-relaxed text-white">{c.label}</span>
+                  <span className="text-base font-medium leading-relaxed text-foreground">{c.label}</span>
                 </label>
               ))}
             </div>
@@ -320,7 +320,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         {/* Implicated agents */}
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-white">
+            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
               <Pill className="h-5 w-5 text-indigo-400" />
               Implicated serotonergic agent(s) — tick all that apply
             </CardTitle>
@@ -331,7 +331,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
           <CardContent className="space-y-4">
             {serotonergicAgents.map((group) => (
               <div key={group.mechanism} className="rounded-lg border border-border p-3 bg-slate-800/40">
-                <p className="text-base font-semibold mb-3 text-white">{group.mechanism}</p>
+                <p className="text-base font-semibold mb-3 text-foreground">{group.mechanism}</p>
 
                 {group.drugs.length > 0 && (
                   <div className="space-y-2">
@@ -345,7 +345,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
                           onCheckedChange={() => toggleDrug(drug)}
                           className="border-slate-400 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
                         />
-                        <span className="text-sm text-white">{drug}</span>
+                        <span className="text-sm text-foreground">{drug}</span>
                       </label>
                     ))}
                   </div>
@@ -356,7 +356,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
                     {group.subGroups.map((sub) => (
                       <Collapsible key={sub.name}>
                         <CollapsibleTrigger className="group flex w-full items-center justify-between rounded-md bg-slate-800 hover:bg-slate-700 px-3 py-2 text-left">
-                          <span className="text-sm font-semibold text-white">{sub.name}</span>
+                          <span className="text-sm font-semibold text-foreground">{sub.name}</span>
                           <ChevronDown className="h-4 w-4 text-slate-300 transition-transform group-data-[state=open]:rotate-180" />
                         </CollapsibleTrigger>
                         <CollapsibleContent className="mt-2 ml-2 space-y-1 border-l-2 border-border pl-3">
@@ -370,7 +370,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
                                 onCheckedChange={() => toggleDrug(med)}
                                 className="border-slate-400 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
                               />
-                              <span className="text-sm text-white">{med}</span>
+                              <span className="text-sm text-foreground">{med}</span>
                             </label>
                           ))}
                         </CollapsibleContent>
@@ -394,7 +394,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
 
         {/* Result */}
         <Card
-          className={`mb-6 border-2 text-white ${
+          className={`mb-6 border-2 text-foreground ${
             meetsHunter
               ? 'border-rose-500 bg-rose-950/60'
               : exposure === false || (exposure === true && !meetsAnyCriterion)
@@ -403,7 +403,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
           }`}
         >
           <CardHeader>
-            <CardTitle className="text-xl flex items-center gap-2 text-white">
+            <CardTitle className="text-xl flex items-center gap-2 text-foreground">
               {meetsHunter ? (
                 <>
                   <AlertTriangle className="h-5 w-5 text-rose-300" />
@@ -422,7 +422,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-base text-white">
+          <CardContent className="space-y-2 text-base text-foreground">
             {meetsHunter ? (
               <>
                 <p className="font-semibold">
@@ -445,7 +445,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         {/* Treatment options */}
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-white">
+            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
               <Stethoscope className="h-5 w-5 text-emerald-400" />
               Treatment options by severity
             </CardTitle>
@@ -457,7 +457,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
             {treatmentOptions.map((tier) => (
               <div key={tier.severity} className="rounded-lg border border-border bg-slate-800/60 p-4">
                 <p className={`text-base font-semibold mb-2 ${tier.tone}`}>{tier.severity}</p>
-                <ul className="list-disc pl-5 space-y-1 text-sm text-white">
+                <ul className="list-disc pl-5 space-y-1 text-sm text-foreground">
                   {tier.items.map((it) => (
                     <li key={it}>{it}</li>
                   ))}
@@ -470,7 +470,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         {/* Export */}
         <Card className="mb-6 bg-slate-900 border-border text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-lg text-white">Export / final text</CardTitle>
+            <CardTitle className="text-lg text-foreground">Export / final text</CardTitle>
             <Button onClick={copyExport} variant="outline" size="sm" className="bg-slate-800 border-input text-white hover:bg-slate-700 hover:text-white gap-2">
               <Copy className="h-4 w-4" /> Copy
             </Button>

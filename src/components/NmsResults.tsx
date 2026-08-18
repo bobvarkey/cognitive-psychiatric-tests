@@ -117,7 +117,7 @@ export const NmsResultsComponent: React.FC<NmsResultsProps> = ({ results, isMala
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center gap-4">
-            <div className={`flex items-center gap-3 px-6 py-3 rounded-lg text-white ${getDiagnosticBadgeColor(results.diagnosticCategory)}`}>
+            <div className={`flex items-center gap-3 px-6 py-3 rounded-lg text-foreground ${getDiagnosticBadgeColor(results.diagnosticCategory)}`}>
               {getDiagnosticIcon(results.diagnosticCategory)}
               <span className="text-xl font-bold">
                 {isMalayalam ? diagnosticInfo.labelMl : diagnosticInfo.label}

@@ -55,7 +55,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-cyan-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">LAEP Assessment</CardTitle>
+              <CardTitle className="text-2xl text-foreground">LAEP Assessment</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Likelihood of Adverse Effects Profile for Antiseizure Medications
               </p>
@@ -92,7 +92,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
                       )}
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-white">{item.name}</div>
+                      <div className="font-semibold text-foreground">{item.name}</div>
                       <div className="text-sm text-muted-foreground mt-1">{item.description}</div>
                     </div>
                   </div>
@@ -106,7 +106,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
       {/* Results */}
       <Card className={`bg-card border-border ${severity.bg}`}>
         <CardHeader>
-          <CardTitle className="text-lg text-white flex items-center gap-2">
+          <CardTitle className="text-lg text-foreground flex items-center gap-2">
             <span className={`w-3 h-3 rounded-full ${severity.color.replace('text', 'bg')}`} />
             Adverse Effect Profile
           </CardTitle>
@@ -129,7 +129,7 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
 
           <div className="border-t border-border pt-4">
             <p className="text-sm text-foreground/90">
-              <span className="font-semibold text-white">Clinical Interpretation:</span>
+              <span className="font-semibold text-foreground">Clinical Interpretation:</span>
             </p>
             <p className="text-sm text-muted-foreground mt-2">
               {sideEffectsCount === 0 &&
@@ -155,15 +155,15 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            <span className="font-semibold text-white">LAEP Purpose:</span> The Likelihood of Adverse Effects Profile (LAEP) is
+            <span className="font-semibold text-foreground">LAEP Purpose:</span> The Likelihood of Adverse Effects Profile (LAEP) is
             a self-report tool for systematically measuring and tracking side effects of antiseizure medications (ASMs).
           </p>
           <p>
-            <span className="font-semibold text-white">Clinical Use:</span> Useful for identifying medication-related side effects
+            <span className="font-semibold text-foreground">Clinical Use:</span> Useful for identifying medication-related side effects
             that may impact quality of life and medication adherence in patients with epilepsy.
           </p>
           <p>
-            <span className="font-semibold text-white">Interpretation:</span> Higher number of reported effects suggests need for
+            <span className="font-semibold text-foreground">Interpretation:</span> Higher number of reported effects suggests need for
             medication review. Consider balancing seizure control with side effect burden.
           </p>
         </CardContent>

@@ -53,7 +53,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
           <div className="flex items-start gap-3">
             <TrendingUp className="w-6 h-6 text-fuchsia-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">Epilepsy Surgery Grading Scale</CardTitle>
+              <CardTitle className="text-2xl text-foreground">Epilepsy Surgery Grading Scale</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Prediction of seizure-free outcome after resective surgery for drug-resistant focal epilepsy
               </p>
@@ -82,7 +82,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
                   return (
                     <div key={key} className="space-y-3">
                       <div>
-                        <label className="font-semibold text-white">{component.name}</label>
+                        <label className="font-semibold text-foreground">{component.name}</label>
                         <p className="text-sm text-muted-foreground mt-1">{component.description}</p>
                       </div>
                       <div className="flex items-center gap-4">
@@ -112,7 +112,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
             {/* Total Score & Grade */}
             <Card className={`bg-card border-border ${gradeColor.replace('text', 'border')}`}>
               <CardHeader>
-                <CardTitle className="text-lg text-white">ESGS Result</CardTitle>
+                <CardTitle className="text-lg text-foreground">ESGS Result</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -127,7 +127,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
                 </div>
 
                 <div className={`p-4 rounded-lg ${gradeColor.replace('text', 'bg').replace('400', '500/10')} border ${gradeColor.replace('text', 'border')} ${gradeColor.replace('text', 'border')}/30`}>
-                  <div className="font-semibold text-white mb-2">Predicted Outcome</div>
+                  <div className="font-semibold text-foreground mb-2">Predicted Outcome</div>
                   <div className="text-sm text-foreground/90 space-y-1">
                     <p><span className="font-semibold">Probability:</span> {grade.probability}</p>
                     <p><span className="font-semibold">Prognosis:</span> {grade.description}</p>
@@ -161,7 +161,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
             <CardContent className="space-y-4">
               {Object.entries(ESGS_COMPONENTS).map(([key, component]) => (
                 <div key={key} className="p-4 rounded-lg border border-border bg-muted/40">
-                  <div className="font-semibold text-white mb-2">{component.name}</div>
+                  <div className="font-semibold text-foreground mb-2">{component.name}</div>
                   <p className="text-sm text-muted-foreground mb-2">{component.description}</p>
                   <p className="text-xs text-muted-foreground mb-2">
                     <span className="font-semibold">Scoring:</span> {component.scoring}
@@ -188,15 +188,15 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            <span className="font-semibold text-white">Purpose:</span> The Epilepsy Surgery Grading Scale (ESGS) is an empirically derived
+            <span className="font-semibold text-foreground">Purpose:</span> The Epilepsy Surgery Grading Scale (ESGS) is an empirically derived
             tool designed to predict likelihood of seizure freedom after resective surgery in drug-resistant focal epilepsy.
           </p>
           <p>
-            <span className="font-semibold text-white">Scoring Basis:</span> Combines MRI findings, interictal EEG, seizure semiology,
+            <span className="font-semibold text-foreground">Scoring Basis:</span> Combines MRI findings, interictal EEG, seizure semiology,
             and IQ to create an integrated prognostic score.
           </p>
           <p>
-            <span className="font-semibold text-white">Clinical Use:</span> Helps stratify patients and guide surgical counseling,
+            <span className="font-semibold text-foreground">Clinical Use:</span> Helps stratify patients and guide surgical counseling,
             particularly for patients with drug-resistant focal epilepsy considering resective surgery.
           </p>
           <p className="italic text-muted-foreground">Source: National Institutes of Health (.gov)</p>

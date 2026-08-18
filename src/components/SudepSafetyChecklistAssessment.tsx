@@ -52,7 +52,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
           <div className="flex items-start gap-3">
             <AlertCircle className="w-6 h-6 text-orange-400 mt-1" />
             <div>
-              <CardTitle className="text-2xl text-white">SUDEP Safety Checklist</CardTitle>
+              <CardTitle className="text-2xl text-foreground">SUDEP Safety Checklist</CardTitle>
               <p className="text-sm text-muted-foreground mt-2">
                 Comprehensive Risk Reduction and Safety Measures for Epilepsy Patients
               </p>
@@ -66,7 +66,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
         <CardContent className="pt-6">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-white">Safety Implementation Progress</span>
+              <span className="text-sm font-semibold text-foreground">Safety Implementation Progress</span>
               <span className="text-sm font-bold text-orange-400">{completionPercentage}%</span>
             </div>
             <div className="w-full bg-slate-700 rounded-full h-3">
@@ -124,7 +124,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
                           {isChecked && <CheckCircle2 className="w-4 h-4 text-orange-400" />}
                         </div>
                         <div className="flex-1">
-                          <div className="font-semibold text-white text-sm">{item.name}</div>
+                          <div className="font-semibold text-foreground text-sm">{item.name}</div>
                           <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
                         </div>
                       </div>
@@ -140,7 +140,7 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
       {/* Summary Card */}
       <Card className={`bg-card border-border ${completionPercentage >= 80 ? 'border-green-500/30' : 'border-orange-500/30'}`}>
         <CardHeader>
-          <CardTitle className="text-lg text-white flex items-center gap-2">
+          <CardTitle className="text-lg text-foreground flex items-center gap-2">
             <span className={`w-3 h-3 rounded-full ${completionPercentage >= 80 ? 'bg-green-400' : 'bg-orange-400'}`} />
             Implementation Status
           </CardTitle>
@@ -183,20 +183,20 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>
-            <span className="font-semibold text-white">SUDEP Overview:</span> Sudden Unexpected Death in Epilepsy (SUDEP) is a
+            <span className="font-semibold text-foreground">SUDEP Overview:</span> Sudden Unexpected Death in Epilepsy (SUDEP) is a
             rare but serious complication affecting primarily young people with uncontrolled seizures. Annual SUDEP risk ranges from
-            <span className="font-semibold text-white"> 1 in 1,000 to 1 in 200</span> depending on seizure control.
+            <span className="font-semibold text-foreground"> 1 in 1,000 to 1 in 200</span> depending on seizure control.
           </p>
           <p>
-            <span className="font-semibold text-white">Purpose of Checklist:</span> Comprehensive approach to SUDEP risk reduction
+            <span className="font-semibold text-foreground">Purpose of Checklist:</span> Comprehensive approach to SUDEP risk reduction
             through systematic implementation of evidence-based safety measures across multiple domains.
           </p>
           <p>
-            <span className="font-semibold text-white">Key Modifiable Factors:</span> Medication adherence, seizure control,
+            <span className="font-semibold text-foreground">Key Modifiable Factors:</span> Medication adherence, seizure control,
             seizure monitoring, safe sleep practices, and emergency preparedness are the primary preventable risk factors.
           </p>
           <p>
-            <span className="font-semibold text-white">Multidisciplinary Approach:</span> Optimal SUDEP risk reduction requires
+            <span className="font-semibold text-foreground">Multidisciplinary Approach:</span> Optimal SUDEP risk reduction requires
             coordination between neurology, primary care, mental health services, and patient/family education.
           </p>
         </CardContent>
