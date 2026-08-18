@@ -65,7 +65,7 @@ export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScore
                       <Label htmlFor={item.id} className="font-bold text-sm cursor-pointer">
                         {language === 'ml' ? item.titleMl : item.title}
                       </Label>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">Stage {item.stage}</span>
+                      <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">Stage {item.stage}</span>
                       
                       {item.tooltip && (
                         <Tooltip>

@@ -149,7 +149,7 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
                     value={[scores[d.id] ?? 0]} 
                     onValueChange={(v) => handleScoreChange(d.id, v[0])}
                   />
-                  <div className="flex justify-between text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+                  <div className="flex justify-between text-[11px] text-muted-foreground font-semibold uppercase tracking-tight">
                     <span>None (0)</span>
                     <span>Ques (0.5)</span>
                     <span>Mild (1)</span>

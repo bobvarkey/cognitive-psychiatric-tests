@@ -204,7 +204,9 @@ All colors MUST be HSL.
     background-image: none;
     min-height: 100vh;
     color: hsl(30 8% 22%);
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
   }
 
   /* Enable dark mode for specific containers while keeping standard text defaults */
@@ -262,7 +264,30 @@ All colors MUST be HSL.
   .text-emerald-900,.text-emerald-800,.text-emerald-700{ color: hsl(155 70% 22%) !important; }
 
   /* Improve body text legibility globally */
-  body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  body { 
+    -webkit-font-smoothing: antialiased; 
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility; 
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    line-height: 1.2;
+  }
+
+  p, li, span, label {
+    @apply leading-relaxed;
+  }
+
+  .text-sm {
+    font-size: 0.925rem;
+    line-height: 1.5;
+  }
+
+  .text-xs {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
 }
 
 @layer utilities {
@@ -434,15 +459,42 @@ All colors MUST be HSL.
   }
 }
 
-/* Respect dark mode for text */
+/* Respect dark mode for text and override hardcoded slates/grays */
+.dark .text-slate-900,
+.dark .text-slate-800,
 .dark .text-slate-700,
 .dark .text-slate-600,
 .dark .text-slate-500,
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-zinc-900,
+.dark .text-zinc-800,
+.dark .text-zinc-700,
+.dark .text-zinc-600,
+.dark .text-zinc-500,
+.dark .text-neutral-900,
+.dark .text-neutral-800,
+.dark .text-neutral-700,
+.dark .text-neutral-600,
+.dark .text-neutral-500,
+.dark .text-blue-900,
 .dark h3.tracking-tight,
 .dark [class*="CardTitle"] {
-  color: hsl(0 0% 100%) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
+.dark .text-slate-400,
+.dark .text-gray-400,
+.dark .text-zinc-400,
+.dark .text-neutral-400,
+.dark .text-muted-foreground {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Light mode overrides for consistency if needed */
 .text-slate-700,
 .text-slate-600,
 .text-slate-500,
