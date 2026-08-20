@@ -21,15 +21,16 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       description: 'Essential clinical tools',
       yearly: {
         price: 19.99,
-        renewal: 16.99,
+        renewal: 19.99,
         period: '/year',
+        trial: '1 day free',
       },
       monthly: {
-        price: 2.99,
+        price: 3.99,
         period: '/month',
       },
       features: [
-        'Full access to 40+ assessments',
+        'Full access to all assessments',
         'Export to PDF',
         'Basic analytics',
       ],
@@ -38,9 +39,10 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       name: 'Pro',
       description: 'Advanced clinical platform',
       yearly: {
-        price: 29.99,
+        price: 19.99,
         renewal: 19.99,
         period: '/year',
+        trial: '1 day free',
       },
       monthly: {
         price: 3.99,
@@ -177,7 +179,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-bold text-foreground">Yearly</span>
                     <span className="bg-gradient-to-r from-magenta-500 to-cyan-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-[0_0_10px_rgba(255,0,255,0.5)]">
-                      First year
+                      {tierPlans[selectedTier].yearly.trial}
                     </span>
                   </div>
                   <div className="text-muted-foreground text-xs">

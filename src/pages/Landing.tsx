@@ -125,11 +125,11 @@ export default function Landing() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Lite card */}
               <div className="p-6 rounded-2xl glass-dark border border-white/10 text-left">
-                <div className="text-sm text-gray-400 mb-1">Lite — Free to try</div>
+                <div className="text-sm text-gray-400 mb-1">Lite — 1 Day Free Trial</div>
                 <div className="text-4xl font-bold text-white mb-1">$19.99<span className="text-base text-gray-500">/yr</span></div>
-                <div className="text-xs text-gray-500 mb-4">Then $16.99/yr · or $2.99/mo</div>
+                <div className="text-xs text-gray-500 mb-4">Then $19.99/yr · or $3.99/mo</div>
                 <ul className="space-y-2 text-sm text-gray-300">
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-cyan-400" />25 core assessments</li>
+                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-cyan-400" />Full clinical assessments</li>
                   <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-cyan-400" />PDF export</li>
                   <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-cyan-400" />Offline access</li>
                 </ul>
@@ -137,11 +137,11 @@ export default function Landing() {
               {/* Pro card */}
               <div className="relative p-6 rounded-2xl border border-fuchsia-500/40 text-left bg-gradient-to-br from-fuchsia-600/10 to-cyan-600/5 shadow-[0_0_30px_rgba(255,0,255,0.15)]">
                 <div className="absolute -top-3 left-4 px-3 py-1 rounded-full bg-gradient-to-r from-fuchsia-600 to-cyan-500 text-xs font-bold text-white">RECOMMENDED</div>
-                <div className="text-sm text-gray-400 mb-1">Pro</div>
-                <div className="text-4xl font-bold text-white mb-1">$29.99<span className="text-base text-gray-500">/yr</span></div>
+                <div className="text-sm text-gray-400 mb-1">Pro — 1 Day Free Trial</div>
+                <div className="text-4xl font-bold text-white mb-1">$19.99<span className="text-base text-gray-500">/yr</span></div>
                 <div className="text-xs text-gray-500 mb-4">Then $19.99/yr · or $3.99/mo</div>
                 <ul className="space-y-2 text-sm text-gray-300">
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />All 65 assessments</li>
+                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />All assessments unlocked</li>
                   <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />PDF & DOCX export</li>
                   <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />Patient tracking</li>
                   <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />Priority support</li>

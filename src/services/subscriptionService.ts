@@ -25,19 +25,21 @@ export const PRICING = {
   lite: {
     yearly: {
       firstYear: 19.99,
-      renewal: 16.99,
+      renewal: 19.99,
       currency: 'USD',
+      trialDays: 1,
     },
     monthly: {
-      firstYear: 2.99,
+      firstYear: 3.99,
       currency: 'USD',
     },
   },
   pro: {
     yearly: {
-      firstYear: 29.99,
+      firstYear: 19.99,
       renewal: 19.99,
       currency: 'USD',
+      trialDays: 1,
     },
     monthly: {
       firstYear: 3.99,
