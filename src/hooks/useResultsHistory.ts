@@ -33,6 +33,12 @@ export const useResultsHistory = () => {
       window.removeEventListener('cognito:results-updated', sync);
     };
   }, [loadResults]);
+  
+  useEffect(() => {
+    if (isOnline && results.length > 0) {
+      syncResults(results).catch(console.error);
+    }
+  }, [isOnline, results]);
 
   const add = useCallback(async (result: Omit<AssessmentResult, 'completedAt'>) => {
     const newResult: AssessmentResult = {
