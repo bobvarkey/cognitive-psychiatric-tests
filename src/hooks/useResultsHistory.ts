@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AssessmentResult, saveResultOffline, getOfflineResults, deleteOfflineResult, clearOfflineResults } from '../lib/db';
+import { syncResults } from '../lib/sync';
 import { toast } from 'sonner';
+import { useOffline } from '../contexts/OfflineContext';
 
 export type { AssessmentResult };
 
 export const useResultsHistory = () => {
   const [results, setResults] = useState<AssessmentResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isOnline } = useOffline();
 
   const loadResults = useCallback(async () => {
     try {
