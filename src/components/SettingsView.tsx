@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert, Palette, Moon, Sun, Type } from 'lucide-react';
+import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert, Palette, Moon, Sun, Type, WifiOff } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
@@ -26,7 +26,7 @@ export const SettingsView = () => {
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
   const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
-  const { mode, toggleMode, theme, setTheme, fontSize, setFontSize } = useThemeStore();
+  const { mode, toggleMode, theme, setTheme, fontSize, setFontSize, offlineMode, setOfflineMode } = useThemeStore();
 
   const themes: { id: AppTheme; label: string; colors: string[] }[] = [
     { id: 'sunset', label: 'Sunset Blaze', colors: ['bg-[#ff4500]', 'bg-[#ff00ff]'] },
@@ -167,6 +167,31 @@ export const SettingsView = () => {
             </div>
           </section>
 
+
+          {/* Offline Mode */}
+          <section>
+            <div className="flex items-center gap-2 mb-2">
+              <WifiOff className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold">
+                {isMl ? 'ഓഫ്‌ലൈൻ മോഡ്' : 'Offline Mode'}
+              </h3>
+            </div>
+            <div className="flex items-center justify-between rounded-xl border border-border p-3">
+              <div className="min-w-0 pr-3">
+                <p className="text-sm font-medium">
+                  {isMl ? 'ഓഫ്‌ലൈനായി പ്രവർത്തിക്കുക' : 'Work Offline'}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {isMl ? 'ഇന്റർനെറ്റ് ഇല്ലാതെ ആപ്പ് ഉപയോഗിക്കാൻ അനുവദിക്കുന്നു.' : 'Allows using the app without an internet connection.'}
+                </p>
+              </div>
+              <Switch
+                checked={offlineMode}
+                onCheckedChange={setOfflineMode}
+                aria-label="Toggle offline mode"
+              />
+            </div>
+          </section>
 
           {/* Access mode */}
           <section>

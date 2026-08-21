@@ -10,10 +10,19 @@ import CategoryBrowser from "./pages/CategoryBrowser";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { NavigationButtons } from "@/components/NavigationButtons";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
+import { OfflineProvider } from "@/contexts/OfflineContext";
 import { useEffect } from "react";
 import { useThemeStore } from "@/hooks/useThemeStore";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const ThemeInitializer = () => {
   const { mode, theme, fontSize } = useThemeStore();
@@ -43,22 +52,25 @@ const App = () => (
     <TooltipProvider>
       <SubscriptionProvider>
         <LanguageProvider>
-          <PatientInfoProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/history" element={<Index />} />
-                <Route path="/settings" element={<Index />} />
-                <Route path="/glossary" element={<Index />} />
-                <Route path="/category/:category" element={<CategoryBrowser />} />
-                <Route path="/assessment/:id" element={<Index />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-              <NavigationButtons />
-            </BrowserRouter>
-          </PatientInfoProvider>
+          <OfflineProvider>
+            <PatientInfoProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/history" element={<Index />} />
+                  <Route path="/settings" element={<Index />} />
+                  <Route path="/glossary" element={<Index />} />
+                  <Route path="/category/:category" element={<CategoryBrowser />} />
+                  <Route path="/assessment/:id" element={<Index />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <NavigationButtons />
+                <OfflineIndicator />
+              </BrowserRouter>
+            </PatientInfoProvider>
+          </OfflineProvider>
         </LanguageProvider>
       </SubscriptionProvider>
     </TooltipProvider>

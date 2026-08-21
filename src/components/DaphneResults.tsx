@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +24,7 @@ import { DomainRadarChart } from './DomainRadarChart';
 import { toast } from '@/hooks/use-toast';
 import { Document, Packer, Paragraph, HeadingLevel, TextRun, AlignmentType } from 'docx';
 import { saveAs } from 'file-saver';
+import { useResultsHistory } from '@/hooks/useResultsHistory';
 
 interface DaphneResultsProps {
   results: DaphneResultsType;
@@ -42,7 +43,18 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
 }) => {
   const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
+  const { add } = useResultsHistory();
   const [showNote, setShowNote] = useState(false);
+
+  useEffect(() => {
+    add({
+      key: 'daphne',
+      name: 'DAPHNE Behavioural Assessment',
+      score: `D6: ${results.daphne6Score}, D40: ${results.daphne40Score}`,
+      interpretation: getDaphne6Interpretation(results.daphne6Score).level,
+      patient: patientInfo.name || undefined
+    });
+  }, []);
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',

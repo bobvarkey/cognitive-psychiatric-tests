@@ -2,12 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FabResponse, FabResult } from '@/types/fab';
 import { fabItems } from '@/data/fabScale';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Copy, Check, FileDown, Download } from 'lucide-react';
 import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
+import { useResultsHistory } from '@/hooks/useResultsHistory';
 
 interface FabResultsProps {
   responses: FabResponse[];
@@ -47,6 +48,18 @@ export const FabResults = ({ responses, onReset }: FabResultsProps) => {
   const { language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+  const { add } = useResultsHistory();
+  const { patientInfo } = usePatientInfo();
+
+  useEffect(() => {
+    add({
+      key: 'fab',
+      name: 'Frontal Assessment Battery (FAB)',
+      score: results.totalScore,
+      interpretation: results.interpretation,
+      patient: patientInfo.name || undefined
+    });
+  }, []);
 
   const getSeverityColor = (severity: FabResult['severity']) => {
     switch (severity) {
