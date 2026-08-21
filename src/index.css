@@ -179,6 +179,7 @@ All colors MUST be HSL.
   * {
     @apply border-border focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none ring-offset-background;
   }
+}
 
   body {
     @apply bg-background text-foreground;
