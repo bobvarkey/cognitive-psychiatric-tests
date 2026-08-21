@@ -15,7 +15,14 @@ import { OfflineProvider } from "@/contexts/OfflineContext";
 import { useEffect } from "react";
 import { useThemeStore } from "@/hooks/useThemeStore";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const ThemeInitializer = () => {
   const { mode, theme, fontSize } = useThemeStore();
