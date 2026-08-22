@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AIMS_ITEMS, AIMS_INTERPRETATION } from '@/data/aimsScale';
 import { ArrowLeft, RotateCcw, AlertCircle } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface AimsAssessmentProps {
   onBack?: () => void;
@@ -47,6 +49,32 @@ export const AimsAssessment = ({ onBack }: AimsAssessmentProps) => {
     const trunk = (responses['trunk'] || 0);
     const global = (responses['global_severity'] || 0) + (responses['incapacity'] || 0);
     return { orofacial, extremities, trunk, global };
+  };
+
+  const reportData: ReportData = {
+    assessmentName: 'AIMS (Abnormal Involuntary Movement Scale)',
+    date: new Date().toLocaleString(),
+    totalScore: `${totalScore}/44`,
+    interpretation: `${getInterpretation().level} — ${getInterpretation().description}`,
+    severity: getInterpretation().level,
+    sections: [
+      {
+        title: 'Area Scores',
+        items: [
+          `Orofacial (Items 1-4): ${getAreaScores().orofacial}`,
+          `Extremities (Items 5-8): ${getAreaScores().extremities}`,
+          `Trunk (Item 9): ${getAreaScores().trunk}`,
+          `Global Assessment (Items 10-11): ${getAreaScores().global}`,
+        ],
+        type: 'info',
+      },
+      {
+        title: 'Item Scores',
+        items: AIMS_ITEMS.map((item) => `${item.number}. ${item.body_region}: ${responses[item.id] ?? 0}`),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'AIMS is a clinician-rated scale for dyskinesia; clinical interpretation required.',
   };
 
   return (
@@ -202,6 +230,10 @@ export const AimsAssessment = ({ onBack }: AimsAssessmentProps) => {
                       </p>
                     </TabsContent>
                   </Tabs>
+
+                  <div className="flex justify-center pt-1">
+                    <ExportButtons data={reportData} />
+                  </div>
                 </div>
               );
             })()}
