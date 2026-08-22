@@ -6,6 +6,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, FlaskConical, RotateCcw, FileText } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { cn } from '@/lib/utils';
 
 interface Props { onBack?: () => void }
@@ -26,6 +28,29 @@ export const CageAssessment = ({ onBack }: Props) => {
   const score = Object.values(responses).filter(Boolean).length;
   const positive = score >= 2;
   const reset = () => { setResponses({}); setShowResults(false); };
+
+  const reportData: ReportData = {
+    assessmentName: 'CAGE (Alcohol Use Disorder Screen)',
+    date: new Date().toLocaleString(),
+    totalScore: `${score}/4`,
+    interpretation: positive
+      ? 'Positive screen — warrants further evaluation for alcohol use disorder.'
+      : 'Negative screen (score < 2).',
+    severity: positive ? 'Positive' : 'Negative',
+    sections: [
+      {
+        title: 'Item Responses',
+        items: ITEMS.map((item) => `${item.letter}. ${item.text}: ${responses[item.id] ? 'Yes' : 'No'}`),
+        type: 'info',
+      },
+      {
+        title: 'Interpretation',
+        items: ['Score ≥ 2 is clinically significant; 93% sensitivity / 76% specificity for excessive drinking.'],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'CAGE is a 4-item screening tool; clinical evaluation is required for diagnosis.',
+  };
 
   if (showResults) {
     return (
@@ -49,6 +74,7 @@ export const CageAssessment = ({ onBack }: Props) => {
               <p><strong>Clinical action:</strong> If positive, take a detailed drinking history (quantity, frequency, last drink), screen for withdrawal risk (CIWA-Ar), assess for comorbid mood/anxiety disorders, and consider AUDIT for severity grading. Offer brief intervention, pharmacotherapy (naltrexone, acamprosate, disulfiram) where appropriate, and referral to addiction services.</p>
             </div>
             <div className="flex justify-center gap-3 print:hidden">
+              <ExportButtons data={reportData} />
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
               <Button onClick={reset}><RotateCcw className="mr-2 h-4 w-4" />New Assessment</Button>
             </div>
