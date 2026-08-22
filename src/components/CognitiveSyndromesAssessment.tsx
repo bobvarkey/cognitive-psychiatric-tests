@@ -13,6 +13,8 @@ import { CognitiveSyndromeCategory } from '@/types/cognitiveSyndromes';
 import { Brain, Search, X, FileText, RotateCcw, AlertTriangle, Info } from 'lucide-react';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { generatePdfReport } from '@/utils/reportGenerator';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface CognitiveSyndromesAssessmentProps {
@@ -152,6 +154,27 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
     const presentTests = frontalLobeTests.filter(t => selectedTests.has(t.id));
     const affectedCategories = Array.from(new Set(presentSyndromes.map(s => s.category)));
 
+    const reportData: ReportData = {
+      assessmentName: 'Cognitive Syndromes & Frontal Lobe Assessment',
+      date: new Date().toLocaleString(),
+      totalScore: `${presentSyndromes.length} syndromes, ${presentTests.length} frontal tests`,
+      interpretation: `${presentSyndromes.length} cognitive syndrome(s) identified and ${presentTests.length} frontal lobe test(s) abnormal. Affected categories: ${affectedCategories.length ? affectedCategories.join(', ') : 'none'}.`,
+      severity: presentSyndromes.length ? 'Positive' : 'Negative',
+      sections: [
+        {
+          title: 'Cognitive Syndromes Identified',
+          items: presentSyndromes.map(s => `${s.name}: ${language === 'en' ? s.description : s.descriptionMl}`),
+          type: 'positive',
+        },
+        {
+          title: 'Frontal Lobe Tests — Abnormal',
+          items: presentTests.map(t => `${t.name} (${t.domain}): ${language === 'en' ? t.description : t.descriptionMl}`),
+          type: 'info',
+        },
+      ],
+      disclaimer: 'Cognitive syndrome identification is a clinical reference/documentation aid and not a diagnostic test.',
+    };
+
     return (
       <div className="max-w-4xl mx-auto p-4 sm:p-6 pt-16">
         <h1 className="text-2xl sm:text-3xl font-bold mb-6 flex items-center gap-2">
@@ -245,11 +268,12 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
           </Card>
         )}
 
-        <div className="flex gap-3 mt-6">
-          <Button onClick={handleReset} variant="outline" className="flex-1">
+        <div className="flex flex-wrap gap-3 mt-6">
+          <ExportButtons data={reportData} />
+          <Button onClick={handleReset} variant="outline" className="flex-1 min-w-[140px]">
             <RotateCcw className="h-4 w-4 mr-2" /> {t('reset')}
           </Button>
-          <Button onClick={handleExportPdf} className="flex-1">
+          <Button onClick={handleExportPdf} className="flex-1 min-w-[140px]">
             <FileText className="h-4 w-4 mr-2" /> Export PDF
           </Button>
         </div>
