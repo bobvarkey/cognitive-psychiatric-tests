@@ -795,13 +795,13 @@ export const AssessmentSelector = () => {
                       loading="lazy"
                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 bg-gradient-to-b from-black/60 via-black/20 to-transparent rounded-2xl gap-4">
-                      <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground text-center px-4 leading-tight max-w-sm drop-shadow-2xl">
+                      <h2 className="text-3xl sm:text-4xl font-extrabold text-white text-center px-4 leading-tight max-w-sm drop-shadow-2xl">
                         {language === 'en'
                           ? 'Neuropsychiatric\nEvaluation Companion'
                           : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}
                       </h2>
                       <div className="flex items-center gap-3 px-4">
-                        <span className="text-2xl font-bold text-foreground drop-shadow">Cognito</span>
+                        <span className="text-2xl font-bold text-white drop-shadow">Cognito</span>
                       </div>
                       <Button
                         onClick={() => openAssessment('triage')}
