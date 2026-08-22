@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Frown, RotateCcw, FileText } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { cn } from '@/lib/utils';
 
 interface Props { onBack?: () => void }
@@ -55,6 +57,27 @@ export const BdiAssessment = ({ onBack }: Props) => {
 
   const reset = () => { setResponses({}); setShowResults(false); };
 
+  const reportData: ReportData = {
+    assessmentName: 'BDI-II (Beck Depression Inventory — Second Edition)',
+    date: new Date().toLocaleString(),
+    totalScore: `${total}/63`,
+    interpretation: interpret(total).label,
+    severity: interpret(total).label,
+    sections: [
+      {
+        title: 'Item Scores',
+        items: BDI_ITEMS.map((item) => `Item ${item.id}. ${item.label}: ${responses[item.id] ?? 0}`),
+        type: 'info',
+      },
+      {
+        title: 'Cutoffs',
+        items: ['0–13 minimal · 14–19 mild · 20–28 moderate · 29–63 severe'],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'BDI-II is a screening tool for depressive symptoms over the past two weeks; not diagnostic on its own.',
+  };
+
   if (showResults) {
     const interp = interpret(total);
     const item9 = responses[9] ?? 0;
@@ -82,6 +105,7 @@ export const BdiAssessment = ({ onBack }: Props) => {
               <strong>Cutoffs:</strong> 0–13 minimal · 14–19 mild · 20–28 moderate · 29–63 severe. The BDI-II is a screening tool, not diagnostic.
             </div>
             <div className="flex justify-center gap-3 print:hidden">
+              <ExportButtons data={reportData} />
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
               <Button onClick={reset}><RotateCcw className="mr-2 h-4 w-4" />New Assessment</Button>
             </div>
