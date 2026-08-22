@@ -5,6 +5,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { EPWORTH_ITEMS, EPWORTH_SCORING_GUIDE, EPWORTH_INTERPRETATION } from '@/data/epworthSleepinessScale';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface EpworthAssessmentProps {
   onBack?: () => void;
@@ -38,6 +40,22 @@ export const EpworthAssessment = ({ onBack }: EpworthAssessmentProps) => {
     if (totalScore <= 12) return EPWORTH_INTERPRETATION[2];
     if (totalScore <= 15) return EPWORTH_INTERPRETATION[3];
     return EPWORTH_INTERPRETATION[4];
+  };
+
+  const reportData: ReportData = {
+    assessmentName: 'Epworth Sleepiness Scale (ESS)',
+    date: new Date().toLocaleString(),
+    totalScore: `${totalScore}/24`,
+    interpretation: getInterpretation().description,
+    severity: getInterpretation().level,
+    sections: [
+      {
+        title: 'Item Scores',
+        items: EPWORTH_ITEMS.map((item) => `${item.number}. ${item.situation}: ${responses[item.id] ?? 0}`),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'ESS is a self-report screening tool for daytime sleepiness; clinical evaluation is required for diagnosis.',
   };
 
   return (
@@ -168,6 +186,10 @@ export const EpworthAssessment = ({ onBack }: EpworthAssessmentProps) => {
                         ? 'Patient shows moderate excessive daytime sleepiness. Consider sleep study.'
                         : 'Patient shows severe excessive daytime sleepiness. Sleep study strongly recommended.'}
                     </p>
+                  </div>
+
+                  <div className="flex justify-center pt-1">
+                    <ExportButtons data={reportData} />
                   </div>
                 </div>
               );
