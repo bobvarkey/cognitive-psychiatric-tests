@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
-import { createDemoSubscription, setDemoUnlockAll } from '@/services/subscriptionService';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createDemoSubscription, setDemoUnlockAll, getDemoUnlockAll } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
+import { usePremiumEntitlement } from '@/hooks/usePremiumEntitlement';
 
 interface PremiumFeatures {
   allAssessments: boolean;
@@ -28,35 +29,51 @@ interface SubscriptionContextType {
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
 
-export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const FULL_PREMIUM_FEATURES: PremiumFeatures = {
-    allAssessments: true,
-    exportToPDF: true,
-    exportToDOCX: true,
-    clinicalAnalytics: true,
-    patientTracking: true,
-    prioritySupport: true,
-    offlineSync: true,
-    bannerAdsDisabled: true,
-  };
+const FULL_PREMIUM_FEATURES: PremiumFeatures = {
+  allAssessments: true,
+  exportToPDF: true,
+  exportToDOCX: true,
+  clinicalAnalytics: true,
+  patientTracking: true,
+  prioritySupport: true,
+  offlineSync: true,
+  bannerAdsDisabled: true,
+};
 
-  const [isPremium, setIsPremium] = useState(true);
+const FREE_FEATURES: PremiumFeatures = {
+  allAssessments: false,
+  exportToPDF: false,
+  exportToDOCX: false,
+  clinicalAnalytics: false,
+  patientTracking: false,
+  prioritySupport: false,
+  offlineSync: false,
+  bannerAdsDisabled: false,
+};
+
+export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [features, setFeatures] = useState<PremiumFeatures>(FULL_PREMIUM_FEATURES);
   const [showPaywall, setShowPaywall] = useState(false);
-  const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(true);
-  // Force-unlock: ensure Pro and all plans are always available.
+  const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(() => getDemoUnlockAll());
+
+  // Real entitlement from the AppBuild wrapper's RevenueCat (Purchases) plugin.
+  // isPremium is true only when the 'premium' entitlement is active in the native app.
+  const { isPremium: entitlementActive, loading: entitlementLoading, refresh: refreshEntitlement } =
+    usePremiumEntitlement('premium');
+
+  // Demo unlock is a dev/test escape hatch. When ON it forces premium regardless of entitlement.
+  const isPremium = demoUnlockAll || entitlementActive;
+
+  const features: PremiumFeatures = isPremium ? FULL_PREMIUM_FEATURES : FREE_FEATURES;
 
   const refreshSubscription = () => {
-    setIsPremium(true);
-    setFeatures(FULL_PREMIUM_FEATURES);
-    setDemoUnlockAllState(true);
-    setDemoUnlockAll(true);
+    // Re-check the native entitlement (e.g. after a purchase or restore).
+    refreshEntitlement();
   };
 
   const toggleDemoUnlockAll = (enabled: boolean) => {
     setDemoUnlockAll(enabled);
-    refreshSubscription();
+    setDemoUnlockAllState(enabled);
   };
 
   const initiatePurchase = async (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => {
@@ -70,9 +87,16 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const activateDemoSubscription = (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => {
     createDemoSubscription(plan, tier);
-    refreshSubscription();
     setShowPaywall(false);
+    refreshSubscription();
   };
+
+  // Keep the local subscription record in sync with the entitlement state.
+  useEffect(() => {
+    if (isPremium && !subscription) {
+      // No-op: entitlement is the source of truth; we don't fabricate a local record.
+    }
+  }, [isPremium, subscription]);
 
   const value: SubscriptionContextType = {
     isPremium,

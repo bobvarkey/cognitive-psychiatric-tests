@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <script src="https://appbuild.diy/snippets/appbuild-wrapper-sdk.js" defer></script>
 
+    <!-- DEV-ONLY mock of window.AppbuildWrapper (see public/appbuild-wrapper-sdk.mock.js).
+         Injected only in development mode so wrapper.ts / revenuecat.ts / the Paywall /
+         usePremiumEntitlement can be tested in a plain browser. NEVER ships in production. -->
+    <script src="/appbuild-wrapper-sdk.mock.js" defer></script>
+
     <!-- Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, FileText, User } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, User, Save } from 'lucide-react';
 import { getDaphneScaleItems } from '@/data/daphneScale';
 import { DaphneResponse, DaphneResults } from '@/types/daphne';
 import { DaphneItemCard } from './DaphneItemCard';
@@ -13,17 +13,48 @@ import { LanguageToggle } from './LanguageToggle';
 import { AssessmentReference } from '@/components/AssessmentReference';
 import { ProgressIndicator } from './ProgressIndicator';
 
+const STORAGE_KEY = 'cognito.daphne.draft.v1';
+
+interface DaphneDraft {
+  responses: DaphneResponse[];
+  patientInfo: {
+    name: string;
+    age: string;
+    assessorName: string;
+  };
+  currentStep: number;
+  showPatientForm: boolean;
+  savedAt: number;
+}
+
+const readDraft = (): DaphneDraft | null => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object' && Array.isArray(parsed.responses)) {
+      return parsed as DaphneDraft;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+};
+
 export const DaphneAssessment = () => {
   const { language, t } = useLanguage();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [responses, setResponses] = useState<DaphneResponse[]>([]);
+  const initialDraft = useRef<DaphneDraft | null>(readDraft());
+  const [currentStep, setCurrentStep] = useState(() => initialDraft.current?.currentStep ?? 0);
+  const [responses, setResponses] = useState<DaphneResponse[]>(() => initialDraft.current?.responses ?? []);
   const [showResults, setShowResults] = useState(false);
-  const [patientInfo, setPatientInfo] = useState({
+  const [patientInfo, setPatientInfo] = useState(() => initialDraft.current?.patientInfo ?? {
     name: '',
     age: '',
     assessorName: ''
   });
-  const [showPatientForm, setShowPatientForm] = useState(true);
+  const [showPatientForm, setShowPatientForm] = useState(() => initialDraft.current?.showPatientForm ?? true);
+  const [savedAt, setSavedAt] = useState<number | null>(() => initialDraft.current?.savedAt ?? null);
+  const [resumed, setResumed] = useState(() => !!initialDraft.current && initialDraft.current.responses.length > 0);
 
   const DAPHNE_SCALE_ITEMS = getDaphneScaleItems(language);
   const totalSteps = DAPHNE_SCALE_ITEMS.length;
@@ -89,6 +120,40 @@ export const DaphneAssessment = () => {
     };
 
     setShowResults(true);
+    clearDraft();
+  };
+
+  // Auto-save draft on changes (skip while results are shown).
+  useEffect(() => {
+    if (showResults) return;
+    const hasData = responses.length > 0 || patientInfo.name || patientInfo.age || patientInfo.assessorName;
+    if (!hasData) return;
+    const handle = setTimeout(() => {
+      try {
+        const draft: DaphneDraft = {
+          responses,
+          patientInfo,
+          currentStep,
+          showPatientForm,
+          savedAt: Date.now(),
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+        setSavedAt(draft.savedAt);
+      } catch {
+        /* ignore quota */
+      }
+    }, 400);
+    return () => clearTimeout(handle);
+  }, [responses, patientInfo, currentStep, showPatientForm, showResults]);
+
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* noop */
+    }
+    setSavedAt(null);
+    setResumed(false);
   };
 
   const handleStartAssessment = () => {
@@ -96,6 +161,7 @@ export const DaphneAssessment = () => {
   };
 
   const handleRestart = () => {
+    clearDraft();
     setCurrentStep(0);
     setResponses([]);
     setShowResults(false);
@@ -227,11 +293,38 @@ export const DaphneAssessment = () => {
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
         <div className="mb-6">
+          {resumed && responses.length > 0 && (
+            <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-3 flex items-center justify-between gap-3 text-sm text-blue-900 mb-4">
+              <div className="flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                <span>
+                  {language === 'en'
+                    ? `Resumed your saved draft (${responses.length}/${totalSteps} answered).`
+                    : `സംരക്ഷിച്ച ഡ്രാഫ്റ്റ് പുനരാരംഭിച്ചു (${responses.length}/${totalSteps} ഉത്തരം).`}
+                </span>
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => { setResponses([]); setCurrentStep(0); setShowPatientForm(true); clearDraft(); }}
+              >
+                {language === 'en' ? 'Start fresh' : 'പുതുതായി തുടങ്ങുക'}
+              </Button>
+            </div>
+          )}
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-medical-primary">{t('assessment.header')}</h1>
-            <Badge variant="outline" className="text-medical-primary border-medical-primary">
-              {currentStep + 1} / {totalSteps}
-            </Badge>
+            <div className="flex items-center gap-3">
+              {savedAt && (
+                <span className="inline-flex items-center gap-1 text-xs text-emerald-700">
+                  <Save className="h-3 w-3" />
+                  {language === 'en' ? 'Saved' : 'സംരക്ഷിച്ചു'} {new Date(savedAt).toLocaleTimeString()}
+                </span>
+              )}
+              <Badge variant="outline" className="text-medical-primary border-medical-primary">
+                {currentStep + 1} / {totalSteps}
+              </Badge>
+            </div>
           </div>
           
           {/* Live Scoring Summary */}
