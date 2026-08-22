@@ -11,6 +11,8 @@ import { MiniAceResponse, MiniAceResults } from '@/types/miniace';
 import { ArrowLeft, Brain, Clock, ListChecks, AlertCircle, CheckCircle2, Info, FileText, Cat } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface MiniAceAssessmentProps {
   onBack?: () => void;
@@ -92,6 +94,35 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
   };
 
   if (showResults && results) {
+    const reportData: ReportData = {
+      assessmentName: `Mini-ACE (Mini-Addenbrooke's Cognitive Examination) — Version ${results.version}`,
+      date: new Date().toLocaleString(),
+      totalScore: `${results.totalScore}/30`,
+      interpretation: language === 'ml' ? results.interpretationMl : results.interpretation,
+      severity: results.riskLevel,
+      sections: [
+        {
+          title: language === 'ml' ? 'ഡൊമെയ്ൻ സ്കോറുകൾ' : 'Domain Scores',
+          items: Object.entries(results.domainScores).map(([domain, score]) => {
+            const item = MINI_ACE_ITEMS.find(i => i.id === domain);
+            return `${language === 'ml' ? item?.titleMl : item?.title}: ${score}/${item?.maxScore}`;
+          }),
+          type: 'info',
+        },
+        {
+          title: language === 'ml' ? 'കട്ട്-ഓഫ് മൂല്യങ്ങൾ' : 'Cut-off Values',
+          items: [
+            `≤25: ${language === 'ml' ? 'ഉയർന്ന സംവേദനക്ഷമത - സാധ്യമായ വൈജ്ഞാനിക കുറവ്' : 'High sensitivity - Possible cognitive impairment'}`,
+            `≤21: ${language === 'ml' ? 'ഉയർന്ന പ്രത്യേകത - ഡിമെൻഷ്യ വളരെ സാധ്യത' : 'High specificity - Dementia highly likely'}`,
+          ],
+          type: 'info',
+        },
+      ],
+      disclaimer: language === 'ml'
+        ? 'Mini-ACE ഒരു സ്‌ക്രീനിംഗ് ഉപകരണമാണ്; രോഗനിർണയത്തിന് സമഗ്രമായ ക്ലിനിക്കൽ വിലയിരുത്തൽ ആവശ്യമാണ്.'
+        : 'Mini-ACE is a screening tool; comprehensive clinical evaluation is required for diagnosis.',
+    };
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-4 md:p-8">
         <LanguageToggle />
@@ -137,6 +168,11 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Copyable TXT report */}
+              <div className="flex justify-center">
+                <ExportButtons data={reportData} />
               </div>
 
               {/* Cut-off Information */}
