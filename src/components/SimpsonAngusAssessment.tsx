@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Activity, RotateCcw, FileText } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { cn } from '@/lib/utils';
 
 interface Props { onBack?: () => void }
@@ -68,6 +70,22 @@ export const SimpsonAngusAssessment = ({ onBack }: Props) => {
   const positive = mean >= 0.3;
   const reset = () => { setResponses({}); setShowResults(false); };
 
+  const reportData: ReportData = {
+    assessmentName: 'Simpson-Angus Scale (SAS)',
+    date: new Date().toLocaleString(),
+    totalScore: `${total}/40`,
+    interpretation: `${positive ? 'Drug-induced parkinsonism likely' : 'Below threshold'} — Mean ${mean.toFixed(2)} (cutoff ≥ 0.3)`,
+    severity: positive ? 'Positive' : 'Negative',
+    sections: [
+      {
+        title: 'Item Scores',
+        items: ITEMS.map((item) => `Item ${item.id}. ${item.label}: ${responses[item.id] ?? 0}`),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'SAS measures antipsychotic-induced parkinsonism; mean ≥ 0.3 is clinically significant.',
+  };
+
   if (showResults) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 p-4 md:p-8">
@@ -88,6 +106,7 @@ export const SimpsonAngusAssessment = ({ onBack }: Props) => {
               <strong>Interpretation:</strong> Mean score (total / 10). Cutoff ≥ 0.3 indicates clinically significant drug-induced parkinsonism. Consider dose reduction, switch to lower-EPS antipsychotic, or anticholinergic (e.g. trihexyphenidyl).
             </div>
             <div className="flex justify-center gap-3 print:hidden">
+              <ExportButtons data={reportData} />
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
               <Button onClick={reset}><RotateCcw className="mr-2 h-4 w-4" />New Assessment</Button>
             </div>
