@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Sparkles, RotateCcw, FileText } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { cn } from '@/lib/utils';
 
 interface Props { onBack?: () => void }
@@ -73,6 +75,29 @@ export const PanssAssessment = ({ onBack }: Props) => {
 
   const reset = () => { setResponses({}); setShowResults(false); };
 
+  const severity = total <= 58 ? 'Mildly ill' : total <= 75 ? 'Moderately ill' : total <= 95 ? 'Markedly ill' : 'Severely ill';
+
+  const reportData: ReportData = {
+    assessmentName: 'PANSS (Positive and Negative Syndrome Scale)',
+    date: new Date().toLocaleString(),
+    totalScore: `${total}/210`,
+    interpretation: `${severity} — Positive ${sub.P}/49, Negative ${sub.N}/49, General ${sub.G}/112, Composite ${composite > 0 ? '+' : ''}${composite}`,
+    severity,
+    sections: [
+      {
+        title: 'Subscale Scores',
+        items: [`Positive (P): ${sub.P}/49`, `Negative (N): ${sub.N}/49`, `General (G): ${sub.G}/112`, `Composite (P − N): ${composite > 0 ? '+' : ''}${composite}`],
+        type: 'info',
+      },
+      {
+        title: 'Item Scores',
+        items: ITEMS.map((item) => `${item.id}. [${SUBSCALE_NAMES[item.sub]}] ${item.label}: ${responses[item.id] ?? 0}`),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'PANSS is rated over the past week from a structured clinical interview; clinical diagnosis requires comprehensive evaluation.',
+  };
+
   if (showResults) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-fuchsia-50 to-pink-50 p-4 md:p-8">
@@ -100,6 +125,7 @@ export const PanssAssessment = ({ onBack }: Props) => {
               <strong>Reference (Leucht 2005, equipercentile linking to CGI-S):</strong> ~58 ≈ mildly ill · ~75 ≈ moderately ill · ~95 ≈ markedly ill · ~116 ≈ severely ill. Composite score &gt; 0 favours positive symptoms; &lt; 0 favours negative.
             </div>
             <div className="flex justify-center gap-3 print:hidden">
+              <ExportButtons data={reportData} />
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
               <Button onClick={reset}><RotateCcw className="mr-2 h-4 w-4" />New Assessment</Button>
             </div>
