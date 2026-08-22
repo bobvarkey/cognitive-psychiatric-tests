@@ -198,11 +198,11 @@ export const assessments: Assessment[] = [
   // Other Assessments
   {
     id: 'adam',
-    name: 'ADAM Androgen Deficiency',
+    name: 'ADAM Apathy-Depression-Anhedonia Measure',
     abbreviation: 'ADAM',
-    description: 'Screen for androgen deficiency symptoms',
+    description: 'Dissociate apathy, depression, and anhedonia symptoms',
     category: ASSESSMENT_CATEGORIES.GENERAL,
-    subcategory: 'Endocrine',
+    subcategory: 'Mood & Apathy',
     component: null,
     icon: '🏥',
     duration: '5 min',

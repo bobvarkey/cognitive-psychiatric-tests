@@ -364,9 +364,7 @@ export const DaphneAssessment = () => {
               })}
             </div>
             <p className="text-[10px] text-muted-foreground italic leading-tight">
-              '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-              
-              the page should not slide from side to side  when i move sliders
+              The six domains above update live as you answer.
             </p>
           </div>
 

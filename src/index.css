@@ -526,3 +526,19 @@ body {
 html {
   overflow-x: hidden;
 }
+
+/* Robust anti-horizontal-scroll: clip instead of hidden so no element can
+   drag the page sideways (sliders, off-canvas sidebar, wide tables). */
+html,
+body,
+#root {
+  overflow-x: clip;
+  max-width: 100vw;
+}
+
+/* Make all app text selectable/copyable app-wide. */
+body * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
