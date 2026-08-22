@@ -7,6 +7,8 @@ import { ArrowLeft, Brain, LayoutDashboard, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DementiaConsolidatedResults } from './DementiaConsolidatedResults';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface CdrAssessmentProps { 
   onBack?: () => void;
@@ -103,6 +105,25 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
 
   const isComplete = Object.keys(scores).length === domains.length;
 
+  const reportData: ReportData = {
+    assessmentName: 'CDR (Clinical Dementia Rating)',
+    date: new Date().toLocaleString(),
+    totalScore: `${Object.keys(scores).length}/${domains.length} domains rated`,
+    interpretation: isComplete
+      ? (language === 'ml' ? 'എല്ലാ ഡൊമെയ്നുകളും റേറ്റ് ചെയ്തു — കൺസോളിഡേറ്റഡ് വ്യൂ ഉപയോഗിച്ച് ആഗോള CDR സ്റ്റേജ് കണക്കാക്കുക.' : 'All domains rated — use the Consolidated View to derive the global CDR stage.')
+      : (language === 'ml' ? 'എല്ലാ ഡൊമെയ്നുകളും റേറ്റ് ചെയ്തിട്ടില്ല.' : 'Not all domains rated yet.'),
+    sections: [
+      {
+        title: language === 'ml' ? 'ഡൊമെയ്ൻ സ്കോറുകൾ' : 'Domain Scores',
+        items: domains.map((d) => `${language === 'ml' ? d.nameMl : d.name}: ${scores[d.id] ?? 0}`),
+        type: 'info',
+      },
+    ],
+    disclaimer: language === 'ml'
+      ? 'CDR ഒരു ക്ലിനീഷ്യൻ റേറ്റിംഗ് സ്‌കെയിലാണ്; ആഗോള സ്റ്റേജിനായി സ്റ്റാൻഡേർഡ് CDR ബോക്സ് സ്കോർ രീതി ഉപയോഗിക്കുക.'
+      : 'CDR is a clinician-rated scale; use the standard CDR box-score method for the global stage.',
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-4 space-y-6">
       <div className="flex items-center justify-between">
@@ -165,6 +186,11 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
             ))}
           </TooltipProvider>
           <div className="p-4 bg-primary/10 rounded font-bold">Total Domains Rated: {Object.keys(scores).length}</div>
+          {Object.keys(scores).length > 0 && (
+            <div className="flex justify-center pt-2">
+              <ExportButtons data={reportData} />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
