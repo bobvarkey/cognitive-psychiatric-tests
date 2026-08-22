@@ -1022,7 +1022,7 @@ export const AssessmentSelector = () => {
                               activeCategory as Exclude<Category, 'all'>,
                               filteredAssessments.length,
                             )}
-                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                          <div className="flex flex-col divide-y divide-border/60 rounded-2xl bg-card/40 border border-border/60 overflow-hidden">
                             {filteredAssessments.map((a, idx) => renderTile(a, idx, false))}
                           </div>
                         </>
@@ -1038,7 +1038,7 @@ export const AssessmentSelector = () => {
                           return (
                             <section key={cat} aria-labelledby={`cat-${cat}`}>
                               {renderCategoryBanner(cat, items.length)}
-                              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                              <div className="flex flex-col divide-y divide-border/60 rounded-2xl bg-card/40 border border-border/60 overflow-hidden">
                                 {items.map((a, idx) => renderTile(a, idx, false))}
                               </div>
                             </section>
