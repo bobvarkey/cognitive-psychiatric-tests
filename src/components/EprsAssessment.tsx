@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Zap, RotateCcw, FileText } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { cn } from '@/lib/utils';
 
 interface Props { onBack?: () => void }
@@ -50,6 +52,27 @@ export const EprsAssessment = ({ onBack }: Props) => {
 
   const reset = () => { setResponses({}); setShowResults(false); };
 
+  const reportData: ReportData = {
+    assessmentName: 'EPRS (Extrapyramidal Symptom Rating Scale)',
+    date: new Date().toLocaleString(),
+    totalScore: `${total}/48`,
+    interpretation: total === 0 ? 'No EPS' : total <= 8 ? 'Mild' : total <= 20 ? 'Moderate' : 'Marked',
+    severity: total === 0 ? 'None' : total <= 8 ? 'Mild' : total <= 20 ? 'Moderate' : 'Marked',
+    sections: [
+      {
+        title: 'Domain Scores',
+        items: DOMAINS.map((d) => `${d}: ${domainScores[d] ?? 0}`),
+        type: 'info',
+      },
+      {
+        title: 'Item Scores',
+        items: ITEMS.map((item) => `Item ${item.id}. [${item.domain}] ${item.label}: ${responses[item.id] ?? 0}`),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'Any domain score ≥ 3 warrants intervention; clinical interpretation required.',
+  };
+
   if (showResults) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 p-4 md:p-8">
@@ -80,6 +103,7 @@ export const EprsAssessment = ({ onBack }: Props) => {
               <strong>Note:</strong> Each domain scored independently. Any score ≥ 3 in a domain warrants intervention: anticholinergic for parkinsonism / dystonia; β-blocker or benzodiazepine for akathisia; consider VMAT-2 inhibitor (valbenazine, deutetrabenazine) or dose reduction / switch for tardive dyskinesia.
             </div>
             <div className="flex justify-center gap-3 print:hidden">
+              <ExportButtons data={reportData} />
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
               <Button onClick={reset}><RotateCcw className="mr-2 h-4 w-4" />New Assessment</Button>
             </div>
