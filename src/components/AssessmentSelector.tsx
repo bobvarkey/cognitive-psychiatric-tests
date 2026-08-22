@@ -906,7 +906,6 @@ export const AssessmentSelector = () => {
                     const renderTile = (a: AssessmentInfo, index: number, locked = false) => {
                       const Icon = a.icon;
                       const color = neonColorPalette[index % neonColorPalette.length];
-                      const customGlowStyle = color.customGlow ? { style: { boxShadow: color.customGlow } } : {};
                       const reference = getAssessmentReference(a.key);
 
                       return (
@@ -914,30 +913,31 @@ export const AssessmentSelector = () => {
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => locked ? setShowPaywall(true) : openAssessment(a.key)}
-                              className={`group relative flex flex-col items-center justify-center text-center p-3 sm:p-4 min-h-[132px] rounded-2xl border shadow-sm transition-all duration-300 active:scale-[0.97] overflow-hidden ${
-                                locked
-                                  ? 'bg-card/50 border-border/50 opacity-60 cursor-pointer'
-                                  : 'bg-card border-border hover:shadow-xl hover:border-primary/50 hover:bg-accent/5 dark:hover:bg-primary/5'
+                              className={`group w-full flex items-start gap-3 sm:gap-4 text-left px-3 sm:px-4 py-3 rounded-2xl transition-colors active:scale-[0.995] ${
+                                locked ? 'opacity-60' : 'hover:bg-accent/40'
                               }`}
                             >
-                              {/* Pro lock overlay removed — all assessments unlocked */}
-
-                              <div className={`absolute inset-0 bg-gradient-to-br ${a.gradient} opacity-0 group-hover:opacity-[0.06] transition-opacity`} aria-hidden />
-                              <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${color.bg} flex items-center justify-center mb-2.5 border group-hover:scale-110 transition-all ${color.glow}`} style={{ borderColor: color.icon, ...customGlowStyle.style }}>
+                              <div
+                                className={`shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${color.bg} flex items-center justify-center border`}
+                                style={{ borderColor: color.icon }}
+                              >
                                 <Icon className="h-6 w-6 text-foreground" style={{ filter: `drop-shadow(0 0 8px ${color.icon})` }} />
                               </div>
-                              <span className="relative text-sm font-semibold text-foreground leading-tight">
-                                {a.name}
-                              </span>
-                              <span className="relative text-[11px] text-muted-foreground mt-0.5 leading-tight">
-                                {a.subtitle}
-                              </span>
-                              {reference && (
-                                <span className="relative mt-1 inline-flex items-center gap-1 rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
-                                  <BookOpen className="h-3 w-3" />
-                                  Verified citation
-                                </span>
-                              )}
+                              <div className="min-w-0 flex-1">
+                                <h4 className="text-base sm:text-lg font-semibold text-foreground leading-snug truncate">
+                                  {a.name}
+                                </h4>
+                                <p className="text-sm text-muted-foreground leading-snug truncate">
+                                  {a.subtitle}
+                                </p>
+                                {reference && (
+                                  <span className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                                    <BookOpen className="h-3 w-3" />
+                                    Verified citation
+                                  </span>
+                                )}
+                              </div>
+                              <ArrowRight className="h-4 w-4 mt-1 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-primary" />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
@@ -954,6 +954,7 @@ export const AssessmentSelector = () => {
                         </Tooltip>
                       );
                     };
+
 
                     const renderCategoryBanner = (cat: Exclude<Category, 'all'>, count: number) => {
                       const CatIcon = categoryLabels[cat].icon;
