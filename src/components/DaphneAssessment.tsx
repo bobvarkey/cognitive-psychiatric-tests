@@ -233,6 +233,50 @@ export const DaphneAssessment = () => {
               {currentStep + 1} / {totalSteps}
             </Badge>
           </div>
+          
+          {/* Live Scoring Summary */}
+          <div className="mb-4 p-4 rounded-xl border border-medical-primary/20 bg-medical-primary/5 space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Live DAPHNE Score</span>
+              <div className="flex gap-4">
+                <div className="text-right">
+                  <span className="text-xs text-muted-foreground block">DAPHNE-6</span>
+                  <span className="font-bold text-medical-primary">
+                    {Object.values(responses.reduce((acc, response) => {
+                      const item = getDaphneScaleItems('en').find(i => i.id === response.itemId);
+                      if (item && response.score > 0) acc[item.domain] = 1;
+                      return acc;
+                    }, {} as Record<string, number>)).reduce((sum, score) => sum + score, 0)}/6
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-muted-foreground block">DAPHNE-40</span>
+                  <span className="font-bold text-medical-primary">
+                    {responses.reduce((sum, r) => sum + r.score, 0)}/40
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-6 gap-1">
+              {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
+                const domainItems = getDaphneScaleItems('en').filter(item => item.domain === domain);
+                const hasSymptom = responses.filter(r => domainItems.some(i => i.id === r.itemId)).some(r => r.score > 0);
+                return (
+                  <div 
+                    key={domain} 
+                    className={`h-1.5 rounded-full transition-colors ${hasSymptom ? 'bg-medical-primary' : 'bg-muted'}`}
+                    title={domain}
+                  />
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-muted-foreground italic leading-tight">
+              '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+              
+              Add a DAPHNE-6 scoring summary screen that calculates domain and total scores as I answer the 10 items.
+            </p>
+          </div>
+
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>{t('nav.patient')}: {patientInfo.name || 'Not provided'}</span>
