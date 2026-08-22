@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Brain, RotateCcw, FileText, AlertTriangle, CheckCircle2, Save } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { IQCODE_ITEMS, IQCODE_OPTIONS } from '@/data/iqcodeScale';
 import { cn } from '@/lib/utils';
 
@@ -112,6 +114,26 @@ export const IqcodeAssessment = ({ onBack }: IqcodeAssessmentProps) => {
     clearDraft();
   };
 
+  const reportData: ReportData = {
+    assessmentName: language === 'en' ? 'Short IQCODE (Informant Questionnaire on Cognitive Decline in the Elderly)' : 'ഷോർട്ട് IQCODE',
+    date: new Date().toLocaleString(),
+    totalScore: `${result.mean.toFixed(2)} (mean)`,
+    interpretation: language === 'en' ? interpretMean(result.mean).en : interpretMean(result.mean).ml,
+    severity: interpretMean(result.mean).severity,
+    sections: [
+      {
+        title: language === 'en' ? 'Score' : 'സ്കോർ',
+        items: [
+          `${language === 'en' ? `Total: ${result.sum} / 80 across ${result.n} items` : `മൊത്തം: ${result.sum} / 80, ${result.n} ഇനങ്ങളിൽ`}`,
+        ],
+        type: 'info',
+      },
+    ],
+    disclaimer: language === 'en'
+      ? 'IQCODE is an informant-rated screening tool; not a diagnosis. Cutoffs vary by population (3.31–3.38).'
+      : 'IQCODE ഒരു സ്‌ക്രീനിംഗ് ഉപകരണമാണ്; രോഗനിർണയമല്ല.',
+  };
+
   if (showResults) {
     const interp = interpretMean(result.mean);
     const isPositive = interp.severity === 'positive';
@@ -185,7 +207,8 @@ export const IqcodeAssessment = ({ onBack }: IqcodeAssessmentProps) => {
                   : 'IQCODE ഇൻഫോർമന്റ് റേറ്റിംഗാണ് — ഇത് ഒരു സ്ക്രീനിംഗ് ഉപകരണം മാത്രമാണ്, രോഗനിർണയമല്ല.'}
               </div>
 
-              <div className="flex justify-center gap-3 print:hidden">
+              <div className="flex flex-wrap justify-center gap-3 print:hidden">
+                <ExportButtons data={reportData} />
                 <Button variant="outline" onClick={() => window.print()}>
                   <FileText className="mr-2 h-4 w-4" />
                   {language === 'en' ? 'Print' : 'പ്രിന്റ്'}
