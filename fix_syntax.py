@@ -2,26 +2,24 @@ import sys
 
 file_path = "src/components/AssessmentSelector.tsx"
 with open(file_path, "r") as f:
-    content = f.read()
+    lines = f.readlines()
 
-header = "const assessments: AssessmentInfo[] = ["
-idx_start = content.find(header)
-if idx_start == -1:
-    print("Could not find header")
-    sys.exit(1)
-idx_start += len(header)
+# Find the start and end indices for the 'opd-psych-eval' and 'cdr' entries
+start_idx = -1
+end_idx = -1
 
-cdr_entry = '{ key: \'cdr\''
-idx_end = content.find(cdr_entry, idx_start)
-if idx_end == -1:
-    cdr_entry = '{ key: "cdr"'
-    idx_end = content.find(cdr_entry, idx_start)
+for i, line in enumerate(lines):
+    if "'opd-psych-eval'" in line:
+        start_idx = i
+    if start_idx != -1 and "'cdr'" in line:
+        end_idx = i
+        break
 
-if idx_end == -1:
-    print("Could not find cdr entry")
+if start_idx == -1 or end_idx == -1:
+    print(f"Could not find indices: {start_idx}, {end_idx}")
     sys.exit(1)
 
-# Using hex representation for problematic characters or just building string parts
+# The content to replace for opd-psych-eval
 desc_text = (
     "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n"
     "                                        \n"
@@ -84,19 +82,13 @@ desc_text = (
     "```"
 )
 
-# Escape the string for JS
 desc_js = desc_text.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
+new_line = f"  {{ key: 'opd-psych-eval', name: 'OPD Psych Evaluation', subtitle: 'Pediatric / SLD Workup', icon: ClipboardList, gradient: 'from-emerald-500 to-teal-600', category: ['all', 'cognitive'], description: \"{desc_js}\" }},\n"
 
-new_entries = (
-    "\n  // ─── Triage & Core Flows ───\n"
-    "  { key: 'triage', name: 'Psychiatric Triage', subtitle: 'Clinical Routing', icon: Shield, gradient: 'from-blue-600 to-indigo-700', category: ['all'], description: 'Psychiatric Triage Mini App — Step-by-step clinical decision support for safety, psychosis, mood, anxiety, ADHD, and substance use routing.' },\n"
-    "  { key: 'adhd-outpatient', name: 'ADHD Outpatient Flow', subtitle: 'Treatment Algorithm', icon: Activity, gradient: 'from-blue-600 to-indigo-700', category: ['all', 'cognitive'], description: 'Adolescent and adult ADHD outpatient treatment algorithm — capturing patient profile, symptoms, comorbidities, prior treatments, and risks to generate recommended pharmacologic and non-pharmacologic plans.' },\n"
-    "  { key: 'adhd', name: 'ADHD (DSM-5)', subtitle: 'Diagnostic Criteria', icon: Focus, gradient: 'from-amber-500 to-orange-600', category: ['all', 'cognitive'], description: 'DSM-5-TR ADHD diagnostic criteria checklist for inattention and hyperactivity-impulsivity domains.' },\n"
-    "  { key: 'adhdScreener', name: 'ADHD Screeners', subtitle: 'ASRS & Vanderbilt', icon: ClipboardCheck, gradient: 'from-emerald-500 to-teal-600', category: ['all', 'cognitive'], description: 'Access the ASRS-v1.1 (6 & 18 items) for adults and the NICHQ Vanderbilt Parent Scale for children.' },\n"
-    "  { key: 'opd-psych-eval', name: 'OPD Psych Evaluation', subtitle: 'Pediatric / SLD Workup', icon: ClipboardList, gradient: 'from-emerald-500 to-teal-600', category: ['all', 'cognitive'], description: \"" + desc_js + "\" },\n  "
-)
+# Replace the lines from start_idx up to (but not including) end_idx
+final_lines = lines[:start_idx] + [new_line] + lines[end_idx:]
 
-new_content = content[:idx_start] + new_entries + content[idx_end:]
 with open(file_path, "w") as f:
-    f.write(new_content)
+    f.writelines(final_lines)
+
 print("Updated successfully")
