@@ -379,6 +379,31 @@ export const DaphneAssessment = () => {
 
         {/* Assessment Item */}
         <div>
+          {/* Domain coverage indicator — shows all 6 DAPHNE domains so the
+              user sees the full scope (first 4 items are all disinhibition). */}
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map((domain) => {
+              const isCurrent = currentItem?.domain === domain;
+              const domainItems = getDaphneScaleItems('en').filter((i) => i.domain === domain);
+              const hasSymptom = responses
+                .filter((r) => domainItems.some((i) => i.id === r.itemId))
+                .some((r) => r.score > 0);
+              return (
+                <span
+                  key={domain}
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border ${
+                    isCurrent
+                      ? 'bg-medical-primary text-white border-medical-primary'
+                      : hasSymptom
+                        ? 'bg-medical-primary/10 text-medical-primary border-medical-primary/30'
+                        : 'bg-muted text-muted-foreground border-border'
+                  }`}
+                >
+                  {domain}
+                </span>
+              );
+            })}
+          </div>
           <DaphneItemCard
             item={currentItem}
             currentScore={getCurrentScore(currentItem.id)}
