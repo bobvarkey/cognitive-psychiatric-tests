@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Home, BookOpen, TrendingUp } from 'lucide-react';
 import { ESGS_COMPONENTS, ESGS_GRADING } from '@/data/epilepsyScales';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface EsgsAssessmentProps {
   onBack?: () => void;
@@ -30,6 +32,22 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
     totalScore >= 7.5 ? 'text-green-700 dark:text-green-400' :
     totalScore > 4 ? 'text-yellow-700 dark:text-yellow-400' :
     'text-red-700 dark:text-red-400';
+
+  const reportData: ReportData = {
+    assessmentName: 'ESGS (Epilepsy Surgery Grading Scale)',
+    date: new Date().toLocaleString(),
+    totalScore: `${totalScore.toFixed(1)} / 10`,
+    interpretation: `${grade.name} — Probability: ${grade.probability}. Prognosis: ${grade.description}`,
+    severity: grade.name,
+    sections: [
+      {
+        title: 'Component Scores',
+        items: ESGS_COMPONENTS.map((c) => `${c.name}: ${scores[c.key] ?? 0}`),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'ESGS predicts likelihood of seizure freedom after resective surgery in drug-resistant focal epilepsy; not a substitute for comprehensive presurgical evaluation.',
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-4">
@@ -146,6 +164,9 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
                         'Grade 3 (Least Favorable): Patient has limited likelihood of seizure freedom but may still benefit from surgery. Detailed counseling about realistic expectations essential.'}
                     </p>
                   </div>
+                </div>
+                <div className="pt-2 flex justify-center print:hidden">
+                  <ExportButtons data={reportData} />
                 </div>
               </CardContent>
             </Card>
