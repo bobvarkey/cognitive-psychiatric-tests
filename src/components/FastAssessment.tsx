@@ -8,6 +8,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useLanguage } from '@/contexts/LanguageContext';
 import { FAST_ITEMS } from '@/data/fastScale';
 import { DementiaConsolidatedResults } from './DementiaConsolidatedResults';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface FastAssessmentProps { 
   onBack?: () => void;
@@ -24,6 +26,33 @@ export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScore
     const stage = parseInt(val);
     setSelectedStage(stage);
     if (onStageChange) onStageChange(stage);
+  };
+
+  const selectedItem = selectedStage !== null ? FAST_ITEMS.find(i => i.stage === selectedStage) : null;
+
+  const reportData: ReportData = {
+    assessmentName: 'FAST (Functional Assessment Staging)',
+    date: new Date().toLocaleString(),
+    totalScore: selectedStage !== null ? `Stage ${selectedStage}` : undefined,
+    interpretation: selectedItem
+      ? (language === 'ml' ? selectedItem.titleMl : selectedItem.title)
+      : undefined,
+    severity: selectedStage !== null ? `Stage ${selectedStage}` : undefined,
+    sections: [
+      {
+        title: language === 'ml' ? 'തിരഞ്ഞെടുത്ത ഘട്ടം' : 'Selected Stage',
+        items: selectedItem
+          ? [
+              `${language === 'ml' ? selectedItem.titleMl : selectedItem.title}`,
+              `${language === 'ml' ? selectedItem.descriptionMl : selectedItem.description}`,
+            ]
+          : [language === 'ml' ? 'ഘട്ടം തിരഞ്ഞെടുത്തിട്ടില്ല' : 'No stage selected'],
+        type: 'info',
+      },
+    ],
+    disclaimer: language === 'ml'
+      ? 'FAST ഒരു ഫങ്ഷണൽ സ്റ്റേജിംഗ് സ്‌കെയിലാണ്; രോഗനിർണയത്തിന് സമഗ്രമായ ക്ലിനിക്കൽ വിലയിരുത്തൽ ആവശ്യമാണ്.'
+      : 'FAST is a functional staging scale; comprehensive clinical evaluation is required for diagnosis.',
   };
 
   if (showConsolidated) {
@@ -97,6 +126,9 @@ export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScore
             <div className="mt-6 p-4 bg-primary/10 rounded-xl border border-primary/20 animate-in fade-in slide-in-from-bottom-2">
               <span className="text-xs font-bold text-primary uppercase tracking-wider block mb-1">Selected Clinical Stage</span>
               <div className="text-xl font-black text-foreground">Stage {selectedStage}</div>
+              <div className="mt-3 flex justify-center">
+                <ExportButtons data={reportData} />
+              </div>
             </div>
           )}
         </CardContent>
