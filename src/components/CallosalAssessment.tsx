@@ -1,8 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Home, Brain, Hand, Eye, PenLine, Activity } from 'lucide-react';
+import { Home, Brain, Hand, Eye, PenLine, Activity, Check, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
+import { useState } from 'react';
 
 interface CallosalAssessmentProps {
   onBack: () => void;
@@ -64,6 +67,43 @@ const tests = [
 export const CallosalAssessment = ({ onBack }: CallosalAssessmentProps) => {
   const { language } = useLanguage();
   const isEn = language === 'en';
+  const [results, setResults] = useState<(boolean | null)[]>(tests.map(() => null));
+
+  const setResult = (idx: number, value: boolean) => {
+    setResults((prev) => prev.map((r, i) => (i === idx ? value : r)));
+  };
+
+  const answered = results.filter((r) => r !== null).length;
+  const positiveCount = results.filter((r) => r === true).length;
+  const allAnswered = answered === tests.length;
+
+  const interpretation = (() => {
+    if (positiveCount === 0) return isEn ? 'No evidence of callosal disconnection.' : 'കാലോസൽ ഡിസ്‌കണക്ഷന്റെ തെളിവുകളൊന്നുമില്ല.';
+    if (positiveCount <= 2) return isEn ? 'Suggestive of callosal disconnection — correlate with MRI / DTI.' : 'കാലോസൽ ഡിസ്‌കണക്ഷൻ സൂചിപ്പിക്കുന്നു — MRI / DTI ഉപയോഗിച്ച് സ്ഥിരീകരിക്കുക.';
+    return isEn ? 'Strongly suggestive of callosal disconnection — confirm with MRI / DTI.' : 'കാലോസൽ ഡിസ്‌കണക്ഷൻ ശക്തമായി സൂചിപ്പിക്കുന്നു — MRI / DTI ഉപയോഗിച്ച് സ്ഥിരീകരിക്കുക.';
+  })();
+
+  const reportData: ReportData = {
+    assessmentName: isEn ? 'Callosal Disconnection Syndrome — Bedside Examination' : 'കാലോസൽ ഡിസ്‌കണക്ഷൻ സിൻഡ്രോം — ബെഡ്‌സൈഡ് പരിശോധന',
+    date: new Date().toLocaleString(),
+    totalScore: `${positiveCount}/${tests.length} tests positive`,
+    interpretation,
+    severity: positiveCount === 0 ? 'None' : positiveCount <= 2 ? 'Mild–Moderate' : 'Severe',
+    sections: [
+      {
+        title: isEn ? 'Bedside tests' : 'ബെഡ്‌സൈഡ് പരിശോധനകൾ',
+        items: tests.map((t, i) => {
+          const r = results[i];
+          const label = r === null ? (isEn ? 'Not assessed' : 'വിലയിരുത്തിയിട്ടില്ല') : r ? (isEn ? 'Positive' : 'പോസിറ്റീവ്') : (isEn ? 'Negative' : 'നെഗറ്റീവ്');
+          return `${i + 1}. ${isEn ? t.name : t.nameMl} — ${label}`;
+        }),
+        type: 'info',
+      },
+    ],
+    disclaimer: isEn
+      ? 'Callosal disconnection is a clinical diagnosis supported by MRI / DTI. This bedside screen is not diagnostic on its own.'
+      : 'കാലോസൽ ഡിസ്‌കണക്ഷൻ MRI / DTI പിന്തുണയുള്ള ക്ലിനിക്കൽ രോഗനിർണയമാണ്. ഈ ബെഡ്‌സൈഡ് സ്‌ക്രീൻ മാത്രം രോഗനിർണയത്തിന് പര്യാപ്തമല്ല.',
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary p-4 sm:p-6 print:bg-white">
@@ -149,11 +189,61 @@ export const CallosalAssessment = ({ onBack }: CallosalAssessmentProps) => {
                       <p className="text-muted-foreground leading-relaxed italic">{test.rationale}</p>
                     </div>
                   )}
+                  <div className="pt-2 border-t border-border/60">
+                    <p className="text-xs font-semibold text-muted-foreground mb-2">
+                      {isEn ? 'Result' : 'ഫലം'}
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant={results[idx] === true ? 'default' : 'outline'}
+                        onClick={() => setResult(idx, true)}
+                        className="flex items-center gap-1.5"
+                      >
+                        <Check className="h-4 w-4" />
+                        {isEn ? 'Positive' : 'പോസിറ്റീവ്'}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={results[idx] === false ? 'default' : 'outline'}
+                        onClick={() => setResult(idx, false)}
+                        className="flex items-center gap-1.5"
+                      >
+                        <X className="h-4 w-4" />
+                        {isEn ? 'Negative' : 'നെഗറ്റീവ്'}
+                      </Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             );
           })}
         </div>
+
+        <Card className="mt-6 border-l-4 border-l-primary">
+          <CardHeader>
+            <CardTitle className="text-base">
+              {isEn ? 'Examination Result' : 'പരിശോധനാ ഫലം'}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl font-bold">{positiveCount}/{tests.length}</span>
+              <span className="text-sm text-muted-foreground">
+                {isEn ? 'tests positive' : 'പോസിറ്റീവ് പരിശോധനകൾ'}
+              </span>
+            </div>
+            <p className="text-sm text-foreground">{interpretation}</p>
+            {!allAnswered && (
+              <p className="text-xs text-muted-foreground">
+                {isEn
+                  ? `${answered}/${tests.length} answered — mark each test Positive or Negative.`
+                  : `${answered}/${tests.length} പൂർത്തിയായി — ഓരോ പരിശോധനയും പോസിറ്റീവ് അല്ലെങ്കിൽ നെഗറ്റീവ് അടയാളപ്പെടുത്തുക.`}
+              </p>
+            )}
+            <ExportButtons data={reportData} />
+          </CardContent>
+        </Card>
 
         <Card className="mt-6 bg-muted/30">
           <CardHeader>
