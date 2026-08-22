@@ -113,6 +113,8 @@ import { SettingsView } from './SettingsView';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import cognitoHero from '@/assets/cognito-hero.png';
 // Images removed as they are unused and causing build errors
+const VISUAL_SPECS = "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n\nThe system (set up once):\n\n1. One font family, two weights (SF Pro on iOS)\n\n2. 4px or 8px spacing scale, no arbitrary values\n\n3. ~8 semantic color tokens, zero hardcoded hex values\n\n4. One border radius everywhere\n\n5. One icon library, one shadow scale\n\n6. Every interactive element has a pressed/hover state\n\nThe native layer:\n\n7. Continuous (squircle) corner curves\n\n8. Haptics on meaningful actions\n\n9. Tabular numerals on all counters and stats\n\n10. Safe areas respected, native navigation patterns, 44pt tap targets";
+
 
 export type AssessmentKey =
   | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'

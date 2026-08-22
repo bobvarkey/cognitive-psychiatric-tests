@@ -43,7 +43,7 @@ export const SettingsView = () => {
 
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 tabular-nums">
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
