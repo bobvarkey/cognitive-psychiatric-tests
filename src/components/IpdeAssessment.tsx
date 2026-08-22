@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Heart, RotateCcw, FileText } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { cn } from '@/lib/utils';
 
 interface Props { onBack?: () => void }
@@ -100,6 +102,23 @@ export const IpdeAssessment = ({ onBack }: Props) => {
   const flagged = Object.entries(perPd).filter(([pd, n]) => n >= (PD_CUTOFFS[pd] ?? 99));
   const reset = () => { setResponses({}); setShowResults(false); };
 
+  const reportData: ReportData = {
+    assessmentName: 'IPDE-SQ (International Personality Disorder Examination — Screening Questionnaire)',
+    date: new Date().toLocaleString(),
+    interpretation: flagged.length > 0
+      ? `Above-cutoff dimensions: ${flagged.map(([pd]) => pd).join(', ')}`
+      : 'No dimensions reached cutoff.',
+    severity: flagged.length > 0 ? 'Flagged' : 'Below cutoff',
+    sections: [
+      {
+        title: 'Dimensions',
+        items: Object.keys(PD_CUTOFFS).map((pd) => `${pd}: ${perPd[pd] ?? 0} / cutoff ${PD_CUTOFFS[pd]}${(perPd[pd] ?? 0) >= PD_CUTOFFS[pd] ? ' — Refer for interview' : ''}`),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'IPDE-SQ is a screen only; above-cutoff dimensions warrant a structured clinical interview. It does not establish a diagnosis.',
+  };
+
   if (showResults) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-red-50 p-4 md:p-8">
@@ -131,6 +150,7 @@ export const IpdeAssessment = ({ onBack }: Props) => {
               <strong>Note:</strong> The IPDE-SQ is a screen only. Items above cutoff suggest the corresponding personality disorder may warrant a structured clinical interview (full IPDE or SCID-5-PD). It does not establish a diagnosis. {flagged.length > 0 ? 'Above-cutoff dimensions are flagged in red.' : 'No dimensions reached cutoff.'}
             </div>
             <div className="flex justify-center gap-3 print:hidden">
+              <ExportButtons data={reportData} />
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
               <Button onClick={reset}><RotateCcw className="mr-2 h-4 w-4" />New Assessment</Button>
             </div>
