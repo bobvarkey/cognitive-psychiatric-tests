@@ -4,27 +4,31 @@ file_path = "src/components/AssessmentSelector.tsx"
 with open(file_path, "r") as f:
     lines = f.readlines()
 
-# Find the start and end indices for the 'opd-psych-eval' and 'cdr' entries
 start_idx = -1
-end_idx = -1
-
 for i, line in enumerate(lines):
-    if "'opd-psych-eval'" in line:
+    if "{ key: 'opd-psych-eval'" in line:
         start_idx = i
-    if start_idx != -1 and "'cdr'" in line:
+        break
+
+if start_idx == -1:
+    print("Could not find start index")
+    sys.exit(1)
+
+# Find the next valid assessment entry to know where the garbage ends
+end_idx = -1
+for i in range(start_idx + 1, len(lines)):
+    if "{ key: 'cdr'" in lines[i]:
         end_idx = i
         break
 
-if start_idx == -1 or end_idx == -1:
-    print(f"Could not find indices: {start_idx}, {end_idx}")
+if end_idx == -1:
+    print("Could not find end index")
     sys.exit(1)
 
-# The content to replace for opd-psych-eval
 desc_text = (
     "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n"
-    "                                        \n"
-    "                                            \n"
-    "                                            For the code present, I get the error below.\n"
+    "\n"
+    "For the code present, I get the error below.\n"
     "\n"
     "Please think step-by-step in order to resolve it.\n"
     "```\n"
@@ -51,44 +55,18 @@ desc_text = (
     " 169 | '''\n"
     "     `----\n"
     "\n"
-    "\n"
     "Caused by:\n"
     "    Syntax Error\n"
-    "\n"
-    "Stack backtrace:\n"
-    "   0: <unknown>\n"
-    "   1: <unknown>\n"
-    "   2: <unknown>\n"
-    "   3: <unknown>\n"
-    "   4: <unknown>\n"
-    "   5: <unknown>\n"
-    "   6: <unknown>\n"
-    "   7: <unknown>\n"
-    "   8: <unknown>\n"
-    "   9: _ZZN4node14ThreadPoolWork12ScheduleWorkEvENUlP9uv_work_sE_4_FUNES2_\n"
-    "  10: worker\n"
-    "  11: start_thread\n"
-    "  12: __clone3\n"
-    "\n"
-    "{\n"
-    "  \"timestamp\": 1787358229502,\n"
-    "  \"error_type\": \"RUNTIME_ERROR\",\n"
-    "  \"filename\": \"/dev-server/src/components/AssessmentSelector.tsx\",\n"
-    "  \"lineno\": 0,\n"
-    "  \"colno\": 0,\n"
-    "  \"stack\": \"Unavailable\",\n"
-    "  \"has_blank_screen\": true\n"
-    "}\n"
     "```"
 )
 
-desc_js = desc_text.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
-new_line = f"  {{ key: 'opd-psych-eval', name: 'OPD Psych Evaluation', subtitle: 'Pediatric / SLD Workup', icon: ClipboardList, gradient: 'from-emerald-500 to-teal-600', category: ['all', 'cognitive'], description: \"{desc_js}\" }},\n"
+# Minimal escaping for single line
+desc_escaped = desc_text.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
+new_entry = f"  {{ key: 'opd-psych-eval', name: 'OPD Psych Evaluation', subtitle: 'Pediatric / SLD Workup', icon: ClipboardList, gradient: 'from-emerald-500 to-teal-600', category: ['all', 'cognitive'], description: \"{desc_escaped}\" }},\n"
 
-# Replace the lines from start_idx up to (but not including) end_idx
-final_lines = lines[:start_idx] + [new_line] + lines[end_idx:]
+final_lines = lines[:start_idx] + [new_entry] + lines[end_idx:]
 
 with open(file_path, "w") as f:
     f.writelines(final_lines)
 
-print("Updated successfully")
+print("Cleaned successfully")
