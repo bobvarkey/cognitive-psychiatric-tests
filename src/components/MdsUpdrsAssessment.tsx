@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { MDS_UPDRS_ITEMS, MDS_UPDRS_INTERPRETATION } from '@/data/mdsUpdrsScale';
 import { ArrowLeft, RotateCcw, AlertCircle, Brain, Activity, Stethoscope, CheckCircle2 } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface MdsUpdrsAssessmentProps {
   onBack?: () => void;
@@ -93,6 +95,26 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
     if (totalScore <= 32) return MDS_UPDRS_INTERPRETATION.mild;
     if (totalScore <= 58) return MDS_UPDRS_INTERPRETATION.moderate;
     return MDS_UPDRS_INTERPRETATION.severe;
+  };
+
+  const reportData: ReportData = {
+    assessmentName: 'MDS-UPDRS (Movement Disorder Society Unified Parkinson\'s Disease Rating Scale)',
+    date: new Date().toLocaleString(),
+    totalScore: `${totalScore}`,
+    interpretation: `${getInterpretation().level} (${getInterpretation().range}) — ${getInterpretation().description}`,
+    severity: getInterpretation().level,
+    sections: [
+      {
+        title: 'Part Scores',
+        items: [
+          `Part I (Non-Motor): ${getPartScores().part1}`,
+          `Part II (Daily Living): ${getPartScores().part2} (L: ${getPartScores().part2L}, R: ${getPartScores().part2R})`,
+          `Part III (Motor): ${getPartScores().part3}`,
+        ],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'MDS-UPDRS is a comprehensive Parkinson\'s disease rating tool; clinical interpretation and specialist consultation recommended for moderate-to-severe scores.',
   };
 
   const groupByPart = (part: string) => {
@@ -637,7 +659,8 @@ export const MdsUpdrsAssessment = ({ onBack }: MdsUpdrsAssessmentProps) => {
               );
             })()}
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-wrap gap-4 pt-4">
+              <ExportButtons data={reportData} />
               <Button
                 onClick={handleReset}
                 variant="outline"
