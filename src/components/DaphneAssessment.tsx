@@ -273,7 +273,7 @@ export const DaphneAssessment = () => {
             <p className="text-[10px] text-muted-foreground italic leading-tight">
               '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
               
-              Add a DAPHNE-6 scoring summary screen that calculates domain and total scores as I answer the 10 items.
+              the page should not slide from side to side  when i move sliders
             </p>
           </div>
 
