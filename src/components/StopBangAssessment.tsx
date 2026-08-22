@@ -5,6 +5,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { STOP_BANG_ITEMS, STOP_BANG_INTERPRETATION } from '@/data/stopBangScale';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface StopBangAssessmentProps {
   onBack?: () => void;
@@ -42,6 +44,27 @@ export const StopBangAssessment = ({ onBack }: StopBangAssessmentProps) => {
     if (totalScore <= 2) return 'green';
     if (totalScore <= 4) return 'yellow';
     return 'red';
+  };
+
+  const reportData: ReportData = {
+    assessmentName: 'STOP-BANG (Obstructive Sleep Apnea Risk)',
+    date: new Date().toLocaleString(),
+    totalScore: `${totalScore}/8`,
+    interpretation: `${getRiskLevel().level} — ${getRiskLevel().description}`,
+    severity: getRiskLevel().level,
+    sections: [
+      {
+        title: 'Item Responses',
+        items: STOP_BANG_ITEMS.map((item) => `${item.category}. ${item.question}: ${responses[item.id] ? 'Yes' : 'No'}`),
+        type: 'info',
+      },
+      {
+        title: 'Recommendation',
+        items: [getRiskLevel().recommendation],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'STOP-BANG is a screening tool for OSA risk; polysomnography is required for definitive diagnosis.',
   };
 
   return (
@@ -182,6 +205,10 @@ export const StopBangAssessment = ({ onBack }: StopBangAssessmentProps) => {
                       </p>
                     </div>
                   )}
+
+                  <div className="flex justify-center pt-1">
+                    <ExportButtons data={reportData} />
+                  </div>
                 </div>
               );
             })()}
