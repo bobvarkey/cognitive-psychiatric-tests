@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Pill, RotateCcw, FileText } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { cn } from '@/lib/utils';
 
 interface Props { onBack?: () => void }
@@ -69,6 +71,29 @@ export const CowsAssessment = ({ onBack }: Props) => {
 
   const reset = () => { setResponses({}); setShowResults(false); };
 
+  const reset = () => { setResponses({}); setShowResults(false); };
+
+  const reportData: ReportData = {
+    assessmentName: 'COWS (Clinical Opiate Withdrawal Scale)',
+    date: new Date().toLocaleString(),
+    totalScore: `${total}/48`,
+    interpretation: interpret(total).label,
+    severity: interpret(total).label,
+    sections: [
+      {
+        title: 'Item Scores',
+        items: ITEMS.map((item) => `Item ${item.id}. ${item.label}: ${responses[item.id] ?? 0}`),
+        type: 'info',
+      },
+      {
+        title: 'Cutoffs',
+        items: ['5–12 mild · 13–24 moderate · 25–36 moderately severe · >36 severe'],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'COWS is a clinician-rated scale; buprenorphine induction typically requires COWS ≥ 8–12 to avoid precipitated withdrawal.',
+  };
+
   if (showResults) {
     const interp = interpret(total);
     return (
@@ -91,6 +116,7 @@ export const CowsAssessment = ({ onBack }: Props) => {
               <div><strong>Buprenorphine induction:</strong> Most protocols require COWS ≥ 8–12 (typically ≥ 12 for full agonists like methadone) before first dose to avoid precipitated withdrawal.</div>
             </div>
             <div className="flex justify-center gap-3 print:hidden">
+              <ExportButtons data={reportData} />
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
               <Button onClick={reset}><RotateCcw className="mr-2 h-4 w-4" />New Assessment</Button>
             </div>
