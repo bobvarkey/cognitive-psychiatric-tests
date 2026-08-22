@@ -89,9 +89,9 @@ export const ASSESSMENT_INTERPRETATIONS: Record<string, AssessmentInterpretation
     clinicalAction: 'Follow the specific monitoring plan generated: initial follow-up at 4 weeks, titration checks every 2 weeks, and stable monitoring every 6 months. Adjust plan based on patient response and side-effect profile.',
   },
   adam: {
-    interpretation: '≥ 3 "yes" answers (or yes to questions 1 or 7) suggests symptomatic androgen deficiency in the ageing male and warrants morning total testosterone testing.',
-    psychometrics: 'ADAM has high sensitivity (~88%) but low specificity (~60%) for biochemical hypogonadism (Morley 2000); use as screening tool only.',
-    clinicalAction: 'Confirm with two morning total testosterone levels (and free T if SHBG abnormal), LH/FSH, prolactin, and DEXA where appropriate. Treat reversible causes (sleep apnoea, obesity, opioids) before considering testosterone replacement.',
+    interpretation: 'Scored across apathy (behavioural, social, emotional), anhedonia and depression domains. Higher scores indicate greater symptom burden. Scores ≥ 3 on apathy suggest clinically significant apathy; elevation on the depression domain should prompt evaluation for comorbid depression.',
+    psychometrics: 'ADAM is a domain-based apathy, depression and anhedonia measure adapted from the Lille Apathy Rating Scale structure (Sockeel 2006). Scores are grouped by domain: behavioural/social/emotional apathy, anhedonia, and depression.',
+    clinicalAction: 'Use alongside structured assessment of apathy (e.g. Lille Apathy Rating Scale) and mood. Interpret domain elevations separately: apathy vs. anhedonia vs. depression have different treatment implications. Consider re-assessment over time to track change.',
   },
   daphne: {
     interpretation: 'Higher scores on each Big-Five-derived domain (Disinhibition, Anankastia, Negative affectivity, Detachment, Dissocial, Psychoticism) indicate greater trait expression and severity of personality dysfunction per ICD-11.',

@@ -76,8 +76,7 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
   },
   adam: {
     citation:
-      'Morley JE, Charlton E, Patrick P, et al. Validation of a screening questionnaire for androgen deficiency in aging males (ADAM). Metabolism. 2000;49(9):1239–1242.',
-    url: 'https://doi.org/10.1053/meta.2000.8625',
+      'Domain-based apathy, depression and anhedonia measure adapted from the Lille Apathy Rating Scale (Sockeel P, Dujardin K, Devos D, et al. BMC Neurology. 2006).',
   },
   hare: {
     citation:
