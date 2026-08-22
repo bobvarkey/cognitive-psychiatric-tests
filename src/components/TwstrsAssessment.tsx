@@ -5,6 +5,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { TWSTRS_ITEMS, TWSTRS_INTERPRETATION } from '@/data/twstrsScale';
 import { ArrowLeft, RotateCcw, AlertCircle } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface TwstrsAssessmentProps {
   onBack?: () => void;
@@ -45,6 +47,22 @@ export const TwstrsAssessment = ({ onBack }: TwstrsAssessmentProps) => {
     if (totalScore <= 40) return TWSTRS_INTERPRETATION.moderate;
     if (totalScore <= 60) return TWSTRS_INTERPRETATION.severe;
     return TWSTRS_INTERPRETATION.verysevere;
+  };
+
+  const reportData: ReportData = {
+    assessmentName: 'TWSTRS (Toronto Western Spasmodic Torticollis Rating Scale)',
+    date: new Date().toLocaleString(),
+    totalScore: `${totalScore}/85`,
+    interpretation: `${getInterpretation().level} (${getInterpretation().range}) — ${getInterpretation().description}`,
+    severity: getInterpretation().level,
+    sections: [
+      {
+        title: 'Subscales',
+        items: [`Severity: ${getSeverityScore()} / 25`, `Disability: ${getDisabilityScore()} / 30`],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'TWSTRS assesses cervical dystonia severity and disability; clinical interpretation required.',
   };
 
   const groupedItems = {
@@ -239,7 +257,8 @@ export const TwstrsAssessment = ({ onBack }: TwstrsAssessmentProps) => {
               );
             })()}
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex flex-wrap gap-4 pt-4">
+              <ExportButtons data={reportData} />
               <Button
                 onClick={handleReset}
                 variant="outline"
