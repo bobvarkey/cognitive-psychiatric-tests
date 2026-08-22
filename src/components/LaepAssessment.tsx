@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Home, AlertCircle, BookOpen, CheckCircle } from 'lucide-react';
 import { LAEP_ITEMS } from '@/data/epilepsyScales';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface LaepAssessmentProps {
   onBack?: () => void;
@@ -32,6 +34,22 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
   };
 
   const severity = getSeverityLevel();
+
+  const reportData: ReportData = {
+    assessmentName: 'LAEP (Likelihood of Adverse Effects Profile for Antiseizure Medications)',
+    date: new Date().toLocaleString(),
+    totalScore: `${sideEffectsCount} / ${totalItems}`,
+    interpretation: `Severity level: ${severity.level}. ${sideEffectsCount} of ${totalItems} (${percentage}%) adverse effects reported.`,
+    severity: severity.level,
+    sections: [
+      {
+        title: 'Reported Side Effects',
+        items: LAEP_ITEMS.filter((item) => responses[item.id]).map((item) => item.name),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'LAEP is a self-report tool for tracking antiseizure medication side effects; higher burden suggests medication review.',
+  };
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 space-y-4">
@@ -141,6 +159,9 @@ export const LaepAssessment = ({ onBack }: LaepAssessmentProps) => {
               {sideEffectsCount > 4 &&
                 'Patient experiencing significant side effects. Medication change or dose reduction should be considered in consultation with neurologist.'}
             </p>
+            <div className="pt-2 flex justify-center print:hidden">
+              <ExportButtons data={reportData} />
+            </div>
           </div>
         </CardContent>
       </Card>
