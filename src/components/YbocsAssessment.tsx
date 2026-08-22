@@ -7,6 +7,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ArrowLeft, Activity, RotateCcw, FileText } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 import { cn } from '@/lib/utils';
 
 interface Props { onBack?: () => void }
@@ -54,6 +56,27 @@ export const YbocsAssessment = ({ onBack }: Props) => {
 
   const reset = () => { setResponses({}); setShowResults(false); };
 
+  const reportData: ReportData = {
+    assessmentName: 'Y-BOCS (Yale-Brown Obsessive Compulsive Scale)',
+    date: new Date().toLocaleString(),
+    totalScore: `${total}/40`,
+    interpretation: `${interpret(total).label} — Obsessions ${obsessions}/20, Compulsions ${compulsions}/20`,
+    severity: interpret(total).label,
+    sections: [
+      {
+        title: 'Item Scores',
+        items: YBOCS_ITEMS.map((item) => `${item.id}. [${item.group}] ${item.label}: ${responses[item.id] ?? 0}`),
+        type: 'info',
+      },
+      {
+        title: 'Cutoffs (total)',
+        items: ['0–7 subclinical · 8–15 mild · 16–23 moderate · 24–31 severe · 32–40 extreme'],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'Y-BOCS measures OCD symptom severity over the past week; clinical diagnosis requires comprehensive evaluation.',
+  };
+
   if (showResults) {
     const interp = interpret(total);
     return (
@@ -76,6 +99,7 @@ export const YbocsAssessment = ({ onBack }: Props) => {
               <strong>Cutoffs (total):</strong> 0–7 subclinical · 8–15 mild · 16–23 moderate · 24–31 severe · 32–40 extreme. Score the worst symptoms over the past week.
             </div>
             <div className="flex justify-center gap-3 print:hidden">
+              <ExportButtons data={reportData} />
               <Button variant="outline" onClick={() => window.print()}><FileText className="mr-2 h-4 w-4" />Print</Button>
               <Button onClick={reset}><RotateCcw className="mr-2 h-4 w-4" />New Assessment</Button>
             </div>
