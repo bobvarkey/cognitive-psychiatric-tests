@@ -5,6 +5,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { HOEHN_YAHR_STAGES } from '@/data/hoehnYahrScale';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface HoehnYahrAssessmentProps {
   onBack?: () => void;
@@ -28,6 +30,22 @@ export const HoehnYahrAssessment = ({ onBack }: HoehnYahrAssessmentProps) => {
   const selectedStageData = HOEHN_YAHR_STAGES.find(
     s => s.stage === selectedStage
   );
+
+  const reportData: ReportData = {
+    assessmentName: 'Hoehn and Yahr Scale (Parkinson\'s Disease Staging)',
+    date: new Date().toLocaleString(),
+    totalScore: selectedStage || undefined,
+    interpretation: selectedStageData?.description,
+    severity: selectedStage || undefined,
+    sections: [
+      {
+        title: 'Characteristics',
+        items: selectedStageData?.characteristics ?? [],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'Hoehn & Yahr categorises Parkinson\'s disease stage based on clinical findings.',
+  };
 
   return (
     <div className="space-y-6">
@@ -151,6 +169,10 @@ export const HoehnYahrAssessment = ({ onBack }: HoehnYahrAssessmentProps) => {
                       ? 'Patient shows unilateral symptoms with midline involvement.'
                       : 'Patient shows early unilateral symptoms with good functional status.'}
                   </p>
+                </div>
+
+                <div className="flex justify-center pt-1">
+                  <ExportButtons data={reportData} />
                 </div>
               </div>
             )}
