@@ -129,7 +129,14 @@ export type AssessmentKey =
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
   | 'isi' | 'berlin' | 'psqi' | 'fosq' | 'irls' | 'asrs-sleep' | 'cataplexy' | 'sdq'
-  | 'adhd-outpatient' | 'opd-psych-eval' | 'fast' | 'cdr';
+  | 'adhd-outpatient' | 'opd-psych-eval' | 'fast' | 'cdr'
+  | 'late-onset-psychosis' | 'pid5-unified' | 'audit' | 'alcohol-units'
+  | 'ciwa-ar' | 'sds' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse'
+  | 'fibromyalgia' | 'brain-fog';
+
+export type Category =
+  | 'all' | 'cognitive' | 'psychosis' | 'mood' | 'personality' | 'substance'
+  | 'movement' | 'epilepsy' | 'sleep' | 'adverse' | 'fibromyalgia' | 'brainfog';
 
 interface AssessmentInfo {
   key: AssessmentKey;
