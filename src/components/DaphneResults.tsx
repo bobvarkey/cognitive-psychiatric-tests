@@ -61,26 +61,18 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     day: 'numeric'
   });
 
-  const getDaphne6Interpretation = (score: number): { level: string; color: string; description: string } => {
-    if (score === 0) return { 
-      level: t('interp.no.behavioral'), 
+  const getDaphne6Interpretation = (score: number): { level: string; color: string; description: string; action: string } => {
+    if (score <= 3) return { 
+      level: "Below suggested screening cutoff", 
       color: 'text-medical-success', 
-      description: t('interp.no.domains') 
-    };
-    if (score <= 2) return { 
-      level: t('interp.mild.behavioral'), 
-      color: 'text-medical-warning', 
-      description: `${score} ${score > 1 ? t('interp.domains.affected') : t('interp.domain.affected')}` 
-    };
-    if (score <= 4) return { 
-      level: t('interp.moderate.behavioral'), 
-      color: 'text-orange-600', 
-      description: `${score} ${t('interp.domains.affected')}` 
+      description: "Does not exclude bvFTD or another neurologic/psychiatric disorder if clinical concern persists.",
+      action: "Monitor symptoms and correlate with history."
     };
     return { 
-      level: t('interp.severe.behavioral'), 
+      level: "Positive screening result", 
       color: 'text-destructive', 
-      description: `${score} ${t('interp.domains.affected')}` 
+      description: "Arrange comprehensive clinical assessment; do not label the patient solely from this score.",
+      action: "Refer for specialist evaluation and neuroimaging."
     };
   };
 
@@ -113,9 +105,9 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
   const domainDetails = [
     { name: 'Disinhibition', key: 'disinhibition', items: 4 },
     { name: 'Apathy', key: 'apathy', items: 1 },
+    { name: 'Loss of Empathy', key: 'empathy', items: 1 },
     { name: 'Perseverations', key: 'perseverations', items: 1 },
     { name: 'Hyperorality', key: 'hyperorality', items: 3 },
-    { name: 'Loss of Empathy', key: 'empathy', items: 1 },
     { name: 'Personal Neglect', key: 'neglect', items: 2 }
   ];
 
@@ -172,7 +164,10 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     lines.push('Detailed Domain Status:');
     ['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].forEach(dom => {
       const isPresent = involvedDomains.has(dom);
-      lines.push(`  [${isPresent ? 'X' : ' '}] ${dom.charAt(0).toUpperCase() + dom.slice(1)}`);
+      const label = dom === 'empathy' ? 'Loss of Empathy' : 
+                    dom === 'neglect' ? 'Personal Neglect' : 
+                    dom.charAt(0).toUpperCase() + dom.slice(1);
+      lines.push(`  [${isPresent ? 'X' : ' '}] ${label}`);
     });
     lines.push('');
     lines.push('Item-level findings:');
@@ -448,7 +443,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                       </>
                     ) : (
                       <>
-                        The screening threshold was not met (<strong>{results.daphne6Score} &lt; 4</strong>). This suggests a <strong>low likelihood of bvFTD</strong> based on the DAPHNE-6 criteria.
+                        The screening threshold was not met (<strong>{results.daphne6Score} ≤ 3</strong>). This suggests a <strong>low likelihood of bvFTD</strong> based on the DAPHNE-6 criteria.
                         {daphne40Positive && (
                           <span> <strong>Note:</strong> An atypical presentation is noted as the DAPHNE-40 diagnostic threshold was exceeded ({results.daphne40Score} ≥ 15).</span>
                         )}
@@ -456,6 +451,10 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                       </>
                     )}
                   </p>
+                  <div className="mt-3 flex items-start gap-2 text-sm italic opacity-80 border-t pt-3 border-foreground/10">
+                    <Target className="h-4 w-4 shrink-0 mt-0.5" />
+                    <span>Clinical Action: {daphne6Interp.action}</span>
+                  </div>
                 </div>
               </div>
 

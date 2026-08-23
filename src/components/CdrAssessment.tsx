@@ -110,7 +110,7 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
     date: new Date().toLocaleString(),
     totalScore: `${Object.keys(scores).length}/${domains.length} domains rated`,
     interpretation: isComplete
-      ? (language === 'ml' ? 'എല്ലാ ഡൊമെയ്നുകളും റേറ്റ് ചെയ്തു — കൺസോളിഡേറ്റഡ് വ്യൂ ഉപയോഗിച്ച് ആഗോള CDR സ്റ്റേജ് കണക്കാക്കുക.' : 'All domains rated — use the Consolidated View to derive the global CDR stage.')
+      ? (language === 'ml' ? 'എല്ലാ ഡൊമെയ്നുകളും റേറ്റ് ചെയ്തു — കൺസോളിഡേറ്റഡ് വ്യൂ ഉപയോഗിച്ച് ആഗോള CDR സ്റ്റേജ് കണക്കാക്കുക.' : 'All domains rated. This screening is suggestive of a specific dementia severity stage based on the sum of boxes and memory domain score.')
       : (language === 'ml' ? 'എല്ലാ ഡൊമെയ്നുകളും റേറ്റ് ചെയ്തിട്ടില്ല.' : 'Not all domains rated yet.'),
     sections: [
       {
