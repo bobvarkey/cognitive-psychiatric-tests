@@ -430,11 +430,11 @@ export const DaphneAssessment = () => {
               {currentDomainGroup.domain}
             </h2>
             <div className="space-y-8">
-              {currentDomainGroup.items.map((item: any) => (
+              {currentDomainGroup.items.map((currentItem: any) => (
                 <DaphneItemCard
-                  key={item.id}
-                  item={item}
-                  currentScore={getCurrentScore(item.id) ?? -1}
+                  key={currentItem.id}
+                  item={currentItem}
+                  currentScore={getCurrentScore(currentItem.id) ?? -1}
                   onScoreChange={handleScoreChange}
                 />
               ))}
