@@ -931,21 +931,22 @@ export const AssessmentSelector = () => {
                               >
                                 <Icon className="h-8 w-8 text-foreground" style={{ filter: `drop-shadow(0 0 8px ${color.icon})` }} />
                               </div>
-                              <div className="min-w-0 flex-1">
-                                <h4 className="text-base sm:text-lg font-semibold text-foreground leading-snug truncate">
+                              <div className="w-full">
+                                <h4 className="text-sm sm:text-base font-bold text-foreground leading-snug line-clamp-2 mb-1">
                                   {a.name}
                                 </h4>
-                                <p className="text-sm text-muted-foreground leading-snug truncate">
+                                <p className="text-[10px] sm:text-xs text-muted-foreground leading-snug truncate">
                                   {a.subtitle}
                                 </p>
                                 {reference && (
-                                  <span className="mt-1.5 inline-flex items-center gap-1 rounded-md bg-primary/15 px-2 py-0.5 text-[11px] font-semibold text-primary">
-                                    <BookOpen className="h-3 w-3" />
-                                    Verified citation
-                                  </span>
+                                  <div className="mt-2 flex justify-center">
+                                    <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.5 text-[9px] font-semibold text-primary">
+                                      <BookOpen className="h-2.5 w-2.5" />
+                                      Ref
+                                    </span>
+                                  </div>
                                 )}
                               </div>
-                              <ArrowRight className="h-4 w-4 mt-1 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-primary" />
                             </button>
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
