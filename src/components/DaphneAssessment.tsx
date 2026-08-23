@@ -58,9 +58,20 @@ export const DaphneAssessment = () => {
   const [resumed, setResumed] = useState(() => !!initialDraft.current && initialDraft.current.responses.length > 0);
 
   const DAPHNE_SCALE_ITEMS = getDaphneScaleItems(language);
-  const totalSteps = DAPHNE_SCALE_ITEMS.length;
+  
+  // Group items by domain
+  const domainGroups = useMemo(() => {
+    const groups: Record<string, typeof DAPHNE_SCALE_ITEMS> = {};
+    DAPHNE_SCALE_ITEMS.forEach(item => {
+      if (!groups[item.domain]) groups[item.domain] = [];
+      groups[item.domain].push(item);
+    });
+    return Object.entries(groups).map(([domain, items]) => ({ domain, items }));
+  }, [DAPHNE_SCALE_ITEMS]);
+
+  const totalSteps = domainGroups.length;
   const progress = ((currentStep + 1) / totalSteps) * 100;
-  const currentItem = DAPHNE_SCALE_ITEMS[currentStep];
+  const currentDomainGroup = domainGroups[currentStep];
 
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -81,15 +92,18 @@ export const DaphneAssessment = () => {
   };
 
   const handleNext = () => {
-    const currentScore = getCurrentScore(currentItem.id);
-    if (currentScore === null) {
-      setValidationError(language === 'en' ? 'Please provide a response for this item before proceeding.' : 'തുടരുന്നതിന് മുമ്പ് ഈ ഇനത്തിന് ഉത്തരം നൽകുക.');
+    const groupItemIds = currentDomainGroup.items.map(i => i.id);
+    const unansweredInGroup = groupItemIds.some(id => getCurrentScore(id) === null);
+    
+    if (unansweredInGroup) {
+      setValidationError(language === 'en' ? 'Please provide a response for all items in this domain before proceeding.' : 'തുടരുന്നതിന് മുമ്പ് ഈ വിഭാഗത്തിലെ എല്ലാ ഇനങ്ങൾക്കും ഉത്തരം നൽകുക.');
       return;
     }
 
     if (currentStep < totalSteps - 1) {
       setCurrentStep(prev => prev + 1);
       setValidationError(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       calculateResults();
     }
@@ -99,6 +113,7 @@ export const DaphneAssessment = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
       setValidationError(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
