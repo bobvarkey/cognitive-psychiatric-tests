@@ -187,14 +187,8 @@ Note: Original screening prototype — not clinically validated.`;
                 </div>
               ))}
             </div>
-                  <div className="font-mono font-semibold text-foreground">{s} / {m}</div>
-                </div>
-              ))}
-            </div>
-            <div className="flex gap-2 pt-1">
-              <Button size="sm" variant="outline" onClick={copyReport}><Copy className="h-4 w-4 mr-1" /> Copy report</Button>
-              <Button size="sm" variant="ghost" onClick={reset}><RotateCcw className="h-4 w-4 mr-1" /> Reset</Button>
-            </div>
+          </CardContent>
+        </Card>
           </CardContent>
         </Card>
 
