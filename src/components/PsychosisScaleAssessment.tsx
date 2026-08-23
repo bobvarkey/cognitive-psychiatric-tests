@@ -84,7 +84,7 @@ export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => 
   const { patientInfo } = usePatientInfo();
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
-  const [showNote, setShowNote] = useState(false);
+  const [showNote, setShowNote] = useState(true);
   const [showSoap, setShowSoap] = useState(false);
   const [copied, setCopied] = useState(false);
   const [soapCopied, setSoapCopied] = useState(false);
