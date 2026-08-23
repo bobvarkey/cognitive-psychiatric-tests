@@ -305,15 +305,7 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            Add scoring inputs for the Disinhibition domain items so I can select the correct response category for each item.
-
-Add scoring inputs for the Personal Neglect domain items so I can select the correct response category for each item.
-
-Add scoring inputs for the Loss of Empathy domain items so I can select the correct response category for each item.
-
-Show a final scoring summary that totals each domain and presents my overall Daphne-6 results after I complete all items.
-
-Add a results summary page that shows my domain scores and overall DAPHNE-6 assessment at the end of the mini-app.
+                                            Implement scoring logic for the Disinhibition, Personal Neglect, and Loss of Empathy domain items so I can select the correct response category for each item.
       </div>
       <ProgressIndicator 
         sections={[
