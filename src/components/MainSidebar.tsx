@@ -215,7 +215,13 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        Show a per-domain score breakdown and running total as I answer each domain.
+                        Implement navigation so that after I finish the first domain, the UI automatically advances and reveals each remaining domain in order.
+                        <br /><br />
+                        Make sure the other 5 DAPHNE-6 domains are visible so I can access them from the assessment selector.
+                        <br /><br />
+                        Add a completion indicator that shows which domain I’m scoring and which domains/items are still remaining.
+                        <br /><br />
+                        Create a results review screen that summarizes my total DAPHNE-6 score and breaks it down by each of the six domains.
                       </div>
                     </div>
 

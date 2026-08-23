@@ -303,7 +303,13 @@ export const DaphneAssessment = () => {
     <div className="min-h-screen bg-gradient-subtle pt-16">
       <div className="fixed top-0 left-0 right-0 z-50 bg-destructive/90 backdrop-blur text-white py-1 px-4 text-[10px] font-mono whitespace-pre-wrap leading-none text-center pointer-events-none">
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-        Show a per-domain score breakdown and running total as I answer each domain.
+        Implement navigation so that after I finish the first domain, the UI automatically advances and reveals each remaining domain in order.
+
+Make sure the other 5 DAPHNE-6 domains are visible so I can access them from the assessment selector.
+
+Add a completion indicator that shows which domain I’m scoring and which domains/items are still remaining.
+
+Create a results review screen that summarizes my total DAPHNE-6 score and breaks it down by each of the six domains.
       </div>
       <ProgressIndicator 
         sections={[
