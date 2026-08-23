@@ -80,6 +80,56 @@ const TONE_CLASSES: Record<SeverityBand['tone'], { text: string; bg: string; bor
 const findBand = (bands: SeverityBand[] | undefined, score: number): SeverityBand | undefined =>
   bands?.find((b) => score >= b.min && score <= b.max);
 
+/**
+ * Standardised report builder for psychiatric assessments.
+ */
+const buildClinicalReport = (scale: PsychosisScale, totals: Totals, responses: Record<string, number>, patientInfo: any, currentDate: string) => {
+  const lines: string[] = [];
+  lines.push(`${scale.fullName} - Clinical Report`);
+  lines.push('—'.repeat(46));
+  if (patientInfo.name) lines.push(`Patient: ${patientInfo.name}`);
+  if (patientInfo.id) lines.push(`Patient ID: ${patientInfo.id}`);
+  lines.push(`Date: ${currentDate}`);
+  lines.push('');
+
+  if (scale.subscales) {
+    lines.push('Subscale Totals:');
+    scale.subscales.forEach((s) => {
+      const v = totals.bySubscale[s.id] ?? 0;
+      const band = findBand(scale.severityBands?.[s.id], v);
+      lines.push(`  • ${s.label}: ${v}${band ? ` — ${band.label}` : ''}`);
+    });
+  }
+
+  lines.push(`Total Score: ${totals.total}`);
+  const totalBand = findBand(scale.severityBands?.total, totals.total);
+  if (totalBand) {
+    lines.push(`Impression: ${totalBand.label}`);
+    lines.push(`Description: ${totalBand.description}`);
+  }
+
+  lines.push('');
+  lines.push('Item-Level Breakdown:');
+  scale.items.forEach((it) => {
+    const v = responses[it.id];
+    const anchors = it.anchors ?? scale.anchors;
+    const anchor = anchors.find(a => a.value === v);
+    lines.push(`  - ${it.label}: ${v != null ? `${v} (${anchor?.label || ''})` : '—'}`);
+  });
+
+  if (scale.thresholdNote) {
+    lines.push('');
+    lines.push(`Clinical Note: ${scale.thresholdNote}`);
+  }
+
+  lines.push('');
+  lines.push(`Reference: ${scale.citation}`);
+  lines.push('Disclaimer: Screening tool — does not replace comprehensive clinical diagnostic evaluation.');
+  
+  return lines.join('\n');
+};
+
+
 export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => {
   const { patientInfo } = usePatientInfo();
   const [responses, setResponses] = useState<Record<string, number>>({});
@@ -435,9 +485,40 @@ export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => 
                     <p className="text-sm text-muted-foreground mt-1">{totalBand.description}</p>
                   </>
                 )}
-              </div>
-            </CardContent>
-          </Card>
+                </div>
+                <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center no-print">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                    onClick={async () => {
+                      try {
+                        const report = buildClinicalReport(scale, totals, responses, patientInfo, currentDate);
+                        await navigator.clipboard.writeText(report);
+                        setCopied(true);
+                        toast({ title: 'Report copied to clipboard' });
+                        setTimeout(() => setCopied(false), 2000);
+                      } catch (err) {
+                        toast({ title: 'Copy failed', variant: 'destructive' });
+                      }
+                    }}
+                  >
+                    {copied ? <Check className="h-4 w-4 text-green-600" /> : <ClipboardCopy className="h-4 w-4" />}
+                    {copied ? 'Copied' : 'Copy TXT Report'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                    onClick={handleExportDocx}
+                  >
+                    <Download className="h-4 w-4" />
+                    Export DOCX
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
 
           {/* Subscales */}
           {scale.subscales && (
