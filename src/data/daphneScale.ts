@@ -147,23 +147,6 @@ export const DAPHNE_SCALE_ITEMS_EN: DaphneItem[] = [
   }
 ];
 
-export const getDaphneScaleItems = (lang: string) => {
-  const allItems = lang === 'ml' ? DAPHNE_SCALE_ITEMS_ML : DAPHNE_SCALE_ITEMS_EN;
-  // DAPHNE-6 uses exactly 10 items according to the scoring logic requirement
-  const selectedIds = [
-    'disinhibition',
-    'inappropriate-joviality',
-    'unrestrained-spending',
-    'sexual-disinhibition',
-    'apathy',
-    'loss-of-empathy',
-    'perseverations',
-    'hyperorality',
-    'bulimia-gluttony',
-    'personal-neglect'
-  ];
-  return allItems.filter(item => selectedIds.includes(item.id));
-};
 
 
 export const DAPHNE_SCALE_ITEMS_ML: DaphneItem[] = [
@@ -314,8 +297,20 @@ export const DAPHNE_SCALE_ITEMS_ML: DaphneItem[] = [
 ];
 
 
-import type { Language } from '@/contexts/LanguageContext';
-
-export const getDaphneScaleItems = (language: Language): DaphneItem[] => {
-  return language === 'en' ? DAPHNE_SCALE_ITEMS_EN : DAPHNE_SCALE_ITEMS_ML;
+export const getDaphneScaleItems = (lang: string): DaphneItem[] => {
+  const allItems = lang === 'ml' ? DAPHNE_SCALE_ITEMS_ML : DAPHNE_SCALE_ITEMS_EN;
+  // DAPHNE-6 uses exactly 10 items according to the scoring logic requirement
+  const selectedIds = [
+    'disinhibition',
+    'inappropriate-joviality',
+    'unrestrained-spending',
+    'sexual-disinhibition',
+    'apathy',
+    'loss-of-empathy',
+    'perseverations',
+    'hyperorality',
+    'bulimia-gluttony',
+    'personal-neglect'
+  ];
+  return allItems.filter(item => selectedIds.includes(item.id));
 };
