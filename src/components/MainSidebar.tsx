@@ -215,9 +215,9 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        Add the Hyperorality domain details to the DAPHNE-6 assessment UI. [HyperoralityEating disorders, new preference for sweetsno troublesubject has a new preference for sweetssubject has new or bizarre food preferences but can listen to reasonsubject eats or drinks excessively and cannot listen to reason (padlock on cupboard, etc.)subject eats and drinks everything within reach, including in other people's plates or glasses, or eats inedible substancesBulimia, gluttonyno troublesubject eats much more, has put on weightsubject eats gluttonously, voraciously, without getting dirtysubject eats quickly and gets dirty, takes big pieces, risking chokingsubject eats with hands, uncleanly, does not cut his food, keeps food in mouth; subject has put on a lot of weight]
+                        Add scoring inputs for the remaining Perseverations items so I can select the correct response category for each item.
 
-Add the Personal neglect domain details to the DAPHNE-6 assessment UI. [NeglectPersonal neglectno troublesubject looks less neatsubject must be stimulated to wash or change clothessubject can wash or change clothes only when threatened or trickedsubject has very poor hygiene (dirty fingernails, dirty hair, dirty clothes, etc.)]
+Implement a live completion indicator that shows which domain and which item I’m currently scoring, with a running total that updates as I answer.
                       </div>
                     </div>
 
