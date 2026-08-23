@@ -305,17 +305,79 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            use these 6 to build the DAPHNE-6  ;: Socially inappropriate actions or loss of self-control.
+                                            Use the DAPHNE -6 score ;The DAPHNE-6 is an acronym-based clinical screening tool adapted from the Rascovsky bvFTD diagnostic criteria to assess six behavioral domains: Disinhibition (D), Apathy (A), Perseverations (P), Hyperorality (H), personal Neglect (N), and Empathy loss (E). Each domain is scored as 0 (absent) or 1 (present), resulting in a total score from 0 to 6. A score of 4 or higher indicates a high likelihood of behavioral variant frontotemporal dementia with a 92% sensitivity rate. [1, 2, 3, 4, 5]  The 6 Behavioral Domains
 
-Apathy: Indifference, reduced initiative, or lack of interest.
+D – Disinhibition: Socially inappropriate behavior, loss of manners/decorum, impulsive or reckless actions.
 
-Perseverations: Repetitive, stereotyped, or compulsive behaviors.
+A – Apathy / Inertia: Loss of drive, initiative, or motivation; reduction in spontaneous activity or speech.
 
-Hyperorality: Dietary changes or excessive eating/mouth behaviors.
+P – Perseverations: Stereotypical, repetitive behaviors, rituals, or speech; fixation on specific objects, phrases, or routines.
 
-Personal Neglect: Disregard for personal hygiene or self-care.
+H – Hyperorality: Changes in eating habits, binge eating, altered food preferences (especially craving sweets), or putting non-food items in the mouth.
 
-Loss of Empathy: Reduced sympathy or interpersonal warmth. [1, 2, 3]
+N – personal Neglect: Decline in personal hygiene, grooming, or self-care habits.
+
+E – Empathy loss: Loss of emotional responsiveness, coldness, or a decreased capacity to sympathize with others. Show me the scoring ONLY for AI Mode conversation: show the dAPHNE 6 compnents
+
+show the dAPHNE 6 compnents
+
+The DAPHNE-6 is a quick clinical screening inventory adapted from Rascovsky's criteria used by clinicians to assess the behavioral variant of frontotemporal dementia (bvFTD). [1]
+
+The tool evaluates patients across six specific behavioral domains (which form the acronym DAPHNE): [1]
+
+D – Disinhibition: Early behavioral disinhibition (e.g., loss of social convenience, socially inappropriate behaviors, or unrestrained spending). [1]
+
+A – Apathy: Early apathy or inertia (e.g., loss of initiative, drive, or general interest). [1]
+
+P – Perseveration: Early perseverative, stereotyped, or compulsive/ritualistic behavior (e.g., repetitive movements or emotional fixed ideas). [1]
+
+H – Hyperorality: Hyperorality and dietary changes (e.g., altered food preferences, overeating, binge drinking, or oral exploration of objects). [1, 2]
+
+N – Neglect: Personal neglect and hygiene deficiencies (e.g., loss of grooming, early negligence of appearance, or household care). [1, 2]
+
+E – Empathy loss: Early loss of empathy or sympathy (e.g., emotional blunting, decreased responsiveness to others' needs, or diminished warmth). [1, 2]
+
+Scoring Structure
+
+While the expanded version (DAPHNE-40) maps these domains across 10 specific checklist items to yield a diagnostic score, the DAPHNE-6 condenses them directly into a 6-point screening score (one point per affected domain). A score of ≥ 4 on the DAPHNE-6 indicates a high likelihood of bvFTD and triggers further diagnostic exploration. [1]
+
+If you are using this scale for clinical or research purposes, let me know if you would like a breakdown of the 10 scoring items used in the full DAPHNE-40 diagnostic matrix. [1]
+
+ResearchGate
+
+(PDF) DAPHNE: A New Tool for the Assessment of the ...
+
+4 Aug 2026 — DAPHNE, a New Behavioral Disturbance Scale. apathy, perseverations, characterize the following deficits: apathy, loss of empathy, ...
+
+PubMed Central (PMC) (.gov)
+
+DAPHNE: A New Tool for the Assessment of the Behavioral ...
+
+This scale (adapted from Rascovsky's criteria) explores six domains: disinhibition, apathy, perseverations, hyperorality, personal...
+
+Springer Nature Link
+
+The Behavioural Dysfunction Questionnaire discriminates ...
+
+23 Mar 2023 — “personal neglect” is an addition to the five behavioural domains. disinhibition represents 40%, hyperorality represents 20% repre...
+
+Show all
+
+show me the DAPHNE 6 screening tool
+
+Here is the clinical structure of the DAPHNE-6 screening tool matrix. It is administered to a caregiver or close informant to screen for behavioral variant frontotemporal dementia (bvFTD). [1]
+
+DAPHNE-6 Screening Matrix
+
+The clinician assesses whether a clinically significant, persistent change has occurred in each of the six behavioral domains compared to the patient's baseline. [1]
+
+DomainTargeted Screening Behavioral ChangePresent (1) / Absent (0)DisinhibitionLoss of social "brakes": Socially inappropriate behavior, loss of manners, or impulsive, unrestrained spending.ApathyLoss of initiative: Marked inertia, loss of drive, or requiring constant prompting to begin basic tasks.PerseverationRigid or repetitive behaviors: Stereotyped movements, repeating phrases, or ritualistic compulsions.HyperoralityDietary changes: Marked sweet tooth, binge eating, or cramming food/oral exploration of non-food objects.NeglectPersonal hygiene decline: Lack of grooming, neglecting physical appearance, or ignoring household cleanliness.Empathy lossEmotional blunting: Apparent coldness, indifference to others' feelings, or loss of response to major family events.Total ScoreSum of all checked domains (Range: 0 – 6)/ 6
+
+Clinical Scoring & Interpretation
+
+Score ≥ 4: Indicates a positive screen for bvFTD. This threshold demonstrates a 92% sensitivity rate in catching early-stage frontotemporal degeneration. [1]
+
+Next Steps: A positive screen on the DAPHNE-6 indicates that the clinician should escalate the assessment to the comprehensive DAPHNE-40 inventory (which evaluates 10 sub-items on a graded 0–4 scale) to maximize diagnostic specificity and differentiate it from psychiatric mimics like bipolar disorde. I dont want the DAPHNE 40
       </div>
       <ProgressIndicator 
         sections={[
