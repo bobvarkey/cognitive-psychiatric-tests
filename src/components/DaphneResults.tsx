@@ -113,10 +113,10 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
   const domainDetails = [
     { name: t('domain.disinhibition'), key: 'disinhibition', items: 4 },
     { name: t('domain.apathy'), key: 'apathy', items: 1 },
-    { name: t('domain.empathy'), key: 'empathy', items: 1 },
     { name: t('domain.perseverations'), key: 'perseverations', items: 1 },
-    { name: t('domain.hyperorality'), key: 'hyperorality', items: 2 },
-    { name: t('domain.neglect'), key: 'neglect', items: 1 }
+    { name: t('domain.hyperorality'), key: 'hyperorality', items: 3 }, // 1 original + 2 new
+    { name: t('domain.empathy'), key: 'empathy', items: 1 },
+    { name: t('domain.neglect'), key: 'neglect', items: 2 } // 1 original + 1 new
   ];
 
   const handlePrint = () => {
