@@ -124,11 +124,9 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
   };
 
   const buildClinicalNote = (): string => {
-    // In DAPHNE assessment, we use 10 items for scoring but can have 12 items total in data
     const allItems = getDaphneScaleItems('en'); 
-    const allDataItems = lang === 'en' ? DAPHNE_SCALE_ITEMS_EN : DAPHNE_SCALE_ITEMS_ML; // This would require imports
-
     const scoreLabels = ['Normal (0)', 'Very mild (1)', 'Mild (2)', 'Moderate (3)', 'Severe (4)'];
+
 
     const daphne6Positive = results.daphne6Score >= 4;
     const daphne40Positive = results.daphne40Score >= 15;
