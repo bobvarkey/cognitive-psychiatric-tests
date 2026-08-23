@@ -926,10 +926,10 @@ export const AssessmentSelector = () => {
                               }`}
                             >
                               <div
-                                className={`shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${color.bg} flex items-center justify-center border`}
+                                className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${color.bg} flex items-center justify-center border mb-3`}
                                 style={{ borderColor: color.icon }}
                               >
-                                <Icon className="h-6 w-6 text-foreground" style={{ filter: `drop-shadow(0 0 8px ${color.icon})` }} />
+                                <Icon className="h-8 w-8 text-foreground" style={{ filter: `drop-shadow(0 0 8px ${color.icon})` }} />
                               </div>
                               <div className="min-w-0 flex-1">
                                 <h4 className="text-base sm:text-lg font-semibold text-foreground leading-snug truncate">
