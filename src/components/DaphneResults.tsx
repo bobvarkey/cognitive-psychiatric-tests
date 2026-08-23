@@ -164,7 +164,10 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     lines.push('Detailed Domain Status:');
     ['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].forEach(dom => {
       const isPresent = involvedDomains.has(dom);
-      lines.push(`  [${isPresent ? 'X' : ' '}] ${dom.charAt(0).toUpperCase() + dom.slice(1)}`);
+      const label = dom === 'empathy' ? 'Loss of Empathy' : 
+                    dom === 'neglect' ? 'Personal Neglect' : 
+                    dom.charAt(0).toUpperCase() + dom.slice(1);
+      lines.push(`  [${isPresent ? 'X' : ' '}] ${label}`);
     });
     lines.push('');
     lines.push('Item-level findings:');
