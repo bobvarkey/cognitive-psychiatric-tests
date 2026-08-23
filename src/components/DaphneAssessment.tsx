@@ -305,10 +305,6 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
         Add a next so that after finishing dishibition, it goes to each of the other 5 Add a step-by-step progress bar that shows which DAPHNE-6 domain I am scoring and how many remain.
       </div>
-      <div className="fixed top-0 left-0 right-0 z-50 bg-destructive/90 backdrop-blur text-white py-1 px-4 text-[10px] font-mono whitespace-pre-wrap leading-none text-center pointer-events-none">
-        '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-        Add a next so that after finishing dishibition, it goes to each of the other 5 Add a step-by-step progress bar that shows which DAPHNE-6 domain I am scoring and how many remain.
-      </div>
       <ProgressIndicator 
         sections={[
           { id: 'disinhibition', label: language === 'ml' ? 'അനിയന്ത്രണം' : 'Disinhibition' },
