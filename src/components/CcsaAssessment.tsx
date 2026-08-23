@@ -138,18 +138,39 @@ Note: Original screening prototype — not clinically validated.`;
           </CardContent>
         </Card>
 
-        {/* Live score */}
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 bg-medical-primary/5 p-6 rounded-2xl border border-medical-primary/10 shadow-sm gap-4">
+          <div className="text-center sm:text-left">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-medical-primary mb-1">Live Clinical Score</h2>
+            <div className="flex items-baseline gap-2 justify-center sm:justify-start">
+              <span className="text-5xl font-black text-medical-primary tabular-nums">{scores.total}</span>
+              <span className="text-xl font-bold text-medical-primary/40">/ 30</span>
+            </div>
+          </div>
+          
+          <div className="flex flex-col items-center sm:items-end gap-2">
+            <Badge variant="outline" className={`px-4 py-1.5 text-sm font-bold shadow-sm ${interp.tone}`}>
+              {interp.label}
+            </Badge>
+            <div className="flex gap-2 mt-2">
+              <Button onClick={copyReport} size="sm" variant="outline" className="h-9 px-4 font-bold border-medical-primary/20 hover:bg-medical-primary/5">
+                <Copy className="h-4 w-4 mr-2" /> Copy TXT
+              </Button>
+              <Button onClick={reset} size="sm" variant="ghost" className="h-9 px-4 font-bold text-muted-foreground hover:text-destructive">
+                <RotateCcw className="h-4 w-4 mr-2" /> Reset
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Live score breakdown */}
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center justify-between">
-              <span>Live score</span>
-              <span className="font-mono">{scores.total} / 30</span>
+              <span>Domain Breakdown</span>
+              <span className="text-sm font-normal text-muted-foreground">Detailed Score Matrix</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className={`inline-flex items-center rounded-md border px-3 py-1.5 text-sm font-medium ${interp.tone}`}>
-              {interp.label}
-            </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
               {[
                 ['Orientation', scores.orientation, 6],
@@ -160,8 +181,12 @@ Note: Original screening prototype — not clinically validated.`;
                 ['Visuospatial', scores.visuospatial, 3],
                 ['Delayed recall', scores.recall, 3],
               ].map(([n, s, m]) => (
-                <div key={n as string} className="rounded border border-border p-2">
-                  <div className="text-muted-foreground">{n}</div>
+                <div key={n as string} className="rounded border border-border p-2 text-center">
+                  <div className="text-muted-foreground mb-0.5">{n}</div>
+                  <div className="font-bold text-medical-primary text-base">{s as number} / {m as number}</div>
+                </div>
+              ))}
+            </div>
                   <div className="font-mono font-semibold text-foreground">{s} / {m}</div>
                 </div>
               ))}
