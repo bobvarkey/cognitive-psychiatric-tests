@@ -305,13 +305,17 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            Add a results summary page that displays my domain scores and my overall DAPHNE-6 assessment at the end of the mini-app.
+                                            use these 6 to build the DAPHNE-6  ;: Socially inappropriate actions or loss of self-control.
 
-Show a final scoring summary that totals each domain and computes my overall DAPHNE-6 result after I complete all items.
+Apathy: Indifference, reduced initiative, or lack of interest.
 
-Add a progress tracker that shows how many DAPHNE-6 items I have completed and how close I am to finishing the assessment.
+Perseverations: Repetitive, stereotyped, or compulsive behaviors.
 
-Export my DAPHNE-6 domain scores and overall results as a downloadable PDF report.
+Hyperorality: Dietary changes or excessive eating/mouth behaviors.
+
+Personal Neglect: Disregard for personal hygiene or self-care.
+
+Loss of Empathy: Reduced sympathy or interpersonal warmth. [1, 2, 3]
       </div>
       <ProgressIndicator 
         sections={[
