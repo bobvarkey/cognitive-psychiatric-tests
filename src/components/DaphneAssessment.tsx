@@ -432,16 +432,19 @@ export const DaphneAssessment = () => {
             onScoreChange={handleScoreChange}
           />
 
-          {validationError && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2"
-            >
-              <AlertTriangle className="h-4 w-4" />
-              {validationError}
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {validationError && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2 overflow-hidden"
+              >
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                {validationError}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Navigation */}
           <div className="flex justify-between mt-6">
