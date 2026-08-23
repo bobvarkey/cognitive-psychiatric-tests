@@ -71,8 +71,6 @@ export const CowsAssessment = ({ onBack }: Props) => {
 
   const reset = () => { setResponses({}); setShowResults(false); };
 
-  const reset = () => { setResponses({}); setShowResults(false); };
-
   const reportData: ReportData = {
     assessmentName: 'COWS (Clinical Opiate Withdrawal Scale)',
     date: new Date().toLocaleString(),

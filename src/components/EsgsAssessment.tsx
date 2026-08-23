@@ -42,7 +42,7 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
     sections: [
       {
         title: 'Component Scores',
-        items: ESGS_COMPONENTS.map((c) => `${c.name}: ${scores[c.key] ?? 0}`),
+        items: Object.entries(scores).map(([key, val]) => `${ESGS_COMPONENTS[key as keyof typeof ESGS_COMPONENTS].name}: ${val}`),
         type: 'info',
       },
     ],
