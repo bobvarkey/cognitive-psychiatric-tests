@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,6 +38,8 @@ import { saveAs } from 'file-saver';
 interface Props {
   scale: PsychosisScale;
   onBack?: () => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
   /** Optional patient age range — used for ADHD screener interpretation/SOAP. */
   ageRange?: 'child' | 'adolescent' | 'adult';
 }
@@ -130,7 +133,9 @@ const buildClinicalReport = (scale: PsychosisScale, totals: Totals, responses: R
 };
 
 
-export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => {
+
+export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ageRange }: Props) => {
+
   const { patientInfo } = usePatientInfo();
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
@@ -705,12 +710,35 @@ export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => 
   return (
     <div className="min-h-screen bg-gradient-subtle p-4 md:p-8">
       <div className="w-full space-y-6">
-        {onBack && (
-          <Button variant="ghost" onClick={onBack} className="mb-2">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to menu
-          </Button>
-        )}
+        <div className="flex justify-between items-center mb-2">
+          {onBack && (
+            <Button variant="ghost" onClick={onBack}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to menu
+            </Button>
+          )}
+          
+          <div className="flex gap-2">
+            {onPrevious && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onPrevious}
+              >
+                Previous Test
+              </Button>
+            )}
+            {onNext && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={onNext}
+              >
+                Next Test
+              </Button>
+            )}
+          </div>
+        </div>
 
         <PatientInfoForm />
 
