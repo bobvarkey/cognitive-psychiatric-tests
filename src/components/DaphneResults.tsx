@@ -17,7 +17,7 @@ import {
   Check,
 } from 'lucide-react';
 import { DaphneResults as DaphneResultsType } from '@/types/daphne';
-import { getDaphneScaleItems } from '@/data/daphneScale';
+import { getDaphneScaleItems, DAPHNE_SCALE_ITEMS_EN } from '@/data/daphneScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { DomainRadarChart } from './DomainRadarChart';
@@ -178,9 +178,10 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     });
     lines.push('');
     lines.push('Item-level findings:');
-    allItems.forEach((it) => {
+    DAPHNE_SCALE_ITEMS_EN.forEach((it) => {
       const r = results.responses.find((x) => x.itemId === it.id);
-      const s = r?.score ?? 0;
+      if (!r) return; // Skip if not answered
+      const s = r.score;
       lines.push(`  - ${it.title}: ${scoreLabels[s]}`);
     });
     lines.push('');
