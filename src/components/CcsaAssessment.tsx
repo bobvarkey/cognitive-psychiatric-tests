@@ -189,8 +189,6 @@ Note: Original screening prototype — not clinically validated.`;
             </div>
           </CardContent>
         </Card>
-          </CardContent>
-        </Card>
 
         {/* 1. Orientation */}
         <Card id="sec-orientation">
