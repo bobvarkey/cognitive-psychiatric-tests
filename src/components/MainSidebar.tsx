@@ -196,7 +196,20 @@ export const MainSidebar = ({
                       </p>
                       <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
                         <p className="text-[10px] font-mono text-destructive leading-tight break-words">
-                          For the code present, I get the error below. Please think step-by-step in order to resolve it. Uncaught ReferenceError: currentItem is not defined
+                          For the code present, I get the error below.
+                          <br /><br />
+                          Please think step-by-step in order to resolve it.
+                          <br /><br />
+                          Uncaught ReferenceError: currentItem is not defined
+                          <br /><br />
+                          &#123;
+                            "timestamp": 1787452781272,
+                            "error_type": "RUNTIME_ERROR",
+                            "filename": "https://79abc2a9-b4b9-43a6-8cf0-e8164b1aab42.lovableproject.com/node_modules/.vite/deps/chunk-R6S4VRB5.js?v=b481e454",
+                            "lineno": 19413,
+                            "colno": 13,
+                            "has_blank_screen": true
+                          &#125;
                         </p>
                       </div>
                     </div>
