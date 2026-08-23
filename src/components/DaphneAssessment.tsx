@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -92,8 +92,8 @@ export const DaphneAssessment = () => {
   };
 
   const handleNext = () => {
-    const groupItemIds = currentDomainGroup.items.map(i => i.id);
-    const unansweredInGroup = groupItemIds.some(id => getCurrentScore(id) === null);
+    const groupItemIds = currentDomainGroup.items.map((i: any) => i.id);
+    const unansweredInGroup = groupItemIds.some((id: any) => getCurrentScore(id) === null);
     
     if (unansweredInGroup) {
       setValidationError(language === 'en' ? 'Please provide a response for all items in this domain before proceeding.' : 'തുടരുന്നതിന് മുമ്പ് ഈ വിഭാഗത്തിലെ എല്ലാ ഇനങ്ങൾക്കും ഉത്തരം നൽകുക.');
