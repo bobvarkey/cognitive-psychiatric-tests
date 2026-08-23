@@ -921,8 +921,8 @@ export const AssessmentSelector = () => {
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => locked ? setShowPaywall(true) : openAssessment(a.key)}
-                              className={`group w-full flex items-start gap-3 sm:gap-4 text-left px-3 sm:px-4 py-3 rounded-2xl transition-colors active:scale-[0.995] ${
-                                locked ? 'opacity-60' : 'hover:bg-accent/40'
+                              className={`group w-full flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all border bg-card hover:bg-accent/40 active:scale-[0.98] ${
+                                locked ? 'opacity-60' : ''
                               }`}
                             >
                               <div
