@@ -103,19 +103,18 @@ export const DaphneAssessment = () => {
   };
 
   const calculateResults = () => {
-    // Calculate DAPHNE-40 (sum of all items)
+    // DAPHNE-40 score is a sum of all individual items (max 48 in current list, usually 40 items)
     const daphne40Score = responses.reduce((sum, response) => sum + response.score, 0);
 
-    // Calculate DAPHNE-6 (binary domain scoring)
+    // DAPHNE-6 score is binary (0 or 1) per domain if at least one item is present (score > 0)
     const domainScores: Record<string, number> = {};
     const domains = ['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'];
     
     domains.forEach(domain => {
       const domainItems = getDaphneScaleItems('en').filter(item => item.domain === domain);
-      const domainResponses = responses.filter(r => 
-        domainItems.some(item => item.id === r.itemId)
-      );
-      const hasSymptom = domainResponses.some(r => r.score > 0);
+      const hasSymptom = responses
+        .filter(r => domainItems.some(item => item.id === r.itemId))
+        .some(r => r.score > 0);
       domainScores[domain] = hasSymptom ? 1 : 0;
     });
 
