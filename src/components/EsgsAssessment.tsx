@@ -103,22 +103,23 @@ export const EsgsAssessment = ({ onBack }: EsgsAssessmentProps) => {
                         <label className="font-semibold text-foreground">{component.name}</label>
                         <p className="text-sm text-muted-foreground mt-1">{component.description}</p>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <input
-                          type="range"
-                          min="0"
-                          max="3"
-                          step="0.5"
-                          value={value}
-                          onChange={(e) =>
-                            setScores(prev => ({
-                              ...prev,
-                              [key]: parseFloat(e.target.value),
-                            }))
-                          }
-                          className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer"
-                        />
-                        <div className="text-2xl font-bold text-cyan-700 dark:text-cyan-400 w-12 text-right">{value}</div>
+                      <div className="flex flex-wrap gap-2">
+                        {[0, 0.5, 1, 1.5, 2, 2.5, 3].map((val) => (
+                          <Button
+                            key={val}
+                            variant={value === val ? "default" : "outline"}
+                            size="sm"
+                            className={`w-12 h-10 ${value === val ? 'bg-cyan-600 hover:bg-cyan-700' : ''}`}
+                            onClick={() =>
+                              setScores(prev => ({
+                                ...prev,
+                                [key]: val,
+                              }))
+                            }
+                          >
+                            {val}
+                          </Button>
+                        ))}
                       </div>
                       <p className="text-xs text-muted-foreground">{component.scoring}</p>
                     </div>
