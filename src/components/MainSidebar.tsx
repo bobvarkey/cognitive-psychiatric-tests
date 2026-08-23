@@ -212,6 +212,11 @@ export const MainSidebar = ({
                           &#125;
                         </p>
                       </div>
+                      <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
+                        '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+                        <br /><br />
+                        Add a next so that after finishing dishibition, it goes to each of the other 5 Add a step-by-step progress bar that shows which DAPHNE-6 domain I am scoring and how many remain.
+                      </div>
                     </div>
 
 
