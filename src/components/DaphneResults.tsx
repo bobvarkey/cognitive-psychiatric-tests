@@ -61,26 +61,18 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     day: 'numeric'
   });
 
-  const getDaphne6Interpretation = (score: number): { level: string; color: string; description: string } => {
-    if (score === 0) return { 
-      level: t('interp.no.behavioral'), 
+  const getDaphne6Interpretation = (score: number): { level: string; color: string; description: string; action: string } => {
+    if (score <= 3) return { 
+      level: "Below suggested screening cutoff", 
       color: 'text-medical-success', 
-      description: t('interp.no.domains') 
-    };
-    if (score <= 2) return { 
-      level: t('interp.mild.behavioral'), 
-      color: 'text-medical-warning', 
-      description: `${score} ${score > 1 ? t('interp.domains.affected') : t('interp.domain.affected')}` 
-    };
-    if (score <= 4) return { 
-      level: t('interp.moderate.behavioral'), 
-      color: 'text-orange-600', 
-      description: `${score} ${t('interp.domains.affected')}` 
+      description: "Does not exclude bvFTD or another neurologic/psychiatric disorder if clinical concern persists.",
+      action: "Monitor symptoms and correlate with history."
     };
     return { 
-      level: t('interp.severe.behavioral'), 
+      level: "Positive screening result", 
       color: 'text-destructive', 
-      description: `${score} ${t('interp.domains.affected')}` 
+      description: "Arrange comprehensive clinical assessment; do not label the patient solely from this score.",
+      action: "Refer for specialist evaluation and neuroimaging."
     };
   };
 
