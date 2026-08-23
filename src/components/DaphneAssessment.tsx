@@ -303,7 +303,7 @@ export const DaphneAssessment = () => {
     <div className="min-h-screen bg-gradient-subtle pt-16">
       <div className="fixed top-0 left-0 right-0 z-50 bg-destructive/90 backdrop-blur text-white py-1 px-4 text-[10px] font-mono whitespace-pre-wrap leading-none text-center pointer-events-none">
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-        Verify that the DAPHNE-6 domains render sequentially and that the computed total score updates correctly as I select answers.
+        Verify that the total DAPHNE-6 score updates correctly after I select answers for each domain, using a couple of known answer patterns.
       </div>
       <ProgressIndicator 
         sections={[
