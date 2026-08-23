@@ -159,6 +159,20 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
       const positive = responses.some((r) => r.score > 0);
       lines.push(`  • ${d.name}: ${sum}/${d.items * 4}  [${positive ? 'PRESENT' : 'absent'}]`);
     });
+    
+    // Ensure empathy is labeled correctly as 'Loss of Empathy' in text note
+    const involvedDomains = results.responses.reduce((acc, r) => {
+      const it = allItems.find((i) => i.id === r.itemId);
+      if (it && r.score > 0) acc.add(it.domain);
+      return acc;
+    }, new Set<string>());
+    
+    lines.push('');
+    lines.push('Detailed Domain Status:');
+    ['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].forEach(dom => {
+      const isPresent = involvedDomains.has(dom);
+      lines.push(`  [${isPresent ? 'X' : ' '}] ${dom.charAt(0).toUpperCase() + dom.slice(1)}`);
+    });
     lines.push('');
     lines.push('Item-level findings:');
     allItems.forEach((it) => {
