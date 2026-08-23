@@ -123,7 +123,7 @@ export const DaphneAssessment = () => {
 
     // DAPHNE-6 score is binary (0 or 1) per domain if at least one item is present (score > 0)
     const domainScores: Record<string, number> = {};
-    const domains = ['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'];
+    const domains = ['disinhibition', 'apathy', 'loss_of_empathy', 'perseverations', 'hyperorality', 'neglect'];
     
     domains.forEach(domain => {
       const domainItems = getDaphneScaleItems('en').filter(item => item.domain === domain);
@@ -305,13 +305,13 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            Add scoring inputs for the Hyperorality domain items so I can select the correct response category for each item.
+                                            remove the present dAPHNE app and use this mini-app instead
       </div>
       <ProgressIndicator 
         sections={[
           { id: 'disinhibition', label: language === 'ml' ? 'അനിയന്ത്രണം' : 'Disinhibition' },
           { id: 'apathy', label: language === 'ml' ? 'നിസ്സംഗത' : 'Apathy' },
-          { id: 'empathy', label: language === 'ml' ? 'സഹാനുഭൂതി' : 'Empathy' },
+          { id: 'loss_of_empathy', label: language === 'ml' ? 'സഹാനുഭൂതി' : 'Empathy' },
           { id: 'perseverations', label: language === 'ml' ? 'ആവർത്തനം' : 'Perseverations' },
           { id: 'hyperorality', label: language === 'ml' ? 'അമിത വായ്ക്കോളിത്തം' : 'Hyperorality' },
           { id: 'neglect', label: language === 'ml' ? 'അവഗണന' : 'Neglect' }
@@ -380,7 +380,7 @@ export const DaphneAssessment = () => {
               </div>
             </div>
             <div className="grid grid-cols-6 gap-1">
-              {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
+              {['disinhibition', 'apathy', 'loss_of_empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
                 const domainItems = getDaphneScaleItems('en').filter(item => item.domain === domain);
                 const hasSymptom = responses.filter(r => domainItems.some(i => i.id === r.itemId)).some(r => r.score > 0);
                 return (
@@ -401,7 +401,7 @@ export const DaphneAssessment = () => {
                 The total DAPHNE-6 score (0-6) is the sum of positive domains.
               </p>
               <div className="space-y-2">
-                {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
+                {['disinhibition', 'apathy', 'loss_of_empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
                   const items = getDaphneScaleItems('en').filter(i => i.domain === domain);
                   const domainResp = responses.filter(r => items.some(i => i.id === r.itemId));
                   const score = domainResp.reduce((a, r) => a + r.score, 0);
