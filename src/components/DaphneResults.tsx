@@ -111,12 +111,12 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
   const daphne40Interp = getDaphne40Interpretation(results.daphne40Score);
 
   const domainDetails = [
-    { name: t('domain.disinhibition'), key: 'disinhibition', items: 4 },
-    { name: t('domain.apathy'), key: 'apathy', items: 1 },
-    { name: t('domain.perseverations'), key: 'perseverations', items: 1 },
-    { name: t('domain.hyperorality'), key: 'hyperorality', items: 3 }, // 1 original + 2 new
-    { name: t('domain.empathy'), key: 'empathy', items: 1 },
-    { name: t('domain.neglect'), key: 'neglect', items: 2 } // 1 original + 1 new
+    { name: 'Disinhibition', key: 'disinhibition', items: 4 },
+    { name: 'Apathy', key: 'apathy', items: 1 },
+    { name: 'Perseverations', key: 'perseverations', items: 1 },
+    { name: 'Hyperorality', key: 'hyperorality', items: 3 },
+    { name: 'Loss of Empathy', key: 'empathy', items: 1 },
+    { name: 'Personal Neglect', key: 'neglect', items: 2 }
   ];
 
   const handlePrint = () => {

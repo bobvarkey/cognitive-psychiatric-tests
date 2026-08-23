@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, FileText, User, Save, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, User, Save, AlertTriangle, CheckCircle } from 'lucide-react';
 import { getDaphneScaleItems } from '@/data/daphneScale';
 import { DaphneResponse, DaphneResults } from '@/types/daphne';
 import { DaphneItemCard } from './DaphneItemCard';
@@ -394,22 +394,35 @@ export const DaphneAssessment = () => {
             {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map((domain) => {
               const isCurrent = currentItem?.domain === domain;
               const domainItems = getDaphneScaleItems('en').filter((i) => i.domain === domain);
+              const answeredItems = domainItems.filter(i => responses.some(r => r.itemId === i.id)).length;
+              const isFullyAnswered = answeredItems === domainItems.length;
               const hasSymptom = responses
                 .filter((r) => domainItems.some((i) => i.id === r.itemId))
                 .some((r) => r.score > 0);
+                
               return (
-                <span
-                  key={domain}
-                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border ${
-                    isCurrent
-                      ? 'bg-medical-primary text-white border-medical-primary'
-                      : hasSymptom
-                        ? 'bg-medical-primary/10 text-medical-primary border-medical-primary/30'
-                        : 'bg-muted text-muted-foreground border-border'
-                  }`}
-                >
-                  {domain}
-                </span>
+                <div key={domain} className="flex flex-col gap-1">
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border transition-all ${
+                      isCurrent
+                        ? 'bg-medical-primary text-white border-medical-primary ring-2 ring-medical-primary/20'
+                        : isFullyAnswered
+                          ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30'
+                          : hasSymptom
+                            ? 'bg-medical-primary/10 text-medical-primary border-medical-primary/30'
+                            : 'bg-muted text-muted-foreground border-border'
+                    }`}
+                  >
+                    {domain}
+                    {isFullyAnswered && <CheckCircle className="h-3 w-3 ml-0.5" />}
+                  </span>
+                  <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full transition-all duration-300 ${isFullyAnswered ? 'bg-emerald-500' : 'bg-medical-primary'}`}
+                      style={{ width: `${(answeredItems / domainItems.length) * 100}%` }}
+                    />
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -419,16 +432,19 @@ export const DaphneAssessment = () => {
             onScoreChange={handleScoreChange}
           />
 
-          {validationError && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2"
-            >
-              <AlertTriangle className="h-4 w-4" />
-              {validationError}
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {validationError && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2 overflow-hidden"
+              >
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                {validationError}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Navigation */}
           <div className="flex justify-between mt-6">
