@@ -61,6 +61,8 @@ export const DaphneAssessment = () => {
   const progress = ((currentStep + 1) / totalSteps) * 100;
   const currentItem = DAPHNE_SCALE_ITEMS[currentStep];
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const handleScoreChange = (itemId: string, score: number) => {
     setResponses(prev => {
       const existing = prev.find(r => r.itemId === itemId);
@@ -69,19 +71,24 @@ export const DaphneAssessment = () => {
       }
       return [...prev, { itemId, score }];
     });
+    setValidationError(null);
   };
 
-  const getCurrentScore = (itemId: string): number => {
-    return responses.find(r => r.itemId === itemId)?.score ?? 0;
-  };
-
-  const canProceed = () => {
-    return responses.some(r => r.itemId === currentItem.id);
+  const getCurrentScore = (itemId: string): number | null => {
+    const resp = responses.find(r => r.itemId === itemId);
+    return resp ? resp.score : null;
   };
 
   const handleNext = () => {
+    const currentScore = getCurrentScore(currentItem.id);
+    if (currentScore === null) {
+      setValidationError(language === 'en' ? 'Please provide a response for this item before proceeding.' : 'തുടരുന്നതിന് മുമ്പ് ഈ ഇനത്തിന് ഉത്തരം നൽകുക.');
+      return;
+    }
+
     if (currentStep < totalSteps - 1) {
       setCurrentStep(prev => prev + 1);
+      setValidationError(null);
     } else {
       calculateResults();
     }
@@ -90,6 +97,7 @@ export const DaphneAssessment = () => {
   const handlePrevious = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
+      setValidationError(null);
     }
   };
 
@@ -406,9 +414,20 @@ export const DaphneAssessment = () => {
           </div>
           <DaphneItemCard
             item={currentItem}
-            currentScore={getCurrentScore(currentItem.id)}
+            currentScore={getCurrentScore(currentItem.id) ?? -1}
             onScoreChange={handleScoreChange}
           />
+
+          {validationError && (
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2"
+            >
+              <AlertTriangle className="h-4 w-4" />
+              {validationError}
+            </motion.div>
+          )}
 
           {/* Navigation */}
           <div className="flex justify-between mt-6">
@@ -422,7 +441,6 @@ export const DaphneAssessment = () => {
             </Button>
             <Button
               onClick={handleNext}
-              disabled={!canProceed()}
               className="bg-medical-primary hover:bg-medical-primary/90"
             >
               {currentStep === totalSteps - 1 ? t('nav.complete') : t('nav.next')}
