@@ -305,7 +305,7 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            add this to Apathy;ApathyLoss of initiative, social interestno troublesubject can take part in usual activities, but must be encouraged to do anything outside of the ordinarysubject can take part in usual activities, but does not complete them; subject can restart an activity, but only with stimulationsubject interrupts activities and does not restart them, even with stimulation; subject does not want to do usual activitiessubject has no interest; does not do anything despite stimulation, stays in his/her seat or in bed all d
+                                            add this to Loss of empathyEmotional blunting, indifferenceno troublesubject complains about loss of emotion towards relativessubject shows little interest in stories from relatives or in emotionally current matters; subject has difficulty expressing feelingssubject is indifferent to relatives, does not care about them, and is not concerned when people speak about him/hersubject is unable to express or decipher any emotion, can have inappropriate emotional responses
       </div>
       <ProgressIndicator 
         sections={[
