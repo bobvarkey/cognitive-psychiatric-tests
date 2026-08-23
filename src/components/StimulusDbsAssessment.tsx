@@ -1,15 +1,25 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen, TrendingUp } from 'lucide-react';
+import { Home, BookOpen, TrendingUp, ClipboardCopy, Check, RotateCcw } from 'lucide-react';
 import { DBS_CANDIDACY_CRITERIA } from '@/data/pdManagementTools';
+import { PatientInfoForm } from './PatientInfoForm';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface StimulusDbsAssessmentProps {
   onBack?: () => void;
 }
 
+
 export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) => {
   const [appropriateness, setAppropriateness] = useState<number>(5);
+  const [selectedFavorable, setSelectedFavorable] = useState<Record<number, boolean>>({});
+  const [selectedUnfavorable, setSelectedUnfavorable] = useState<Record<number, boolean>>({});
+  const [copied, setCopied] = useState(false);
+  const { patientInfo } = usePatientInfo();
+  const { toast } = useToast();
+
 
   const getAppropriatenessLevel = () => {
     if (appropriateness <= 3) return { level: 'Not Appropriate', color: 'text-red-700 dark:text-red-400' };
@@ -35,6 +45,8 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
           </Button>
         )}
       </div>
+
+      <PatientInfoForm />
 
       <Card className="bg-gradient-to-r from-amber-600/20 to-orange-600/20 border-amber-500/30">
         <CardHeader>
@@ -115,14 +127,19 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
             <CardTitle className="text-sm text-green-700 dark:text-green-400">Favorable Factors</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className="space-y-2">
               {DBS_CANDIDACY_CRITERIA.favorable.map((factor, idx) => (
-                <li key={idx} className="flex gap-2">
-                  <span className="text-green-700 dark:text-green-400 font-bold mt-0.5">+</span>
-                  <span>{factor}</span>
-                </li>
+                <label key={idx} className="flex items-start gap-3 p-2 rounded hover:bg-muted/40 cursor-pointer transition-colors border border-transparent hover:border-border">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    checked={!!selectedFavorable[idx]}
+                    onChange={(e) => setSelectedFavorable(prev => ({ ...prev, [idx]: e.target.checked }))}
+                  />
+                  <span className="text-sm text-muted-foreground">{factor}</span>
+                </label>
               ))}
-            </ul>
+            </div>
           </CardContent>
         </Card>
 
@@ -132,17 +149,73 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
             <CardTitle className="text-sm text-red-700 dark:text-red-400">Unfavorable Factors</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className="space-y-2">
               {DBS_CANDIDACY_CRITERIA.unfavorable.map((factor, idx) => (
-                <li key={idx} className="flex gap-2">
-                  <span className="text-red-700 dark:text-red-400 font-bold mt-0.5">−</span>
-                  <span>{factor}</span>
-                </li>
+                <label key={idx} className="flex items-start gap-3 p-2 rounded hover:bg-muted/40 cursor-pointer transition-colors border border-transparent hover:border-border">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                    checked={!!selectedUnfavorable[idx]}
+                    onChange={(e) => setSelectedUnfavorable(prev => ({ ...prev, [idx]: e.target.checked }))}
+                  />
+                  <span className="text-sm text-muted-foreground">{factor}</span>
+                </label>
               ))}
-            </ul>
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Report Generator */}
+      <Card className="no-print">
+        <CardContent className="p-4 flex flex-col sm:flex-row gap-3">
+          <Button
+            onClick={() => {
+              const favs = DBS_CANDIDACY_CRITERIA.favorable.filter((_, i) => selectedFavorable[i]);
+              const unfavs = DBS_CANDIDACY_CRITERIA.unfavorable.filter((_, i) => selectedUnfavorable[i]);
+              
+              const report = [
+                `Stimulus DBS Appropriateness Report`,
+                `Date: ${new Date().toLocaleDateString()}`,
+                patientInfo.name ? `Patient: ${patientInfo.name}` : '',
+                patientInfo.id ? `ID: ${patientInfo.id}` : '',
+                `---`,
+                `Appropriateness Score: ${appropriateness}/9 (${level.level})`,
+                `---`,
+                `Favorable Factors Present:`,
+                favs.length ? favs.map(f => `  [+] ${f}`).join('\n') : '  None selected',
+                ``,
+                `Unfavorable Factors Present:`,
+                unfavs.length ? unfavs.map(f => `  [-] ${f}`).join('\n') : '  None selected',
+                `---`,
+                `Clinical Note: The Stimulus tool is evidence-based decision support for DBS referral in PD. A score of 7-9 suggests DBS is appropriate.`
+              ].filter(Boolean).join('\n');
+
+              navigator.clipboard.writeText(report);
+              setCopied(true);
+              toast({ title: "Report copied to clipboard" });
+              setTimeout(() => setCopied(false), 2000);
+            }}
+            className="flex-1 bg-medical-primary hover:bg-medical-primary/90 gap-2"
+          >
+            {copied ? <Check className="h-4 w-4" /> : <ClipboardCopy className="h-4 w-4" />}
+            {copied ? 'Copied' : 'Copy TXT Report'}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setAppropriateness(5);
+              setSelectedFavorable({});
+              setSelectedUnfavorable({});
+            }}
+            className="gap-2"
+          >
+            <RotateCcw className="h-4 w-4" />
+            Reset
+          </Button>
+        </CardContent>
+      </Card>
+
 
       {/* Clinical Information */}
       <Card className="bg-card border-border">
