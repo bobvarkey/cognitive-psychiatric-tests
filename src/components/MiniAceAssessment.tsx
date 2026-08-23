@@ -153,18 +153,23 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
                 </div>
               </div>
 
-              {/* Domain Scores */}
+              {/* Domain Scores & Subscores */}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                 {Object.entries(results.domainScores).map(([domain, score]) => {
                   const item = MINI_ACE_ITEMS.find(i => i.id === domain);
                   return (
-                    <div key={domain} className="bg-white border rounded-lg p-3 text-center">
-                      <p className="text-xs text-muted-foreground mb-1">
+                    <div key={domain} className="bg-white border rounded-lg p-3 text-center shadow-sm">
+                      <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 font-bold">
                         {language === 'ml' ? item?.titleMl : item?.title}
                       </p>
-                      <p className="text-xl font-semibold text-emerald-700">
-                        {score}/{item?.maxScore}
-                      </p>
+                      <div className="flex flex-col">
+                        <span className="text-2xl font-bold text-emerald-700">
+                          {score}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground border-t mt-1 pt-1">
+                          Max: {item?.maxScore}
+                        </span>
+                      </div>
                     </div>
                   );
                 })}

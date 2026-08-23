@@ -86,8 +86,12 @@ Visuospatial: ${scores.visuospatial}/3
 Delayed recall: ${scores.recall}/3
 
 Note: Original screening prototype — not clinically validated.`;
-    await navigator.clipboard.writeText(txt);
-    toast({ title: 'Copied to clipboard' });
+    try {
+      await navigator.clipboard.writeText(txt);
+      toast({ title: 'Copied to clipboard', description: 'TXT report is ready to paste.' });
+    } catch (err) {
+      toast({ title: 'Copy failed', variant: 'destructive' });
+    }
   };
 
   const toggle = (arr: boolean[], setArr: (v: boolean[]) => void, i: number) => {
