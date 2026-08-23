@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, FileText, User, Save } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, User, Save, AlertTriangle } from 'lucide-react';
 import { getDaphneScaleItems } from '@/data/daphneScale';
 import { DaphneResponse, DaphneResults } from '@/types/daphne';
 import { DaphneItemCard } from './DaphneItemCard';
