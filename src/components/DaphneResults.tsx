@@ -440,7 +440,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                       </>
                     ) : (
                       <>
-                        The screening threshold was not met (<strong>{results.daphne6Score} &lt; 4</strong>). This suggests a <strong>low likelihood of bvFTD</strong> based on the DAPHNE-6 criteria.
+                        The screening threshold was not met (<strong>{results.daphne6Score} ≤ 3</strong>). This suggests a <strong>low likelihood of bvFTD</strong> based on the DAPHNE-6 criteria.
                         {daphne40Positive && (
                           <span> <strong>Note:</strong> An atypical presentation is noted as the DAPHNE-40 diagnostic threshold was exceeded ({results.daphne40Score} ≥ 15).</span>
                         )}
@@ -448,6 +448,10 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                       </>
                     )}
                   </p>
+                  <div className="mt-3 flex items-start gap-2 text-sm italic opacity-80 border-t pt-3 border-foreground/10">
+                    <Target className="h-4 w-4 shrink-0 mt-0.5" />
+                    <span>Clinical Action: {daphne6Interp.action}</span>
+                  </div>
                 </div>
               </div>
 
