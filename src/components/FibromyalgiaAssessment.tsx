@@ -5,10 +5,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Activity, CheckCircle2, XCircle } from 'lucide-react';
+import { ArrowLeft, Activity, CheckCircle2, XCircle, ClipboardCopy, Check } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { toast } from '@/hooks/use-toast';
+
 
 interface Props {
   onBack?: () => void;
@@ -62,11 +65,14 @@ const somaticLabel = (n: number) => {
 
 export const FibromyalgiaAssessment = ({ onBack }: Props) => {
   const { t } = useLanguage();
+  const { patientInfo } = usePatientInfo();
   const [wpi, setWpi] = useState<Record<string, boolean>>({});
   const [sss, setSss] = useState<Record<string, number | undefined>>({});
   const [somatic, setSomatic] = useState<Record<string, boolean>>({});
   const [threeMonths, setThreeMonths] = useState(false);
   const [otherExplains, setOtherExplains] = useState(false);
+  const [copied, setCopied] = useState(false);
+
 
   const wpiScore = useMemo(() => Object.values(wpi).filter(Boolean).length, [wpi]);
   const sss2aScore = useMemo(
@@ -82,7 +88,69 @@ export const FibromyalgiaAssessment = ({ onBack }: Props) => {
   const conditionB = wpiScore >= 3 && wpiScore <= 6 && ssTotal >= 9;
   const meetsAcr = (conditionA || conditionB) && threeMonths && !otherExplains;
 
+  const buildClinicalReport = () => {
+    const lines = [];
+    lines.push('Fibromyalgia - ACR 2010 Clinical Report');
+    lines.push('—'.repeat(46));
+    if (patientInfo.name) lines.push(`Patient: ${patientInfo.name}`);
+    if (patientInfo.id) lines.push(`Patient ID: ${patientInfo.id}`);
+    lines.push(`Date: ${new Date().toLocaleDateString()}`);
+    lines.push('');
+
+    lines.push('PART 1: Widespread Pain Index (WPI)');
+    lines.push(`Total Score: ${wpiScore}/19`);
+    const activeWpi = Object.entries(wpi).filter(([_, v]) => v).map(([k]) => k);
+    if (activeWpi.length > 0) {
+      lines.push(`Areas: ${activeWpi.join(', ')}`);
+    } else {
+      lines.push('Areas: None reported');
+    }
+    lines.push('');
+
+    lines.push('PART 2A: Symptom Severity (SSS)');
+    lines.push(`2A Score: ${sss2aScore}/9`);
+    SSS_ITEMS.forEach(item => {
+      const val = sss[item.id];
+      const label = val !== undefined ? SEVERITY_OPTIONS.find(o => o.value === val)?.label : 'Not rated';
+      lines.push(`- ${item.label}: ${val ?? 'N/A'} (${label})`);
+    });
+    lines.push('');
+
+    lines.push('PART 2B: Somatic Symptoms');
+    lines.push(`Count: ${somaticCount} (Banded Score: ${sss2bScore}/3)`);
+    lines.push(`Impression: ${somaticLabel(somaticCount)}`);
+    const activeSomatic = Object.entries(somatic).filter(([_, v]) => v).map(([k]) => k);
+    if (activeSomatic.length > 0) {
+      lines.push(`Symptoms: ${activeSomatic.join(', ')}`);
+    }
+    lines.push('');
+
+    lines.push('DIAGNOSTIC CRITERIA');
+    lines.push(`SS Total (2A + 2B): ${ssTotal}/12`);
+    lines.push(`FS / PSD Score: ${wpiScore + ssTotal}`);
+    lines.push(`Meets Pain Pattern: ${conditionA || conditionB ? 'YES' : 'NO'}`);
+    lines.push(`Duration ≥ 3 months: ${threeMonths ? 'YES' : 'NO'}`);
+    lines.push(`No other explanation: ${!otherExplains ? 'YES' : 'NO'}`);
+    lines.push(`FINAL IMPRESSION: ${meetsAcr ? 'Meets ACR 2010 preliminary criteria' : 'Does not meet criteria'}`);
+    lines.push('');
+    lines.push('Note: This screening instrument assists in identifying fibromyalgia but is not a substitute for clinical judgment.');
+    
+    return lines.join('\n');
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(buildClinicalReport());
+      setCopied(true);
+      toast({ title: 'Report copied to clipboard' });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast({ title: 'Copy failed', variant: 'destructive' });
+    }
+  };
+
   return (
+
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {onBack && (
@@ -290,6 +358,18 @@ export const FibromyalgiaAssessment = ({ onBack }: Props) => {
                 </div>
               </div>
             )}
+
+            <div className="pt-4 flex justify-center no-print border-t border-slate-100">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+                onClick={handleCopy}
+              >
+                {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <ClipboardCopy className="h-4 w-4" />}
+                {copied ? 'Copied' : 'Copy TXT Report'}
+              </Button>
+            </div>
+
           </CardContent>
         </Card>
 
