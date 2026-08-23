@@ -1,15 +1,22 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home, BookOpen, CheckCircle2, AlertTriangle, Lightbulb } from 'lucide-react';
+import { Home, BookOpen, CheckCircle2, AlertTriangle, Lightbulb, ClipboardCopy, Check } from 'lucide-react';
 import { CASES_SCREENING_ITEMS } from '@/data/epilepsyScales';
+import { toast } from '@/hooks/use-toast';
+import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { PatientInfoForm } from './PatientInfoForm';
+
 
 interface CasesToolAssessmentProps {
   onBack?: () => void;
 }
 
 export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
+  const { patientInfo } = usePatientInfo();
   const [responses, setResponses] = useState<Record<string, boolean | null>>({});
+  const [copied, setCopied] = useState(false);
+
 
   const handleResponse = (itemId: string, value: boolean) => {
     setResponses(prev => ({
@@ -24,10 +31,44 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
 
   const isAppropriate = totalYes >= 4; // Typically, ≥4 positive items suggests appropriateness for surgical evaluation
 
+  const buildClinicalReport = () => {
+    const lines = [];
+    lines.push('CASES Tool - Clinical Report');
+    lines.push('—'.repeat(46));
+    if (patientInfo.name) lines.push(`Patient: ${patientInfo.name}`);
+    if (patientInfo.id) lines.push(`Patient ID: ${patientInfo.id}`);
+    lines.push(`Date: ${new Date().toLocaleDateString()}`);
+    lines.push('');
+    lines.push('Criteria Checklist:');
+    CASES_SCREENING_ITEMS.forEach(item => {
+      const resp = responses[item.id];
+      const status = resp === true ? '[YES]' : resp === false ? '[NO]' : '[UNANSWERED]';
+      lines.push(`${status} ${item.name}`);
+    });
+    lines.push('');
+    lines.push(`Total Criteria Met: ${totalYes} of ${totalItems}`);
+    lines.push(`Clinical Impression: ${isAppropriate ? 'Appropriate for Surgical Referral' : 'Marginal or Not Appropriate'}`);
+    lines.push('');
+    lines.push('Disclaimer: Screening instrument designed to help identify patients appropriate for specialized surgical evaluation; not a substitute for clinical judgment.');
+    return lines.join('\n');
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(buildClinicalReport());
+      setCopied(true);
+      toast({ title: 'Report copied to clipboard' });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast({ title: 'Copy failed', variant: 'destructive' });
+    }
+  };
+
   return (
     <div className="w-full max-w-3xl mx-auto p-4 space-y-4">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-6">
+      <div className="flex items-center justify-between mb-6">
+
         {onBack && (
           <Button
             variant="outline"
@@ -40,6 +81,9 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
           </Button>
         )}
       </div>
+
+      <PatientInfoForm />
+
 
       <Card className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 border-emerald-500/30">
         <CardHeader>
@@ -143,6 +187,19 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
                 </div>
               </div>
             </div>
+
+            <div className="pt-2 flex justify-center no-print">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={handleCopy}
+              >
+                {copied ? <Check className="h-4 w-4 text-green-600" /> : <ClipboardCopy className="h-4 w-4" />}
+                {copied ? 'Copied' : 'Copy TXT Report'}
+              </Button>
+            </div>
+
           </CardContent>
         </Card>
       )}
