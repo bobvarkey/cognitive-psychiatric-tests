@@ -17,7 +17,7 @@ import {
   Check,
 } from 'lucide-react';
 import { DaphneResults as DaphneResultsType } from '@/types/daphne';
-import { getDaphneScaleItems } from '@/data/daphneScale';
+import { getDaphneScaleItems, DAPHNE_SCALE_ITEMS_EN } from '@/data/daphneScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { DomainRadarChart } from './DomainRadarChart';
@@ -113,10 +113,10 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
   const domainDetails = [
     { name: t('domain.disinhibition'), key: 'disinhibition', items: 4 },
     { name: t('domain.apathy'), key: 'apathy', items: 1 },
-    { name: t('domain.empathy'), key: 'empathy', items: 1 },
     { name: t('domain.perseverations'), key: 'perseverations', items: 1 },
-    { name: t('domain.hyperorality'), key: 'hyperorality', items: 2 },
-    { name: t('domain.neglect'), key: 'neglect', items: 1 }
+    { name: t('domain.hyperorality'), key: 'hyperorality', items: 3 }, // 1 original + 2 new
+    { name: t('domain.empathy'), key: 'empathy', items: 1 },
+    { name: t('domain.neglect'), key: 'neglect', items: 2 } // 1 original + 1 new
   ];
 
   const handlePrint = () => {
@@ -124,8 +124,9 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
   };
 
   const buildClinicalNote = (): string => {
-    const allItems = getDaphneScaleItems('en');
+    const allItems = getDaphneScaleItems('en'); 
     const scoreLabels = ['Normal (0)', 'Very mild (1)', 'Mild (2)', 'Moderate (3)', 'Severe (4)'];
+
 
     const daphne6Positive = results.daphne6Score >= 4;
     const daphne40Positive = results.daphne40Score >= 15;
@@ -175,9 +176,10 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     });
     lines.push('');
     lines.push('Item-level findings:');
-    allItems.forEach((it) => {
+    DAPHNE_SCALE_ITEMS_EN.forEach((it) => {
       const r = results.responses.find((x) => x.itemId === it.id);
-      const s = r?.score ?? 0;
+      if (!r) return; // Skip if not answered
+      const s = r.score;
       lines.push(`  - ${it.title}: ${scoreLabels[s]}`);
     });
     lines.push('');
