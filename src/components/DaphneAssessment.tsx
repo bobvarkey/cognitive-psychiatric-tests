@@ -337,7 +337,7 @@ export const DaphneAssessment = () => {
           </div>
           
           {/* Live Scoring Summary */}
-          <div className="mb-4 p-4 rounded-xl border border-medical-primary/20 bg-medical-primary/5 space-y-3">
+          <div className="mb-4 p-4 rounded-xl border border-medical-primary/20 bg-medical-primary/5 space-y-3 relative group">
             <div className="flex justify-between items-center">
               <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Live DAPHNE Score</span>
               <div className="flex gap-4">
@@ -372,8 +372,31 @@ export const DaphneAssessment = () => {
                 );
               })}
             </div>
+            
+            {/* Transparency Panel on Hover */}
+            <div className="hidden group-hover:block absolute top-full left-0 right-0 z-30 mt-2 p-4 bg-card border border-border rounded-xl shadow-xl animate-in fade-in zoom-in-95">
+              <h4 className="text-xs font-bold uppercase mb-2">Scoring Transparency</h4>
+              <p className="text-[10px] text-muted-foreground mb-3">
+                Each domain (DAPHNE-6) is marked "Positive" if at least one item within that domain is rated ≥1.
+                The total DAPHNE-6 score (0-6) is the sum of positive domains.
+              </p>
+              <div className="space-y-2">
+                {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
+                  const items = getDaphneScaleItems('en').filter(i => i.domain === domain);
+                  const domainResp = responses.filter(r => items.some(i => i.id === r.itemId));
+                  const score = domainResp.reduce((a, r) => a + r.score, 0);
+                  return (
+                    <div key={domain} className="flex justify-between text-[10px]">
+                      <span className="capitalize">{domain} ({items.length} items)</span>
+                      <span className="font-mono">Score: {score}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <p className="text-[10px] text-muted-foreground italic leading-tight">
-              The six domains above update live as you answer.
+              Hover to see scoring transparency. The six domains above update live as you answer.
             </p>
           </div>
 
