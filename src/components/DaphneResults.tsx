@@ -336,6 +336,33 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
       <LanguageToggle />
       <div className="container mx-auto px-4 py-8">
         <div className="w-full space-y-6">
+          <div className="flex flex-wrap gap-4 mb-4 no-print">
+            <Button 
+              onClick={handleCopyNote} 
+              variant="outline" 
+              className="flex-1 md:flex-none"
+            >
+              {copied ? <Check className="h-4 w-4 mr-2 text-green-500" /> : <ClipboardCopy className="h-4 w-4 mr-2" />}
+              {copied ? 'Copied' : 'Copy TXT Report'}
+            </Button>
+            <Button 
+              onClick={handlePrint} 
+              variant="outline" 
+              className="flex-1 md:flex-none"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Print / PDF
+            </Button>
+            <Button 
+              onClick={handleExportDocx} 
+              variant="outline" 
+              className="flex-1 md:flex-none"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Export DOCX
+            </Button>
+          </div>
+
           {/* Header */}
           <Card className="shadow-medical">
             <CardHeader className="text-center">
