@@ -38,6 +38,8 @@ import { saveAs } from 'file-saver';
 interface Props {
   scale: PsychosisScale;
   onBack?: () => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
   /** Optional patient age range — used for ADHD screener interpretation/SOAP. */
   ageRange?: 'child' | 'adolescent' | 'adult';
 }
@@ -132,9 +134,7 @@ const buildClinicalReport = (scale: PsychosisScale, totals: Totals, responses: R
 import { assessments } from './AssessmentSelector';
 
 
-export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => {
-  const navigate = useNavigate(); // Added for navigation
-  const location = useLocation(); // Added to help find current assessment index
+export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ageRange }: Props) => {
 
   const { patientInfo } = usePatientInfo();
   const [responses, setResponses] = useState<Record<string, number>>({});
@@ -719,32 +719,24 @@ export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => 
           )}
           
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => {
-                const currentIndex = assessments.findIndex(a => a.key === scale.id);
-                if (currentIndex > 0) {
-                  // This relies on the parent's navigation logic. 
-                  // Since we are inside the component, we might need a way to tell the parent to switch.
-                  // However, the component is rendered based on state in AssessmentSelector.
-                  // If we want to support "Previous/Next", we should probably pass those handlers as props.
-                  // For now, let's look at how AssessmentSelector handles it.
-                  onBack?.();
-                }
-              }}
-            >
-              Previous Test
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => {
-                onBack?.();
-              }}
-            >
-              Next Test
-            </Button>
+            {onPrevious && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onPrevious}
+              >
+                Previous Test
+              </Button>
+            )}
+            {onNext && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={onNext}
+              >
+                Next Test
+              </Button>
+            )}
           </div>
         </div>
 

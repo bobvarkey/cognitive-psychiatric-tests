@@ -496,10 +496,17 @@ export const AssessmentSelector = () => {
       vagus: 'vagus',
     };
     if (selectedAssessment in psychosisKeys) {
+      const allKeys = Object.keys(psychosisKeys) as AssessmentKey[];
+      const currentIndex = allKeys.indexOf(selectedAssessment);
+      const onPrevious = currentIndex > 0 ? () => openAssessment(allKeys[currentIndex - 1]) : undefined;
+      const onNext = currentIndex < allKeys.length - 1 ? () => openAssessment(allKeys[currentIndex + 1]) : undefined;
+
       return wrapWithBack(
         <PsychosisScaleAssessment
           scale={PSYCHOSIS_SCALES[psychosisKeys[selectedAssessment]]}
           onBack={handleBackToMenu}
+          onPrevious={onPrevious}
+          onNext={onNext}
         />
       );
     }
