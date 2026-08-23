@@ -113,9 +113,9 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
   const domainDetails = [
     { name: 'Disinhibition', key: 'disinhibition', items: 4 },
     { name: 'Apathy', key: 'apathy', items: 1 },
+    { name: 'Loss of Empathy', key: 'empathy', items: 1 },
     { name: 'Perseverations', key: 'perseverations', items: 1 },
     { name: 'Hyperorality', key: 'hyperorality', items: 3 },
-    { name: 'Loss of Empathy', key: 'empathy', items: 1 },
     { name: 'Personal Neglect', key: 'neglect', items: 2 }
   ];
 
