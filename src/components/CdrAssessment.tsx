@@ -164,20 +164,18 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
                   <span className="text-sm font-bold bg-primary/10 px-2 py-1 rounded">Score: {scores[d.id] ?? 0}</span>
                 </div>
                 
-                <div className="space-y-2">
-                  <Slider 
-                    min={0} max={3} step={0.5} 
-                    value={[scores[d.id] ?? 0]} 
-                    onValueChange={(v) => handleScoreChange(d.id, v[0])}
-                    className="touch-none"
-                  />
-                  <div className="flex justify-between text-[11px] text-muted-foreground font-semibold uppercase tracking-tight">
-                    <span>None (0)</span>
-                    <span>Ques (0.5)</span>
-                    <span>Mild (1)</span>
-                    <span>Mod (2)</span>
-                    <span>Sev (3)</span>
-                  </div>
+                <div className="flex flex-wrap gap-2">
+                  {[0, 0.5, 1, 2, 3].map((val) => (
+                    <Button
+                      key={val}
+                      variant={scores[d.id] === val ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleScoreChange(d.id, val)}
+                      className="flex-1 min-w-[60px]"
+                    >
+                      {val}
+                    </Button>
+                  ))}
                 </div>
 
                 <div className="text-xs text-muted-foreground italic border-t pt-2 mt-2">
