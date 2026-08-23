@@ -1047,7 +1047,7 @@ export const AssessmentSelector = () => {
                           return (
                             <section key={cat} aria-labelledby={`cat-${cat}`}>
                               {renderCategoryBanner(cat, items.length)}
-                              <div className="flex flex-col divide-y divide-border/60 rounded-2xl bg-card/40 border border-border/60 overflow-hidden">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                 {items.map((a, idx) => renderTile(a, idx, false))}
                               </div>
                             </section>
