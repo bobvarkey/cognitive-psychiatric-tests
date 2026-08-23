@@ -215,7 +215,7 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        The other 5 tests are not seen
+                        Show a per-domain score breakdown and running total as I answer each domain.
                       </div>
                     </div>
 
