@@ -321,7 +321,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
     }
   };
 
-  const daphne6Positive = results.daphne6Score >= 4;
+  const daphne6Positive = (results.daphne6?.riskCategory ?? (results.daphne6Score >= 4 ? 'High' : 'Low')) === 'High';
   const daphne40Positive = results.daphne40Score >= 15;
   const involvedDomains = domainDetails.filter((d) => {
     const responses = results.responses.filter((r) => {

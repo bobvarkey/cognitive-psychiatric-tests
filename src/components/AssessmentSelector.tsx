@@ -459,16 +459,9 @@ export const AssessmentSelector = () => {
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        drag="x"
-        dragDirectionLock
-        dragConstraints={{ left: 0, right: 1000 }}
-        dragElastic={0.05}
-        dragListener={true}
-        onDragEnd={(_, info) => {
-          if (info.offset.x > 80 || info.velocity.x > 300) {
-            handleBackToMenu();
-          }
-        }}
+        // NOTE: horizontal `drag`/`onDragEnd` swipe-to-dismiss was removed because
+        // it captured taps on Next/Previous buttons as drag gestures (buttons
+        // "didn't work") and made every assessment page slide side-to-side.
         className="fixed inset-0 z-50 bg-background overflow-y-auto"
       >
         <div className="fixed left-3 z-30 print:hidden flex items-center gap-2 top-[max(0.75rem,env(safe-area-inset-top))]">

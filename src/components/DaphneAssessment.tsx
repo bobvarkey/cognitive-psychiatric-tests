@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, FileText, User, Save, AlertTriangle, CheckCircle } from 'lucide-react';
 import { getDaphneScaleItems } from '@/data/daphneScale';
-import { DaphneResponse, DaphneResults } from '@/types/daphne';
+import { DaphneResponse, DaphneResults, buildDaphne6Result, DAPHNE_DOMAINS } from '@/types/daphne';
 import { DaphneItemCard } from './DaphneItemCard';
 import { DaphneResults as DaphneResultsComponent } from './DaphneResults';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -121,25 +121,21 @@ export const DaphneAssessment = () => {
     // DAPHNE-40 score is a sum of all individual items (max 48 in current list, usually 40 items)
     const daphne40Score = responses.reduce((sum, response) => sum + response.score, 0);
 
-    // DAPHNE-6 score is binary (0 or 1) per domain if at least one item is present (score > 0)
-    const domainScores: Record<string, number> = {};
-    const domains = ['disinhibition', 'apathy', 'loss_of_empathy', 'perseverations', 'hyperorality', 'neglect'];
-    
-    domains.forEach(domain => {
-      const domainItems = getDaphneScaleItems('en').filter(item => item.domain === domain);
-      const hasSymptom = responses
-        .filter(r => domainItems.some(item => item.id === r.itemId))
-        .some(r => r.score > 0);
-      domainScores[domain] = hasSymptom ? 1 : 0;
-    });
+    // DAPHNE-6 via the typed scorer (binary per-domain, ≥4 = High)
+    const daphne6 = buildDaphne6Result(responses);
 
-    const daphne6Score = Object.values(domainScores).reduce((sum, score) => sum + score, 0);
+    // DAPHNE-40 diagnostic score, and domain binary flags for the legacy object
+    const domainScores: Record<string, number> = {};
+    DAPHNE_DOMAINS.forEach((domain) => {
+      domainScores[domain] = daphne6.domains[domain] ? 1 : 0;
+    });
 
     const results: DaphneResults = {
       responses,
-      daphne6Score,
+      daphne6Score: daphne6.totalScore,
       daphne40Score,
-      domainScores
+      domainScores,
+      daphne6: daphne6,
     };
 
     setShowResults(true);
@@ -271,23 +267,16 @@ export const DaphneAssessment = () => {
   }
 
   if (showResults) {
+    const daphne6 = buildDaphne6Result(responses);
     const results: DaphneResults = {
       responses,
-      daphne6Score: Object.values(responses.reduce((acc, response) => {
-        const item = getDaphneScaleItems('en').find(i => i.id === response.itemId);
-        if (item && response.score > 0) {
-          acc[item.domain] = 1;
-        }
-        return acc;
-      }, {} as Record<string, number>)).reduce((sum, score) => sum + score, 0),
+      daphne6Score: daphne6.totalScore,
       daphne40Score: responses.reduce((sum, response) => sum + response.score, 0),
-      domainScores: responses.reduce((acc, response) => {
-        const item = getDaphneScaleItems('en').find(i => i.id === response.itemId);
-        if (item) {
-          acc[item.domain] = (acc[item.domain] || 0) + (response.score > 0 ? 1 : 0);
-        }
+      domainScores: DAPHNE_DOMAINS.reduce((acc, domain) => {
+        acc[domain] = daphne6.domains[domain] ? 1 : 0;
         return acc;
-      }, {} as Record<string, number>)
+      }, {} as Record<string, number>),
+      daphne6: daphne6,
     };
 
     return (
@@ -311,7 +300,7 @@ export const DaphneAssessment = () => {
         sections={[
           { id: 'disinhibition', label: language === 'ml' ? 'അനിയന്ത്രണം' : 'Disinhibition' },
           { id: 'apathy', label: language === 'ml' ? 'നിസ്സംഗത' : 'Apathy' },
-          { id: 'loss_of_empathy', label: language === 'ml' ? 'സഹാനുഭൂതി' : 'Empathy' },
+          { id: 'empathy', label: language === 'ml' ? 'സഹാനുഭൂതി' : 'Empathy' },
           { id: 'perseverations', label: language === 'ml' ? 'ആവർത്തനം' : 'Perseverations' },
           { id: 'hyperorality', label: language === 'ml' ? 'അമിത വായ്ക്കോളിത്തം' : 'Hyperorality' },
           { id: 'neglect', label: language === 'ml' ? 'അവഗണന' : 'Neglect' }
@@ -380,7 +369,7 @@ export const DaphneAssessment = () => {
               </div>
             </div>
             <div className="grid grid-cols-6 gap-1">
-              {['disinhibition', 'apathy', 'loss_of_empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
+              {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
                 const domainItems = getDaphneScaleItems('en').filter(item => item.domain === domain);
                 const hasSymptom = responses.filter(r => domainItems.some(i => i.id === r.itemId)).some(r => r.score > 0);
                 return (
@@ -401,7 +390,7 @@ export const DaphneAssessment = () => {
                 The total DAPHNE-6 score (0-6) is the sum of positive domains.
               </p>
               <div className="space-y-2">
-                {['disinhibition', 'apathy', 'loss_of_empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
+                {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
                   const items = getDaphneScaleItems('en').filter(i => i.domain === domain);
                   const domainResp = responses.filter(r => items.some(i => i.id === r.itemId));
                   const score = domainResp.reduce((a, r) => a + r.score, 0);
