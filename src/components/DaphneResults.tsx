@@ -393,17 +393,27 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
 
                 <div className="space-y-4">
                   <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Domain Status</h4>
-                  <div className="grid grid-cols-1 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     {domainDetails.map((domain) => {
                       const involved = involvedDomains.some(id => id.key === domain.key);
+                      const allItems = getDaphneScaleItems('en');
+                      const domainItems = results.responses.filter(r => {
+                        const it = allItems.find(i => i.id === r.itemId);
+                        return it?.domain === domain.key;
+                      });
+                      const scoreSum = domainItems.reduce((a, r) => a + r.score, 0);
+                      
                       return (
-                        <div key={domain.key} className="flex items-center justify-between p-2 rounded-lg border bg-background/50">
-                          <span className="text-sm font-medium">{domain.name}</span>
-                          {involved ? (
-                            <Badge variant="destructive" className="h-5">Positive</Badge>
-                          ) : (
-                            <Badge variant="outline" className="h-5 opacity-60">Absent</Badge>
-                          )}
+                        <div key={domain.key} className="flex flex-col p-3 rounded-lg border bg-background/50 hover:bg-background/80 transition-colors">
+                          <span className="text-xs font-semibold text-muted-foreground uppercase mb-1">{domain.name}</span>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xl font-bold">{scoreSum}</span>
+                            {involved ? (
+                              <Badge variant="destructive" className="h-5">Positive</Badge>
+                            ) : (
+                              <Badge variant="outline" className="h-5 opacity-60">Absent</Badge>
+                            )}
+                          </div>
                         </div>
                       );
                     })}
