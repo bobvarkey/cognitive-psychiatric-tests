@@ -131,7 +131,7 @@ const buildClinicalReport = (scale: PsychosisScale, totals: Totals, responses: R
   
   return lines.join('\n');
 };
-import { assessments } from './AssessmentSelector';
+
 
 
 export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ageRange }: Props) => {
