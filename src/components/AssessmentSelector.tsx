@@ -921,7 +921,7 @@ export const AssessmentSelector = () => {
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => locked ? setShowPaywall(true) : openAssessment(a.key)}
-                              className={`group w-full flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all border bg-card hover:bg-accent/40 active:scale-[0.98] ${
+                              className={`group w-full flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all border bg-card hover:bg-accent/40 active:scale-[0.98] h-full ${
                                 locked ? 'opacity-60' : ''
                               }`}
                             >
@@ -1031,7 +1031,7 @@ export const AssessmentSelector = () => {
                               activeCategory as Exclude<Category, 'all'>,
                               filteredAssessments.length,
                             )}
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                             {filteredAssessments.map((a, idx) => renderTile(a, idx, false))}
                           </div>
                         </>
@@ -1047,7 +1047,7 @@ export const AssessmentSelector = () => {
                           return (
                             <section key={cat} aria-labelledby={`cat-${cat}`}>
                               {renderCategoryBanner(cat, items.length)}
-                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                 {items.map((a, idx) => renderTile(a, idx, false))}
                               </div>
                             </section>
