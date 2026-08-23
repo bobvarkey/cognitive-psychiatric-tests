@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,9 +58,20 @@ export const DaphneAssessment = () => {
   const [resumed, setResumed] = useState(() => !!initialDraft.current && initialDraft.current.responses.length > 0);
 
   const DAPHNE_SCALE_ITEMS = getDaphneScaleItems(language);
-  const totalSteps = DAPHNE_SCALE_ITEMS.length;
+  
+  // Group items by domain
+  const domainGroups = useMemo(() => {
+    const groups: Record<string, typeof DAPHNE_SCALE_ITEMS> = {};
+    DAPHNE_SCALE_ITEMS.forEach(item => {
+      if (!groups[item.domain]) groups[item.domain] = [];
+      groups[item.domain].push(item);
+    });
+    return Object.entries(groups).map(([domain, items]) => ({ domain, items }));
+  }, [DAPHNE_SCALE_ITEMS]);
+
+  const totalSteps = domainGroups.length;
   const progress = ((currentStep + 1) / totalSteps) * 100;
-  const currentItem = DAPHNE_SCALE_ITEMS[currentStep];
+  const currentDomainGroup = domainGroups[currentStep];
 
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -81,15 +92,18 @@ export const DaphneAssessment = () => {
   };
 
   const handleNext = () => {
-    const currentScore = getCurrentScore(currentItem.id);
-    if (currentScore === null) {
-      setValidationError(language === 'en' ? 'Please provide a response for this item before proceeding.' : 'തുടരുന്നതിന് മുമ്പ് ഈ ഇനത്തിന് ഉത്തരം നൽകുക.');
+    const groupItemIds = currentDomainGroup.items.map((i: any) => i.id);
+    const unansweredInGroup = groupItemIds.some((id: any) => getCurrentScore(id) === null);
+    
+    if (unansweredInGroup) {
+      setValidationError(language === 'en' ? 'Please provide a response for all items in this domain before proceeding.' : 'തുടരുന്നതിന് മുമ്പ് ഈ വിഭാഗത്തിലെ എല്ലാ ഇനങ്ങൾക്കും ഉത്തരം നൽകുക.');
       return;
     }
 
     if (currentStep < totalSteps - 1) {
       setCurrentStep(prev => prev + 1);
       setValidationError(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       calculateResults();
     }
@@ -99,6 +113,7 @@ export const DaphneAssessment = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
       setValidationError(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -409,50 +424,22 @@ export const DaphneAssessment = () => {
         </div>
 
         {/* Assessment Item */}
-        <div>
-          {/* Domain coverage indicator — shows all 6 DAPHNE domains so the
-              user sees the full scope (first 4 items are all disinhibition). */}
-          <div className="mb-3 flex flex-wrap gap-1.5">
-            {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map((domain) => {
-              const isCurrent = currentItem?.domain === domain;
-              const domainItems = getDaphneScaleItems('en').filter((i) => i.domain === domain);
-              const answeredItems = domainItems.filter(i => responses.some(r => r.itemId === i.id)).length;
-              const isFullyAnswered = answeredItems === domainItems.length;
-              const hasSymptom = responses
-                .filter((r) => domainItems.some((i) => i.id === r.itemId))
-                .some((r) => r.score > 0);
-                
-              return (
-                <div key={domain} className="flex flex-col gap-1">
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide border transition-all ${
-                      isCurrent
-                        ? 'bg-medical-primary text-white border-medical-primary ring-2 ring-medical-primary/20'
-                        : isFullyAnswered
-                          ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30'
-                          : hasSymptom
-                            ? 'bg-medical-primary/10 text-medical-primary border-medical-primary/30'
-                            : 'bg-muted text-muted-foreground border-border'
-                    }`}
-                  >
-                    {domain}
-                    {isFullyAnswered && <CheckCircle className="h-3 w-3 ml-0.5" />}
-                  </span>
-                  <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full transition-all duration-300 ${isFullyAnswered ? 'bg-emerald-500' : 'bg-medical-primary'}`}
-                      style={{ width: `${(answeredItems / domainItems.length) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+        <div className="space-y-6">
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-border/50">
+            <h2 className="text-xl font-bold text-medical-primary mb-4 capitalize">
+              {currentDomainGroup.domain}
+            </h2>
+            <div className="space-y-8">
+              {currentDomainGroup.items.map((item: any) => (
+                <DaphneItemCard
+                  key={item.id}
+                  item={item}
+                  currentScore={getCurrentScore(item.id) ?? -1}
+                  onScoreChange={handleScoreChange}
+                />
+              ))}
+            </div>
           </div>
-          <DaphneItemCard
-            item={currentItem}
-            currentScore={getCurrentScore(currentItem.id) ?? -1}
-            onScoreChange={handleScoreChange}
-          />
 
           <AnimatePresence>
             {validationError && (
@@ -460,7 +447,7 @@ export const DaphneAssessment = () => {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2 overflow-hidden"
+                className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm flex items-center gap-2 overflow-hidden"
               >
                 <AlertTriangle className="h-4 w-4 shrink-0" />
                 {validationError}
@@ -469,21 +456,24 @@ export const DaphneAssessment = () => {
           </AnimatePresence>
 
           {/* Navigation */}
-          <div className="flex justify-between mt-6">
+          <div className="flex gap-4 pb-10">
             <Button
               variant="outline"
+              size="lg"
+              className="flex-1 h-14 rounded-2xl border-2"
               onClick={handlePrevious}
               disabled={currentStep === 0}
             >
-              <ChevronLeft className="h-4 w-4 mr-2" />
+              <ChevronLeft className="mr-2 h-5 w-5" />
               {t('nav.previous')}
             </Button>
             <Button
+              size="lg"
+              className="flex-1 h-14 rounded-2xl bg-medical-primary hover:bg-medical-primary/90 text-white shadow-lg"
               onClick={handleNext}
-              className="bg-medical-primary hover:bg-medical-primary/90"
             >
-              {currentStep === totalSteps - 1 ? t('nav.complete') : t('nav.next')}
-              {currentStep !== totalSteps - 1 && <ChevronRight className="h-4 w-4 ml-2" />}
+              {currentStep === totalSteps - 1 ? t('nav.finish') : t('nav.next')}
+              <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </div>
