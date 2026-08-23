@@ -9,6 +9,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "vitest run",
     "test:layout": "python3 scripts/verify-layout.py"
   },
   "dependencies": {
