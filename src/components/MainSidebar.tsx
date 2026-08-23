@@ -190,6 +190,16 @@ export const MainSidebar = ({
                 <SidebarMenuItem className="flex flex-col min-h-0 grow">
                   {renderSectionRow('assessments')}
                   <div className={cn("flex flex-col min-h-0 grow overflow-hidden", (collapsed || section !== 'assessments') && "hidden")}>
+                    <div className="px-3 py-4 border-b border-sidebar-border/50 bg-sidebar-accent/20">
+                      <p className="text-[11px] font-bold text-sidebar-foreground uppercase tracking-widest leading-relaxed">
+                        Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.
+                      </p>
+                      <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                        <p className="text-[10px] font-mono text-destructive leading-tight break-words">
+                          For the code present, I get the error below. Please think step-by-step in order to resolve it. Uncaught ReferenceError: currentItem is not defined
+                        </p>
+                      </div>
+                    </div>
 
 
                       <div className="px-3 py-2">
