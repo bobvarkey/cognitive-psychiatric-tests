@@ -305,7 +305,7 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            Implement scoring inputs for all 10 DAPHNE-6 items so I can select one of the five response categories for each item.
+                                            Add automatic calculation of all six DAPHNE-6 domain totals and the overall DAPHNE-6 result based on my selected responses.
       </div>
       <ProgressIndicator 
         sections={[
