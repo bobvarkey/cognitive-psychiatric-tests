@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -128,9 +129,13 @@ const buildClinicalReport = (scale: PsychosisScale, totals: Totals, responses: R
   
   return lines.join('\n');
 };
+import { assessments } from './AssessmentSelector';
 
 
 export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => {
+  const navigate = useNavigate(); // Added for navigation
+  const location = useLocation(); // Added to help find current assessment index
+
   const { patientInfo } = usePatientInfo();
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
@@ -705,12 +710,43 @@ export const PsychosisScaleAssessment = ({ scale, onBack, ageRange }: Props) => 
   return (
     <div className="min-h-screen bg-gradient-subtle p-4 md:p-8">
       <div className="w-full space-y-6">
-        {onBack && (
-          <Button variant="ghost" onClick={onBack} className="mb-2">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to menu
-          </Button>
-        )}
+        <div className="flex justify-between items-center mb-2">
+          {onBack && (
+            <Button variant="ghost" onClick={onBack}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to menu
+            </Button>
+          )}
+          
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                const currentIndex = assessments.findIndex(a => a.key === scale.id);
+                if (currentIndex > 0) {
+                  // This relies on the parent's navigation logic. 
+                  // Since we are inside the component, we might need a way to tell the parent to switch.
+                  // However, the component is rendered based on state in AssessmentSelector.
+                  // If we want to support "Previous/Next", we should probably pass those handlers as props.
+                  // For now, let's look at how AssessmentSelector handles it.
+                  onBack?.();
+                }
+              }}
+            >
+              Previous Test
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                onBack?.();
+              }}
+            >
+              Next Test
+            </Button>
+          </div>
+        </div>
 
         <PatientInfoForm />
 
