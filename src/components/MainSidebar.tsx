@@ -215,15 +215,7 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        Add scoring inputs for the Disinhibition domain items so I can select the correct response category for each item.
-                        <br /><br />
-                        Add scoring inputs for the Personal Neglect domain items so I can select the correct response category for each item.
-                        <br /><br />
-                        Add scoring inputs for the Loss of Empathy domain items so I can select the correct response category for each item.
-                        <br /><br />
-                        Show a final scoring summary that totals each domain and presents my overall Daphne-6 results after I complete all items.
-                        <br /><br />
-                        Add a results summary page that shows my domain scores and overall DAPHNE-6 assessment at the end of the mini-app.
+                        Implement scoring logic for the Disinhibition, Personal Neglect, and Loss of Empathy domain items so I can select the correct response category for each item.
                       </div>
                     </div>
 
