@@ -215,11 +215,7 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        Add a completion indicator that shows which domain I’m currently scoring and which domains/items are still remaining.
-                        <br /><br />
-                        Create a results review screen that summarizes my total DAPHNE-6 score and breaks it down by each of the six domains.
-                        <br /><br />
-                        Display a per-item and per-domain score breakdown with a running total as I answer each domain.
+                        add this to Apathy;ApathyLoss of initiative, social interestno troublesubject can take part in usual activities, but must be encouraged to do anything outside of the ordinarysubject can take part in usual activities, but does not complete them; subject can restart an activity, but only with stimulationsubject interrupts activities and does not restart them, even with stimulation; subject does not want to do usual activitiessubject has no interest; does not do anything despite stimulation, stays in his/her seat or in bed all d
                       </div>
                     </div>
 

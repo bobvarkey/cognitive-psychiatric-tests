@@ -303,11 +303,9 @@ export const DaphneAssessment = () => {
     <div className="min-h-screen bg-gradient-subtle pt-16">
       <div className="fixed top-0 left-0 right-0 z-50 bg-destructive/90 backdrop-blur text-white py-1 px-4 text-[10px] font-mono whitespace-pre-wrap leading-none text-center pointer-events-none">
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-        Add a completion indicator that shows which domain I’m currently scoring and which domains/items are still remaining.
-
-Create a results review screen that summarizes my total DAPHNE-6 score and breaks it down by each of the six domains.
-
-Display a per-item and per-domain score breakdown with a running total as I answer each domain.
+                                        
+                                            
+                                            add this to Apathy;ApathyLoss of initiative, social interestno troublesubject can take part in usual activities, but must be encouraged to do anything outside of the ordinarysubject can take part in usual activities, but does not complete them; subject can restart an activity, but only with stimulationsubject interrupts activities and does not restart them, even with stimulation; subject does not want to do usual activitiessubject has no interest; does not do anything despite stimulation, stays in his/her seat or in bed all d
       </div>
       <ProgressIndicator 
         sections={[
