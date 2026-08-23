@@ -120,8 +120,33 @@ export const DAPHNE_SCALE_ITEMS_EN: DaphneItem[] = [
       moderate: 'Subject can wash or change clothes only when threatened or tricked',
       severe: 'Subject has very poor hygiene (dirty fingernails, dirty hair, dirty clothes, etc.)'
     }
+  },
+  {
+    id: 'hyperorality-objects',
+    domain: 'hyperorality',
+    title: 'Hyperorality (Objects)',
+    descriptions: {
+      normal: 'No trouble',
+      veryMild: 'Subject explores objects with mouth',
+      mild: 'Subject puts non-food objects in mouth',
+      moderate: 'Subject chews or swallows non-food objects',
+      severe: 'Subject continuously puts objects in mouth, high risk of ingestion'
+    }
+  },
+  {
+    id: 'environmental-neglect',
+    domain: 'neglect',
+    title: 'Environmental Neglect',
+    descriptions: {
+      normal: 'No trouble',
+      veryMild: 'Subject is less concerned about home cleanliness',
+      mild: 'Subject ignores household chores previously performed',
+      moderate: 'Subject allows environment to become unsanitary',
+      severe: 'Total neglect of living conditions, hoarding or squalor'
+    }
   }
 ];
+
 
 export const DAPHNE_SCALE_ITEMS_ML: DaphneItem[] = [
   {
@@ -243,8 +268,33 @@ export const DAPHNE_SCALE_ITEMS_ML: DaphneItem[] = [
       moderate: 'ഭീഷണിപ്പെടുത്തുമ്പോഴോ കബളിപ്പിക്കുമ്പോഴോ മാത്രമേ രോഗിയ്ക്ക് കുളിക്കാനോ വസ്ത്രം മാറാനോ കഴിയൂ',
       severe: 'രോഗിക്ക് വളരെ മോശമായ ശുചിത്വമുണ്ട് (വൃത്തികേടായ നഖങ്ങൾ, വൃത്തികേടായ മുടി, വൃത്തികേടായ വസ്ത്രങ്ങൾ മുതലായവ)'
     }
+  },
+  {
+    id: 'hyperorality-objects',
+    domain: 'hyperorality',
+    title: 'വായ്‌ക്കൂട്ടൽ - വസ്തുക്കൾ (Hyperorality - Objects)',
+    descriptions: {
+      normal: 'കുഴപ്പമില്ല',
+      veryMild: 'രോഗി വസ്തുക്കളെ വായ കൊണ്ട് പരിശോധിക്കുന്നു',
+      mild: 'രോഗി ഭക്ഷ്യേതര വസ്തുക്കൾ വായിൽ ഇടുന്നു',
+      moderate: 'രോഗി ഭക്ഷ്യേതര വസ്തുക്കൾ ചവയ്ക്കുകയോ വിഴുങ്ങുകയോ ചെയ്യുന്നു',
+      severe: 'രോഗി തുടർച്ചയായി വസ്തുക്കൾ വായിൽ ഇടുന്നു, വിഴുങ്ങാനുള്ള ഉയർന്ന സാധ്യത'
+    }
+  },
+  {
+    id: 'environmental-neglect',
+    domain: 'neglect',
+    title: 'പരിസര അവഗണന (Environmental Neglect)',
+    descriptions: {
+      normal: 'കുഴപ്പമില്ല',
+      veryMild: 'രോഗി വീടിന്റെ വൃത്തിയിൽ കുറഞ്ഞ ശ്രദ്ധ കാണിക്കുന്നു',
+      mild: 'മുമ്പ് ചെയ്തിരുന്ന വീട്ടുജോലികൾ രോഗി അവഗണിക്കുന്നു',
+      moderate: 'പരിസരം അശുചിത്വമാകാൻ രോഗി അനുവദിക്കുന്നു',
+      severe: 'ജീവിതസാഹചര്യങ്ങളുടെ പൂർണ്ണമായ അവഗണന, പൂഴ്ത്തിവെപ്പ് അല്ലെങ്കിൽ അഴുക്ക്'
+    }
   }
 ];
+
 
 import type { Language } from '@/contexts/LanguageContext';
 
