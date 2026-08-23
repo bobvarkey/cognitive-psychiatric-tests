@@ -156,7 +156,7 @@ export const assessments: AssessmentInfo[] = [
   { key: 'cdr', name: 'CDR', subtitle: 'Clinical Dementia Rating', icon: Gauge, gradient: 'from-blue-600 to-indigo-700', category: ['cognitive'], description: 'Clinical Dementia Rating (CDR) Scale — specialized 6-domain assessment for dementia staging (Memory, Orientation, Judgment, Community, Home, Personal Care).' },
   { key: 'fast', name: 'FAST', subtitle: 'Functional Staging', icon: Clock, gradient: 'from-teal-500 to-blue-600', category: ['cognitive'], description: 'Functional Assessment Staging (FAST) — 7-stage scale for monitoring functional decline in Alzheimer\'s and related dementias.' },
   { key: 'dementia', name: 'Dementia Screen', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['cognitive'], description: 'BEHAV5+ behavioural screen plus localising neurological signs in dementia.' },
-  { key: 'daphne', name: 'DAPHNE', subtitle: 'bvFTD Assessment', icon: Brain, gradient: 'from-purple-500 to-pink-600', category: ['all', 'cognitive'], description: "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            add this to DAPHNE and complete the scoring" },
+  { key: 'daphne', name: 'DAPHNE', subtitle: 'bvFTD Assessment', icon: Brain, gradient: 'from-purple-500 to-pink-600', category: ['all', 'cognitive'], description: "'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            Improve the home page test grids to be fully responsive with consistent card heights and spacing across mobile, tablet, and desktop.\n\nAdd a one-click TXT export of my DAPHNE-6 results and clinical interpretation." },
   { key: 'moca', name: 'CCSA', subtitle: 'Comprehensive Cognitive Screening', icon: ClipboardCheck, gradient: 'from-fuchsia-500 to-purple-600', category: ['cognitive'], description: 'CCSA — original 30-point multidomain cognitive screen (orientation, memory, attention, executive, language, visuospatial, recall). Prototype tool; not clinically validated.' },
   { key: 'miniace', name: 'Mini-ACE', subtitle: "Addenbrooke's", icon: ClipboardList, gradient: 'from-emerald-500 to-green-600', category: ['cognitive'], description: "Mini-ACE — Mini Addenbrooke's Cognitive Examination; brief multidomain cognitive screen (attention, memory, fluency, visuospatial)." },
   { key: 'minicog', name: 'Mini-Cog™', subtitle: 'Brief Screening', icon: Gauge, gradient: 'from-blue-500 to-cyan-600', category: ['cognitive'], description: 'Mini-Cog — 3-item recall plus clock-drawing; rapid bedside dementia screen (~3 min).' },
@@ -921,7 +921,7 @@ export const AssessmentSelector = () => {
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => locked ? setShowPaywall(true) : openAssessment(a.key)}
-                              className={`group w-full flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all border bg-card hover:bg-accent/40 active:scale-[0.98] ${
+                              className={`group w-full flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all border bg-card hover:bg-accent/40 active:scale-[0.98] h-full ${
                                 locked ? 'opacity-60' : ''
                               }`}
                             >
@@ -1031,7 +1031,7 @@ export const AssessmentSelector = () => {
                               activeCategory as Exclude<Category, 'all'>,
                               filteredAssessments.length,
                             )}
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                             {filteredAssessments.map((a, idx) => renderTile(a, idx, false))}
                           </div>
                         </>
@@ -1047,7 +1047,7 @@ export const AssessmentSelector = () => {
                           return (
                             <section key={cat} aria-labelledby={`cat-${cat}`}>
                               {renderCategoryBanner(cat, items.length)}
-                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                 {items.map((a, idx) => renderTile(a, idx, false))}
                               </div>
                             </section>
