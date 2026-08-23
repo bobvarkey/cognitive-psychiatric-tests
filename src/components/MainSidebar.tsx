@@ -215,7 +215,9 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        add this to Loss of empathyEmotional blunting, indifferenceno troublesubject complains about loss of emotion towards relativessubject shows little interest in stories from relatives or in emotionally current matters; subject has difficulty expressing feelingssubject is indifferent to relatives, does not care about them, and is not concerned when people speak about him/hersubject is unable to express or decipher any emotion, can have inappropriate emotional responses
+                        Add scoring inputs for the Apathy domain items so I can select the correct response category for each item.
+
+Show a live completion indicator and running total as I answer each Apathy item and move through the other domains.                                                                                                                [Add this to PerseverationsFixed ideas, stereotypical behaviorno troublesubject collects usual objects or has trouble getting rid of things or has routine activitiessubject collects unusual objects or does not throw anything away, has ritualized activities or has obsessions (hours, etc.), but this is consistent with social lifesubject collects lots of objects or has difficulty sitting still, has obsessional rituals that interfere with social lifesubject has continuous rituals (grinding of teeth, rubbing of body, grasping of objects, repetition of words or sentences); subject does not stand still]
                       </div>
                     </div>
 
