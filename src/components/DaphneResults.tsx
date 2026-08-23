@@ -424,7 +424,13 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
               <Separator />
 
               <div className="space-y-4">
-                <h4 className="font-semibold text-lg flex items-center">
+                <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+                  <h4 className="font-bold text-sm uppercase tracking-wider mb-2">Clinical Interpretation</h4>
+                  <div className="text-2xl font-black mb-1">{daphne6Interp.level}</div>
+                  <p className="text-sm text-muted-foreground">{daphne6Interp.description}</p>
+                </div>
+
+                <h4 className="font-semibold text-lg flex items-center pt-2">
                   <AlertCircle className="h-5 w-5 mr-2 text-medical-primary" />
                   Clinician-Ready Conclusion
                 </h4>
