@@ -299,18 +299,8 @@ export const DAPHNE_SCALE_ITEMS_ML: DaphneItem[] = [
 
 export const getDaphneScaleItems = (lang: string): DaphneItem[] => {
   const allItems = lang === 'ml' ? DAPHNE_SCALE_ITEMS_ML : DAPHNE_SCALE_ITEMS_EN;
-  // DAPHNE-6 uses exactly 10 items according to the scoring logic requirement
-  const selectedIds = [
-    'disinhibition',
-    'inappropriate-joviality',
-    'unrestrained-spending',
-    'sexual-disinhibition',
-    'apathy',
-    'loss-of-empathy',
-    'perseverations',
-    'hyperorality',
-    'bulimia-gluttony',
-    'personal-neglect'
-  ];
-  return allItems.filter(item => selectedIds.includes(item.id));
+  // DAPHNE-6 uses exactly 6 domains, with multiple items mapping to them.
+  // The provided DAPHNE-6 instrument defines 6 specific domains: 
+  // Disinhibition, Apathy, Perseverations, Hyperorality, Personal Neglect, Loss of Empathy.
+  return allItems;
 };
