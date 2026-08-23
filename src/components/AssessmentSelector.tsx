@@ -146,7 +146,7 @@ interface AssessmentInfo {
   description: string;
 }
 
-const assessments: AssessmentInfo[] = [
+export const assessments: AssessmentInfo[] = [
   // ─── Triage & Core Flows ───
   { key: 'triage', name: 'Psychiatric Triage', subtitle: 'Clinical Routing', icon: Shield, gradient: 'from-blue-600 to-indigo-700', category: ['all'], description: 'Psychiatric Triage Mini App — Step-by-step clinical decision support for safety, psychosis, mood, anxiety, ADHD, and substance use routing.' },
   { key: 'adhd-outpatient', name: 'ADHD Outpatient Flow', subtitle: 'Treatment Algorithm', icon: Activity, gradient: 'from-blue-600 to-indigo-700', category: ['all', 'cognitive'], description: 'Adolescent and adult ADHD outpatient treatment algorithm — capturing patient profile, symptoms, comorbidities, prior treatments, and risks to generate recommended pharmacologic and non-pharmacologic plans.' },
