@@ -46,6 +46,8 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
         )}
       </div>
 
+      <PatientInfoForm />
+
       <Card className="bg-gradient-to-r from-amber-600/20 to-orange-600/20 border-amber-500/30">
         <CardHeader>
           <div className="flex items-start gap-3">
