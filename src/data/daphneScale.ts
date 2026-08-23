@@ -120,8 +120,33 @@ export const DAPHNE_SCALE_ITEMS_EN: DaphneItem[] = [
       moderate: 'Subject can wash or change clothes only when threatened or tricked',
       severe: 'Subject has very poor hygiene (dirty fingernails, dirty hair, dirty clothes, etc.)'
     }
+  },
+  {
+    id: 'hyperorality-objects',
+    domain: 'hyperorality',
+    title: 'Hyperorality (Objects)',
+    descriptions: {
+      normal: 'No trouble',
+      veryMild: 'Subject explores objects with mouth',
+      mild: 'Subject puts non-food objects in mouth',
+      moderate: 'Subject chews or swallows non-food objects',
+      severe: 'Subject continuously puts objects in mouth, high risk of ingestion'
+    }
+  },
+  {
+    id: 'environmental-neglect',
+    domain: 'neglect',
+    title: 'Environmental Neglect',
+    descriptions: {
+      normal: 'No trouble',
+      veryMild: 'Subject is less concerned about home cleanliness',
+      mild: 'Subject ignores household chores previously performed',
+      moderate: 'Subject allows environment to become unsanitary',
+      severe: 'Total neglect of living conditions, hoarding or squalor'
+    }
   }
 ];
+
 
 export const DAPHNE_SCALE_ITEMS_ML: DaphneItem[] = [
   {
