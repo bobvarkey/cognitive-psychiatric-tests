@@ -42,7 +42,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
     lines.push('Criteria Checklist:');
     CASES_SCREENING_ITEMS.forEach(item => {
       const resp = responses[item.id];
-      const status = resp === true ? '[YES]' : resp === false ? '[NO]' : '[UNANSWERED]'];
+      const status = resp === true ? '[YES]' : resp === false ? '[NO]' : '[UNANSWERED]';
       lines.push(`${status} ${item.name}`);
     });
     lines.push('');
