@@ -305,9 +305,7 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            Add scoring inputs for the remaining Perseverations items so I can select the correct response category for each item.
-
-Implement a live completion indicator that shows which domain and which item I’m currently scoring, with a running total that updates as I answer.
+                                            Add scoring inputs for the Hyperorality domain items so I can select the correct response category for each item.
       </div>
       <ProgressIndicator 
         sections={[
