@@ -105,7 +105,7 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
           title: language === 'ml' ? 'ഡൊമെയ്ൻ സ്കോറുകൾ' : 'Domain Scores',
           items: Object.entries(results.domainScores).map(([domain, score]) => {
             const item = MINI_ACE_ITEMS.find(i => i.id === domain);
-            return `${language === 'ml' ? item?.titleMl : item?.title}: ${score}/${item?.maxScore}`;
+            return `${language === 'ml' ? item?.titleMl : item?.title}: ${score} / ${item?.maxScore}`;
           }),
           type: 'info',
         },
@@ -409,7 +409,7 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
                 {language === 'ml' ? 'നിലവിലെ ആകെ സ്കോർ' : 'Current Total Score'}
               </p>
               <p className="text-3xl font-bold text-emerald-800">
-                {responses.attention + responses.memory + responses.fluency + responses.clock + responses.recall}/30
+                <span className="text-emerald-900">{responses.attention + responses.memory + responses.fluency + responses.clock + responses.recall}</span> / 30
               </p>
             </div>
 

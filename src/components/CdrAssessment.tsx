@@ -169,6 +169,7 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
                     min={0} max={3} step={0.5} 
                     value={[scores[d.id] ?? 0]} 
                     onValueChange={(v) => handleScoreChange(d.id, v[0])}
+                    className="touch-none"
                   />
                   <div className="flex justify-between text-[11px] text-muted-foreground font-semibold uppercase tracking-tight">
                     <span>None (0)</span>
