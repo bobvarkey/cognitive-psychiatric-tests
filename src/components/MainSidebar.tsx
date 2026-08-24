@@ -215,7 +215,7 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        remove DAPHNE altogether
+                        Implement binary DAPHNE-6 domain scoring (1 if any symptom is present, otherwise 0) and compute the 0–6 total plus the ≥4/6 cutoff interpretation automatically from my Yes/No selections.
                       </div>
                     </div>
 
