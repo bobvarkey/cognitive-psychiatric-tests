@@ -294,7 +294,17 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            Implement binary DAPHNE-6 domain scoring (1 if any symptom is present, otherwise 0) based on my Yes/No selections.
+                                            Compute the 0–6 DAPHNE-6 total automatically from my selected responses and display it in the results view. Show these 6 questions disinhibition (4 items)Score: 0
+
+apathy (1 items)Score: 0
+
+empathy (0 items)Score: 0
+
+perseverations (1 items)Score: 0
+
+hyperorality (2 items)Score: 0
+
+neglect (1 items)
       </div>
       <ProgressIndicator 
         sections={[
