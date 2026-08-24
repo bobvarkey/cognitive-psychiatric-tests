@@ -79,15 +79,19 @@ export type Daphne6Result = {
  * @returns a typed Daphne6Result
  */
 export function buildDaphne6Result(responses: DaphneResponse[]): Daphne6Result {
-  const domains = {} as Daphne6Domains;
-  DAPHNE_DOMAINS.forEach((d) => {
-    domains[d] = false;
-  });
+  const domains: Daphne6Domains = {
+    disinhibition: false,
+    apathy: false,
+    empathy: false,
+    perseverations: false,
+    hyperorality: false,
+    neglect: false
+  };
 
   responses.forEach((r) => {
     if (r.score > 0) {
-      const item = DAPHNE_SCALE_TO_DOMAINS[r.itemId];
-      if (item) domains[item] = true;
+      const domain = (DAPHNE_SCALE_TO_DOMAINS as Record<string, DaphneDomain>)[r.itemId];
+      if (domain) domains[domain] = true;
     }
   });
 
@@ -110,8 +114,7 @@ export function buildDaphne6Result(responses: DaphneResponse[]): Daphne6Result {
         'Cut-off ≥4 optimized for screening (high sensitivity, moderate specificity).',
       ],
       disclaimer:
-        'This tool provides risk estimates for clinician decision support only. ' +
-        'It does not diagnose bvFTD, prescribe treatment, or replace clinical judgment.',
+        'This tool provides risk estimates for clinician decision support only. It does not diagnose bvFTD, prescribe treatment, or replace clinical judgment.',
     },
   };
 }
