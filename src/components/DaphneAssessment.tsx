@@ -294,7 +294,7 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            remove DAPHNE altogether
+                                            Implement binary DAPHNE-6 domain scoring (1 if any symptom is present, otherwise 0) and compute the 0–6 total plus the ≥4/6 cutoff interpretation automatically from my Yes/No selections.
       </div>
       <ProgressIndicator 
         sections={[
