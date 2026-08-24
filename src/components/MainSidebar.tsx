@@ -215,7 +215,7 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        Implement binary DAPHNE-6 domain scoring (1 if any symptom is present, otherwise 0) based on my Yes/No selections.
+                        Compute the 0–6 DAPHNE-6 total automatically from my selected responses and display it in the results view. Show these 6 questions disinhibition (4 items)Score: 0<br /><br />apathy (1 items)Score: 0<br /><br />empathy (0 items)Score: 0<br /><br />perseverations (1 items)Score: 0<br /><br />hyperorality (2 items)Score: 0<br /><br />neglect (1 items)
                       </div>
                     </div>
 
