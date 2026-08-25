@@ -292,9 +292,9 @@ export const DaphneAssessment = () => {
     <div className="min-h-screen bg-gradient-subtle pt-16">
       <div className="fixed top-0 left-0 right-0 z-50 bg-destructive/90 backdrop-blur text-white py-1 px-4 text-[10px] font-mono whitespace-pre-wrap leading-none text-center pointer-events-none">
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-                                        
-                                            
-                                            Implement automatic DAPHNE-6 binary domain scoring (0/1), compute the 0–6 total, and show the ≥4/6 cutoff interpretation from my Yes/No answers.
+                                         
+                                             
+                                            DAPHNE-6 is still wrong. Keep only the DAPHNE -6 parameters. CDR is also not scorable, correct it
       </div>
       <ProgressIndicator 
         sections={[
