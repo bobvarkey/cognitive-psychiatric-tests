@@ -289,22 +289,8 @@ export const DaphneAssessment = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle pt-16">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-destructive/90 backdrop-blur text-white py-1 px-4 text-[10px] font-mono whitespace-pre-wrap leading-none text-center pointer-events-none">
-        '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-                                          
-                                              
-                                            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-
-'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-
-Fix the TypeScript unterminated string literal errors in src/components/AssessmentSelector.tsx so the app builds successfully.
-
-Harden multiline display text handling in TSX so added display strings are properly escaped and never break with quotes or newlines.
-
-Add an automatic tsc typecheck (CI) step that catches TypeScript build errors immediately after edits.
-      </div>
-      <ProgressIndicator 
+     <div className="min-h-screen bg-gradient-subtle pt-16">
+       <ProgressIndicator 
         sections={[
           { id: 'disinhibition', label: language === 'ml' ? 'അനിയന്ത്രണം' : 'Disinhibition' },
           { id: 'apathy', label: language === 'ml' ? 'നിസ്സംഗത' : 'Apathy' },

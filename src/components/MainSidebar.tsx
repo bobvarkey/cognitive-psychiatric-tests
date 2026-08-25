@@ -212,19 +212,6 @@ export const MainSidebar = ({
                           &#125;
                         </p>
                       </div>
-                      <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
-                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-                         <br /><br />
-                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-
-'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-
-Fix the TypeScript unterminated string literal errors in src/components/AssessmentSelector.tsx so the app builds successfully.
-
-Harden multiline display text handling in TSX so added display strings are properly escaped and never break with quotes or newlines.
-
-Add an automatic tsc typecheck (CI) step that catches TypeScript build errors immediately after edits.
-                      </div>
                     </div>
 
 
