@@ -217,11 +217,13 @@ export const MainSidebar = ({
                          <br /><br />
                          '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-use only this for DAPHNE-6
+'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-Add the DAPHNE-6 ≥4/6 cutoff interpretation to the results view with clear wording based on my score.
+Fix the TypeScript unterminated string literal errors in src/components/AssessmentSelector.tsx so the app builds successfully.
 
-Display the per-domain domain scores (disinhibition, apathy, empathy, perseverations, hyperorality, neglect) in the results view alongside the total.
+Harden multiline display text handling in TSX so added display strings are properly escaped and never break with quotes or newlines.
+
+Add an automatic tsc typecheck (CI) step that catches TypeScript build errors immediately after edits.
                       </div>
                     </div>
 
