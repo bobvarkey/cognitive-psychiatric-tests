@@ -160,11 +160,13 @@ export const assessments: AssessmentInfo[] = [
 
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-use only this for DAPHNE-6
+'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-Add the DAPHNE-6 ≥4/6 cutoff interpretation to the results view with clear wording based on my score.
+Fix the TypeScript unterminated string literal errors in src/components/AssessmentSelector.tsx so the app builds successfully.
 
-Display the per-domain domain scores (disinhibition, apathy, empathy, perseverations, hyperorality, neglect) in the results view alongside the total.` },
+Harden multiline display text handling in TSX so added display strings are properly escaped and never break with quotes or newlines.
+
+Add an automatic tsc typecheck (CI) step that catches TypeScript build errors immediately after edits.` },
   { key: 'moca', name: 'CCSA', subtitle: 'Comprehensive Cognitive Screening', icon: ClipboardCheck, gradient: 'from-fuchsia-500 to-purple-600', category: ['cognitive'], description: 'CCSA — original 30-point multidomain cognitive screen (orientation, memory, attention, executive, language, visuospatial, recall). Prototype tool; not clinically validated.' },
   { key: 'miniace', name: 'Mini-ACE', subtitle: "Addenbrooke's", icon: ClipboardList, gradient: 'from-emerald-500 to-green-600', category: ['cognitive'], description: "Mini-ACE — Mini Addenbrooke's Cognitive Examination; brief multidomain cognitive screen (attention, memory, fluency, visuospatial)." },
   { key: 'minicog', name: 'Mini-Cog™', subtitle: 'Brief Screening', icon: Gauge, gradient: 'from-blue-500 to-cyan-600', category: ['cognitive'], description: 'Mini-Cog — 3-item recall plus clock-drawing; rapid bedside dementia screen (~3 min).' },
