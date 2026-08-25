@@ -215,7 +215,7 @@ export const MainSidebar = ({
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                         <br /><br />
-                        Implement automatic DAPHNE-6 binary domain scoring (0/1), compute the 0–6 total, and show the ≥4/6 cutoff interpretation from my Yes/No answers.
+                        DAPHNE-6 is still wrong. Keep only the DAPHNE -6 parameters. CDR is also not scorable, correct it
                       </div>
                     </div>
 
