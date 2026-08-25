@@ -294,7 +294,13 @@ export const DaphneAssessment = () => {
         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                           
                                               
-                                            Fix the DAPHNE-6 scoring logic so the domain mapping and 0–6 total are correct based on my selected responses.
+                                            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+
+use only this for DAPHNE-6
+
+Add the DAPHNE-6 ≥4/6 cutoff interpretation to the results view with clear wording based on my score.
+
+Display the per-domain domain scores (disinhibition, apathy, empathy, perseverations, hyperorality, neglect) in the results view alongside the total.
       </div>
       <ProgressIndicator 
         sections={[
