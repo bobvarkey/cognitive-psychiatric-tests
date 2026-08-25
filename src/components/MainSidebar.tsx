@@ -213,9 +213,9 @@ export const MainSidebar = ({
                         </p>
                       </div>
                       <div className="mt-2 text-[9px] font-bold text-sidebar-foreground/70 uppercase leading-tight bg-primary/5 p-2 rounded border border-primary/20">
-                        '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-                        <br /><br />
-                        DAPHNE-6 is still wrong. Keep only the DAPHNE -6 parameters. CDR is also not scorable, correct it
+                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
+                         <br /><br />
+                         Fix the DAPHNE-6 scoring logic so the domain mapping and 0–6 total are correct based on my selected responses.
                       </div>
                     </div>
 
