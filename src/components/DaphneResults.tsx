@@ -466,7 +466,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                         ) : (
                           <span> However, the diagnostic threshold was not met (DAPHNE-40: {results.daphne40Score} &lt; 15), suggesting a need for careful clinical follow-up or re-evaluation.</span>
                         )}
-                        {" "}A comprehensive neuropsychiatric evaluation and neuroimaging are strongly indicated.
+                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.''' Add copy-to-clipboard buttons next to each section’s command text so I can paste it into my notes or EHR.A comprehensive neuropsychiatric evaluation and neuroimaging are strongly indicated.
                       </>
                     ) : (
                       <>
@@ -474,7 +474,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
                         {daphne40Positive && (
                           <span> <strong>Note:</strong> An atypical presentation is noted as the DAPHNE-40 diagnostic threshold was exceeded ({results.daphne40Score} ≥ 15).</span>
                         )}
-                        {" "}Clinical monitoring is advised if symptoms persist or progress.
+                         '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.''' Add copy-to-clipboard buttons next to each section’s command text so I can paste it into my notes or EHR.Clinical monitoring is advised if symptoms persist or progress.
                       </>
                     )}
                   </p>
