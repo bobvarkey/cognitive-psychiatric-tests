@@ -14,6 +14,7 @@ import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { OfflineProvider } from "@/contexts/OfflineContext";
 import { useEffect } from "react";
 import { useThemeStore } from "@/hooks/useThemeStore";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -66,6 +67,7 @@ const App = () => (
                   <Route path="/assessment/:id" element={<Index />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                <LanguageToggle />
                 <NavigationButtons />
                 <OfflineIndicator />
               </BrowserRouter>
