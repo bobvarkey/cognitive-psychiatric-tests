@@ -28,12 +28,12 @@ export const DpdrItemCard = ({ item, selectedScore, onScoreSelect }: DpdrItemCar
   };
 
   const getDomainLabel = (domain: string) => {
-    const labels = {
+    const labels: Record<string, { en: string; ml: string }> = {
       depersonalization: { en: 'Depersonalization', ml: 'വ്യക്തിത്വനഷ്ടം' },
       derealization: { en: 'Derealization', ml: 'യാഥാർത്ഥ്യനഷ്ടം' },
       distress: { en: 'Impact & Distress', ml: 'ആഘാതവും ദുരിതവും' }
     };
-    return labels[domain as keyof typeof labels]?.[language] || domain;
+    return labels[domain]?.[(language === 'ml' ? 'ml' : 'en')] || domain;
   };
 
   return (

@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowLeft, FlaskConical, AlertTriangle, CheckCircle2, XCircle, Info, Pill, ChevronDown, Stethoscope } from 'lucide-react';
+import { ArrowLeft, FlaskConical, AlertTriangle, CheckCircle2, XCircle, Info, Pill, ChevronDown, Stethoscope, Copy, Check } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
@@ -190,6 +190,15 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
     lines.push(`Verdict: ${meetsHunter ? 'Hunter Criteria MET — Serotonin Syndrome likely' : 'Hunter Criteria NOT met'}`);
     return lines.join('\n');
   }, [exposure, criteria, implicatedDrugs, meetsHunter]);
+
+  const [copiedExport, setCopiedExport] = useState(false);
+  const copyExport = async () => {
+    try {
+      await navigator.clipboard.writeText(exportText);
+      setCopiedExport(true);
+      setTimeout(() => setCopiedExport(false), 2000);
+    } catch { /* ignore */ }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
@@ -462,7 +471,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-lg text-foreground">Export / final text</CardTitle>
             <Button onClick={copyExport} variant="outline" size="sm" className="bg-slate-800 border-input text-white hover:bg-slate-700 hover:text-white gap-2">
-              <Copy className="h-4 w-4" /> Copy all
+              {copiedExport ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />} {copiedExport ? 'Copied' : 'Copy all'}
             </Button>
           </CardHeader>
           <CardContent>

@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Brain, AlertTriangle, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Brain, AlertTriangle, RotateCcw, Copy, Check } from 'lucide-react';
 import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface Props { onBack?: () => void }
@@ -229,6 +229,15 @@ export const BrainFogAssessment = ({ onBack }: Props) => {
     [setConfirm, setMimics, setRedFlags, setOnset, setTemporal, setNeuro, setPsych,
      setSleep, setSystemic, setMeds, setCauses, setLabs, setAddLabs, setMgmt].forEach(s => s(new Set()));
     setNotes('');
+  };
+
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(exportText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* ignore */ }
   };
 
   const exportText = useMemo(() => {

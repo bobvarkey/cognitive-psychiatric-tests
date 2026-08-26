@@ -212,7 +212,7 @@ export const getPresentation = (
 import type { Language } from '@/contexts/LanguageContext';
 
 export const getPresentationLabel = (presentation: string, language: Language): { title: string; description: string } => {
-  const labels = {
+  const labels: Record<string, { en: { title: string; description: string }; ml: { title: string; description: string } }> = {
     'combined': {
       en: { 
         title: 'Combined Presentation', 
@@ -255,5 +255,5 @@ export const getPresentationLabel = (presentation: string, language: Language): 
     }
   };
   
-  return labels[presentation as keyof typeof labels]?.[language] || labels['subthreshold'][language];
+  return labels[presentation]?.[(language === 'ml' ? 'ml' : 'en')] || labels['subthreshold'][(language === 'ml' ? 'ml' : 'en')];
 };

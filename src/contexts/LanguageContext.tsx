@@ -373,14 +373,13 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
 
 
   const toggleLanguage = () => {
-    setLanguage(prev => {
-      const idx = LANGUAGES.findIndex(l => l.code === prev);
-      return LANGUAGES[(idx + 1) % LANGUAGES.length].code;
-    });
+    const idx = LANGUAGES.findIndex(l => l.code === language);
+    setLanguage(LANGUAGES[(idx + 1) % LANGUAGES.length].code);
   };
 
   const t = (key: string): string => {
-    const selectedDict = translations[language] as Record<string, string> | undefined;
+    const lang = (language === 'ml' ? 'ml' : 'en') as 'en' | 'ml';
+    const selectedDict = translations[lang] as Record<string, string> | undefined;
     const englishDict = translations.en as Record<string, string>;
     return selectedDict?.[key] || englishDict[key] || key;
   };

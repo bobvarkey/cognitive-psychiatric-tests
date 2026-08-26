@@ -35,13 +35,13 @@ export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
   };
 
   const getSeverityLabel = (severity: string) => {
-    const labels = {
+    const labels: Record<string, { en: string; ml: string }> = {
       minimal: { en: 'Minimal', ml: 'ഏറ്റവും കുറഞ്ഞത്' },
       mild: { en: 'Mild', ml: 'നേരിയത്' },
       moderate: { en: 'Moderate', ml: 'മദ്ധ്യമം' },
       severe: { en: 'Severe', ml: 'ഗുരുതരം' }
     };
-    return labels[severity as keyof typeof labels]?.[language] || severity;
+    return labels[severity]?.[(language === 'ml' ? 'ml' : 'en')] || severity;
   };
 
   return (
