@@ -289,8 +289,8 @@ export const DaphneAssessment = () => {
   }
 
   return (
-     <div className="min-h-screen bg-gradient-subtle pt-16">
-       <ProgressIndicator 
+    <div className="min-h-screen bg-gradient-subtle pt-16">
+      <ProgressIndicator 
         sections={[
           { id: 'disinhibition', label: language === 'ml' ? 'അനിയന്ത്രണം' : 'Disinhibition' },
           { id: 'apathy', label: language === 'ml' ? 'നിസ്സംഗത' : 'Apathy' },
