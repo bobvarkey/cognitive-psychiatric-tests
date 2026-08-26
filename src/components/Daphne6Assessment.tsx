@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, Brain, FileText, AlertTriangle, ShieldCheck, RotateCcw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
@@ -20,22 +20,48 @@ interface Daphne6AssessmentProps {
   onBack?: () => void;
 }
 
+const DAPHNE6_STORAGE_KEY = 'cognito.daphne6.draft.v1';
+
+interface Daphne6Draft {
+  selected: Record<string, string[]>;
+  currentDomainIndex: number;
+  patientInfo: { name: string; age: string; assessorName: string };
+  started: boolean;
+}
+
+const readDraft = (): Daphne6Draft | null => {
+  try {
+    const raw = localStorage.getItem(DAPHNE6_STORAGE_KEY);
+    if (!raw) return null;
+    const draft = JSON.parse(raw) as Daphne6Draft;
+    if (draft && typeof draft.selected === 'object' && draft.patientInfo) return draft;
+  } catch {
+    // Ignore unavailable or invalid local storage.
+  }
+  return null;
+};
+
 /** Binary per-domain DAPHNE-6 screener: a domain is positive when ANY symptom present. */
 export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) => {
   const { language } = useLanguage();
-  const [selected, setSelected] = useState<Record<string, string[]>>({}); // domainId -> symptom keys present
+  const initialDraft = useRef<Daphne6Draft | null>(readDraft());
+  const [selected, setSelected] = useState<Record<string, string[]>>(() => initialDraft.current?.selected ?? {});
   const [showResults, setShowResults] = useState(false);
-  const [started, setStarted] = useState(false);
-  const [patientInfo, setPatientInfo] = useState({ name: '', age: '', assessorName: '' });
+  const [started, setStarted] = useState(() => initialDraft.current?.started ?? false);
+  const [currentDomainIndex, setCurrentDomainIndex] = useState(() => initialDraft.current?.currentDomainIndex ?? 0);
+  const [patientInfo, setPatientInfo] = useState(() => initialDraft.current?.patientInfo ?? ({ name: '', age: '', assessorName: '' }));
+  const [resumed, setResumed] = useState(() => Boolean(initialDraft.current && Object.keys(initialDraft.current.selected).length));
 
-  const toggleSymptom = (domainId: string, symptomIndex: number) => {
+  const setSymptomPresence = (domainId: string, symptomIndex: number, present: boolean) => {
     setSelected(prev => {
       const current = prev[domainId] ?? [];
       const key = String(symptomIndex);
       const exists = current.includes(key);
       return {
         ...prev,
-        [domainId]: exists ? current.filter(k => k !== key) : [...current, key],
+        [domainId]: present
+          ? (exists ? current : [...current, key])
+          : current.filter(k => k !== key),
       };
     });
   };
@@ -49,11 +75,39 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
   const totalScore = DAPHNE6_DOMAINS.filter(d => domainPositive(d.id)).length;
   const isPositive = totalScore >= DAPHNE6_CUTOFF.threshold;
 
+  const answeredDomains = DAPHNE6_DOMAINS.filter(d => Object.prototype.hasOwnProperty.call(selected, d.id)).length;
+  const currentDomain = DAPHNE6_DOMAINS[currentDomainIndex];
+
+  useEffect(() => {
+    if (!started || showResults) return;
+    try {
+      localStorage.setItem(DAPHNE6_STORAGE_KEY, JSON.stringify({
+        selected,
+        currentDomainIndex,
+        patientInfo,
+        started,
+      } satisfies Daphne6Draft));
+    } catch {
+      // Draft persistence is best effort.
+    }
+  }, [selected, currentDomainIndex, patientInfo, started, showResults]);
+
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(DAPHNE6_STORAGE_KEY);
+    } catch {
+      // Ignore unavailable local storage.
+    }
+    setResumed(false);
+  };
+
   const handleBegin = () => setStarted(true);
   const handleRestart = () => {
+    clearDraft();
     setSelected({});
     setShowResults(false);
     setStarted(false);
+    setCurrentDomainIndex(0);
     setPatientInfo({ name: '', age: '', assessorName: '' });
   };
 
@@ -89,7 +143,7 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
 
   if (!started) {
     return (
-      <div className="max-w-3xl mx-auto p-4 space-y-6">
+      <div className="max-w-3xl mx-auto w-full p-3 sm:p-4 space-y-5">
         {onBack && <Button variant="ghost" onClick={onBack}><ArrowLeft className="mr-2" /> Back</Button>}
         <Card>
           <CardHeader>
@@ -97,6 +151,11 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
             <CardDescription>{DAPHNE6_METADATA.fullName}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
+            {resumed && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+                Saved DAPHNE-6 answers were restored. You can continue from domain {currentDomainIndex + 1}.
+              </div>
+            )}
             <p className="text-muted-foreground text-sm">{DAPHNE6_METADATA.purpose}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="p-3 rounded-lg bg-muted/50">
@@ -190,46 +249,96 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-4 space-y-6">
+    <div className="max-w-3xl mx-auto w-full p-3 sm:p-4 space-y-5">
       {onBack && <Button variant="ghost" onClick={onBack}><ArrowLeft className="mr-2" /> Back</Button>}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Brain /> DAPHNE-6</CardTitle>
-          <CardDescription>
-            {language === 'ml'
-              ? 'ഒരു ഡൊമെയ്നിൽ കുറഞ്ഞത് ഒരു ലക്ഷണം ഉണ്ടെങ്കിൽ ആ ഡൊമെയ്ന് 1 പോയിന്റ് സ്കോർ ചെയ്യുക.'
-              : 'Score 1 point per domain if at least one symptom in that domain is present.'}
-          </CardDescription>
+        <CardHeader className="space-y-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <CardTitle className="flex items-center gap-2"><Brain /> DAPHNE-6</CardTitle>
+              <CardDescription className="mt-2">
+                {language === 'ml'
+                  ? 'ഓരോ ലക്ഷണത്തിനും നിലവിലുള്ളത് അല്ലെങ്കിൽ ഇല്ലാത്തത് തിരഞ്ഞെടുക്കുക.'
+                  : 'For each symptom, select Present or Absent. One or more present symptoms make the domain positive.'}
+              </CardDescription>
+            </div>
+            <Badge variant="secondary" className="shrink-0">{answeredDomains}/6</Badge>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+              <span>Domain {currentDomainIndex + 1} of {DAPHNE6_MAX_SCORE}</span>
+              <span>{Math.round(((currentDomainIndex + 1) / DAPHNE6_MAX_SCORE) * 100)}%</span>
+            </div>
+            <Progress value={((currentDomainIndex + 1) / DAPHNE6_MAX_SCORE) * 100} className="h-2" />
+            <div className="grid grid-cols-6 gap-1" aria-label="DAPHNE-6 domain progress">
+              {DAPHNE6_DOMAINS.map((domain, index) => (
+                <button
+                  key={domain.id}
+                  type="button"
+                  aria-label={`Go to ${domain.domain}`}
+                  onClick={() => setCurrentDomainIndex(index)}
+                  className={`h-2 rounded-full transition-colors ${index === currentDomainIndex ? 'bg-primary' : domainPositive(domain.id) ? 'bg-primary/50' : 'bg-muted'}`}
+                />
+              ))}
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex justify-between items-center p-4 rounded-lg bg-primary/10">
-            <span className="font-semibold">DAPHNE-6 Score</span>
-            <span className="font-bold text-2xl">{totalScore}/{DAPHNE6_MAX_SCORE}</span>
+        <CardContent className="space-y-5">
+          {resumed && (
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
+              Saved answers restored. Continue with domain {currentDomainIndex + 1}.
+            </div>
+          )}
+
+          <div className="flex items-center justify-between gap-3 rounded-lg bg-primary/10 p-3 sm:p-4">
+            <div>
+              <p className="font-semibold">{language === 'ml' ? currentDomain.domainMl : currentDomain.domain}</p>
+              <p className="text-xs text-muted-foreground">{currentDomain.symptoms.length} symptom {currentDomain.symptoms.length === 1 ? 'item' : 'items'}</p>
+            </div>
+            <Badge variant={domainPositive(currentDomain.id) ? 'default' : 'outline'}>
+              {domainPositive(currentDomain.id) ? 'Positive: 1' : 'Negative: 0'}
+            </Badge>
           </div>
 
-          {DAPHNE6_DOMAINS.map(d => (
-            <div key={d.id} className="p-4 border rounded-lg space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">{language === 'ml' ? d.domainMl : d.domain}</span>
-                <Badge variant={domainPositive(d.id) ? 'default' : 'outline'}>{domainPositive(d.id) ? 'Positive' : '0'}</Badge>
-              </div>
-              <div className="space-y-2">
-                {d.symptoms.map((symptom, idx) => (
-                  <label key={idx} className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer">
-                    <Checkbox
-                      checked={domainPositive(d.id) && (selected[d.id] ?? []).includes(String(idx))}
-                      onCheckedChange={() => toggleSymptom(d.id, idx)}
-                    />
-                    <span className="text-sm">{language === 'ml' ? d.symptomsMl[idx] : symptom}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+          <div className="space-y-3">
+            {currentDomain.symptoms.map((symptom, idx) => {
+              const present = (selected[currentDomain.id] ?? []).includes(String(idx));
+              return (
+                <div key={symptom} className="rounded-lg border p-3 sm:p-4 space-y-3">
+                  <p className="text-sm font-medium leading-relaxed">{language === 'ml' ? currentDomain.symptomsMl[idx] : symptom}</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      type="button"
+                      variant={present ? 'default' : 'outline'}
+                      className="min-h-11 w-full"
+                      onClick={() => setSymptomPresence(currentDomain.id, idx, true)}
+                    >
+                      Present
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={!present ? 'secondary' : 'outline'}
+                      className="min-h-11 w-full"
+                      onClick={() => setSymptomPresence(currentDomain.id, idx, false)}
+                    >
+                      Absent
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-          <div className="flex justify-between gap-3">
-            <Button variant="outline" onClick={handleRestart} className="flex-1"><RotateCcw className="mr-2 h-4 w-4" /> Reset</Button>
-            <Button onClick={() => setShowResults(true)} className="flex-1" size="lg">View Result</Button>
+          <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
+            <Button variant="outline" onClick={handleRestart} className="sm:w-auto"><RotateCcw className="mr-2 h-4 w-4" /> Reset</Button>
+            <div className="flex flex-1 gap-2">
+              <Button variant="outline" onClick={() => setCurrentDomainIndex(index => Math.max(0, index - 1))} disabled={currentDomainIndex === 0} className="flex-1">Previous</Button>
+              {currentDomainIndex < DAPHNE6_DOMAINS.length - 1 ? (
+                <Button onClick={() => { setCurrentDomainIndex(index => index + 1); setResumed(false); }} className="flex-1">Next</Button>
+              ) : (
+                <Button onClick={() => { setShowResults(true); clearDraft(); }} className="flex-1" size="lg">View Result</Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
