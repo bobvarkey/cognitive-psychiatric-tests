@@ -72,6 +72,7 @@ export const DaphneAssessment = () => {
   const totalSteps = domainGroups.length;
   const progress = ((currentStep + 1) / totalSteps) * 100;
   const currentDomainGroup = domainGroups[currentStep];
+  const liveDaphne6 = buildDaphne6Result(responses);
 
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -347,11 +348,7 @@ export const DaphneAssessment = () => {
                 <div className="text-right">
                   <span className="text-xs text-muted-foreground block">DAPHNE-6</span>
                   <span className="font-bold text-medical-primary">
-                    {Object.values(responses.reduce((acc, response) => {
-                      const item = getDaphneScaleItems('en').find(i => i.id === response.itemId);
-                      if (item && response.score > 0) acc[item.domain] = 1;
-                      return acc;
-                    }, {} as Record<string, number>)).reduce((sum, score) => sum + score, 0)}/6
+                    {liveDaphne6.totalScore}/6
                   </span>
                 </div>
                 <div className="text-right">
@@ -363,9 +360,9 @@ export const DaphneAssessment = () => {
               </div>
             </div>
             <div className="grid grid-cols-6 gap-1">
-              {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
+                {DAPHNE_DOMAINS.map(domain => {
                 const domainItems = getDaphneScaleItems('en').filter(item => item.domain === domain);
-                const hasSymptom = responses.filter(r => domainItems.some(i => i.id === r.itemId)).some(r => r.score > 0);
+                  const hasSymptom = liveDaphne6.domains[domain];
                 return (
                   <div 
                     key={domain} 
@@ -384,7 +381,7 @@ export const DaphneAssessment = () => {
                 The total DAPHNE-6 score (0-6) is the sum of positive domains.
               </p>
               <div className="space-y-2">
-                {['disinhibition', 'apathy', 'empathy', 'perseverations', 'hyperorality', 'neglect'].map(domain => {
+                {DAPHNE_DOMAINS.map(domain => {
                   const items = getDaphneScaleItems('en').filter(i => i.domain === domain);
                   const domainResp = responses.filter(r => items.some(i => i.id === r.itemId));
                   const score = domainResp.reduce((a, r) => a + r.score, 0);

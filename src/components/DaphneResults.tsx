@@ -16,7 +16,7 @@ import {
   ClipboardCopy,
   Check,
 } from 'lucide-react';
-import { DaphneResults as DaphneResultsType } from '@/types/daphne';
+import { DaphneResults as DaphneResultsType, buildDaphne6Result } from '@/types/daphne';
 import { getDaphneScaleItems, DAPHNE_SCALE_ITEMS_EN } from '@/data/daphneScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
@@ -101,6 +101,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
 
   const daphne6Interp = getDaphne6Interpretation(results.daphne6Score);
   const daphne40Interp = getDaphne40Interpretation(results.daphne40Score);
+  const daphne6Domains = results.daphne6?.domains ?? buildDaphne6Result(results.responses).domains;
 
   const domainDetails = [
     { name: 'Disinhibition', key: 'disinhibition', items: 4 },
@@ -323,13 +324,7 @@ export const DaphneResults: React.FC<DaphneResultsProps> = ({
 
   const daphne6Positive = (results.daphne6?.riskCategory ?? (results.daphne6Score >= 4 ? 'High' : 'Low')) === 'High';
   const daphne40Positive = results.daphne40Score >= 15;
-  const involvedDomains = domainDetails.filter((d) => {
-    const responses = results.responses.filter((r) => {
-      const it = getDaphneScaleItems('en').find((i) => i.id === r.itemId);
-      return it?.domain === d.key;
-    });
-    return responses.some((r) => r.score > 0);
-  });
+  const involvedDomains = domainDetails.filter((d) => daphne6Domains[d.key as keyof typeof daphne6Domains]);
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
