@@ -172,10 +172,11 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
                   {[0, 0.5, 1, 2, 3].map((val) => (
                     <Button
                       key={val}
+                      type="button"
                       variant={scores[d.id] === val ? "default" : "outline"}
                       size="sm"
                       onClick={() => handleScoreChange(d.id, val)}
-                      className="flex-1 min-w-[60px]"
+                      className="relative z-10 flex-1 min-w-[60px] min-h-11 pointer-events-auto"
                     >
                       {val}
                     </Button>

@@ -255,7 +255,7 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
   }
 
   return (
-    <div className="max-w-3xl mx-auto w-full p-3 sm:p-4 space-y-5">
+    <div className="relative z-10 max-w-3xl mx-auto w-full p-3 sm:p-4 space-y-5">
       {onBack && <Button variant="ghost" onClick={onBack}><ArrowLeft className="mr-2" /> Back</Button>}
       <Card>
         <CardHeader className="space-y-4">
@@ -312,7 +312,7 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
                   {domain.symptoms.map((symptom, idx) => {
                     const present = (selected[domain.id] ?? []).includes(String(idx));
                     return (
-                      <div key={symptom} className="rounded-lg border bg-background p-3 sm:p-4 space-y-3">
+                      <div key={symptom} className="relative z-10 rounded-lg border bg-background p-3 sm:p-4 space-y-3">
                         <p className="text-sm font-medium leading-relaxed">{language === 'ml' ? domain.symptomsMl[idx] : symptom}</p>
                         <div className="grid grid-cols-2 gap-2">
                           <Button

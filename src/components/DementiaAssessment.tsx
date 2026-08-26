@@ -493,8 +493,9 @@ export const DementiaAssessment: React.FC<DementiaAssessmentProps> = ({ onBack }
                           {domain.ratings.map((rating) => (
                             <td key={rating.score} className="border p-1 text-center">
                               <button
+                                type="button"
                                 onClick={() => handleCdrChange(domain.id, rating.score)}
-                                className={`w-full h-full min-h-[3rem] p-1 rounded text-xs transition-colors ${
+                                className={`relative z-10 w-full h-full min-h-[3.25rem] p-1 rounded text-xs transition-colors pointer-events-auto ${
                                   responses.cdr[domain.id] === rating.score
                                     ? 'bg-indigo-600 text-white'
                                     : 'hover:bg-indigo-100'
