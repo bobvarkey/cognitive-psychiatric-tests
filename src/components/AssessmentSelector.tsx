@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { DaphneAssessment } from '@/components/DaphneAssessment';
 import { Daphne6Assessment } from '@/components/Daphne6Assessment';
 import { HoehnYahrAssessment } from '@/components/HoehnYahrAssessment';
 import { EpworthAssessment } from '@/components/EpworthAssessment';
@@ -116,7 +115,7 @@ import cognitoHero from '@/assets/cognito-hero.png';
 
 
 export type AssessmentKey =
-  | 'daphne' | 'daphne6' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
+  | 'daphne6' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
   | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
@@ -157,7 +156,6 @@ export const assessments: AssessmentInfo[] = [
   { key: 'cdr', name: 'CDR', subtitle: 'Clinical Dementia Rating', icon: Gauge, gradient: 'from-blue-600 to-indigo-700', category: ['cognitive'], description: 'Clinical Dementia Rating (CDR) Scale — specialized 6-domain assessment for dementia staging (Memory, Orientation, Judgment, Community, Home, Personal Care).' },
   { key: 'fast', name: 'FAST', subtitle: 'Functional Staging', icon: Clock, gradient: 'from-teal-500 to-blue-600', category: ['cognitive'], description: 'Functional Assessment Staging (FAST) — 7-stage scale for monitoring functional decline in Alzheimer\'s and related dementias.' },
   { key: 'dementia', name: 'Dementia Screen', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['cognitive'], description: 'BEHAV5+ behavioural screen plus localising neurological signs in dementia.' },
-  { key: 'daphne', name: 'DAPHNE', subtitle: 'bvFTD Assessment', icon: Brain, gradient: 'from-purple-500 to-pink-600', category: ['all', 'cognitive'], description: 'DAPHNE — Behavioural variant Frontotemporal Dementia screening across disinhibition, apathy, perseveration, hyperorality, neglect and loss of empathy.' },
   { key: 'daphne6', name: 'DAPHNE-6', subtitle: 'bvFTD Quick Screen', icon: Gauge, gradient: 'from-fuchsia-500 to-purple-600', category: ['all', 'cognitive'], description: 'DAPHNE-6 — six-domain caregiver screening for behavioural variant FTD. Binary per-domain scoring (0-6); >= 4/6 is a positive screen (sensitivity 92%).' },
   { key: 'moca', name: 'CCSA', subtitle: 'Comprehensive Cognitive Screening', icon: ClipboardCheck, gradient: 'from-fuchsia-500 to-purple-600', category: ['cognitive'], description: 'CCSA — original 30-point multidomain cognitive screen (orientation, memory, attention, executive, language, visuospatial, recall). Prototype tool; not clinically validated.' },
   { key: 'miniace', name: 'Mini-ACE', subtitle: "Addenbrooke's", icon: ClipboardList, gradient: 'from-emerald-500 to-green-600', category: ['cognitive'], description: "Mini-ACE — Mini Addenbrooke's Cognitive Examination; brief multidomain cognitive screen (attention, memory, fluency, visuospatial)." },
@@ -561,7 +559,7 @@ export const AssessmentSelector = () => {
       cdr: true,
       fast: true,
       'ciwa-ar': true,
-      daphne: true, daphne6: true, minicog: true, hare: true, tulia: true,
+      daphne6: true, minicog: true, hare: true, tulia: true,
       fab: true, pcl5: true, delusions: true,
       sds: true,
     };
@@ -643,11 +641,11 @@ export const AssessmentSelector = () => {
         'ciwa-ar': (props: any) => <SubstanceAssessment {...props} initialTab="ciwa" />,
         sds: (props: any) => <SubstanceAssessment {...props} initialTab="sds" />,
         cdr: (props: any) => (
-          <CdrAssessment 
-            {...props} 
+          <CdrAssessment
+            {...props}
             scores={cdrScores}
-            fastStage={fastStage} 
-            onScoresChange={setCdrScores} 
+            fastStage={fastStage}
+            onScoresChange={setCdrScores}
           />
         ),
         fast: (props: any) => (
@@ -662,7 +660,6 @@ export const AssessmentSelector = () => {
       };
 
       const wrapMap: Record<string, React.ReactNode> = {
-        daphne: <DaphneAssessment />,
         minicog: <MiniCogAssessment />,
         hare: <HareAssessment />,
         tulia: <TuliaAssessment onBack={handleBackToMenu} />,
@@ -798,7 +795,7 @@ export const AssessmentSelector = () => {
                       loading="lazy"
                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-start pt-8 bg-gradient-to-b from-black/60 via-black/20 to-transparent rounded-2xl gap-4">
-                      <h2 className="text-3xl sm:text-4xl font-extrabold text-white text-center px-4 leading-tight max-w-sm drop-shadow-2xl">
+                      <h2 className="text-3xl sm:text-4xl font-extrabold text-white text-center px-4 leading-tight max-w-sm whitespace-pre-line drop-shadow-2xl">
                         {language === 'en'
                           ? 'Neuropsychiatric\nEvaluation Companion'
                           : 'വിരിയറ്റ ഗ്രൂപ്പിനും\nവിലയിരുത്തലും'}

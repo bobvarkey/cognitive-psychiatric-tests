@@ -5,7 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Brain, AlertTriangle, Copy, RotateCcw, Check } from 'lucide-react';
+import { ArrowLeft, Brain, AlertTriangle, RotateCcw } from 'lucide-react';
 import { AssessmentReference } from '@/components/AssessmentReference';
 
 interface Props { onBack?: () => void }
@@ -216,7 +216,6 @@ export const BrainFogAssessment = ({ onBack }: Props) => {
   const [addLabs, setAddLabs] = useState<Set<string>>(new Set());
   const [mgmt, setMgmt] = useState<Set<string>>(new Set());
   const [notes, setNotes] = useState('');
-  const [copied, setCopied] = useState(false);
 
   const toggler = (setter: React.Dispatch<React.SetStateAction<Set<string>>>) => (v: string) => {
     setter((prev) => {
@@ -266,12 +265,6 @@ export const BrainFogAssessment = ({ onBack }: Props) => {
     }
     return lines.join('\n');
   }, [confirm, mimics, redFlags, onset, temporal, neuro, psych, sleep, systemic, meds, causes, labs, addLabs, mgmt, notes]);
-
-  const copy = async () => {
-    await navigator.clipboard.writeText(exportText);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 pt-16">
@@ -463,7 +456,7 @@ export const BrainFogAssessment = ({ onBack }: Props) => {
               </Button>
               <Button size="sm" onClick={copy}>
                 {copied ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                {copied ? 'Copied' : 'Copy'}
+                {copied ? 'Copied' : 'Copy all'}
               </Button>
             </div>
           </CardTitle>

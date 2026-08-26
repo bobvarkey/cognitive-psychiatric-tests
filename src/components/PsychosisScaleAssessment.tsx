@@ -334,6 +334,19 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
     }
   };
 
+  const handleCopyAll = async () => {
+    const text = [showNote ? buildNote() : '', isAdhdScreener && showSoap ? buildSoap() : '']
+      .filter(Boolean)
+      .join('\n\n');
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({ title: 'All text copied to clipboard' });
+    } catch {
+      toast({ title: 'Copy failed', variant: 'destructive' });
+    }
+  };
+
   const handleExportDocx = async () => {
     try {
       const heading = (
@@ -660,6 +673,10 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap">
+            <Button onClick={handleCopyAll} variant="outline" size="lg" disabled={!showNote && !(isAdhdScreener && showSoap)}>
+              <ClipboardCopy className="h-4 w-4 mr-2" />
+              Copy all
+            </Button>
             <Button onClick={() => window.print()} variant="outline" size="lg">
               <Download className="h-4 w-4 mr-2" />
               Print / PDF

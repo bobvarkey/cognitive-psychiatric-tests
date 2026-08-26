@@ -5,12 +5,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ArrowLeft, FlaskConical, AlertTriangle, CheckCircle2, XCircle, Info, Pill, ChevronDown, Copy, Stethoscope } from 'lucide-react';
+import { ArrowLeft, FlaskConical, AlertTriangle, CheckCircle2, XCircle, Info, Pill, ChevronDown, Stethoscope } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
-import { toast } from '@/hooks/use-toast';
 
 interface HunterAssessmentProps {
   onBack: () => void;
@@ -191,15 +190,6 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
     lines.push(`Verdict: ${meetsHunter ? 'Hunter Criteria MET — Serotonin Syndrome likely' : 'Hunter Criteria NOT met'}`);
     return lines.join('\n');
   }, [exposure, criteria, implicatedDrugs, meetsHunter]);
-
-  const copyExport = async () => {
-    try {
-      await navigator.clipboard.writeText(exportText);
-      toast({ title: 'Copied', description: 'Assessment text copied to clipboard.' });
-    } catch {
-      toast({ title: 'Copy failed', description: 'Please select and copy manually.', variant: 'destructive' });
-    }
-  };
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
@@ -472,7 +462,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-lg text-foreground">Export / final text</CardTitle>
             <Button onClick={copyExport} variant="outline" size="sm" className="bg-slate-800 border-input text-white hover:bg-slate-700 hover:text-white gap-2">
-              <Copy className="h-4 w-4" /> Copy
+              <Copy className="h-4 w-4" /> Copy all
             </Button>
           </CardHeader>
           <CardContent>

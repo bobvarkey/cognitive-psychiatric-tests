@@ -209,7 +209,7 @@ export const MainSidebar = ({
                           )}
                         </div>
                       </div>
-                      <SidebarMenuSub className="border-l-0 ml-0 px-1.5 flex-1 overflow-y-auto">
+                      <SidebarMenuSub className="border-l-0 ml-0 px-1.5 flex-1 overflow-y-auto grid grid-cols-2 content-start gap-1">
                         {filteredCategories.map((cat) => {
                           const CatIcon = cat.icon;
                           const isActive = activeCategory === cat.key;
@@ -231,7 +231,7 @@ export const MainSidebar = ({
                               key={cat.key} 
                               open={isOpen}
                               onOpenChange={() => toggleCategory(cat.key)}
-                              className="group/cat-collapsible"
+                              className={`group/cat-collapsible ${isOpen ? 'col-span-2' : ''}`}
                             >
                               <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>

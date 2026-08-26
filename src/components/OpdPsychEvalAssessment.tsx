@@ -6,8 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ArrowLeft, Copy, Check, Printer } from 'lucide-react';
+import { ArrowLeft, Printer } from 'lucide-react';
 import { ProgressIndicator } from './ProgressIndicator';
+import { CopyTextButton } from './CopyTextButton';
 
 
 interface Props { onBack: () => void }
@@ -179,8 +180,6 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
 
   const [diagnosis, setDiagnosis] = useState<Record<string, boolean>>({});
 
-  const [copied, setCopied] = useState(false);
-
   const report = useMemo(() => {
     const lines: string[] = [];
     const push = (s = '') => lines.push(s);
@@ -264,12 +263,6 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
       otherPerinatal, postnatal, dev, family, tests, reading, readingImpression,
       writing, writingImpression, calc, calcImpression, diagnosis]);
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(report);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const impressionOpts = ['Age Appropriate', 'Age inappropriate', 'Other observation'];
 
   return (
@@ -292,10 +285,7 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
       <div className="flex items-center justify-between mb-4 print:hidden">
         <Button variant="ghost" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-2" />Back</Button>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleCopy}>
-            {copied ? <Check className="h-4 w-4 mr-1 text-green-600" /> : <Copy className="h-4 w-4 mr-1" />}
-            {copied ? 'Copied' : 'Copy report'}
-          </Button>
+          <CopyTextButton text={report} label="Copy all" />
           <Button variant="outline" size="sm" onClick={() => window.print()}>
             <Printer className="h-4 w-4 mr-1" />Print / PDF
           </Button>
