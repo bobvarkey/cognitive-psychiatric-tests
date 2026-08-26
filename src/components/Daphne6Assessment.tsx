@@ -75,6 +75,9 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
 
   // DAPHNE-6 total = number of domains with >= 1 symptom present (0-6)
   const totalScore = DAPHNE6_DOMAINS.filter(d => domainPositive(d.id)).length;
+  // Symptom-level total = count of all positive symptoms across domains
+  const positiveSymptomCount = DAPHNE6_DOMAINS.reduce((sum, d) => sum + (selected[d.id] ?? []).length, 0);
+  const totalSymptomCount = DAPHNE6_DOMAINS.reduce((sum, d) => sum + d.symptoms.length, 0);
   const isPositive = totalScore >= DAPHNE6_CUTOFF.threshold;
 
   const answeredDomains = DAPHNE6_DOMAINS.filter(d => Object.prototype.hasOwnProperty.call(selected, d.id)).length;
@@ -122,7 +125,7 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
   const reportData: ReportData = {
     assessmentName: DAPHNE6_METADATA.toolName,
     date: new Date().toLocaleString(),
-    totalScore: `${totalScore}/${DAPHNE6_MAX_SCORE}`,
+    totalScore: `${totalScore}/${DAPHNE6_MAX_SCORE} domains positive (${positiveSymptomCount}/${totalSymptomCount} symptoms)`,
     interpretation: `${interpretation.label}: ${interpretation.meaning}`,
     severity: isPositive ? 'Positive screening (>= 4/6)' : 'Below screening threshold (< 4/6)',
     patientInfo: patientInfo.name
@@ -225,7 +228,10 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
           <CardContent className="space-y-5">
             <div className="text-center">
               <div className="text-5xl font-bold">{totalScore}<span className="text-2xl text-muted-foreground">/{DAPHNE6_MAX_SCORE}</span></div>
-              <p className="text-sm text-muted-foreground mt-1">DAPHNE-6 screening score</p>
+              <p className="text-sm text-muted-foreground mt-1">DAPHNE-6 screening score (domains positive)</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {positiveSymptomCount}/{totalSymptomCount} symptoms present across domains
+              </p>
             </div>
             <div className={`p-4 rounded-lg ${isPositive ? 'bg-amber-500/10 border border-amber-500/30' : 'bg-emerald-500/10 border border-emerald-500/30'}`}>
               <span className="text-xs font-bold uppercase block mb-1">{language === 'ml' ? interpretation.labelMl : interpretation.label}</span>
