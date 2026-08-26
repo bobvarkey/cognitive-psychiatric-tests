@@ -73,7 +73,7 @@ export const DAPHNE_SCALE_ITEMS_EN: DaphneItem[] = [
   },
   {
     id: 'emotional_blunting_indifference',
-    domain: 'loss_of_empathy',
+    domain: 'empathy',
     title: 'Emotional blunting, indifference',
     descriptions: {
       normal: 'no trouble',

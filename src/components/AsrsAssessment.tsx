@@ -263,6 +263,10 @@ export const AsrsAssessment = ({ onBack }: AsrsAssessmentProps) => {
               Reset
             </Button>
           </div>
+          <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-gray-900">
+            <span className="text-sm font-medium">Current score: </span>
+            <span className="text-lg font-bold">{totalScore}/13</span>
+          </div>
         </div>
       ) : (
         <div className="space-y-6">

@@ -532,13 +532,15 @@ html {
 html,
 body,
 #root {
+  width: 100%;
+  overflow-x: hidden;
   overflow-x: clip;
   max-width: 100vw;
 }
 
 /* Make all app text selectable/copyable app-wide. */
 body * {
-  -webkit-user-select: text;
-  user-select: text;
+  -webkit-user-select: text !important;
+  user-select: text !important;
 }
 

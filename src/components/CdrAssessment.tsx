@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Brain, LayoutDashboard, HelpCircle } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -108,11 +107,12 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
   }
 
   const isComplete = Object.keys(scores).length === domains.length;
+  const cdrBoxScore = domains.reduce((total, domain) => total + (scores[domain.id] ?? 0), 0);
 
   const reportData: ReportData = {
     assessmentName: 'CDR (Clinical Dementia Rating)',
     date: new Date().toLocaleString(),
-    totalScore: `${Object.keys(scores).length}/${domains.length} domains rated`,
+    totalScore: `${cdrBoxScore} CDR box score (${Object.keys(scores).length}/${domains.length} domains rated)`,
     interpretation: isComplete
       ? (language === 'ml' ? 'എല്ലാ ഡൊമെയ്നുകളും റേറ്റ് ചെയ്തു — കൺസോളിഡേറ്റഡ് വ്യൂ ഉപയോഗിച്ച് ആഗോള CDR സ്റ്റേജ് കണക്കാക്കുക.' : 'All domains rated. This screening is suggestive of a specific dementia severity stage based on the sum of boxes and memory domain score.')
       : (language === 'ml' ? 'എല്ലാ ഡൊമെയ്നുകളും റേറ്റ് ചെയ്തിട്ടില്ല.' : 'Not all domains rated yet.'),
@@ -188,7 +188,10 @@ export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage,
               </div>
             ))}
           </TooltipProvider>
-          <div className="p-4 bg-primary/10 rounded font-bold">Total Domains Rated: {Object.keys(scores).length}</div>
+          <div className="p-4 bg-primary/10 rounded font-bold flex items-center justify-between gap-3">
+            <span>CDR Box Score</span>
+            <span className="text-2xl tabular-nums">{cdrBoxScore}</span>
+          </div>
           {Object.keys(scores).length > 0 && (
             <div className="flex justify-center pt-2">
               <ExportButtons data={reportData} />

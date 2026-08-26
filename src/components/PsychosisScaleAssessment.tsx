@@ -757,6 +757,15 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
           </div>
         </div>
 
+        <Card className="shadow-card border-medical-primary/20">
+          <CardContent className="flex items-center justify-between gap-4 p-4">
+            <span className="text-sm font-medium text-muted-foreground">Current score</span>
+            <span className="text-2xl font-bold tabular-nums text-medical-primary">
+              {totals.total}/{isAsrs6 ? 6 : totalItems}
+            </span>
+          </CardContent>
+        </Card>
+
         <PatientInfoForm />
 
         <Card className="shadow-medical">

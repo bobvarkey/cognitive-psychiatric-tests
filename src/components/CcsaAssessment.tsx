@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ArrowLeft, Brain, Copy, RotateCcw } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { ArrowLeft, Brain, RotateCcw } from 'lucide-react';
 import { ProgressIndicator } from './ProgressIndicator';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface CcsaAssessmentProps {
   onBack?: () => void;
@@ -73,25 +74,27 @@ export const CcsaAssessment = ({ onBack }: CcsaAssessmentProps) => {
     setRecall(Array(5).fill(false));
   };
 
-  const copyReport = async () => {
-    const txt = `Comprehensive Cognitive Screening Assessment (CCSA)
-Total: ${scores.total} / 30 — ${interp.label}
-
-Orientation: ${scores.orientation}/6
-Immediate memory: ${scores.immediate}/5
-Attention: ${scores.attention}/5
-Executive function: ${scores.executive}/4
-Language: ${scores.language}/4
-Visuospatial: ${scores.visuospatial}/3
-Delayed recall: ${scores.recall}/3
-
-Note: Original screening prototype — not clinically validated.`;
-    try {
-      await navigator.clipboard.writeText(txt);
-      toast({ title: 'Copied to clipboard', description: 'TXT report is ready to paste.' });
-    } catch (err) {
-      toast({ title: 'Copy failed', variant: 'destructive' });
-    }
+  const reportData: ReportData = {
+    assessmentName: 'Comprehensive Cognitive Screening Assessment (CCSA)',
+    date: new Date().toLocaleString(),
+    totalScore: `${scores.total}/30`,
+    interpretation: interp.label,
+    sections: [
+      {
+        title: 'Domain Scores',
+        items: [
+          `Orientation: ${scores.orientation}/6`,
+          `Immediate memory: ${scores.immediate}/5`,
+          `Attention: ${scores.attention}/5`,
+          `Executive function: ${scores.executive}/4`,
+          `Language: ${scores.language}/4`,
+          `Visuospatial: ${scores.visuospatial}/3`,
+          `Delayed recall: ${scores.recall}/3`,
+        ],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'Original screening prototype; not clinically validated.',
   };
 
   const toggle = (arr: boolean[], setArr: (v: boolean[]) => void, i: number) => {
@@ -152,9 +155,7 @@ Note: Original screening prototype — not clinically validated.`;
               {interp.label}
             </Badge>
             <div className="flex gap-2 mt-2">
-              <Button onClick={copyReport} size="sm" variant="outline" className="h-9 px-4 font-bold border-medical-primary/20 hover:bg-medical-primary/5">
-                <Copy className="h-4 w-4 mr-2" /> Copy TXT
-              </Button>
+              <ExportButtons data={reportData} className="h-9" />
               <Button onClick={reset} size="sm" variant="ghost" className="h-9 px-4 font-bold text-muted-foreground hover:text-destructive">
                 <RotateCcw className="h-4 w-4 mr-2" /> Reset
               </Button>
