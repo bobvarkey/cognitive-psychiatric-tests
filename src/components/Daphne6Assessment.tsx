@@ -53,6 +53,8 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
   const [resumed, setResumed] = useState(() => Boolean(initialDraft.current && Object.keys(initialDraft.current.selected).length));
 
   const setSymptomPresence = (domainId: string, symptomIndex: number, present: boolean) => {
+    const domainIndex = DAPHNE6_DOMAINS.findIndex(domain => domain.id === domainId);
+    if (domainIndex >= 0) setCurrentDomainIndex(domainIndex);
     setSelected(prev => {
       const current = prev[domainId] ?? [];
       const key = String(symptomIndex);
@@ -76,7 +78,11 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
   const isPositive = totalScore >= DAPHNE6_CUTOFF.threshold;
 
   const answeredDomains = DAPHNE6_DOMAINS.filter(d => Object.prototype.hasOwnProperty.call(selected, d.id)).length;
-  const currentDomain = DAPHNE6_DOMAINS[currentDomainIndex];
+
+  const goToDomain = (index: number) => {
+    setCurrentDomainIndex(index);
+    document.getElementById(`daphne6-${DAPHNE6_DOMAINS[index].id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   useEffect(() => {
     if (!started || showResults) return;
@@ -276,7 +282,7 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
                   key={domain.id}
                   type="button"
                   aria-label={`Go to ${domain.domain}`}
-                  onClick={() => setCurrentDomainIndex(index)}
+                  onClick={() => goToDomain(index)}
                   className={`h-2 rounded-full transition-colors ${index === currentDomainIndex ? 'bg-primary' : domainPositive(domain.id) ? 'bg-primary/50' : 'bg-muted'}`}
                 />
               ))}
@@ -290,51 +296,56 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
             </div>
           )}
 
-          <div className="flex items-center justify-between gap-3 rounded-lg bg-primary/10 p-3 sm:p-4">
-            <div>
-              <p className="font-semibold">{language === 'ml' ? currentDomain.domainMl : currentDomain.domain}</p>
-              <p className="text-xs text-muted-foreground">{currentDomain.symptoms.length} symptom {currentDomain.symptoms.length === 1 ? 'item' : 'items'}</p>
-            </div>
-            <Badge variant={domainPositive(currentDomain.id) ? 'default' : 'outline'}>
-              {domainPositive(currentDomain.id) ? 'Positive: 1' : 'Negative: 0'}
-            </Badge>
-          </div>
-
-          <div className="space-y-3">
-            {currentDomain.symptoms.map((symptom, idx) => {
-              const present = (selected[currentDomain.id] ?? []).includes(String(idx));
-              return (
-                <div key={symptom} className="rounded-lg border p-3 sm:p-4 space-y-3">
-                  <p className="text-sm font-medium leading-relaxed">{language === 'ml' ? currentDomain.symptomsMl[idx] : symptom}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      type="button"
-                      variant={present ? 'default' : 'outline'}
-                      className="min-h-11 w-full"
-                      onClick={() => setSymptomPresence(currentDomain.id, idx, true)}
-                    >
-                      Present
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={!present ? 'secondary' : 'outline'}
-                      className="min-h-11 w-full"
-                      onClick={() => setSymptomPresence(currentDomain.id, idx, false)}
-                    >
-                      Absent
-                    </Button>
+          <div className="space-y-5">
+            {DAPHNE6_DOMAINS.map((domain, domainIndex) => (
+              <section key={domain.id} id={`daphne6-${domain.id}`} className="scroll-mt-24 rounded-xl border p-3 sm:p-5 space-y-4">
+                <div className="flex items-center justify-between gap-3 rounded-lg bg-primary/10 p-3 sm:p-4">
+                  <div>
+                    <p className="font-semibold">{domainIndex + 1}. {language === 'ml' ? domain.domainMl : domain.domain}</p>
+                    <p className="text-xs text-muted-foreground">{domain.symptoms.length} symptom {domain.symptoms.length === 1 ? 'item' : 'items'}</p>
                   </div>
+                  <Badge variant={domainPositive(domain.id) ? 'default' : 'outline'}>
+                    {domainPositive(domain.id) ? 'Positive: 1' : 'Negative: 0'}
+                  </Badge>
                 </div>
-              );
-            })}
+                <div className="space-y-3">
+                  {domain.symptoms.map((symptom, idx) => {
+                    const present = (selected[domain.id] ?? []).includes(String(idx));
+                    return (
+                      <div key={symptom} className="rounded-lg border bg-background p-3 sm:p-4 space-y-3">
+                        <p className="text-sm font-medium leading-relaxed">{language === 'ml' ? domain.symptomsMl[idx] : symptom}</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <Button
+                            type="button"
+                            variant={present ? 'default' : 'outline'}
+                            className="min-h-11 w-full"
+                            onClick={() => setSymptomPresence(domain.id, idx, true)}
+                          >
+                            Present
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={!present ? 'secondary' : 'outline'}
+                            className="min-h-11 w-full"
+                            onClick={() => setSymptomPresence(domain.id, idx, false)}
+                          >
+                            Absent
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
           </div>
 
           <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
             <Button variant="outline" onClick={handleRestart} className="sm:w-auto"><RotateCcw className="mr-2 h-4 w-4" /> Reset</Button>
             <div className="flex flex-1 gap-2">
-              <Button variant="outline" onClick={() => setCurrentDomainIndex(index => Math.max(0, index - 1))} disabled={currentDomainIndex === 0} className="flex-1">Previous</Button>
+              <Button variant="outline" onClick={() => goToDomain(Math.max(0, currentDomainIndex - 1))} disabled={currentDomainIndex === 0} className="flex-1">Previous</Button>
               {currentDomainIndex < DAPHNE6_DOMAINS.length - 1 ? (
-                <Button onClick={() => { setCurrentDomainIndex(index => index + 1); setResumed(false); }} className="flex-1">Next</Button>
+                <Button onClick={() => { goToDomain(currentDomainIndex + 1); setResumed(false); }} className="flex-1">Next</Button>
               ) : (
                 <Button onClick={() => { setShowResults(true); clearDraft(); }} className="flex-1" size="lg">View Result</Button>
               )}

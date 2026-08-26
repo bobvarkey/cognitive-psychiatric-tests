@@ -1,9 +1,15 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type Language = 'en' | 'ml';
+export type Language = 'en' | 'es' | 'de' | 'fr' | 'ja' | 'zh' | 'hi' | 'ml';
 
 export const LANGUAGES: { code: Language; label: string; native: string }[] = [
   { code: 'en', label: 'English', native: 'English' },
+  { code: 'es', label: 'Spanish', native: 'Español' },
+  { code: 'de', label: 'German', native: 'Deutsch' },
+  { code: 'fr', label: 'French', native: 'Français' },
+  { code: 'ja', label: 'Japanese', native: '日本語' },
+  { code: 'zh', label: 'Chinese', native: '中文' },
+  { code: 'hi', label: 'Hindi', native: 'हिन्दी' },
   { code: 'ml', label: 'Malayalam', native: 'മലയാളം' },
 ];
 
@@ -16,7 +22,8 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Languages: English (default) and Malayalam only.
+// English and Malayalam have complete in-app resources. Other locales currently
+// use the English resource until their reviewed clinical translations are added.
 
 const translations = {
   en: {
@@ -346,7 +353,23 @@ const translations = {
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguageState] = useState<Language>(() => {
+    try {
+      const saved = localStorage.getItem('cognito.language') as Language | null;
+      return saved && LANGUAGES.some(item => item.code === saved) ? saved : 'en';
+    } catch {
+      return 'en';
+    }
+  });
+
+  const setLanguage = (nextLanguage: Language) => {
+    setLanguageState(nextLanguage);
+    try {
+      localStorage.setItem('cognito.language', nextLanguage);
+    } catch {
+      // Preference persistence is best effort.
+    }
+  };
 
 
   const toggleLanguage = () => {
@@ -357,8 +380,9 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const t = (key: string): string => {
-    const dict = translations[language] as Record<string, string>;
-    return dict[key] || key;
+    const selectedDict = translations[language] as Record<string, string> | undefined;
+    const englishDict = translations.en as Record<string, string>;
+    return selectedDict?.[key] || englishDict[key] || key;
   };
 
   return (
