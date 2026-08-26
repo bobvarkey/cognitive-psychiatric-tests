@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FlaskConical, RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface SubstanceAssessmentProps {
   onBack?: () => void;
@@ -314,6 +316,26 @@ export const SubstanceAssessment = ({ onBack, initialTab = 'ciwa' }: SubstanceAs
                     ? 'കട്ട്-ഓഫ്: ≤9 കുറഞ്ഞത്; 10–19 ഇടത്തരം; ≥20 കടുത്തത് (ബെൻസോഡയാസിപ്പിൻ ചികിത്സ പരിഗണിക്കുക).'
                     : 'Cut-offs: ≤9 minimal; 10–19 mild–moderate; ≥20 severe (consider benzodiazepine therapy).'}
                 </p>
+                <ExportButtons
+                  className="justify-start"
+                  data={{
+                    assessmentName: 'CIWA-Ar — Clinical Institute Withdrawal Assessment for Alcohol',
+                    date: new Date().toLocaleString(),
+                    totalScore: `${ciwaTotal}/67`,
+                    interpretation: tr({ en: ciwaSev.en, ml: ciwaSev.ml }),
+                    sections: [
+                      {
+                        title: 'CIWA-Ar Items',
+                        items: CIWA_ITEMS.map(item => {
+                          const score = ciwa[item.id];
+                          return `${tr(item.title)}: ${score ?? 'not answered'}`;
+                        }),
+                        type: ciwaSev.tone === 'destructive' ? 'positive' : ciwaSev.tone === 'secondary' ? 'negative' : 'info',
+                      },
+                    ],
+                    disclaimer: 'CIWA-Ar is for monitoring alcohol withdrawal severity; manage in an appropriate clinical setting.',
+                  } as ReportData}
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -367,6 +389,26 @@ export const SubstanceAssessment = ({ onBack, initialTab = 'ciwa' }: SubstanceAs
                     ? 'സാധൂകരിച്ച കട്ട്-ഓഫുകൾ: കഞ്ചാവ് ≥3; കൊക്കെയ്ൻ ≥4; ഒപിയോയിഡ് ≥5.'
                     : 'Validated cut-offs vary by substance: cannabis ≥3; cocaine ≥4; opioids ≥5 (Gossop et al., 1995).'}
                 </p>
+                <ExportButtons
+                  className="justify-start"
+                  data={{
+                    assessmentName: 'SDS — Severity of Dependence Scale',
+                    date: new Date().toLocaleString(),
+                    totalScore: `${sdsTotal}/15`,
+                    interpretation: tr({ en: sdsSev.en, ml: sdsSev.ml }),
+                    sections: [
+                      {
+                        title: 'SDS Items',
+                        items: SDS_ITEMS.map((item, idx) => {
+                          const score = sds[item.id];
+                          return `${idx + 1}. ${tr(item.question)}: ${score ?? 'not answered'}`;
+                        }),
+                        type: sdsSev.tone === 'destructive' ? 'positive' : sdsSev.tone === 'secondary' ? 'negative' : 'info',
+                      },
+                    ],
+                    disclaimer: 'SDS is a screening tool for substance dependence severity; clinical diagnosis requires full assessment.',
+                  } as ReportData}
+                />
               </CardContent>
             </Card>
           </TabsContent>

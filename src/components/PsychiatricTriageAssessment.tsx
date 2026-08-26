@@ -15,6 +15,8 @@ import {
   TriageRecommendedRoute,
   TriageComorbidCategory
 } from '@/types/triage';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface PsychiatricTriageAssessmentProps {
   onBack: () => void;
@@ -380,6 +382,43 @@ export const PsychiatricTriageAssessment = ({ onBack }: PsychiatricTriageAssessm
             Return to Dashboard
           </Button>
         </div>
+
+        <ExportButtons
+          className="justify-center"
+          data={{
+            assessmentName: 'Psychiatric Triage Assessment',
+            date: new Date().toLocaleString(),
+            totalScore: `Primary: ${result.primaryCategory.replace(/_/g, ' ')}`,
+            interpretation: `Risk level: ${result.riskLevel}; Recommended route: ${result.recommendedRoute.replace(/_/g, ' ')}`,
+            sections: [
+              {
+                title: 'Triage Outcome',
+                items: [
+                  `Primary category: ${result.primaryCategory.replace(/_/g, ' ')}`,
+                  `Risk level: ${result.riskLevel}`,
+                  `Recommended route: ${result.recommendedRoute.replace(/_/g, ' ')}`,
+                ],
+                type: result.riskLevel === 'high' ? 'positive' : result.riskLevel === 'moderate' ? 'info' : 'negative',
+              },
+              {
+                title: 'Clinical Notes',
+                items: result.clinicalNotes,
+                type: 'info',
+              },
+              {
+                title: 'Comorbid Considerations',
+                items: result.comorbidCategories.map((c: TriageComorbidCategory) => c.replace(/_/g, ' ')),
+                type: 'info',
+              },
+              {
+                title: 'Routing Rationale',
+                items: result.rationale.map((r) => `[${r.domain}] ${r.trigger}: ${r.finding}`),
+                type: 'info',
+              },
+            ],
+            disclaimer: 'Psychiatric triage is decision-support only; it does not replace urgent clinical or emergency evaluation.',
+          } as ReportData}
+        />
       </div>
     );
   }

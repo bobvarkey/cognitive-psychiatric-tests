@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Home, AlertCircle, BookOpen, CheckCircle2 } from 'lucide-react';
+import { FIVE_TWO_ONE_CRITERIA } from '@/data/pdManagementTools';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface FiveTwoOneCriteriaAssessmentProps {
   onBack?: () => void;
@@ -139,6 +142,35 @@ export const FiveTwoOneCriteriaAssessment = ({ onBack }: FiveTwoOneCriteriaAsses
           </div>
         </CardContent>
       </Card>
+
+      {metCriteria > 0 && (
+        <ExportButtons
+          className="justify-start"
+          data={{
+            assessmentName: '5-2-1 Criteria for Advanced Parkinson Disease',
+            date: new Date().toLocaleString(),
+            totalScore: `${metCriteria}/3 criteria met`,
+            interpretation: isAdvanced ? 'Advanced PD' : 'Early-Mid PD',
+            sections: [
+              {
+                title: 'Criteria Met',
+                items: FIVE_TWO_ONE_CRITERIA.map(c => `${c.title}: ${criteria[c.id] ? 'Yes' : 'No'}`),
+                type: isAdvanced ? 'positive' : 'negative',
+              },
+              {
+                title: 'Clinical Interpretation',
+                items: [
+                  isAdvanced
+                    ? 'Patient meets 5-2-1 criteria for advanced PD. Consider evaluation for DBS, LCIG, CSAI, or LECIG.'
+                    : 'Patient does not currently meet 5-2-1 criteria. Continue standard dopaminergic therapy with periodic reassessment.',
+                ],
+                type: 'info',
+              },
+            ],
+            disclaimer: 'The 5-2-1 criteria are a practical rule of thumb; confirm advanced PD with full clinical assessment.',
+          } as ReportData}
+        />
+      )}
 
       {/* Clinical Notes */}
       <Card className="bg-card border-border">

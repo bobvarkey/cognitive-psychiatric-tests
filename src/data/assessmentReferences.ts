@@ -16,6 +16,12 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Boutoleau-Bretonnière C, Evrard C, Hardouin JB, et al. DAPHNE: a new tool for the assessment of the behavioral variant of frontotemporal dementia. Dement Geriatr Cogn Dis Extra. 2015;5(3):503–516.',
     url: 'https://doi.org/10.1159/000440859',
   },
+  daphne6: {
+    citation:
+      'Boutoleau-Bretonnière C, et al. DAPHNE: a new tool for the assessment of the behavioral variant of frontotemporal dementia. Dement Geriatr Cogn Dis Extra. 2015;5(3):503–516.',
+    url: 'https://doi.org/10.1159/000440859',
+    note: 'DAPHNE-6 is the six-domain binary screening form (0-6). A score >= 4/6 is a positive screen (sensitivity 92%, specificity 57%).',
+  },
   minicog: {
     citation:
       'Borson S, Scanlan J, Brush M, Vitaliano P, Dokmak A. The Mini-Cog: a cognitive "vital signs" measure for dementia screening in multi-lingual elderly. Int J Geriatr Psychiatry. 2000;15(11):1021–1027.',

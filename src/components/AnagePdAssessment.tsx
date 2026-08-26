@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Home, BookOpen, CheckCircle } from 'lucide-react';
 import { ANAGE_PD_DOMAINS } from '@/data/pdManagementTools';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface AnagePdAssessmentProps {
   onBack?: () => void;
@@ -120,6 +122,29 @@ export const AnagePdAssessment = ({ onBack }: AnagePdAssessmentProps) => {
                 : 'Current symptom management appears adequate. Continue standard therapy with regular follow-up monitoring.'}
             </p>
           </div>
+          {totalConcerns > 0 && (
+            <ExportButtons
+              data={{
+                assessmentName: 'ANAGE-PD (Advanced PD Management)',
+                date: new Date().toLocaleString(),
+                totalScore: `${totalConcerns} concern(s) identified`,
+                interpretation: requiresIntervention ? 'Needs Review' : 'Optimized',
+                sections: [
+                  {
+                    title: 'Concerns Identified',
+                    items: ANAGE_PD_DOMAINS.flatMap((d) =>
+                      d.items
+                        .map((item, idx) => ({ item, key: `${d.id}-${idx}` }))
+                        .filter(({ key }) => concerns[key])
+                        .map(({ item }) => `${d.name}: ${item}`)
+                    ),
+                    type: requiresIntervention ? 'positive' : 'negative',
+                  },
+                ],
+                disclaimer: 'ANAGE-PD is a clinician decision-support tool for advanced Parkinson disease management.',
+              } as ReportData}
+            />
+          )}
         </CardContent>
       </Card>
 

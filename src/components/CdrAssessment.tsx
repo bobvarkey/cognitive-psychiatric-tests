@@ -13,17 +13,21 @@ import type { ReportData } from '@/utils/reportGenerator';
 interface CdrAssessmentProps { 
   onBack?: () => void;
   fastStage?: number | null;
+  scores?: Record<string, number>;
   onScoresChange?: (scores: Record<string, number>) => void;
 }
 
-export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage, onScoresChange }) => {
+export const CdrAssessment: React.FC<CdrAssessmentProps> = ({ onBack, fastStage, scores: controlledScores, onScoresChange }) => {
   const { language } = useLanguage();
-  const [scores, setScores] = useState<Record<string, number>>({});
+  // Use controlled scores from the parent when provided so selections survive
+  // remounts (e.g. when the parent re-renders). Otherwise fall back to local state.
+  const [localScores, setLocalScores] = useState<Record<string, number>>({});
+  const scores = controlledScores ?? localScores;
   const [showConsolidated, setShowConsolidated] = useState(false);
 
   const handleScoreChange = (id: string, value: number) => {
     const newScores = { ...scores, [id]: value };
-    setScores(newScores);
+    if (!controlledScores) setLocalScores(newScores);
     if (onScoresChange) onScoresChange(newScores);
   };
 

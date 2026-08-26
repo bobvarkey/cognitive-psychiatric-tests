@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Pill, AlertTriangle } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface Props { onBack?: () => void }
 
@@ -229,6 +231,58 @@ export const AntipsychoticMetabolicAssessment = ({ onBack }: Props) => {
             </div>
           </CardContent>
         </Card>
+
+        <ExportButtons
+          className="justify-start"
+          data={{
+            assessmentName: 'Antipsychotic Metabolic Syndrome Tracker',
+            date: new Date().toLocaleString(),
+            totalScore: `BMI ${bmi.toFixed(1)} · WHtR ${whtr.toFixed(2)}`,
+            interpretation: `${drug}: metabolic ${risk.met}, cardiac ${risk.card}, QTc ${risk.qtc}`,
+            sections: [
+              {
+                title: 'Patient & Drug',
+                items: [
+                  `Age: ${age}`,
+                  `Sex: ${sex}`,
+                  `Height: ${height} cm`,
+                  `Weight: ${weight} kg`,
+                  `Waist: ${waist} cm`,
+                  `Antipsychotic: ${drug}`,
+                ],
+                type: 'info',
+              },
+              {
+                title: 'Calculated Risk',
+                items: [
+                  `BMI: ${bmi.toFixed(1)} (${bmiBand})`,
+                  `WHtR: ${whtr.toFixed(2)} (${whtrCentral ? 'central obesity' : 'acceptable'})`,
+                  `Metabolic risk: ${risk.met}`,
+                  `Cardiac risk: ${risk.card}`,
+                  `QTc risk: ${risk.qtc}`,
+                  risk.notes,
+                ],
+                type: risk.met.includes('high') ? 'positive' : 'negative',
+              },
+              {
+                title: 'Monitoring Schedule',
+                items: MONITORING.map(row => `${row.time}: ${row.check}`),
+                type: 'info',
+              },
+              {
+                title: 'Adverse-event Flags',
+                items: ADVERSE_EVENTS,
+                type: 'positive',
+              },
+              {
+                title: 'Action Suggestions',
+                items: ACTIONS,
+                type: 'info',
+              },
+            ],
+            disclaimer: 'WHtR > 0.5 flags central obesity. This tool is for screening and follow-up support, not diagnosis.',
+          } as ReportData}
+        />
 
         <p className="text-xs text-muted-foreground">
           WHtR &gt; 0.5 flags central obesity. This tool is for screening and follow-up support, not diagnosis.

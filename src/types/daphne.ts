@@ -63,8 +63,7 @@ export type Daphne6Result = {
       'Not a standalone diagnostic test; use with clinical assessment and imaging/biomarkers as appropriate.',
       'Cut-off ≥4 optimized for screening (high sensitivity, moderate specificity).',
     ];
-    disclaimer:
-      'This tool provides risk estimates for clinician decision support only. It does not diagnose bvFTD, prescribe treatment, or replace clinical judgment.';
+    disclaimer: string;
   };
 };
 
@@ -119,16 +118,16 @@ export function buildDaphne6Result(responses: DaphneResponse[]): Daphne6Result {
   };
 }
 
-// Maps each DAPHNE item id to its domain (used by buildDaphne6Result).
-const DAPHNE_SCALE_TO_DOMAINS = {
-  disinhibition: 'disinhibition',
-  'inappropriate-joviality': 'disinhibition',
-  'unrestrained-spending': 'disinhibition',
-  'sexual-disinhibition': 'disinhibition',
-  apathy: 'apathy',
-  'loss-of-empathy': 'empathy',
-  perseverations: 'perseverations',
-  hyperorality: 'hyperorality',
-  'bulimia-gluttony': 'hyperorality',
-  'personal-neglect': 'neglect',
-} as const satisfies Record<string, DaphneDomain>;
+// Maps each DAPHNE-40 item id (underscore keys in daphneScale.ts) to its DAPHNE-6 domain.
+const DAPHNE_SCALE_TO_DOMAINS: Record<string, DaphneDomain> = {
+  loss_social_convenience: 'disinhibition',
+  inappropriate_joviality: 'disinhibition',
+  unrestrained_spending: 'disinhibition',
+  sexual_disinhibition: 'disinhibition',
+  loss_initiative_social_interest: 'apathy',
+  emotional_blunting_indifference: 'empathy', // item domain is loss_of_empathy; normalised to empathy
+  fixed_ideas_stereotyped_behavior: 'perseverations',
+  eating_disorders_sweet_preference: 'hyperorality',
+  bulimia_gluttony: 'hyperorality',
+  personal_neglect: 'neglect',
+};

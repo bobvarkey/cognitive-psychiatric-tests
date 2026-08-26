@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { DementiaResults } from './DementiaResults';
+// DementiaResults already includes ExportButtons; skip adding a duplicate here.
 import { BEHAV5_ITEMS, SOFT_SIGN_ITEMS, VAT_ITEMS, CLINICAL_EXAM_ITEMS, HISTORY_ITEMS, TEST_ITEMS, VITAMINS_MNEMONIC, IQCODE_ITEMS, IQCODE_RESPONSE_OPTIONS, CDR_DOMAINS, CDR_GLOBAL_INTERPRETATIONS } from '@/data/dementiaScale';
 import { DementiaResponse, DementiaResults as DementiaResultsType } from '@/types/dementia';
 import { ArrowLeft, Brain, AlertTriangle, Stethoscope, ClipboardList, FlaskConical, Eye, Activity, ChevronDown, Users, Gauge } from 'lucide-react';

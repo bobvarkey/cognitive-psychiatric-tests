@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Home, BookOpen, TrendingUp } from 'lucide-react';
 import { ENGEL_SCALE, ENGEL_OUTCOME_CATEGORIES } from '@/data/epilepsyScales';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface EngelScaleAssessmentProps {
   onBack?: () => void;
@@ -117,6 +119,41 @@ export const EngelScaleAssessment = ({ onBack }: EngelScaleAssessmentProps): JSX
             </div>
 
             {/* Detailed Interpretation */}
+            <ExportButtons
+              className="justify-start"
+              data={{
+                assessmentName: 'Engel Scale (Post-Surgical Epilepsy Outcome)',
+                date: new Date().toLocaleString(),
+                totalScore: `Engel ${selectedClass.toUpperCase()}`,
+                interpretation: `${selectedOutcome.category.charAt(0).toUpperCase() + selectedOutcome.category.slice(1)} — ${selectedOutcome.description}`,
+                sections: [
+                  {
+                    title: 'Selected Engel Class',
+                    items: [
+                      `${selectedOutcome.category.charAt(0).toUpperCase() + selectedOutcome.category.slice(1)} (${selectedClass.toUpperCase()})`,
+                      selectedOutcome.description,
+                    ],
+                    type: selectedOutcome.category === 'poor' ? 'positive' : 'negative',
+                  },
+                  {
+                    title: 'Management Notes',
+                    items: [
+                      selectedClass === 'ia'
+                        ? 'Continue current AED regimen; consider supervised taper later.'
+                        : selectedClass === 'ib'
+                        ? 'Functionally seizure-free; only auras documented.'
+                        : selectedClass === 'ii'
+                        ? 'Rare seizures (≤3/month) — significant improvement.'
+                        : selectedClass === 'iii'
+                        ? '>90% seizure reduction but not seizure-free; reassess if needed.'
+                        : 'No worthwhile improvement or worsening — reconsider surgical indication.',
+                    ],
+                    type: 'info',
+                  },
+                ],
+                disclaimer: 'The Engel scale classifies post-surgical seizure outcomes; clinical decisions require full epilepsy-team review.',
+              } as ReportData}
+            />
             <div className="border-t border-border pt-4">
               <div className="space-y-3">
                 {selectedClass === 'ia' && (

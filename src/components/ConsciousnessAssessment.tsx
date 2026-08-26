@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Activity, RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface ConsciousnessAssessmentProps {
   onBack?: () => void;
@@ -288,6 +290,59 @@ export const ConsciousnessAssessment = ({ onBack: _onBack }: ConsciousnessAssess
   }, [absScores]);
   const absResult = absInterpretation(absTotal);
 
+  const reportData: ReportData = useMemo(() => {
+    const fmtGcs = (opt: Option) => (isMl ? opt.ml : opt.en);
+    const fmtFour = (opt: Option) => (isMl ? opt.ml : opt.en);
+    const fmtRass = (r: typeof RASS_LEVELS[0]) => `${r.value > 0 ? '+' : ''}${r.value} — ${tr(r.label)}`;
+    const fmtAbs = (it: typeof ABS_ITEMS[0]) => `${it.id}. ${isMl ? it.ml : it.en} — score ${absScores[it.id] ?? 1}`;
+    return {
+      assessmentName: 'Consciousness Assessment (GCS · FOUR · RASS · ABS)',
+      date: new Date().toLocaleString(),
+      totalScore: `GCS ${gcsTotal}/15 · FOUR ${fourTotal}/16 · RASS ${rass > 0 ? '+' : ''}${rass} · ABS ${absTotal}/56`,
+      interpretation: `GCS: ${tr(GCS_SEVERITY[gcsSev.key])}; RASS: ${tr(rassItem.label)}`,
+      sections: [
+        {
+          title: 'Glasgow Coma Scale',
+          items: [
+            `Eye: E${gcsE} — ${fmtGcs(GCS_EYE.find(o => o.value === gcsE)!)}`,
+            `Verbal: V${gcsV} — ${fmtGcs(GCS_VERBAL.find(o => o.value === gcsV)!)}`,
+            `Motor: M${gcsM} — ${fmtGcs(GCS_MOTOR.find(o => o.value === gcsM)!)}`,
+            `Total: ${gcsTotal}/15 — ${tr(GCS_SEVERITY[gcsSev.key])}`,
+          ],
+          type: gcsSev.key === 'severe' ? 'positive' : 'info',
+        },
+        {
+          title: 'FOUR Score',
+          items: [
+            `Eye: ${fourE} — ${fmtFour(FOUR_EYE.find(o => o.value === fourE)!)}`,
+            `Motor: ${fourM} — ${fmtFour(FOUR_MOTOR.find(o => o.value === fourM)!)}`,
+            `Brainstem: ${fourB} — ${fmtFour(FOUR_BRAINSTEM.find(o => o.value === fourB)!)}`,
+            `Respiration: ${fourR} — ${fmtFour(FOUR_RESPIRATION.find(o => o.value === fourR)!)}`,
+            `Total: ${fourTotal}/16`,
+          ],
+          type: fourTotal < 8 ? 'positive' : 'info',
+        },
+        {
+          title: 'Richmond Agitation-Sedation Scale',
+          items: [`${fmtRass(rassItem)}`, rassInterpretation(rass, isMl)],
+          type: rass !== 0 ? 'info' : 'negative',
+        },
+        {
+          title: 'Agitated Behaviour Scale',
+          items: [
+            `Total: ${absTotal}/56 — ${tr(absResult.label)}`,
+            `Disinhibition: ${absSubtotals.Disinhibition}`,
+            `Aggression: ${absSubtotals.Aggression}`,
+            `Lability: ${absSubtotals.Lability}`,
+            ...ABS_ITEMS.map(fmtAbs),
+          ],
+          type: absResult.tone === 'destructive' ? 'positive' : absResult.tone === 'secondary' ? 'negative' : 'info',
+        },
+      ],
+      disclaimer: 'Bedside consciousness tools are for clinical monitoring; interpret in the full clinical context and escalate as needed.',
+    };
+  }, [gcsE, gcsV, gcsM, gcsTotal, gcsSev, fourE, fourM, fourB, fourR, fourTotal, rass, rassItem, absScores, absTotal, absSubtotals, absResult, isMl]);
+
   const resetGcs = () => { setGcsE(4); setGcsV(5); setGcsM(6); };
   const resetFour = () => { setFourE(4); setFourM(4); setFourB(4); setFourR(4); };
   const resetRass = () => setRass(0);
@@ -503,6 +558,7 @@ export const ConsciousnessAssessment = ({ onBack: _onBack }: ConsciousnessAssess
                   <p className="text-xs text-muted-foreground">{tr(absResult.note)}</p>
                   <p className="text-[11px] text-muted-foreground italic">{tr(T.absBands)}</p>
                 </div>
+                <ExportButtons className="justify-start" data={reportData} />
               </CardContent>
             </Card>
           </TabsContent>

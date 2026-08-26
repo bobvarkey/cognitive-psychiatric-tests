@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Home, BookOpen, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { D_DATS_CRITERIA, DAT_TYPES } from '@/data/pdManagementTools';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface DDatsAssessmentProps {
   onBack?: () => void;
@@ -169,6 +171,37 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                 </CardContent>
               </Card>
             )}
+
+            <ExportButtons
+              className="justify-start"
+              data={{
+                assessmentName: 'D-DATS (Dutch DAT Screening Tool)',
+                date: new Date().toLocaleString(),
+                totalScore: `${totalMet}/6 criteria met`,
+                interpretation: eligibleForDat ? 'Eligible for DAT Referral' : 'Not Yet Eligible',
+                sections: [
+                  {
+                    title: 'Eligibility Criteria',
+                    items: D_DATS_CRITERIA.map(c => {
+                      const met = responses[c.id] === true;
+                      return `${c.name}${c.required ? ' (required)' : ''}: ${met ? 'Yes' : 'No'}`;
+                    }),
+                    type: eligibleForDat ? 'negative' : 'positive',
+                  },
+                  {
+                    title: 'Selected Device-Aided Therapies',
+                    items: Object.entries(selectedDats)
+                      .filter(([, v]) => v)
+                      .map(([id]) => {
+                        const dat = DAT_TYPES.find(d => d.id === id);
+                        return dat ? `${dat.name} (${dat.abbreviation})` : id;
+                      }),
+                    type: 'info',
+                  },
+                ],
+                disclaimer: 'D-DATS screens candidacy for device-aided therapy in advanced Parkinson disease; final selection requires multidisciplinary review.',
+              } as ReportData}
+            />
           </div>
         </TabsContent>
 

@@ -9,10 +9,12 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { generatePdfReport } from '@/utils/reportGenerator';
-import { ClipboardList, FileText, RotateCcw, Search, X } from 'lucide-react';
+import { ClipboardList, FileText, RotateCcw, Search, X, Copy } from 'lucide-react';
 import { mseExplanations } from '@/data/mseExplanations';
 import { mseImages } from '@/data/mseImages';
 import { StroopGrid } from '@/components/StroopGrid';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface MseAssessmentProps {
   onBack?: () => void;
@@ -456,7 +458,7 @@ export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
     na: Object.values(status).filter(s => s === 'na').length,
   };
 
-  const handleExportPdf = () => {
+  const buildReportData = () => {
     const fmt = (s: Status) =>
       allItems
         .filter(it => status[it.id] === s)
@@ -476,13 +478,24 @@ export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
       ? (Object.fromEntries(Object.entries(patientInfo).map(([k, v]) => [k, String(v)])) as Record<string, string>)
       : undefined;
 
-    generatePdfReport({
+    return {
       assessmentName: 'Mental Status Examination (MSE)',
-      date: new Date().toLocaleDateString(),
+      date: new Date().toLocaleString(),
       totalScore: `${counts.abnormal} abnormal · ${counts.normal} normal · ${counts.na} N/A`,
       patientInfo: pi,
       sections: reportSections,
-    });
+    };
+  };
+
+  const [exportData, setExportData] = useState<ReportData | null>(null);
+
+  const handleExportFull = () => {
+    setExportData(buildReportData());
+  };
+
+  const handleExportPdf = () => {
+    const data = buildReportData();
+    generatePdfReport(data);
   };
 
   const matchesSearch = (label: string, detail?: string) => {
@@ -665,14 +678,19 @@ export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
         </CardContent>
       </Card>
 
-      <div className="flex gap-3 mt-6 mb-8">
+      <div className="flex flex-col sm:flex-row gap-3 mt-6 mb-8">
         <Button onClick={handleExportPdf} className="flex-1" disabled={Object.keys(status).length === 0 && !notes.trim()}>
           <FileText className="h-4 w-4 mr-2" /> Export PDF
+        </Button>
+        <Button onClick={handleExportFull} variant="outline" disabled={Object.keys(status).length === 0 && !notes.trim()}>
+          <Copy className="h-4 w-4 mr-2" /> Copy Text
         </Button>
         <Button onClick={handleReset} variant="outline">
           <RotateCcw className="h-4 w-4" />
         </Button>
       </div>
+
+      {exportData && <ExportButtons className="justify-start" data={exportData} />}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DaphneAssessment } from '@/components/DaphneAssessment';
+import { Daphne6Assessment } from '@/components/Daphne6Assessment';
 import { HoehnYahrAssessment } from '@/components/HoehnYahrAssessment';
 import { EpworthAssessment } from '@/components/EpworthAssessment';
 import { StopBangAssessment } from '@/components/StopBangAssessment';
@@ -115,7 +116,7 @@ import cognitoHero from '@/assets/cognito-hero.png';
 
 
 export type AssessmentKey =
-  | 'daphne' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
+  | 'daphne' | 'daphne6' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
   | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
@@ -157,6 +158,7 @@ export const assessments: AssessmentInfo[] = [
   { key: 'fast', name: 'FAST', subtitle: 'Functional Staging', icon: Clock, gradient: 'from-teal-500 to-blue-600', category: ['cognitive'], description: 'Functional Assessment Staging (FAST) — 7-stage scale for monitoring functional decline in Alzheimer\'s and related dementias.' },
   { key: 'dementia', name: 'Dementia Screen', subtitle: 'BEHAV5+ & Signs', icon: Stethoscope, gradient: 'from-violet-600 to-purple-600', category: ['cognitive'], description: 'BEHAV5+ behavioural screen plus localising neurological signs in dementia.' },
   { key: 'daphne', name: 'DAPHNE', subtitle: 'bvFTD Assessment', icon: Brain, gradient: 'from-purple-500 to-pink-600', category: ['all', 'cognitive'], description: 'DAPHNE — Behavioural variant Frontotemporal Dementia screening across disinhibition, apathy, perseveration, hyperorality, neglect and loss of empathy.' },
+  { key: 'daphne6', name: 'DAPHNE-6', subtitle: 'bvFTD Quick Screen', icon: Gauge, gradient: 'from-fuchsia-500 to-purple-600', category: ['all', 'cognitive'], description: 'DAPHNE-6 — six-domain caregiver screening for behavioural variant FTD. Binary per-domain scoring (0-6); >= 4/6 is a positive screen (sensitivity 92%).' },
   { key: 'moca', name: 'CCSA', subtitle: 'Comprehensive Cognitive Screening', icon: ClipboardCheck, gradient: 'from-fuchsia-500 to-purple-600', category: ['cognitive'], description: 'CCSA — original 30-point multidomain cognitive screen (orientation, memory, attention, executive, language, visuospatial, recall). Prototype tool; not clinically validated.' },
   { key: 'miniace', name: 'Mini-ACE', subtitle: "Addenbrooke's", icon: ClipboardList, gradient: 'from-emerald-500 to-green-600', category: ['cognitive'], description: "Mini-ACE — Mini Addenbrooke's Cognitive Examination; brief multidomain cognitive screen (attention, memory, fluency, visuospatial)." },
   { key: 'minicog', name: 'Mini-Cog™', subtitle: 'Brief Screening', icon: Gauge, gradient: 'from-blue-500 to-cyan-600', category: ['cognitive'], description: 'Mini-Cog — 3-item recall plus clock-drawing; rapid bedside dementia screen (~3 min).' },
@@ -174,8 +176,6 @@ export const assessments: AssessmentInfo[] = [
   { key: 'bprs', name: 'BPRS', subtitle: 'Brief Psychiatric', icon: ClipboardList, gradient: 'from-indigo-500 to-violet-600', category: ['psychosis'], description: 'Add a copyable TXT report generator for SAPS, CRDPSS, and PSYRATS. Have a back button to the Previous test OR Next test on each page' },
   { key: 'sapsSans', name: 'SAPS / SANS', subtitle: 'Pos & Neg Symptoms', icon: Sparkles, gradient: 'from-purple-500 to-fuchsia-600', category: ['psychosis'], description: 'Add a copyable TXT report generator for SAPS, CRDPSS, and PSYRATS. Have a back button to the Previous test OR Next test on each page' },
   { key: 'crdpss', name: 'CRDPSS', subtitle: 'DSM-5 Dimensions', icon: Gauge, gradient: 'from-sky-500 to-indigo-600', category: ['psychosis'], description: 'Add a copyable TXT report generator for SAPS, CRDPSS, and PSYRATS. Have a back button to the Previous test OR Next test on each page' },
-  { key: 'cases', name: 'CASES Tool', subtitle: 'Surgical Referral', icon: CheckCircle, gradient: 'from-emerald-500 to-teal-600', category: ['epilepsy'], description: 'Add a copyable TXT report generator for CASES Tool' },
-  { key: 'esgs', name: 'ESGS', subtitle: 'Surgical Outcomes', icon: TrendingUp, gradient: 'from-fuchsia-500 to-purple-600', category: ['epilepsy'], description: 'Replaced sliders with 0-3 button-based scoring' },
   { key: 'sops', name: 'SOPS', subtitle: 'Prodromal (SIPS)', icon: Lightbulb, gradient: 'from-amber-500 to-orange-600', category: ['psychosis'], description: 'Add a copyable TXT report generator for SAPS, CRDPSS, and PSYRATS. Have a back button to the Previous test OR Next test on each page' },
   { key: 'psyrats', name: 'PSYRATS', subtitle: 'AH & Delusions', icon: Ear, gradient: 'from-rose-500 to-red-600', category: ['psychosis'], description: 'Add a copyable TXT report generator for SAPS, CRDPSS, and PSYRATS. Have a back button to the Previous test OR Next test on each page' },
   { key: 'vagus', name: 'VAGUS-SR', subtitle: 'Insight Self-Report', icon: HelpCircle, gradient: 'from-teal-500 to-emerald-600', category: ['psychosis'], description: 'Add a copyable TXT report generator for SAPS, CRDPSS, and PSYRATS. Have a back button to the Previous test OR Next test on each page' },
@@ -188,7 +188,6 @@ export const assessments: AssessmentInfo[] = [
   { key: 'ybocs', name: 'Y-BOCS', subtitle: 'Obsessive-Compulsive', icon: ClipboardCheck, gradient: 'from-indigo-500 to-purple-600', category: ['mood'], description: 'Y-BOCS — 10-item clinician-rated scale for obsessive-compulsive disorder severity.' },
   { key: 'pss', name: 'PSS', subtitle: 'Perceived Stress', icon: Frown, gradient: 'from-orange-500 to-red-600', category: ['mood'], description: 'PSS — Perceived Stress Scale; 10-item measure of perceived life stress.' },
   { key: 'stressScreening', name: 'Stress Screening', subtitle: 'Screening Assessment', icon: Frown, gradient: 'from-amber-500 to-orange-600', category: ['mood'], description: 'Brief stress screening questionnaire.' },
-  { key: 'fibromyalgia', name: 'Fibromyalgia', subtitle: 'ACR 2010 Criteria', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['all', 'fibromyalgia'], description: 'ACR 2010 criteria for Fibromyalgia (WPI and SSS) with copyable TXT report' },
   { key: 'dpdr', name: 'DPDR', subtitle: 'Depersonalization-Derealization', icon: Eye, gradient: 'from-indigo-500 to-blue-600', category: ['mood'], description: 'DPDR screen for depersonalization and derealization symptoms.' },
   { key: 'pcl5', name: 'PCL-5', subtitle: 'PTSD Checklist', icon: Frown, gradient: 'from-rose-600 to-pink-700', category: ['mood'], description: '20-item PTSD Checklist for DSM-5 (PCL-5) with copyable clinical report' },
 
@@ -562,7 +561,7 @@ export const AssessmentSelector = () => {
       cdr: true,
       fast: true,
       'ciwa-ar': true,
-      daphne: true, minicog: true, hare: true, tulia: true,
+      daphne: true, daphne6: true, minicog: true, hare: true, tulia: true,
       fab: true, pcl5: true, delusions: true,
       sds: true,
     };
@@ -646,6 +645,7 @@ export const AssessmentSelector = () => {
         cdr: (props: any) => (
           <CdrAssessment 
             {...props} 
+            scores={cdrScores}
             fastStage={fastStage} 
             onScoresChange={setCdrScores} 
           />
@@ -654,9 +654,11 @@ export const AssessmentSelector = () => {
           <FastAssessment 
             {...props} 
             cdrScores={cdrScores} 
+            stage={fastStage}
             onStageChange={setFastStage} 
           />
         ),
+        daphne6: (props: any) => <Daphne6Assessment {...props} />,
       };
 
       const wrapMap: Record<string, React.ReactNode> = {

@@ -15,6 +15,8 @@ import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { ProgressIndicator } from './ProgressIndicator';
 import { AdhdOutpatientFlow } from '@/types/adhdOutpatient';
 import { toast } from 'sonner';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface AdhdOutpatientFlowProps {
   onBack?: () => void;
@@ -625,6 +627,78 @@ export const AdhdOutpatientFlowAssessment = ({ onBack }: AdhdOutpatientFlowProps
                   </div>
                 </CardContent>
               </Card>
+            )}
+
+            {decisionOutputs && (
+              <div className="flex justify-center pt-4">
+                <ExportButtons
+                  data={{
+                    assessmentName: 'ADHD Outpatient Treatment Flow',
+                    date: new Date().toLocaleString(),
+                    totalScore: `${decisionOutputs.needsDiagnosticReferral ? 'Diagnostic referral needed' : 'No diagnostic referral'} · ${decisionOutputs.medicationIndicated ? 'Medication indicated' : 'Medication not indicated'}`,
+                    interpretation: decisionOutputs.firstLineMedicationChoice === 'none' ? 'Non-pharmacologic first-line' : `First-line: ${decisionOutputs.firstLineMedicationChoice}`,
+                    sections: [
+                      {
+                        title: 'Clinical Decisions',
+                        items: [
+                          `Diagnostic referral needed: ${decisionOutputs.needsDiagnosticReferral ? 'Yes' : 'No'}`,
+                          `Medication indicated: ${decisionOutputs.medicationIndicated ? 'Yes' : 'No'}`,
+                          `Stimulant contraindicated: ${decisionOutputs.stimulantContraindicated ? 'Yes' : 'No'}`,
+                        ],
+                        type: 'info',
+                      },
+                      {
+                        title: 'Recommended Treatment',
+                        items: [
+                          `First-line medication: ${decisionOutputs.firstLineMedicationChoice === 'none' ? 'None (non-pharmacologic)' : decisionOutputs.firstLineMedicationChoice}`,
+                          ...(decisionOutputs.psychologicalAdjunctsRecommended.length > 0
+                            ? [`Psychological adjuncts: ${decisionOutputs.psychologicalAdjunctsRecommended.map((a: string) => a.replace(/_/g, ' ')).join(', ')}`]
+                            : []),
+                        ],
+                        type: 'info',
+                      },
+                      {
+                        title: 'Monitoring Plan',
+                        items: [
+                          `Initial follow-up: ${decisionOutputs.monitoringPlan.initialFollowUpWeeks} weeks`,
+                          `Titration follow-up: ${decisionOutputs.monitoringPlan.titrationFollowUpFrequencyWeeks} weeks`,
+                          `Stable follow-up: ${decisionOutputs.monitoringPlan.stableFollowUpFrequencyMonths} months`,
+                          ...(decisionOutputs.monitoringPlan.monitoringParameters.length > 0
+                            ? [`Parameters: ${decisionOutputs.monitoringPlan.monitoringParameters.map((p: string) => p.replace(/_/g, ' ')).join(', ')}`]
+                            : []),
+                        ],
+                        type: 'info',
+                      },
+                      ...(decisionOutputs.addPathway
+                        ? [
+                            {
+                              title: 'Predominantly Inattentive (ADD) Strategy',
+                              items: [
+                                `First line: ${decisionOutputs.addPathway.addMedicationStrategy.addFirstLine.replace(/_/g, ' ')}`,
+                                `Second line: ${decisionOutputs.addPathway.addMedicationStrategy.addSecondLine.replace(/_/g, ' ')}`,
+                                `Third line: ${decisionOutputs.addPathway.addMedicationStrategy.addThirdLine.replace(/_/g, ' ')}`,
+                                ...(decisionOutputs.addPathway.addMedicationStrategy.addStrategyRationale
+                                  ? [`Rationale: ${decisionOutputs.addPathway.addMedicationStrategy.addStrategyRationale}`]
+                                  : []),
+                                ...(decisionOutputs.addPathway.addSpecificNonPharmacologicPlan.length > 0
+                                  ? [`Non-pharmacologic focus: ${decisionOutputs.addPathway.addSpecificNonPharmacologicPlan.map((p: string) => p.replace(/_/g, ' ')).join(', ')}`]
+                                  : []),
+                                ...(decisionOutputs.addPathway.cognitiveAdjuncts.length > 0
+                                  ? [`Cognitive adjuncts: ${decisionOutputs.addPathway.cognitiveAdjuncts.map((a: string) => a.replace(/_/g, ' ')).join(', ')}`]
+                                  : []),
+                                ...(decisionOutputs.addPathway.schoolWorkAccommodations.length > 0
+                                  ? [`School/work accommodations: ${decisionOutputs.addPathway.schoolWorkAccommodations.map((a: string) => a.replace(/_/g, ' ')).join(', ')}`]
+                                  : []),
+                              ],
+                              type: 'info',
+                            },
+                          ]
+                        : []),
+                    ],
+                    disclaimer: 'ADHD Outpatient Flow provides treatment-decision support and does not replace specialist clinical assessment.',
+                  } as ReportData}
+                />
+              </div>
             )}
 
             <div className="flex justify-center pt-4">

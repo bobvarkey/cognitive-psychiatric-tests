@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Pill, AlertTriangle } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface Props { onBack?: () => void }
 
@@ -275,6 +277,58 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
             </div>
           </CardContent>
         </Card>
+
+        <ExportButtons
+          className="justify-start"
+          data={{
+            assessmentName: 'SSRI Adverse Events Tracker',
+            date: new Date().toLocaleString(),
+            totalScore: `Weeks on SSRI: ${weeksNum}`,
+            interpretation: `${drug} · metabolic ${risk.met} · sexual ${risk.sex} · bleeding ${risk.bleed} · sweating ${sweatFlag}`,
+            sections: [
+              {
+                title: 'Patient & Drug',
+                items: [
+                  `SSRI: ${drug}`,
+                  `Weeks on SSRI: ${weeksNum}`,
+                  `Weight change: ${wgNum.toFixed(1)} kg`,
+                  `HbA1c: ${a1cNum.toFixed(1)}%`,
+                  `Sexual symptoms: ${sexfx}`,
+                  `Bleeding risk: ${bleed}`,
+                  `Excessive sweating: ${sweat}`,
+                ],
+                type: 'info',
+              },
+              {
+                title: 'Risk Flags',
+                items: [
+                  `Metabolic: ${metFlag}`,
+                  `Sexual: ${sexualFlag}`,
+                  `Bleeding: ${bleedFlag}`,
+                  `Sweating: ${sweatFlag}`,
+                  weeksNum <= 3 ? 'Early activation/insomnia possible' : 'Activation usually settled',
+                ],
+                type: metFlag === 'metabolic concern' || bleed === 'Yes' || sweat === 'Severe' ? 'positive' : 'info',
+              },
+              {
+                title: 'Monitoring Schedule',
+                items: MONITORING.map(row => `${row.time}: ${row.check}`),
+                type: 'info',
+              },
+              {
+                title: 'Adverse-event Flags',
+                items: ADVERSE_EVENTS,
+                type: 'positive',
+              },
+              {
+                title: 'Action Suggestions',
+                items: ACTIONS,
+                type: 'info',
+              },
+            ],
+            disclaimer: 'SSRI adverse-event screening for outpatient follow-up; not a substitute for specialist review.',
+          } as ReportData}
+        />
 
         <p className="text-xs text-muted-foreground">
           This tool is for screening and follow-up support, not diagnosis or emergency management.

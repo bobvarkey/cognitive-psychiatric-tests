@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -9,6 +9,8 @@ import {
   SEIZURE_NOTES,
   CLINICAL_CONTEXT,
 } from '@/data/ilaeSeizureClassification';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface ExpandedCategories {
   [key: string]: boolean;
@@ -30,6 +32,46 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
       [id]: !prev[id],
     }));
   };
+
+  const expandedFlat = useMemo(() => {
+    const walk = (types: typeof ILAE_SEIZURE_CLASSIFICATION): { id: string; code: string; name: string; description: string }[] =>
+      types.flatMap((t: any) => [t, ...(t.subcategories ? walk(t.subcategories) : [])]);
+    return walk(ILAE_SEIZURE_CLASSIFICATION);
+  }, []);
+
+  const selectedExpanded = expandedCategories;
+
+  const reportData: ReportData = useMemo(() => {
+    const expandedItems = Object.keys(selectedExpanded)
+      .filter(k => selectedExpanded[k])
+      .map(id => {
+        const found = expandedFlat.find(t => t.id === id);
+        return found ? `${found.code} — ${found.name}: ${found.description}` : id;
+      });
+    return {
+      assessmentName: 'ILAE Seizure Classification',
+      date: new Date().toLocaleString(),
+      totalScore: `${expandedItems.length} classification node${expandedItems.length === 1 ? '' : 's'} expanded`,
+      sections: [
+        {
+          title: 'Expanded Seizure Types',
+          items: expandedItems.length > 0 ? expandedItems : ['No sub-categories expanded'],
+          type: 'info',
+        },
+        {
+          title: 'Basic Descriptors',
+          items: DESCRIPTORS.BASIC.items,
+          type: 'info',
+        },
+        {
+          title: 'Expanded Descriptors',
+          items: DESCRIPTORS.EXPANDED.items,
+          type: 'info',
+        },
+      ],
+      disclaimer: 'Reference classification for epileptic seizures; clinical diagnosis requires full evaluation.',
+    };
+  }, [selectedExpanded, expandedFlat]);
 
   const renderSeizureType = (type: any, level: number = 0, parentId: string = ''): JSX.Element => {
     const isExpandable = type.subcategories && type.subcategories.length > 0;
@@ -228,6 +270,8 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
           </Card>
         </TabsContent>
       </Tabs>
+
+      <ExportButtons className="justify-start" data={reportData} />
     </div>
   );
 };

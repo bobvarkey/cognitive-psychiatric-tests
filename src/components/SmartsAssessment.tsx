@@ -15,6 +15,8 @@ import {
   SMARTS_ITEMS, SMARTS_PURPOSE, SMARTS_FOLLOWUP,
 } from '@/data/smartsScale';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface SmartsAssessmentProps {
   onBack: () => void;
@@ -200,6 +202,26 @@ export const SmartsAssessment = ({ onBack }: SmartsAssessmentProps) => {
             )}
           </CardContent>
         </Card>
+
+        {positives.length > 0 && (
+          <ExportButtons
+            className="justify-start"
+            data={{
+              assessmentName: 'SMARTS — Systematic Monitoring of Adverse events Related to TreatmentS',
+              date: new Date().toLocaleString(),
+              totalScore: `${positives.length}/${SMARTS_ITEMS.length} side effects endorsed`,
+              interpretation: positives.length > 0 ? 'Follow-up required' : 'No problems identified',
+              sections: [
+                {
+                  title: 'Endorsed Side Effects',
+                  items: positives.map(p => `${p.domain}: ${isMl ? p.questionMl : p.question}`),
+                  type: 'positive',
+                },
+              ],
+              disclaimer: 'SMARTS flags patient-reported side effects; follow up on severity and adherence impact.',
+            } as ReportData}
+          />
+        )}
 
         <div className="flex gap-3">
           <Button onClick={handleReset} variant="outline" className="flex-1">

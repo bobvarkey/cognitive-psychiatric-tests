@@ -98,6 +98,11 @@ export const ASSESSMENT_INTERPRETATIONS: Record<string, AssessmentInterpretation
     psychometrics: 'DAPHNE was developed against the ICD-11 personality trait model; internal consistency α 0.79–0.88 across domains (Bach 2021).',
     clinicalAction: 'Use alongside the ICD-11 severity rating (mild / moderate / severe / personality difficulty). Match psychotherapy modality to dominant trait (e.g. DBT for negative affectivity, schema therapy for detachment).',
   },
+  daphne6: {
+    interpretation: 'DAPHNE-6 screens six behavioural domains (Disinhibition, Apathy, Perseverations, Hyperorality, Personal Neglect, Loss of Empathy). A domain is positive when at least one symptom is present. Total 0–6; a score of >= 4/6 is a positive screening result for bvFTD.',
+    psychometrics: 'Validated cut-off >= 4/6: sensitivity 92%, specificity 57% (Boutoleau-Bretonnière 2015). Caregiver-reported; not a standalone diagnostic test.',
+    clinicalAction: 'A positive DAPHNE-6 warrants comprehensive clinical assessment (history, neuropsychology, imaging/biomarkers) before bvFTD diagnosis. The six-domain DAPHNE-6 is distinct from DAPHNE-40 (ten items, 0-4 each).',
+  },
   catatoniaBfcrs: {
     interpretation: 'BFCRS screening: ≥ 2 of the first 14 items present indicates probable catatonia. Full 23-item severity scale guides treatment response.',
     psychometrics: 'BFCRS inter-rater reliability ICC 0.93–0.95; sensitivity for catatonia > 90% against DSM-5 criteria (Bush 1996).',

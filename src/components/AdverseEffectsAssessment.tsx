@@ -13,6 +13,8 @@ import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ADVERSE_EFFECTS, ADVERSE_EFFECTS_PURPOSE } from '@/data/adverseEffectsData';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface Props { onBack: () => void }
 
@@ -234,6 +236,35 @@ export const AdverseEffectsAssessment = ({ onBack }: Props) => {
             )}
           </CardContent>
         </Card>
+
+        {positives.length > 0 && (
+          <ExportButtons
+            className="justify-start"
+            data={{
+              assessmentName: 'Adverse Effects Tracker',
+              date: new Date().toLocaleString(),
+              totalScore: `${positives.length} flagged · ${seriousCount} serious`,
+              interpretation: seriousCount > 0 ? 'Urgent review' : positives.length > 0 ? 'Monitor' : 'Clear',
+              sections: [
+                ...(seriousCount > 0
+                  ? [
+                      {
+                        title: 'Serious Adverse Effects',
+                        items: positives.filter(p => p.catId === 'serious').map(p => p.label),
+                        type: 'positive' as const,
+                      },
+                    ]
+                  : []),
+                {
+                  title: 'All Flagged Adverse Effects',
+                  items: positives.map(p => `${p.category} › ${p.heading} › ${p.label}`),
+                  type: 'positive' as const,
+                },
+              ],
+              disclaimer: 'Clinician reference only — not a diagnostic or emergency tool.',
+            } as ReportData}
+          />
+        )}
 
         <div className="flex gap-3">
           <Button onClick={reset} variant="outline" className="flex-1">

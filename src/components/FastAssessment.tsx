@@ -14,17 +14,19 @@ import type { ReportData } from '@/utils/reportGenerator';
 interface FastAssessmentProps { 
   onBack?: () => void;
   cdrScores?: Record<string, number>;
+  stage?: number | null;
   onStageChange?: (stage: number | null) => void;
 }
 
-export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScores, onStageChange }) => {
+export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScores, stage: controlledStage, onStageChange }) => {
   const { language } = useLanguage();
-  const [selectedStage, setSelectedStage] = useState<number | null>(null);
+  const [localStage, setLocalStage] = useState<number | null>(null);
   const [showConsolidated, setShowConsolidated] = useState(false);
+  const selectedStage = controlledStage ?? localStage;
 
   const handleStageChange = (val: string) => {
     const stage = parseInt(val);
-    setSelectedStage(stage);
+    if (controlledStage === undefined || controlledStage === null) setLocalStage(stage);
     if (onStageChange) onStageChange(stage);
   };
 

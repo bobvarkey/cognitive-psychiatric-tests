@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Home, AlertTriangle, BookOpen } from 'lucide-react';
 import { SUDEP_7_ITEMS, SUDEP_7_RISK_LEVELS } from '@/data/sudepScales';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface Sudep7InventoryAssessmentProps {
   onBack?: () => void;
@@ -101,6 +103,7 @@ export const Sudep7InventoryAssessment = ({ onBack }: Sudep7InventoryAssessmentP
 
       {/* Results */}
       {allAnswered && riskLevel && (
+        <>
         <Card className={`bg-card border-border ${riskLevel.color.includes('red') ? 'border-red-500/30' : riskLevel.color.includes('orange') ? 'border-orange-500/30' : 'border-yellow-500/30'}`}>
           <CardHeader>
             <CardTitle className="text-lg text-foreground flex items-center gap-2">
@@ -141,9 +144,48 @@ export const Sudep7InventoryAssessment = ({ onBack }: Sudep7InventoryAssessmentP
             </div>
           </CardContent>
         </Card>
+
+        <ExportButtons
+          className="justify-start"
+          data={{
+            assessmentName: 'SUDEP-7 Inventory (Risk Assessment for Sudden Unexpected Death in Epilepsy)',
+            date: new Date().toLocaleString(),
+            totalScore: `${totalScore} (${riskLevel.level.toUpperCase()} risk)`,
+            interpretation: `${riskLevel.description} — ${riskLevel.percentage}`,
+            sections: [
+              {
+                title: 'Item Scores',
+                items: SUDEP_7_ITEMS.map((item, idx) => `${idx + 1}. ${item.name}: ${scores[item.id] ?? 0} — ${item.scoring}`),
+                type: riskLevel.level === 'veryhigh' || riskLevel.level === 'high' ? 'positive' : 'info',
+              },
+              {
+                title: 'Risk Assessment',
+                items: [
+                  `Total score: ${totalScore}`,
+                  `Risk level: ${riskLevel.description}`,
+                  `Annual SUDEP risk: ${riskLevel.percentage}`,
+                  `Score range: ${riskLevel.range}`,
+                ],
+                type: riskLevel.level === 'veryhigh' || riskLevel.level === 'high' ? 'positive' : riskLevel.level === 'moderate' ? 'info' : 'negative',
+              },
+              {
+                title: 'Clinical Interpretation',
+                items: [
+                  riskLevel.level === 'low' && 'Continue standard seizure management with regular follow-up.',
+                  riskLevel.level === 'moderate' && 'Optimize seizure control and medication adherence. Educate patient about risk reduction.',
+                  riskLevel.level === 'high' && 'Urgent intervention recommended. Consider advanced epilepsy treatment (surgery/neuromodulation) and seizure monitoring devices.',
+                  riskLevel.level === 'veryhigh' && 'Immediate intervention essential. Evaluate for epilepsy surgery candidacy, implement comprehensive safety measures.',
+                ].filter(Boolean),
+                type: 'info',
+              },
+            ],
+            disclaimer: 'SUDEP-7 is a validated screening tool; SUDEP risk should be discussed with a neurologist. Risk reduction strategies are available.',
+          } as ReportData}
+        />
+        </>
       )}
 
-      {!allAnswered && (
+        {!allAnswered && (
         <Card className="bg-card border-border">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">

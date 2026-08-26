@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, ExternalLink, FileText, BookOpen } from 'lucide-react';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface MocaAssessmentProps {
   onBack?: () => void;
@@ -167,6 +169,34 @@ export const MocaAssessment = ({ onBack }: MocaAssessmentProps) => {
             </p>
           </CardContent>
         </Card>
+
+        <ExportButtons
+          className="justify-start"
+          data={{
+            assessmentName: 'Montreal Cognitive Assessment (MoCA)',
+            date: new Date().toLocaleString(),
+            totalScore: '30-point multidomain screen',
+            interpretation: 'Standard MCI cut-off < 26/30; add 1 point for ≤12 years education (max 30).',
+            sections: [
+              {
+                title: 'Domains & Scoring',
+                items: domains.map((d) => `${d.name}: ${d.points} point${d.points === 1 ? '' : 's'} — ${d.items}`),
+                type: 'info',
+              },
+              {
+                title: 'Interpretation Cut-offs',
+                items: cutoffs.map((c) => `${c.range}: ${c.label}`),
+                type: 'info',
+              },
+              {
+                title: 'References',
+                items: links.map((l) => `${l.label} — ${l.url}`),
+                type: 'info',
+              },
+            ],
+            disclaimer: 'MoCA is a copyrighted instrument; clinical use requires registration/certification via mocacognition.com.',
+          } as ReportData}
+        />
       </div>
     </div>
   );

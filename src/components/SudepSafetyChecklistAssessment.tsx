@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Home, BookOpen, CheckCircle2, AlertCircle } from 'lucide-react';
 import { SUDEP_SAFETY_MEASURES, SUDEP_PREVENTION_STRATEGIES } from '@/data/sudepScales';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface SudepSafetyChecklistAssessmentProps {
   onBack?: () => void;
@@ -153,6 +155,34 @@ export const SudepSafetyChecklistAssessment = ({ onBack }: SudepSafetyChecklistA
                 ? 'Good progress on safety measures. Prioritize remaining items, especially medication adherence and emergency preparedness.'
                 : 'Important to implement additional safety measures. Focus on medication optimization, sleep monitoring, and emergency planning.'}
           </p>
+          {checkedCount > 0 && (
+            <ExportButtons
+              className="justify-start mt-4"
+              data={{
+                assessmentName: 'SUDEP Safety Checklist',
+                date: new Date().toLocaleString(),
+                totalScore: `${checkedCount}/${totalItems} measures implemented (${completionPercentage}%)`,
+                interpretation: completionPercentage >= 80 ? 'Comprehensive risk reduction in place' : completionPercentage >= 50 ? 'Good progress' : 'Additional measures recommended',
+                sections: [
+                  {
+                    title: 'Implemented Safety Measures',
+                    items: SUDEP_SAFETY_MEASURES.flatMap((c) =>
+                      c.items
+                        .filter((item) => checkedItems[`${c.id}-${item.id}`])
+                        .map((item) => `${c.category}: ${item.name}`)
+                    ),
+                    type: 'info',
+                  },
+                  {
+                    title: 'Prevention Strategies',
+                    items: SUDEP_PREVENTION_STRATEGIES,
+                    type: 'info',
+                  },
+                ],
+                disclaimer: 'SUDEP safety checklist for risk reduction; discuss seizure management with a neurologist.',
+              } as ReportData}
+            />
+          )}
         </CardContent>
       </Card>
 
