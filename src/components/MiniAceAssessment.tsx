@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Slider } from '@/components/ui/slider';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { MINI_ACE_VERSIONS, MINI_ACE_ITEMS, getInterpretation, CLINICAL_NOTES } from '@/data/miniAceScale';
@@ -387,13 +386,25 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <Slider
-                        value={[responses[item.domain as keyof Omit<MiniAceResponse, 'version'>] as number]}
-                        onValueChange={([value]) => handleScoreChange(item.domain as keyof Omit<MiniAceResponse, 'version'>, value)}
-                        max={item.maxScore}
-                        step={1}
-                        className="flex-1"
-                      />
+                      <div className="flex flex-wrap gap-1.5 flex-1">
+                        {Array.from({ length: item.maxScore + 1 }, (_, i) => i).map((val) => {
+                          const current = responses[item.domain as keyof Omit<MiniAceResponse, 'version'>] as number;
+                          return (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={() => handleScoreChange(item.domain as keyof Omit<MiniAceResponse, 'version'>, val)}
+                              className={`h-9 min-w-[2.25rem] px-2 rounded-md text-sm font-bold border transition-colors ${
+                                current === val
+                                  ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                                  : 'bg-background text-foreground border-border hover:border-emerald-400 hover:bg-emerald-50'
+                              }`}
+                            >
+                              {val}
+                            </button>
+                          );
+                        })}
+                      </div>
                       <span className="text-lg font-bold text-emerald-700 min-w-[4rem] text-right">
                         {responses[item.domain as keyof Omit<MiniAceResponse, 'version'>]}/{item.maxScore}
                       </span>

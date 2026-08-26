@@ -544,3 +544,76 @@ body * {
   user-select: text !important;
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Forced readability override — pure white background + black text app-wide.
+   Placed last so it wins over the light/dark toggle and all theme variants,
+   guaranteeing maximum readability on every assessment and page.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root,
+:root.light,
+:root.dark,
+:root.theme-sunset,
+:root.theme-midnight,
+:root.theme-forest {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 0%;
+
+  --secondary: 0 0% 97%;
+  --secondary-foreground: 0 0% 0%;
+
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 25%;
+
+  --accent: 0 0% 95%;
+  --accent-foreground: 0 0% 0%;
+
+  --border: 0 0% 88%;
+  --input: 0 0% 88%;
+
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 0 0% 0%;
+  --sidebar-accent: 0 0% 96%;
+  --sidebar-accent-foreground: 0 0% 0%;
+  --sidebar-border: 0 0% 88%;
+}
+
+/* Neutralise any lingering dark-mode text/background utilities. */
+.dark body,
+body.dark {
+  background-color: hsl(0 0% 100%);
+  color: hsl(0 0% 0%);
+}
+
+.dark .bg-background,
+.dark .bg-card,
+.dark .bg-popover,
+.dark .bg-secondary,
+.dark .bg-muted,
+.dark .bg-accent,
+.dark .bg-card\/50,
+.dark .bg-background\/95,
+.dark .bg-background\/80 {
+  background-color: hsl(0 0% 100%);
+}
+
+.dark .text-foreground,
+.dark .text-card-foreground,
+.dark .text-popover-foreground,
+.dark .text-secondary-foreground,
+.dark .text-accent-foreground,
+.dark .text-primary-foreground,
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
+.dark p, .dark li, .dark span, .dark label,
+.dark .text-slate-900, .dark .text-slate-800, .dark .text-slate-700,
+.dark .text-slate-600, .dark .text-gray-900, .dark .text-gray-800,
+.dark .text-gray-700, .dark .text-gray-600, .dark .text-zinc-900,
+.dark .text-zinc-800, .dark .text-zinc-700, .dark .text-zinc-600,
+.dark .text-neutral-900, .dark .text-neutral-800, .dark .text-neutral-700 {
+  color: hsl(0 0% 0%) !important;
+}

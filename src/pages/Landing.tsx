@@ -66,7 +66,7 @@ export default function Landing() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link to="/assessment/home">
+            <Link to="/">
               <button className="btn-neon">Start Free — 25 Assessments</button>
             </Link>
             <button className="px-6 py-3 rounded-xl border border-white/20 text-white hover:bg-white/10 transition font-semibold">
@@ -201,7 +201,7 @@ export default function Landing() {
             <p className="text-white/90 mb-8 max-w-2xl mx-auto">
               Get started with 25 core assessments free, or upgrade to Pro for all 65.
             </p>
-            <Link to="/assessment/home">
+            <Link to="/">
               <button className="px-8 py-3 rounded-xl bg-white text-fuchsia-600 hover:bg-gray-100 font-semibold transition">
                 Start Free Now <ArrowRight className="ml-2 h-5 w-5 inline" />
               </button>

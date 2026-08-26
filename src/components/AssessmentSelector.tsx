@@ -457,9 +457,10 @@ export const AssessmentSelector = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        // NOTE: horizontal `drag`/`onDragEnd` swipe-to-dismiss was removed because
-        // it captured taps on Next/Previous buttons as drag gestures (buttons
-        // "didn't work") and made every assessment page slide side-to-side.
+        transition={{ duration: 0.2 }}
+        // NOTE: horizontal slide-in (`initial/exit x: 100%`) and swipe-to-dismiss were removed because
+        // they made every assessment page slide side-to-side and captured taps on Next/Previous
+        // buttons as drag gestures (buttons "didn't work"). Fade transition only.
         className="fixed inset-0 z-50 bg-background overflow-y-auto"
       >
         <div className="fixed left-3 z-30 print:hidden flex items-center gap-2 top-[max(0.75rem,env(safe-area-inset-top))]">
