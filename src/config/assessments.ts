@@ -130,18 +130,6 @@ export const assessments: Assessment[] = [
     duration: '10-15 min',
     items: 12,
   },
-  {
-    id: 'daphne',
-    name: 'DAPHNE Scale',
-    abbreviation: 'DAPHNE',
-    description: 'Drug-induced adverse movement assessment',
-    category: ASSESSMENT_CATEGORIES.NEUROLOGICAL,
-    subcategory: 'Movement Disorders',
-    component: null,
-    icon: '⚠️',
-    duration: '10 min',
-    items: 8,
-  },
 
   // Substance Use
   {

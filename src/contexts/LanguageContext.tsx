@@ -59,10 +59,6 @@ const translations = {
     'score.severe': 'Severe (4)',
     
     // Results
-    'results.screening': 'DAPHNE-6 (Screening)',
-    'results.diagnostic': 'DAPHNE-40 (Diagnostic)',
-    'results.domain.analysis': 'Domain Analysis',
-    'results.clinical.notes': 'Clinical Notes',
     'results.scoring.method': 'Scoring Method:',
     'results.assessment.domains': 'Assessment Domains:',
     'results.print': 'Print Results',
@@ -98,7 +94,6 @@ const translations = {
     
     // Clinical notes
     'clinical.scoring.daphne6': 'DAPHNE-6 (Screening): Binary scoring of 6 domains (0-6 max). Score 1 point if any symptom present in domain.',
-    'clinical.scoring.daphne40': 'DAPHNE-40 (Diagnostic): Sum of all 10 items (0-40 max). Each item scored 0-4 based on severity.',
     'clinical.domains.description': 'The DAPHNE scale explores six behavioral domains based on Rascovsky\'s criteria for behavioral variant frontotemporal dementia (bvFTD): disinhibition, apathy, perseverations, hyperorality, personal neglect, and loss of empathy.',
     'clinical.item': 'item',
     'clinical.items': 'items',
@@ -130,7 +125,6 @@ const translations = {
     cognitiveAssessments: 'Cognito',
     selectAssessmentDescription: 'Choose the appropriate assessment tool based on your clinical needs and patient presentation.',
     keyFeatures: 'Key Features',
-    startDaphneAssessment: 'Start DAPHNE Assessment',
     startMocaAssessment: 'Start MoCA Assessment',
     whichAssessmentToUse: 'Which Assessment Should I Use?',
     backToMenu: 'Back to Menu',
@@ -237,10 +231,6 @@ const translations = {
     'score.severe': 'ഗുരുതരം (4)',
     
     // Results
-    'results.screening': 'DAPHNE-6 (സ്ക്രീനിംഗ്)',
-    'results.diagnostic': 'DAPHNE-40 (രോഗനിർണയം)',
-    'results.domain.analysis': 'ഡൊമെയിൻ വിശകലനം',
-    'results.clinical.notes': 'ക്ലിനിക്കൽ കുറിപ്പുകൾ',
     'results.scoring.method': 'സ്കോറിംഗ് രീതി:',
     'results.assessment.domains': 'മൂল്യനിർണ്ണയ ഡൊമെയിനുകൾ:',
     'results.print': 'ഫലങ്ങൾ പ്രിന്റ് ചെയ്യുക',
@@ -276,7 +266,6 @@ const translations = {
     
     // Clinical notes
     'clinical.scoring.daphne6': 'DAPHNE-6 (സ്ക്രീനിംഗ്): ൬ ഡൊമെയിനുകളുടെ ബൈനറി സ്കോറിംഗ് (0-6 പരമാവധി). ഡൊമെയിനിൽ ഏതെങ്കിലും ലക്ഷണം ഉണ്ടെങ്കിൽ ൧ പോയിന്റ് സ്കോർ ചെയ്യുക.',
-    'clinical.scoring.daphne40': 'DAPHNE-40 (രോഗനിർണയം): എല്ലാ ൧൦ ഇനങ്ങളുടെയും ആകെത്തുക (0-40 പരമാവധി). ഓരോ ഇനവും തീവ്രതയെ അടിസ്ഥാനമാക്കി 0-4 സ്കോർ ചെയ്യുന്നു.',
     'clinical.domains.description': 'DAPHNE സ്കെയിൽ റാസ്കോവ്സ്കിയുടെ മാനദണ്ഡങ്ങളെ അടിസ്ഥാനമാക്കി ആറ് പെരുമാറ്റ ഡൊമെയിനുകൾ പര്യവേക്ഷണം ചെയ്യുന്നു: അനിയന്ത്രണം, നിസ്സംഗത, ആവർത്തനം, അമിത വായ്ക്കോളിത്തം, വ്യക്തിഗത അവഗണന, സഹാനുഭൂതി നഷ്ടം.',
     'clinical.item': 'ഇനം',
     'clinical.items': 'ഇനങ്ങൾ',

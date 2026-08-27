@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Daphne6Assessment } from '@/components/Daphne6Assessment';
-import { DaphneAssessment } from '@/components/DaphneAssessment';
 import { HoehnYahrAssessment } from '@/components/HoehnYahrAssessment';
 import { EpworthAssessment } from '@/components/EpworthAssessment';
 import { StopBangAssessment } from '@/components/StopBangAssessment';
@@ -644,7 +643,6 @@ export const AssessmentSelector = () => {
         'opd-psych-eval': OpdPsychEvalAssessment,
         'adhd-outpatient': AdhdOutpatientFlowAssessment,
         triage: PsychiatricTriageAssessment,
-        daphne: DaphneAssessment,
         'ciwa-ar': (props: any) => <SubstanceAssessment {...props} initialTab="ciwa" />,
         sds: (props: any) => <SubstanceAssessment {...props} initialTab="sds" />,
         cdr: (props: any) => (
