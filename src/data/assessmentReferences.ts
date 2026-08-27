@@ -146,6 +146,12 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Weiden PJ, Miller AL, Lambert TJR, Chant D, Williams S, Citrome L, et al. The Systematic Monitoring of Adverse events Related to TreatmentS (SMARTS) checklist. World Psychiatry. 2010;9(2):124–125. (See PMC3896136 for application notes.)',
     url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3896136/',
   },
+  chs: {
+    citation:
+      'Sorensen CJ, DeSanto K, Borgelt L, Phillips KT, Monte AA. Cannabinoid hyperemesis syndrome: diagnosis, pathophysiology, and treatment—a systematic review. J Med Toxicol. 2017;13(1):71–87. Rome IV criteria: Drossman DA, et al. Rome IV Functional Gastrointestinal Disorders. 4th ed. 2016.',
+    url: 'https://doi.org/10.1007/s13181-016-0595-z',
+    note: 'Clinical reference for Cannabinoid Hyperemesis Syndrome — educational, not a scoring tool.',
+  },
   fallRisk: {
     citation:
       'Centers for Disease Control and Prevention. STEADI algorithm. Atlanta: CDC; 2017. Morse JE. Preventing Patient Falls. 2nd ed. Springer; 2009. Stapleton C, Hough P, Oldmeadow L, et al. Four-item Fall Risk Screening Tool (FRAT). Australas J Ageing. 2009;28(3):139–143. Clinical update: BMJ 2025;392:s223.',

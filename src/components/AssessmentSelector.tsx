@@ -39,6 +39,7 @@ import { MmpiAssessment } from '@/components/MmpiAssessment';
 import { AdamAssessment } from '@/components/AdamAssessment';
 import { HunterAssessment } from '@/components/HunterAssessment';
 import { AdverseEffectsAssessment } from '@/components/AdverseEffectsAssessment';
+import { ChsAssessment } from '@/components/ChsAssessment';
 import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
 import { CallosalAssessment } from '@/components/CallosalAssessment';
 import { MseAssessment } from '@/components/MseAssessment';
@@ -94,7 +95,7 @@ import {
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
   ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
-  Cloud, Clock,
+  Cloud, Clock, ShieldAlert,
 } from 'lucide-react';
 import { MiniAppSearch, GlossaryDialog, ModeToggle } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
@@ -131,7 +132,7 @@ export type AssessmentKey =
   | 'adhd-outpatient' | 'opd-psych-eval' | 'fast' | 'cdr'
   | 'late-onset-psychosis' | 'pid5-unified' | 'audit' | 'alcohol-units'
   | 'ciwa-ar' | 'sds' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse'
-  | 'fibromyalgia' | 'brain-fog';
+  | 'chs' | 'fibromyalgia' | 'brain-fog';
 
 export type Category =
   | 'all' | 'cognitive' | 'psychosis' | 'mood' | 'personality' | 'substance'
@@ -250,6 +251,7 @@ export const assessments: AssessmentInfo[] = [
   { key: 'antipsychotic-metabolic', name: 'Antipsychotic Metabolic', subtitle: 'BMI · WHtR · Risk Triage', icon: Pill, gradient: 'from-blue-500 to-indigo-600', category: ['adverse'], description: 'Antipsychotic metabolic syndrome tracker — BMI, waist-to-height ratio, drug-specific metabolic/cardiac/QTc risk, monitoring schedule, and adverse-event flags.' },
   { key: 'ssri-adverse', name: 'SSRI Adverse Events', subtitle: 'Metabolic · Sexual · Bleeding', icon: Pill, gradient: 'from-cyan-500 to-blue-600', category: ['adverse'], description: 'SSRI adverse events tracker — screen metabolic, sexual, bleeding, sleep, and discontinuation effects for common SSRIs with monitoring schedule and suggested actions.' },
   { key: 'fallRisk', name: 'Fall Risk', subtitle: 'STEADI, Morse & FRAT', icon: Footprints, gradient: 'from-orange-500 to-red-600', category: ['adverse'], description: 'Fall risk assessment combining CDC STEADI, Morse Fall Scale and FRAT (Falls Risk Assessment Tool).' },
+  { key: 'chs', name: 'CHS', subtitle: 'Cannabinoid Hyperemesis', icon: ShieldAlert, gradient: 'from-emerald-500 to-teal-600', category: ['adverse'], description: 'CHS — Cannabinoid Hyperemesis Syndrome reference: pathophysiology, clinical phases, Rome IV criteria, and acute + long-term management.' },
 
   // ─── Specialty / Misc ───
   { key: 'fibromyalgia', name: 'Fibromyalgia', subtitle: 'ACR 2010 (WPI + SSS)', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['fibromyalgia'], description: 'ACR 2010 preliminary diagnostic criteria for fibromyalgia. Widespread Pain Index (WPI, 0–19) plus Symptom Severity Scale (SSS, 0–12) covering fatigue, waking unrefreshed, cognitive symptoms, and somatic symptom burden.' },
@@ -551,6 +553,7 @@ export const AssessmentSelector = () => {
       'smds-sf': true,
       'antipsychotic-metabolic': true,
       'ssri-adverse': true,
+      chs: true,
       'brain-fog': true,
       'late-onset-psychosis': true,
       fibromyalgia: true,
@@ -634,6 +637,7 @@ export const AssessmentSelector = () => {
         'smds-sf': SmdsSfAssessment,
         'antipsychotic-metabolic': AntipsychoticMetabolicAssessment,
         'ssri-adverse': SsriAdverseEventsAssessment,
+        chs: ChsAssessment,
         'brain-fog': BrainFogAssessment,
         'late-onset-psychosis': LateOnsetPsychosisAssessment,
         fibromyalgia: FibromyalgiaAssessment,
