@@ -93,11 +93,6 @@ export const ASSESSMENT_INTERPRETATIONS: Record<string, AssessmentInterpretation
     psychometrics: 'ADAM is a domain-based apathy, depression and anhedonia measure adapted from the Lille Apathy Rating Scale structure (Sockeel 2006). Scores are grouped by domain: behavioural/social/emotional apathy, anhedonia, and depression.',
     clinicalAction: 'Use alongside structured assessment of apathy (e.g. Lille Apathy Rating Scale) and mood. Interpret domain elevations separately: apathy vs. anhedonia vs. depression have different treatment implications. Consider re-assessment over time to track change.',
   },
-  daphne: {
-    interpretation: 'Higher scores on each Big-Five-derived domain (Disinhibition, Anankastia, Negative affectivity, Detachment, Dissocial, Psychoticism) indicate greater trait expression and severity of personality dysfunction per ICD-11.',
-    psychometrics: 'DAPHNE was developed against the ICD-11 personality trait model; internal consistency α 0.79–0.88 across domains (Bach 2021).',
-    clinicalAction: 'Use alongside the ICD-11 severity rating (mild / moderate / severe / personality difficulty). Match psychotherapy modality to dominant trait (e.g. DBT for negative affectivity, schema therapy for detachment).',
-  },
   daphne6: {
     interpretation: 'DAPHNE-6 screens six behavioural domains (Disinhibition, Apathy, Perseverations, Hyperorality, Personal Neglect, Loss of Empathy). A domain is positive when at least one symptom is present. Total 0–6; a score of >= 4/6 is a positive screening result for bvFTD.',
     psychometrics: 'Validated cut-off >= 4/6: sensitivity 92%, specificity 57% (Boutoleau-Bretonnière 2015). Caregiver-reported; not a standalone diagnostic test.',

@@ -11,11 +11,6 @@ export interface AssessmentReference {
 }
 
 export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
-  daphne: {
-    citation:
-      'Boutoleau-Bretonnière C, Evrard C, Hardouin JB, et al. DAPHNE: a new tool for the assessment of the behavioral variant of frontotemporal dementia. Dement Geriatr Cogn Dis Extra. 2015;5(3):503–516.',
-    url: 'https://doi.org/10.1159/000440859',
-  },
   daphne6: {
     citation:
       'Boutoleau-Bretonnière C, et al. DAPHNE: a new tool for the assessment of the behavioral variant of frontotemporal dementia. Dement Geriatr Cogn Dis Extra. 2015;5(3):503–516.',

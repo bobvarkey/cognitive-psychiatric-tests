@@ -28,11 +28,8 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations = {
   en: {
     // Assessment titles and labels
-    'assessment.title': 'DAPHNE Scale Assessment',
     'assessment.subtitle': 'A New Tool for the Assessment of the Behavioral Variant of Frontotemporal Dementia',
     'assessment.badge': '10 Items • 6 Domains • 5-Point Scale',
-    'assessment.header': 'DAPHNE Assessment',
-    'assessment.results.title': 'DAPHNE Assessment Results',
     
     // Form labels
     'form.patient.name': 'Patient Name *',
@@ -94,7 +91,6 @@ const translations = {
     
     // Clinical notes
     'clinical.scoring.daphne6': 'DAPHNE-6 (Screening): Binary scoring of 6 domains (0-6 max). Score 1 point if any symptom present in domain.',
-    'clinical.domains.description': 'The DAPHNE scale explores six behavioral domains based on Rascovsky\'s criteria for behavioral variant frontotemporal dementia (bvFTD): disinhibition, apathy, perseverations, hyperorality, personal neglect, and loss of empathy.',
     'clinical.item': 'item',
     'clinical.items': 'items',
     
@@ -200,11 +196,8 @@ const translations = {
   },
   ml: {
     // Assessment titles and labels
-    'assessment.title': 'DAPHNE സ്കെയിൽ മൂല്യനിർണ്ണയം',
     'assessment.subtitle': 'ഫ്രണ്ടോടെമ്പറൽ ഡിമെൻഷ്യയുടെ പെരുമാറ്റ വേരിയന്റിന്റെ മൂല്യനിർണ്ണയത്തിനുള്ള പുതിയ ഉപകരണം',
     'assessment.badge': '൧൦ ഇനങ്ങൾ • ൬ ഡൊമെയിനുകൾ • ൫-പോയിന്റ് സ്കെയിൽ',
-    'assessment.header': 'DAPHNE മൂല്യനിർണ്ണയം',
-    'assessment.results.title': 'DAPHNE മൂല്യനിർണ്ണയ ഫലങ്ങൾ',
     
     // Form labels
     'form.patient.name': 'രോഗിയുടെ പേര് *',
@@ -266,7 +259,6 @@ const translations = {
     
     // Clinical notes
     'clinical.scoring.daphne6': 'DAPHNE-6 (സ്ക്രീനിംഗ്): ൬ ഡൊമെയിനുകളുടെ ബൈനറി സ്കോറിംഗ് (0-6 പരമാവധി). ഡൊമെയിനിൽ ഏതെങ്കിലും ലക്ഷണം ഉണ്ടെങ്കിൽ ൧ പോയിന്റ് സ്കോർ ചെയ്യുക.',
-    'clinical.domains.description': 'DAPHNE സ്കെയിൽ റാസ്കോവ്സ്കിയുടെ മാനദണ്ഡങ്ങളെ അടിസ്ഥാനമാക്കി ആറ് പെരുമാറ്റ ഡൊമെയിനുകൾ പര്യവേക്ഷണം ചെയ്യുന്നു: അനിയന്ത്രണം, നിസ്സംഗത, ആവർത്തനം, അമിത വായ്ക്കോളിത്തം, വ്യക്തിഗത അവഗണന, സഹാനുഭൂതി നഷ്ടം.',
     'clinical.item': 'ഇനം',
     'clinical.items': 'ഇനങ്ങൾ',
     
