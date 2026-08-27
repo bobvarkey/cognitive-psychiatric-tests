@@ -1073,7 +1073,6 @@ export const AssessmentSelector = () => {
       <MobileBottomNav
         section={section}
         onSectionChange={(s) => { setSection(s); pulse(s); }}
-        resultsCount={resultsCount}
       />
 
 
