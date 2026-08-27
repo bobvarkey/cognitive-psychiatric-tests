@@ -34,9 +34,9 @@ describe('ConsciousnessAssessment language gating', () => {
     expect(text).toContain('Eye opening (E)');
   });
 
-  it('exposes only English and Malayalam in the language toggle list', async () => {
+  it('exposes the full supported language set in the language toggle list', async () => {
     const { LANGUAGES } = await import('@/contexts/LanguageContext');
-    expect(LANGUAGES.map((l) => l.code).sort()).toEqual(['en', 'ml']);
+    expect(LANGUAGES.map((l) => l.code).sort()).toEqual(['de', 'en', 'es', 'fr', 'hi', 'ja', 'ml', 'zh']);
   });
 
   it('renders Malayalam translations when toggled to ML, and removes them when toggled back', () => {

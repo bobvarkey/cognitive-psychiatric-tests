@@ -69,9 +69,9 @@ describe("LanguageContext default + toggle behavior", () => {
     expect(screen.queryByText("മുമ്പത്തേത്")).not.toBeInTheDocument();
   });
 
-  it('only exposes English and Malayalam in LANGUAGES', async () => {
+  it('exposes the full supported language set in LANGUAGES', async () => {
     const { LANGUAGES } = await import('@/contexts/LanguageContext');
-    expect(LANGUAGES.map((l) => l.code).sort()).toEqual(['en', 'ml']);
+    expect(LANGUAGES.map((l) => l.code).sort()).toEqual(['de', 'en', 'es', 'fr', 'hi', 'ja', 'ml', 'zh']);
   });
 
   it("each fresh provider mount re-defaults to English", () => {
