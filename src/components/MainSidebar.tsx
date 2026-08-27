@@ -68,7 +68,7 @@ export const MainSidebar = ({
   const { language } = useLanguage();
   const isMl = language === 'ml';
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(() => new Set(categories.map(c => c.key)));
   const activeItemRef = useRef<HTMLElement | null>(null);
 
   // Automatically expand category and scroll to active assessment
@@ -113,7 +113,7 @@ export const MainSidebar = ({
       const newExpanded = new Set(filteredCategories.map(c => c.key));
       setExpandedCategories(newExpanded);
     } else {
-      setExpandedCategories(new Set());
+      setExpandedCategories(new Set(categories.map(c => c.key)));
     }
   }, [searchQuery]);
 

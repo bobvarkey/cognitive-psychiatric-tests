@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Info, BookOpen, Activity, Stethoscope, Pill, AlertTriangle, CheckCircle2, Droplets, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, Info, BookOpen, Activity, Stethoscope, Pill, AlertTriangle, CheckCircle2, Droplets, ShieldAlert, RotateCcw } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AssessmentReference } from '@/components/AssessmentReference';
@@ -22,6 +24,23 @@ const phaseColors = [
 export const ChsAssessment: React.FC<ChsAssessmentProps> = ({ onBack }) => {
   const { language } = useLanguage();
   const isMalayalam = language === 'ml';
+  const [checkedCriteria, setCheckedCriteria] = useState<Set<number>>(new Set());
+
+  const toggleCriterion = (index: number) => {
+    setCheckedCriteria(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
+
+  const allChecked =
+    CHS_DATA.romeIvDiagnosticCriteria.criteria.length > 0 &&
+    checkedCriteria.size === CHS_DATA.romeIvDiagnosticCriteria.criteria.length;
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -123,16 +142,80 @@ export const ChsAssessment: React.FC<ChsAssessmentProps> = ({ onBack }) => {
               <CheckCircle2 className="h-5 w-5 text-green-600" />
               {isMalayalam ? 'റോം IV ഡയഗ്നോസ്റ്റിക് മാനദണ്ഡങ്ങൾ' : 'Rome IV Diagnostic Criteria'}
             </CardTitle>
+            <CardDescription>
+              {isMalayalam ? 'പാലിക്കുന്ന മാനദണ്ഡങ്ങൾ അടയാളപ്പെടുത്തുക' : 'Check the criteria that are met'}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <ol className="space-y-2">
+            <div className="space-y-2">
               {CHS_DATA.romeIvDiagnosticCriteria.criteria.map((c, i) => (
-                <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="font-semibold text-primary shrink-0">{i + 1}.</span>
-                  {c}
-                </li>
+                <div
+                  key={i}
+                  className={`p-3 rounded-lg border transition-colors cursor-pointer ${
+                    checkedCriteria.has(i)
+                      ? 'border-green-600 bg-green-50 dark:bg-green-950/30'
+                      : 'border-border hover:border-primary/40'
+                  }`}
+                  onClick={() => toggleCriterion(i)}
+                >
+                  <div className="flex items-start gap-3">
+                    <Checkbox
+                      checked={checkedCriteria.has(i)}
+                      onCheckedChange={() => toggleCriterion(i)}
+                      className="mt-0.5"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-primary text-sm shrink-0">{i + 1}.</span>
+                        {i === 3 && (
+                          <Badge variant="outline" className="text-[10px]">
+                            {isMalayalam ? 'നിർണ്ണായകം' : 'Definitive'}
+                          </Badge>
+                        )}
+                        {i === 4 && (
+                          <Badge variant="outline" className="text-[10px]">
+                            {isMalayalam ? 'പിന്തുണ' : 'Supportive'}
+                          </Badge>
+                        )}
+                      </div>
+                      <Label
+                        className={`text-sm font-normal cursor-pointer ${
+                          checkedCriteria.has(i) ? 'text-foreground' : 'text-muted-foreground'
+                        }`}
+                      >
+                        {c}
+                      </Label>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </ol>
+            </div>
+
+            {/* Summary bar */}
+            <div className="mt-4 flex items-center justify-between gap-2 p-3 rounded-lg bg-muted">
+              <span className="text-sm font-medium">
+                {isMalayalam
+                  ? `തിരഞ്ഞെടുത്തു: ${checkedCriteria.size} / ${CHS_DATA.romeIvDiagnosticCriteria.criteria.length}`
+                  : `Selected: ${checkedCriteria.size} / ${CHS_DATA.romeIvDiagnosticCriteria.criteria.length}`}
+              </span>
+              <div className="flex items-center gap-2">
+                {allChecked && (
+                  <Badge variant="secondary" className="text-green-700 dark:text-green-400">
+                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                    {isMalayalam ? 'എല്ലാ മാനദണ്ഡങ്ങളും പാലിക്കുന്നു' : 'All criteria met'}
+                  </Badge>
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCheckedCriteria(new Set())}
+                  className="h-7 px-2 text-xs"
+                >
+                  <RotateCcw className="h-3 w-3 mr-1" />
+                  {isMalayalam ? 'റീസെറ്റ്' : 'Reset'}
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
