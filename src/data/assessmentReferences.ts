@@ -147,6 +147,11 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
     url: 'https://doi.org/10.1007/s13181-016-0595-z',
     note: 'Clinical reference for Cannabinoid Hyperemesis Syndrome — educational, not a scoring tool.',
   },
+  somaticDelusions: {
+    citation:
+      'American Psychiatric Association. Diagnostic and Statistical Manual of Mental Disorders, 5th ed., Text Revision (DSM-5-TR). Washington, DC: APA; 2022. Freudenmann RW, Lepping P. Delusional infestation. Clin Microbiol Rev. 2009;22(4):690-732. Cotard J. Du délire des négations. Arch Neurol. 1880. Stompe T, et al. The delusion of infestation. Psychopathology. 2010.',
+    note: 'Clinical taxonomy of somatic delusions by content theme, bizarreness, and clinical context — educational, not a scoring tool.',
+  },
   fallRisk: {
     citation:
       'Centers for Disease Control and Prevention. STEADI algorithm. Atlanta: CDC; 2017. Morse JE. Preventing Patient Falls. 2nd ed. Springer; 2009. Stapleton C, Hough P, Oldmeadow L, et al. Four-item Fall Risk Screening Tool (FRAT). Australas J Ageing. 2009;28(3):139–143. Clinical update: BMJ 2025;392:s223.',

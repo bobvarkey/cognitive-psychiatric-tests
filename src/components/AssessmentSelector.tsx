@@ -39,6 +39,7 @@ import { AdamAssessment } from '@/components/AdamAssessment';
 import { HunterAssessment } from '@/components/HunterAssessment';
 import { AdverseEffectsAssessment } from '@/components/AdverseEffectsAssessment';
 import { ChsAssessment } from '@/components/ChsAssessment';
+import { SomaticDelusionsAssessment } from '@/components/SomaticDelusionsAssessment';
 import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
 import { CallosalAssessment } from '@/components/CallosalAssessment';
 import { MseAssessment } from '@/components/MseAssessment';
@@ -131,7 +132,7 @@ export type AssessmentKey =
   | 'adhd-outpatient' | 'opd-psych-eval' | 'fast' | 'cdr'
   | 'late-onset-psychosis' | 'pid5-unified' | 'audit' | 'alcohol-units'
   | 'ciwa-ar' | 'sds' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse'
-  | 'chs' | 'fibromyalgia' | 'brain-fog';
+  | 'chs' | 'fibromyalgia' | 'brain-fog' | 'somaticDelusions';
 
 export type Category =
   | 'all' | 'cognitive' | 'psychosis' | 'mood' | 'personality' | 'substance'
@@ -250,6 +251,7 @@ export const assessments: AssessmentInfo[] = [
   { key: 'ssri-adverse', name: 'SSRI Adverse Events', subtitle: 'Metabolic · Sexual · Bleeding', icon: Pill, gradient: 'from-cyan-500 to-blue-600', category: ['adverse'], description: 'SSRI adverse events tracker — screen metabolic, sexual, bleeding, sleep, and discontinuation effects for common SSRIs with monitoring schedule and suggested actions.' },
   { key: 'fallRisk', name: 'Fall Risk', subtitle: 'STEADI, Morse & FRAT', icon: Footprints, gradient: 'from-orange-500 to-red-600', category: ['adverse'], description: 'Fall risk assessment combining CDC STEADI, Morse Fall Scale and FRAT (Falls Risk Assessment Tool).' },
   { key: 'chs', name: 'CHS', subtitle: 'Cannabinoid Hyperemesis', icon: ShieldAlert, gradient: 'from-emerald-500 to-teal-600', category: ['adverse'], description: 'CHS — Cannabinoid Hyperemesis Syndrome reference: pathophysiology, clinical phases, Rome IV criteria, and acute + long-term management.' },
+  { key: 'somaticDelusions', name: 'Somatic Delusions', subtitle: 'Taxonomy & Decision Aid', icon: Brain, gradient: 'from-purple-500 to-fuchsia-600', category: ['psychosis'], description: 'Somatic delusions taxonomy — content themes (infestation, disease, organ decay, odor, Cotard, foreign body, functional), bizarreness, clinical context, and differential vs illness anxiety/SSD, somatic hallucinations, and BDD.' },
 
   // ─── Specialty / Misc ───
   { key: 'fibromyalgia', name: 'Fibromyalgia', subtitle: 'ACR 2010 (WPI + SSS)', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['fibromyalgia'], description: 'ACR 2010 preliminary diagnostic criteria for fibromyalgia. Widespread Pain Index (WPI, 0–19) plus Symptom Severity Scale (SSS, 0–12) covering fatigue, waking unrefreshed, cognitive symptoms, and somatic symptom burden.' },
@@ -552,6 +554,7 @@ export const AssessmentSelector = () => {
       'antipsychotic-metabolic': true,
       'ssri-adverse': true,
       chs: true,
+      somaticDelusions: true,
       'brain-fog': true,
       'late-onset-psychosis': true,
       fibromyalgia: true,
@@ -636,6 +639,7 @@ export const AssessmentSelector = () => {
         'antipsychotic-metabolic': AntipsychoticMetabolicAssessment,
         'ssri-adverse': SsriAdverseEventsAssessment,
         chs: ChsAssessment,
+        somaticDelusions: SomaticDelusionsAssessment,
         'brain-fog': BrainFogAssessment,
         'late-onset-psychosis': LateOnsetPsychosisAssessment,
         fibromyalgia: FibromyalgiaAssessment,
