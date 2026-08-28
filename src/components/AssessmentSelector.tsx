@@ -107,12 +107,10 @@ import { PaywallModal } from './PaywallModal';
 import { AdBanner } from './AdBanner';
 
 import { LanguageToggle } from './LanguageToggle';
-import { MainSidebar, type Section } from './MainSidebar';
 import { MobileBottomNav } from './MobileBottomNav';
 
 import { ResultsView } from './ResultsView';
 import { SettingsView } from './SettingsView';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import cognitoHero from '@/assets/cognito-hero.png';
 
 
@@ -328,11 +326,6 @@ export const AssessmentSelector = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deepLinkQuery, setDeepLinkQuery] = useState('');
   const [section, setSection] = useState<Section>('assessments');
-  const [sidebarOpen, setSidebarOpen] = useState(() => {
-    if (typeof window === 'undefined') return true;
-    const saved = localStorage.getItem('sidebar_expanded');
-    return saved === null ? window.innerWidth >= 1024 : saved === 'true';
-  });
   const [cdrScores, setCdrScores] = useState<Record<string, number>>({});
   const [fastStage, setFastStage] = useState<number | null>(null);
 
@@ -363,29 +356,6 @@ export const AssessmentSelector = () => {
       setSection('assessments');
     }
   }, [selectedAssessment]);
-  const [pulseSections, setPulseSections] = useState<Set<Section>>(new Set());
-
-  const handleToggleSidebar = (open: boolean) => {
-    setSidebarOpen(open);
-    localStorage.setItem('sidebar_expanded', String(open));
-  };
-
-  // Pulse a sidebar item briefly when its area is focused / receives input.
-  const pulse = (s: Section) => {
-    setPulseSections((prev) => {
-      if (prev.has(s)) return prev;
-      const next = new Set(prev);
-      next.add(s);
-      return next;
-    });
-    window.setTimeout(() => {
-      setPulseSections((prev) => {
-        const next = new Set(prev);
-        next.delete(s);
-        return next;
-      });
-    }, 1600);
-  };
 
   // Each questionnaire should default to English; user can toggle per-assessment.
   const openAssessment = (key: AssessmentKey) => {
@@ -689,16 +659,6 @@ export const AssessmentSelector = () => {
     }
   }
 
-  // Build category list with live counts
-  const categoryList = (Object.keys(categoryLabels) as Category[]).map((key) => ({
-    key,
-    label: { en: categoryLabels[key].en, ml: categoryLabels[key].ml },
-    icon: categoryLabels[key].icon,
-    count: key === 'all'
-      ? assessments.length
-      : assessments.filter((a) => a.category.includes(key)).length,
-  }));
-
   // Main shell — sticky header + three top-level sections (Assessments / Results / Settings)
   const sectionTitles: Record<Section, { en: string; ml: string }> = {
     assessments: { en: 'Assessments', ml: 'വിലയിരുത്തലുകൾ' },
@@ -706,19 +666,8 @@ export const AssessmentSelector = () => {
     settings: { en: 'Settings', ml: 'ക്രമീകരണങ്ങൾ' },
   };
 
-  // Read results count for sidebar badge (cheap localStorage read on render)
-  let resultsCount = 0;
-  try {
-    const raw = typeof window !== 'undefined' ? localStorage.getItem('cognito.results.history.v1') : null;
-    if (raw) resultsCount = JSON.parse(raw).length ?? 0;
-  } catch { /* ignore */ }
-
   return (
-    <SidebarProvider
-      open={sidebarOpen}
-      onOpenChange={handleToggleSidebar}
-      style={{ ['--sidebar-width' as any]: '17rem' }}
-    >
+    <>
       <AnimatePresence mode="popLayout">
         <motion.div
           key={selectedAssessment ? 'assessment-active' : 'home'}
@@ -728,25 +677,12 @@ export const AssessmentSelector = () => {
           className="min-h-screen flex w-full bg-gradient-to-br from-background to-secondary dark:from-background dark:to-background overflow-x-hidden"
         >
         <LanguageToggle />
-        <MainSidebar
-          section={section}
-          onSectionChange={(s) => { setSection(s); pulse(s); }}
-          categories={categoryList}
-          activeCategory={activeCategory}
-          onCategorySelect={(cat) => { setActiveCategory(cat); setSection('assessments'); pulse('assessments'); }}
-          resultsCount={resultsCount}
-          pulseSections={pulseSections}
-          assessments={assessments}
-          onAssessmentSelect={(key) => openAssessment(key as AssessmentKey)}
-          selectedAssessmentId={selectedAssessment}
-        />
 
         <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
           {/* Sticky header */}
           <header className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm border-b border-border px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 w-full">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-2 mb-3">
-                <SidebarTrigger className="shrink-0" />
                 <Brain className="h-6 w-6 text-primary shrink-0" />
                 <h1 className="text-lg sm:text-2xl font-bold text-foreground truncate">
                   {language === 'en' ? sectionTitles[section].en : sectionTitles[section].ml}
@@ -761,7 +697,7 @@ export const AssessmentSelector = () => {
               {/* Quick search — jump straight to an assessment or cognitive syndrome */}
               {section === 'assessments' && (
                 <div className="flex flex-col sm:flex-row gap-3 items-center">
-                  <MiniAppSearch onSearch={(q) => { setSearchQuery(q); pulse('assessments'); }} />
+                  <MiniAppSearch onSearch={(q) => { setSearchQuery(q); }} />
                   <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                     <ModeToggle />
                     <GlossaryDialog />
@@ -773,8 +709,6 @@ export const AssessmentSelector = () => {
 
             <main
             className="flex-1 w-full mx-auto px-4 py-4 space-y-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] md:pb-8 flex flex-col items-center"
-            onFocusCapture={() => pulse(section)}
-            onInput={() => pulse(section)}
           >
 
             {section === 'results' && (
@@ -1076,7 +1010,7 @@ export const AssessmentSelector = () => {
 
       <MobileBottomNav
         section={section}
-        onSectionChange={(s) => { setSection(s); pulse(s); }}
+        onSectionChange={(s) => { setSection(s); }}
       />
 
 
@@ -1094,6 +1028,6 @@ export const AssessmentSelector = () => {
           <OfflineFallback />
         </div>
       )}
-    </SidebarProvider>
+    </>
   );
 };

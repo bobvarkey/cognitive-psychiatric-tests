@@ -1,4 +1,4 @@
-import type { Category, CategoryDef } from '@/components/MainSidebar';
+import type { Category, CategoryDef } from '@/components/navTypes';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CategoryChipsProps {

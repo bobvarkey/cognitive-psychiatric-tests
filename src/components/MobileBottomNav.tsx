@@ -1,5 +1,5 @@
 import { Settings } from 'lucide-react';
-import type { Section } from '@/components/MainSidebar';
+import type { Section } from '@/components/navTypes';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 
