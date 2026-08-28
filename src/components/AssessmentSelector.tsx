@@ -108,6 +108,7 @@ import { AdBanner } from './AdBanner';
 
 import { LanguageToggle } from './LanguageToggle';
 import { MobileBottomNav } from './MobileBottomNav';
+import { SectionTabs } from './SectionTabs';
 
 import { ResultsView } from './ResultsView';
 import { SettingsView } from './SettingsView';
@@ -326,8 +327,27 @@ export const AssessmentSelector = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [deepLinkQuery, setDeepLinkQuery] = useState('');
   const [section, setSection] = useState<Section>('assessments');
+  const [prevSection, setPrevSection] = useState<Section>('assessments');
   const [cdrScores, setCdrScores] = useState<Record<string, number>>({});
   const [fastStage, setFastStage] = useState<number | null>(null);
+
+  // Switch to a section/tab, remembering the previous one so a "back" control
+  // can return the user to the tab they came from.
+  const goToSection = (next: Section, opts?: { replace?: boolean }) => {
+    setSection((current) => {
+      if (current !== next) setPrevSection(current);
+      return next;
+    });
+    if (next === 'results') navigate('/history', { replace: opts?.replace ?? true });
+    else if (next === 'settings') navigate('/settings', { replace: opts?.replace ?? true });
+    else navigate('/', { replace: opts?.replace ?? true });
+    window.scrollTo(0, 0);
+  };
+
+  // Back to the tab the user was on before the current one.
+  const goBackToPrevTab = () => {
+    goToSection(prevSection);
+  };
 
   // Handle routing for deep links
   useEffect(() => {
@@ -694,6 +714,16 @@ export const AssessmentSelector = () => {
                 )}
               </div>
 
+              {/* Tab bar — switch between sections, with a back-to-previous-tab button */}
+              <div className="mb-3">
+                <SectionTabs
+                  section={section}
+                  onSectionChange={goToSection}
+                  showBack={section !== 'assessments'}
+                  onBack={goBackToPrevTab}
+                />
+              </div>
+
               {/* Quick search — jump straight to an assessment or cognitive syndrome */}
               {section === 'assessments' && (
                 <div className="flex flex-col sm:flex-row gap-3 items-center">
@@ -1010,7 +1040,7 @@ export const AssessmentSelector = () => {
 
       <MobileBottomNav
         section={section}
-        onSectionChange={(s) => { setSection(s); }}
+        onSectionChange={goToSection}
       />
 
 
