@@ -35,8 +35,8 @@ const CIWA_ITEMS: CiwaItem[] = [
     title: { en: 'Nausea & vomiting', ml: 'ഓക്കാനം, ഛർദ്ദി' },
     prompt: { en: 'Ask: "Do you feel sick to your stomach? Have you vomited?"', ml: 'ചോദിക്കുക: "വയറ് അസ്വസ്ഥമാണോ? ഛർദ്ദിച്ചോ?"' },
     options: SCALE_0_7(
-      ['No nausea, no vomiting', 'Mild nausea, no vomiting', '', '', 'Intermittent nausea with dry heaves', '', '', 'Constant nausea, frequent dry heaves and vomiting'],
-      ['ഓക്കാനമോ ഛർദ്ദിയോ ഇല്ല', 'നേരിയ ഓക്കാനം, ഛർദ്ദി ഇല്ല', '', '', 'ഇടവിട്ടുള്ള ഓക്കാനം, വരണ്ട ഛർദ്ദി', '', '', 'നിരന്തര ഓക്കാനം, ആവർത്തിച്ചുള്ള ഛർദ്ദി'],
+      ['No nausea, no vomiting', 'Mild nausea, no vomiting', 'Mild nausea, no vomiting', 'Mild nausea, no vomiting', 'Intermittent nausea with dry heaves', 'Intermittent nausea with dry heaves', 'Intermittent nausea with dry heaves', 'Constant nausea, frequent dry heaves and vomiting'],
+      ['ഓക്കാനമോ ഛർദ്ദിയോ ഇല്ല', 'നേരിയ ഓക്കാനം, ഛർദ്ദി ഇല്ല', 'നേരിയ ഓക്കാനം, ഛർദ്ദി ഇല്ല', 'നേരിയ ഓക്കാനം, ഛർദ്ദി ഇല്ല', 'ഇടവിട്ടുള്ള ഓക്കാനം, വരണ്ട ഛർദ്ദി', 'ഇടവിട്ടുള്ള ഓക്കാനം, വരണ്ട ഛർദ്ദി', 'ഇടവിട്ടുള്ള ഓക്കാനം, വരണ്ട ഛർദ്ദി', 'നിരന്തര ഓക്കാനം, ആവർത്തിച്ചുള്ള ഛർദ്ദി'],
     ),
   },
   {
@@ -44,16 +44,16 @@ const CIWA_ITEMS: CiwaItem[] = [
     title: { en: 'Tremor', ml: 'വിറയൽ' },
     prompt: { en: 'Arms extended, fingers spread', ml: 'കൈകൾ നീട്ടി, വിരലുകൾ വിടർത്തുക' },
     options: SCALE_0_7(
-      ['No tremor', 'Not visible, felt fingertip to fingertip', '', '', 'Moderate, with arms extended', '', '', 'Severe, even with arms not extended'],
-      ['വിറയൽ ഇല്ല', 'കാണാനില്ല, വിരൽത്തുമ്പിൽ അനുഭവപ്പെടുന്നു', '', '', 'ഇടത്തരം, കൈകൾ നീട്ടുമ്പോൾ', '', '', 'കടുത്തത്, കൈകൾ നീട്ടാതെയും'],
+      ['No tremor', 'Not visible, felt fingertip to fingertip', 'Not visible, felt fingertip to fingertip', 'Not visible, felt fingertip to fingertip', 'Moderate, with arms extended', 'Moderate, with arms extended', 'Moderate, with arms extended', 'Severe, even with arms not extended'],
+      ['വിറയൽ ഇല്ല', 'കാണാനില്ല, വിരൽത്തുമ്പിൽ അനുഭവപ്പെടുന്നു', 'കാണാനില്ല, വിരൽത്തുമ്പിൽ അനുഭവപ്പെടുന്നു', 'കാണാനില്ല, വിരൽത്തുമ്പിൽ അനുഭവപ്പെടുന്നു', 'ഇടത്തരം, കൈകൾ നീട്ടുമ്പോൾ', 'ഇടത്തരം, കൈകൾ നീട്ടുമ്പോൾ', 'ഇടത്തരം, കൈകൾ നീട്ടുമ്പോൾ', 'കടുത്തത്, കൈകൾ നീട്ടാതെയും'],
     ),
   },
   {
     id: 'sweats',
     title: { en: 'Paroxysmal sweats', ml: 'പെട്ടെന്നുള്ള വിയർപ്പ്' },
     options: SCALE_0_7(
-      ['No sweat visible', 'Barely perceptible, palms moist', '', '', 'Beads of sweat obvious on forehead', '', '', 'Drenching sweats'],
-      ['വിയർപ്പ് ഇല്ല', 'തെളിയാത്തത്, കൈപ്പത്തി നനവുള്ളത്', '', '', 'നെറ്റിയിൽ വ്യക്തമായ വിയർപ്പുതുള്ളികൾ', '', '', 'പൂർണ്ണമായും വിയർത്ത്'],
+      ['No sweat visible', 'Barely perceptible, palms moist', 'Barely perceptible, palms moist', 'Barely perceptible, palms moist', 'Beads of sweat obvious on forehead', 'Beads of sweat obvious on forehead', 'Beads of sweat obvious on forehead', 'Drenching sweats'],
+      ['വിയർപ്പ് ഇല്ല', 'തെളിയാത്തത്, കൈപ്പത്തി നനവുള്ളത്', 'തെളിയാത്തത്, കൈപ്പത്തി നനവുള്ളത്', 'തെളിയാത്തത്, കൈപ്പത്തി നനവുള്ളത്', 'നെറ്റിയിൽ വ്യക്തമായ വിയർപ്പുതുള്ളികൾ', 'നെറ്റിയിൽ വ്യക്തമായ വിയർപ്പുതുള്ളികൾ', 'നെറ്റിയിൽ വ്യക്തമായ വിയർപ്പുതുള്ളികൾ', 'പൂർണ്ണമായും വിയർത്ത്'],
     ),
   },
   {
@@ -61,16 +61,16 @@ const CIWA_ITEMS: CiwaItem[] = [
     title: { en: 'Anxiety', ml: 'ഉത്കണ്ഠ' },
     prompt: { en: 'Ask: "Do you feel nervous?"', ml: 'ചോദിക്കുക: "നിങ്ങൾക്ക് അസ്വസ്ഥത തോന്നുന്നുണ്ടോ?"' },
     options: SCALE_0_7(
-      ['No anxiety, at ease', 'Mildly anxious', '', '', 'Moderately anxious or guarded', '', '', 'Equivalent to acute panic states'],
-      ['ഉത്കണ്ഠയില്ല, സുഖകരം', 'നേരിയ ഉത്കണ്ഠ', '', '', 'ഇടത്തരം ഉത്കണ്ഠ', '', '', 'കടുത്ത പാനിക് അവസ്ഥ'],
+      ['No anxiety, at ease', 'Mildly anxious', 'Mildly anxious', 'Mildly anxious', 'Moderately anxious or guarded', 'Moderately anxious or guarded', 'Moderately anxious or guarded', 'Equivalent to acute panic states'],
+      ['ഉത്കണ്ഠയില്ല, സുഖകരം', 'നേരിയ ഉത്കണ്ഠ', 'നേരിയ ഉത്കണ്ഠ', 'നേരിയ ഉത്കണ്ഠ', 'ഇടത്തരം ഉത്കണ്ഠ', 'ഇടത്തരം ഉത്കണ്ഠ', 'ഇടത്തരം ഉത്കണ്ഠ', 'കടുത്ത പാനിക് അവസ്ഥ'],
     ),
   },
   {
     id: 'agitation',
     title: { en: 'Agitation', ml: 'ഉദ്വേഗം' },
     options: SCALE_0_7(
-      ['Normal activity', 'Somewhat more than normal activity', '', '', 'Moderately fidgety and restless', '', '', 'Paces back and forth, thrashes about'],
-      ['സാധാരണ പ്രവർത്തനം', 'സാധാരണയിൽ കൂടുതൽ', '', '', 'ഇടത്തരം അസ്വസ്ഥത', '', '', 'അങ്ങോട്ടുമിങ്ങോട്ടും നടക്കുന്നു, അസ്വസ്ഥനായി'],
+      ['Normal activity', 'Somewhat more than normal activity', 'Somewhat more than normal activity', 'Somewhat more than normal activity', 'Moderately fidgety and restless', 'Moderately fidgety and restless', 'Moderately fidgety and restless', 'Paces back and forth, thrashes about'],
+      ['സാധാരണ പ്രവർത്തനം', 'സാധാരണയിൽ കൂടുതൽ', 'സാധാരണയിൽ കൂടുതൽ', 'സാധാരണയിൽ കൂടുതൽ', 'ഇടത്തരം അസ്വസ്ഥത', 'ഇടത്തരം അസ്വസ്ഥത', 'ഇടത്തരം അസ്വസ്ഥത', 'അങ്ങോട്ടുമിങ്ങോട്ടും നടക്കുന്നു, അസ്വസ്ഥനായി'],
     ),
   },
   {
