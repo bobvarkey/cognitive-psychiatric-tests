@@ -721,6 +721,8 @@ export const AssessmentSelector = () => {
                   onSectionChange={goToSection}
                   showBack={section !== 'assessments'}
                   onBack={goBackToPrevTab}
+                  tests={assessments.map((a) => ({ key: a.key, name: a.name, subtitle: a.subtitle }))}
+                  onTestSelect={(key) => openAssessment(key as AssessmentKey)}
                 />
               </div>
 

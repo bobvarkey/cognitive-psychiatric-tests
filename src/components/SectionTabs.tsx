@@ -1,13 +1,24 @@
-import { ClipboardList, FileBarChart, Settings, ArrowLeft } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { ClipboardList, FileBarChart, Settings, ArrowLeft, FlaskConical, Search } from 'lucide-react';
 import type { Section } from '@/components/navTypes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
+
+interface TestItem {
+  key: string;
+  name: string;
+  subtitle: string;
+}
 
 interface SectionTabsProps {
   section: Section;
   onSectionChange: (s: Section) => void;
   showBack?: boolean;
   onBack?: () => void;
+  /** List of tests/assessments shown in the Tests quick-picker. */
+  tests?: TestItem[];
+  /** Called when a test is picked from the Tests quick-picker. */
+  onTestSelect?: (key: string) => void;
 }
 
 const TABS: { key: Section; en: string; ml: string; icon: React.ElementType }[] = [
@@ -17,16 +28,49 @@ const TABS: { key: Section; en: string; ml: string; icon: React.ElementType }[] 
 ];
 
 /**
- * Top tab bar for the three primary sections (Assessments / Results / Settings).
- * Replaces the section navigation that used to live in the desktop sidebar.
- * Optionally renders a "Back to previous tab" button before the tabs.
+ * Top tab bar for the primary sections (Assessments / Results / Settings) plus a
+ * "Tests" quick-picker that lists every individual test for jumping straight to
+ * any test from any page.
  */
-export const SectionTabs = ({ section, onSectionChange, showBack, onBack }: SectionTabsProps) => {
+export const SectionTabs = ({
+  section,
+  onSectionChange,
+  showBack,
+  onBack,
+  tests = [],
+  onTestSelect,
+}: SectionTabsProps) => {
   const { language } = useLanguage();
   const isMl = language === 'ml';
+  const [testsOpen, setTestsOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  // Close the picker when clicking outside it.
+  useEffect(() => {
+    if (!testsOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (pickerRef.current && !pickerRef.current.contains(e.target as Node)) {
+        setTestsOpen(false);
+        setQuery('');
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [testsOpen]);
+
+  const filtered = query.trim()
+    ? tests.filter((t) => `${t.name} ${t.subtitle}`.toLowerCase().includes(query.toLowerCase()))
+    : tests;
+
+  const pick = (key: string) => {
+    onTestSelect?.(key);
+    setTestsOpen(false);
+    setQuery('');
+  };
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+    <div ref={pickerRef} className="flex items-center gap-2 overflow-x-auto scrollbar-none relative">
       {showBack && onBack && (
         <button
           type="button"
@@ -60,7 +104,65 @@ export const SectionTabs = ({ section, onSectionChange, showBack, onBack }: Sect
             </button>
           );
         })}
+
+        {/* Tests quick-picker tab */}
+        <button
+          type="button"
+          onClick={() => setTestsOpen((o) => !o)}
+          aria-expanded={testsOpen}
+          aria-haspopup="listbox"
+          title={isMl ? 'ടെസ്റ്റുകൾ തിരഞ്ഞെടുക്കുക' : 'Pick a test'}
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-full px-3 sm:px-4 min-h-[32px] text-[13px] font-medium transition-all active:scale-95',
+            testsOpen
+              ? 'bg-primary text-primary-foreground shadow'
+              : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+          )}
+        >
+          <FlaskConical className="h-4 w-4 shrink-0" />
+          <span className="whitespace-nowrap">{isMl ? 'ടെസ്റ്റുകൾ' : 'Tests'}</span>
+        </button>
       </div>
+
+      {/* Tests dropdown */}
+      {testsOpen && (
+        <div className="absolute left-0 top-full mt-2 z-50 w-72 sm:w-80 rounded-xl border border-border bg-popover text-popover-foreground shadow-xl animate-in fade-in zoom-in-95 slide-in-from-top-2">
+          <div className="p-2 border-b border-border">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder={isMl ? 'ടെസ്റ്റ് തിരയുക...' : 'Search tests...'}
+                className="h-9 w-full rounded-lg pl-8 pr-3 text-sm bg-muted/50 outline-none focus:ring-2 focus:ring-primary/40"
+              />
+            </div>
+          </div>
+          <ul role="listbox" className="max-h-72 overflow-y-auto p-1">
+            {filtered.length === 0 && (
+              <li className="px-3 py-4 text-center text-xs text-muted-foreground italic">
+                {isMl ? 'ഒന്നും കണ്ടെത്തിയില്ല' : 'No tests found'}
+              </li>
+            )}
+            {filtered.map((t) => (
+              <li key={t.key}>
+                <button
+                  type="button"
+                  role="option"
+                  onClick={() => pick(t.key)}
+                  className="w-full flex flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left hover:bg-accent transition-colors"
+                >
+                  <span className="text-[13px] font-medium text-foreground">{t.name}</span>
+                  {t.subtitle && (
+                    <span className="text-[11px] text-muted-foreground truncate w-full">{t.subtitle}</span>
+                  )}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
