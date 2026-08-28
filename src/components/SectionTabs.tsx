@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ClipboardList, FileBarChart, Settings, ArrowLeft, FlaskConical, Search } from 'lucide-react';
+import { Settings, ArrowLeft, FlaskConical, Search } from 'lucide-react';
 import type { Section } from '@/components/navTypes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -8,6 +8,8 @@ interface TestItem {
   key: string;
   name: string;
   subtitle: string;
+  /** Primary group/category label in English and Malayalam, e.g. 'Cognitive'. */
+  group?: { en: string; ml: string };
 }
 
 interface SectionTabsProps {
@@ -22,15 +24,12 @@ interface SectionTabsProps {
 }
 
 const TABS: { key: Section; en: string; ml: string; icon: React.ElementType }[] = [
-  { key: 'assessments', en: 'Assessments', ml: 'വിലയിരുത്തലുകൾ', icon: ClipboardList },
-  { key: 'results', en: 'Results', ml: 'ഫലങ്ങൾ', icon: FileBarChart },
   { key: 'settings', en: 'Settings', ml: 'ക്രമീകരണങ്ങൾ', icon: Settings },
 ];
 
 /**
- * Top tab bar for the primary sections (Assessments / Results / Settings) plus a
- * "Tests" quick-picker that lists every individual test for jumping straight to
- * any test from any page.
+ * Top tab bar: a "Tests" quick-picker that lists every individual test for
+ * jumping straight to any test from any page, plus the Settings tab.
  */
 export const SectionTabs = ({
   section,
@@ -60,8 +59,19 @@ export const SectionTabs = ({
   }, [testsOpen]);
 
   const filtered = query.trim()
-    ? tests.filter((t) => `${t.name} ${t.subtitle}`.toLowerCase().includes(query.toLowerCase()))
+    ? tests.filter((t) => `${t.name} ${t.subtitle} ${t.group?.en ?? ''}`.toLowerCase().includes(query.toLowerCase()))
     : tests;
+
+  // Group tests by their primary category so group names are clearly visible.
+  const grouped = filtered.reduce<{ label: { en: string; ml: string } | undefined; items: TestItem[] }[]>((acc, t) => {
+    const last = acc[acc.length - 1];
+    if (last && (last.label?.en ?? '') === (t.group?.en ?? '')) {
+      last.items.push(t);
+    } else {
+      acc.push({ label: t.group, items: [t] });
+    }
+    return acc;
+  }, []);
 
   const pick = (key: string) => {
     onTestSelect?.(key);
@@ -140,24 +150,35 @@ export const SectionTabs = ({
             </div>
           </div>
           <ul role="listbox" className="max-h-72 overflow-y-auto p-1">
-            {filtered.length === 0 && (
+            {grouped.length === 0 && (
               <li className="px-3 py-4 text-center text-xs text-muted-foreground italic">
                 {isMl ? 'ഒന്നും കണ്ടെത്തിയില്ല' : 'No tests found'}
               </li>
             )}
-            {filtered.map((t) => (
-              <li key={t.key}>
-                <button
-                  type="button"
-                  role="option"
-                  onClick={() => pick(t.key)}
-                  className="w-full flex flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left hover:bg-accent transition-colors"
-                >
-                  <span className="text-[13px] font-medium text-foreground">{t.name}</span>
-                  {t.subtitle && (
-                    <span className="text-[11px] text-muted-foreground truncate w-full">{t.subtitle}</span>
-                  )}
-                </button>
+            {grouped.map((group, gi) => (
+              <li key={gi}>
+                {group.label && (
+                  <div className="px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-primary">
+                    {isMl ? group.label.ml : group.label.en}
+                  </div>
+                )}
+                <ul>
+                  {group.items.map((t) => (
+                    <li key={t.key}>
+                      <button
+                        type="button"
+                        role="option"
+                        onClick={() => pick(t.key)}
+                        className="w-full flex flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left hover:bg-accent transition-colors"
+                      >
+                        <span className="text-[13px] font-medium text-foreground">{t.name}</span>
+                        {t.subtitle && (
+                          <span className="text-[11px] text-muted-foreground truncate w-full">{t.subtitle}</span>
+                        )}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ul>

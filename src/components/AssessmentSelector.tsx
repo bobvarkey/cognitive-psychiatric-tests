@@ -719,9 +719,17 @@ export const AssessmentSelector = () => {
                 <SectionTabs
                   section={section}
                   onSectionChange={goToSection}
-                  showBack={section !== 'assessments'}
+                  showBack
                   onBack={goBackToPrevTab}
-                  tests={assessments.map((a) => ({ key: a.key, name: a.name, subtitle: a.subtitle }))}
+                  tests={assessments.map((a) => ({
+                    key: a.key,
+                    name: a.name,
+                    subtitle: a.subtitle,
+                    group: (() => {
+                      const primary = (a.category as Category[]).find((c) => c !== 'all') ?? 'cognitive';
+                      return categoryLabels[primary] ? { en: categoryLabels[primary].en, ml: categoryLabels[primary].ml } : undefined;
+                    })(),
+                  }))}
                   onTestSelect={(key) => openAssessment(key as AssessmentKey)}
                 />
               </div>
@@ -1043,6 +1051,16 @@ export const AssessmentSelector = () => {
       <MobileBottomNav
         section={section}
         onSectionChange={goToSection}
+        tests={assessments.map((a) => ({
+          key: a.key,
+          name: a.name,
+          subtitle: a.subtitle,
+          group: (() => {
+            const primary = (a.category as Category[]).find((c) => c !== 'all') ?? 'cognitive';
+            return categoryLabels[primary] ? { en: categoryLabels[primary].en, ml: categoryLabels[primary].ml } : undefined;
+          })(),
+        }))}
+        onTestSelect={(key) => openAssessment(key as AssessmentKey)}
       />
 
 
