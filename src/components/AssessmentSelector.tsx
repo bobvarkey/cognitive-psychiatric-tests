@@ -113,6 +113,17 @@ import { SectionTabs } from './SectionTabs';
 import { ResultsView } from './ResultsView';
 import { SettingsView } from './SettingsView';
 import cognitoHero from '@/assets/cognito-hero.png';
+import catCognitive from '@/assets/categories/cognitive.jpg';
+import catMood from '@/assets/categories/mood.jpg';
+import catPersonality from '@/assets/categories/personality.jpg';
+import catSubstance from '@/assets/categories/substance.jpg';
+import catMovement from '@/assets/categories/movement.jpg';
+import catEpilepsy from '@/assets/categories/epilepsy.jpg';
+import catSleep from '@/assets/categories/sleep.jpg';
+import catAdverse from '@/assets/categories/adverse.jpg';
+import catPsychosis from '@/assets/categories/psychosis.jpg';
+import catFibromyalgia from '@/assets/categories/fibromyalgia.jpg';
+import catBrainfog from '@/assets/categories/brainfog.jpg';
 
 
 export type AssessmentKey =
@@ -939,22 +950,46 @@ export const AssessmentSelector = () => {
                     };
 
 
+                    const categoryBannerImage: Partial<Record<Exclude<Category, 'all'>, string>> = {
+                      cognitive: catCognitive,
+                      mood: catMood,
+                      personality: catPersonality,
+                      substance: catSubstance,
+                      movement: catMovement,
+                      epilepsy: catEpilepsy,
+                      sleep: catSleep,
+                      adverse: catAdverse,
+                      psychosis: catPsychosis,
+                      fibromyalgia: catFibromyalgia,
+                      brainfog: catBrainfog,
+                    };
+
                     const renderCategoryBanner = (cat: Exclude<Category, 'all'>, count: number) => {
                       const CatIcon = categoryLabels[cat].icon;
+                      const bannerImg = categoryBannerImage[cat];
                       return (
-                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-32 sm:h-40 dark:shadow-inner dark:shadow-primary/5`}>
-                          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent" />
+                        <div className={`relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br ${categoryAccent[cat]} mb-5 h-40 sm:h-48 dark:shadow-inner dark:shadow-primary/5`}>
+                          {bannerImg && (
+                            <img
+                              src={bannerImg}
+                              alt=""
+                              aria-hidden
+                              className="absolute inset-0 w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/20" />
                           <div className="relative h-full flex flex-col justify-end p-6 sm:p-8">
                             <div className="flex items-center gap-2 mb-2">
-                              <CatIcon className="h-6 w-6 text-primary shrink-0" />
-                              <h3 className="text-2xl sm:text-3xl font-bold text-foreground">
+                              <CatIcon className="h-6 w-6 text-white shrink-0" />
+                              <h3 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">
                                 {language === 'en' ? categoryLabels[cat].en : categoryLabels[cat].ml}
                               </h3>
                               <span className="ml-auto text-sm font-semibold px-3 py-1 rounded-full bg-primary/90 text-white tabular-nums">
                                 {count} assessments
                               </span>
                             </div>
-                            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl">
+                            <p className="text-sm sm:text-base text-white/90 max-w-2xl drop-shadow">
                               {language === 'en'
                                 ? (({
                                     cognitive: 'Memory, attention, executive function and dementia screens.',
