@@ -149,20 +149,20 @@ export const MobileBottomNav = ({
               {grouped.map((group, gi) => (
                 <li key={gi}>
                   {group.label && (
-                    <div className="px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-primary">
+                    <div className="px-3 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-primary truncate w-full max-w-full">
                       {isMl ? group.label.ml : group.label.en}
                     </div>
                   )}
                   <ul>
                     {group.items.map((t) => (
-                      <li key={t.key}>
+                      <li key={t.key} className="w-full min-w-0">
                         <button
                           type="button"
                           role="option"
                           onClick={() => pick(t.key)}
-                          className="w-full flex flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left hover:bg-accent transition-colors"
+                          className="w-full flex flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left hover:bg-accent transition-colors min-w-0"
                         >
-                          <span className="text-[13px] font-medium text-foreground">{t.name}</span>
+                          <span className="text-[13px] font-medium text-foreground break-words w-full">{t.name}</span>
                           {t.subtitle && (
                             <span className="text-[11px] text-muted-foreground truncate w-full">{t.subtitle}</span>
                           )}
