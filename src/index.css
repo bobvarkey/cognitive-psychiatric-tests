@@ -544,6 +544,20 @@ body * {
   user-select: text !important;
 }
 
+/* Anti-horizontal-slide: let flex/grid children shrink and wrap long text
+   instead of forcing the page (or an inner scroller) sideways. This fixes
+   radio/checkbox option labels and other long strings overflowing their row. */
+#root .flex > *,
+#root .grid > * {
+  min-width: 0;
+}
+
+#root .flex > *,
+#root .grid > * {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    Forced readability override — pure white background + black text app-wide.
    Placed last so it wins over the light/dark toggle and all theme variants,

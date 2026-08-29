@@ -290,9 +290,9 @@ export const SubstanceAssessment = ({ onBack, initialTab = 'ciwa' }: SubstanceAs
                       {item.options
                         .filter((o) => (isMl ? o.ml.replace(/^\d+ – /, '') : o.en.replace(/^\d+ – /, '')))
                         .map((o) => (
-                          <div key={o.value} className="flex items-center gap-2">
-                            <RadioGroupItem value={o.value.toString()} id={`${item.id}-${o.value}`} />
-                            <Label htmlFor={`${item.id}-${o.value}`} className="text-xs font-normal cursor-pointer">
+                          <div key={o.value} className="flex items-start gap-2 min-w-0">
+                            <RadioGroupItem value={o.value.toString()} id={`${item.id}-${o.value}`} className="mt-0.5 shrink-0" />
+                            <Label htmlFor={`${item.id}-${o.value}`} className="text-xs font-normal cursor-pointer min-w-0 break-words leading-snug">
                               {isMl ? o.ml : o.en}
                             </Label>
                           </div>
@@ -363,9 +363,9 @@ export const SubstanceAssessment = ({ onBack, initialTab = 'ciwa' }: SubstanceAs
                       className="mt-2 grid gap-1"
                     >
                       {item.options.map((o) => (
-                        <div key={o.value} className="flex items-center gap-2">
-                          <RadioGroupItem value={o.value.toString()} id={`sds-${item.id}-${o.value}`} />
-                          <Label htmlFor={`sds-${item.id}-${o.value}`} className="text-xs font-normal cursor-pointer">
+                        <div key={o.value} className="flex items-start gap-2 min-w-0">
+                          <RadioGroupItem value={o.value.toString()} id={`sds-${item.id}-${o.value}`} className="mt-0.5 shrink-0" />
+                          <Label htmlFor={`sds-${item.id}-${o.value}`} className="text-xs font-normal cursor-pointer min-w-0 break-words leading-snug">
                             {o.value} – {isMl ? o.ml : o.en}
                           </Label>
                         </div>
