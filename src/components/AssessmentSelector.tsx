@@ -109,6 +109,7 @@ import { AdBanner } from './AdBanner';
 import { LanguageToggle } from './LanguageToggle';
 import { MobileBottomNav } from './MobileBottomNav';
 import { SectionTabs } from './SectionTabs';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 import { ResultsView } from './ResultsView';
 import { SettingsView } from './SettingsView';
@@ -1047,22 +1048,31 @@ export const AssessmentSelector = () => {
                       );
                     }
 
-                    // Browsing all → grouped by category with banners
+                    // Browsing all → grouped by category, each in a collapsible accordion
+                    // (collapsed by default — assessments only appear when the heading is clicked)
                     return (
-                      <div className="space-y-6">
+                      <Accordion type="multiple" className="space-y-4">
                         {categoryOrder.map((cat) => {
                           const items = assessments.filter((a) => a.category.includes(cat));
                           if (items.length === 0) return null;
                           return (
-                            <section key={cat} aria-labelledby={`cat-${cat}`}>
-                              {renderCategoryBanner(cat, items.length)}
-                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                                {items.map((a, idx) => renderTile(a, idx, false))}
-                              </div>
-                            </section>
+                            <AccordionItem
+                              key={cat}
+                              value={cat}
+                              className="rounded-2xl border border-border bg-card overflow-hidden"
+                            >
+                              <AccordionTrigger className="px-0 hover:no-underline">
+                                {renderCategoryBanner(cat, items.length)}
+                              </AccordionTrigger>
+                              <AccordionContent className="px-4 pb-4">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                  {items.map((a, idx) => renderTile(a, idx, false))}
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
                           );
                         })}
-                      </div>
+                      </Accordion>
                     );
                   })()}
                 </TooltipProvider>
