@@ -739,6 +739,16 @@ export const AssessmentSelector = () => {
                     {language === 'en' ? categoryLabels[activeCategory].en : categoryLabels[activeCategory].ml}
                   </span>
                 )}
+                {section === 'assessments' && (
+                  <span
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary border border-primary/20"
+                  >
+                    <ClipboardCheck className="h-3.5 w-3.5" />
+                    {language === 'en'
+                      ? `${assessments.length} tests`
+                      : `${assessments.length} പരീക്ഷണങ്ങൾ`}
+                  </span>
+                )}
               </div>
 
               {/* Tab bar — switch between sections, with a back-to-previous-tab button */}
