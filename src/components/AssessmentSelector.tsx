@@ -314,7 +314,7 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   adverse: { en: 'Adverse', ml: 'പ്രതികൂലം', icon: Pill },
   movement: { en: 'Movement', ml: 'ചലനം', icon: Activity },
   epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
-  substance: { en: 'Substance & Internet', ml: 'ലഹരി & ഇന്റർനെറ്റ്', icon: FlaskConical },
+  substance: { en: 'Substance & Internet Abuse', ml: 'ലഹരി & ഇന്റർനെറ്റ് ദുരുപയോഗം', icon: FlaskConical },
   sleep: { en: 'Sleep', ml: 'ഉറക്കം', icon: Pause },
   fibromyalgia: { en: 'Fibromyalgia', ml: 'ഫൈബ്രോമിയൽജിയ', icon: Heart },
   brainfog: { en: 'Brain Fog', ml: 'ബ്രെയിൻ ഫോഗ്', icon: Cloud },
@@ -431,6 +431,11 @@ export const AssessmentSelector = () => {
     }
     return filtered;
   }, [activeCategory, searchQuery, subscription?.priceId]);
+
+  // Substance category has 11 tools — use 6 columns so they fit in 2 lines (6+5).
+  const gridClass = activeCategory === 'substance'
+    ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4'
+    : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4';
 
   // Search the cognitive syndromes & frontal-lobe-tests reference library
   const syndromeMatches = useMemo(() => {
@@ -1066,7 +1071,7 @@ export const AssessmentSelector = () => {
                               activeCategory as Exclude<Category, 'all'>,
                               filteredAssessments.length,
                             )}
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                          <div className={gridClass}>
                             {filteredAssessments.map((a, idx) => renderTile(a, idx, false))}
                           </div>
                         </>
@@ -1090,7 +1095,9 @@ export const AssessmentSelector = () => {
                                 {renderCategoryBanner(cat, items.length)}
                               </AccordionTrigger>
                               <AccordionContent className="px-4 pb-4">
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                <div className={cat === 'substance'
+                                  ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4'
+                                  : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4'}>
                                   {items.map((a, idx) => renderTile(a, idx, false))}
                                 </div>
                               </AccordionContent>
