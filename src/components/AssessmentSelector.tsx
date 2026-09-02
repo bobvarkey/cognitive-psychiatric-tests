@@ -76,6 +76,8 @@ import { AsrsAssessment } from '@/components/AsrsAssessment';
 import { CataplexyAssessment } from '@/components/CataplexyAssessment';
 import { SdqAssessment } from '@/components/SdqAssessment';
 import { AuditAssessment } from '@/components/AuditAssessment';
+import { AuditCAssessment } from '@/components/AuditCAssessment';
+import { AlcoholSymptomChecklist } from '@/components/AlcoholSymptomChecklist';
 import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { BrainFogAssessment } from '@/components/BrainFogAssessment';
 import { LateOnsetPsychosisAssessment } from '@/components/LateOnsetPsychosisAssessment';
@@ -143,6 +145,7 @@ export type AssessmentKey =
   | 'adhd-outpatient' | 'opd-psych-eval' | 'fast' | 'cdr'
   | 'late-onset-psychosis' | 'pid5-unified' | 'audit' | 'alcohol-units'
   | 'ciwa-ar' | 'sds' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse'
+  | 'audit-c' | 'alcohol-symptom-checklist'
   | 'chs' | 'fibromyalgia' | 'brain-fog' | 'somaticDelusions';
 
 export type Category =
@@ -212,6 +215,8 @@ export const assessments: AssessmentInfo[] = [
   // ─── Substance Abuse & PUI ───
   { key: 'cage', name: 'CAGE', subtitle: 'Alcohol Screen', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'CAGE — 4-item alcohol use screen (Cut-down, Annoyed, Guilty, Eye-opener). Score ≥ 2 = clinically significant.' },
   { key: 'audit', name: 'AUDIT', subtitle: 'Alcohol Use Disorders', icon: ClipboardCheck, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'AUDIT — Alcohol Use Disorders Identification Test (WHO); 10-item screen for hazardous drinking, harmful use, and alcohol dependence. Score 0-40 with zone-based intervention guidance.' },
+  { key: 'audit-c', name: 'AUDIT-C', subtitle: 'Alcohol Consumption Screen', icon: ClipboardCheck, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'AUDIT-C — 3-item consumption screen for unhealthy alcohol use and heavy drinking. Sex-specific cut-offs: ≥4 for men, ≥3 for women. Score 0-12.' },
+  { key: 'alcohol-symptom-checklist', name: 'Alcohol Symptom Checklist', subtitle: 'DSM-5 AUD Criteria', icon: ClipboardList, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'Alcohol Symptom Checklist — screens the 11 DSM-5 criteria for Alcohol Use Disorder over the past 12 months. Severity: 2-3 Mild, 4-5 Moderate, 6+ Severe.' },
   { key: 'alcohol-units', name: 'Alcohol Units Calculator', subtitle: 'UK Units & Weekly Risk', icon: Gauge, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'Calculate UK alcohol units from drink volume and ABV. Estimates weekly intake against the 14-unit low-risk guideline with quick presets for common drinks.' },
   { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['substance'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
   { key: 'ciwa-ar', name: 'CIWA-Ar', subtitle: 'Alcohol Withdrawal', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'CIWA-Ar quantifies severity of alcohol withdrawal (10 items, 0–67).' },
@@ -289,6 +294,8 @@ const referenceKeyByAssessment: Partial<Record<AssessmentKey, string>> = {
   cataplexy: 'cataplexy',
   sdq: 'sdq',
   audit: 'audit',
+  'audit-c': 'auditC',
+  'alcohol-symptom-checklist': 'alcoholSymptomChecklist',
   'ciwa-ar': 'ciwaAr',
   sds: 'sds',
 };
@@ -551,6 +558,8 @@ export const AssessmentSelector = () => {
       'sudep-7': true, 'sudep-safety': true,
       isi: true, berlin: true, psqi: true, fosq: true, irls: true, 'asrs-sleep': true, cataplexy: true, sdq: true,
       audit: true,
+      'audit-c': true,
+      'alcohol-symptom-checklist': true,
       'alcohol-units': true,
       'smds-sf': true,
       'antipsychotic-metabolic': true,
@@ -636,6 +645,8 @@ export const AssessmentSelector = () => {
         cataplexy: CataplexyAssessment,
         sdq: SdqAssessment,
         audit: AuditAssessment,
+        'audit-c': AuditCAssessment,
+        'alcohol-symptom-checklist': AlcoholSymptomChecklist,
         'alcohol-units': AlcoholUnitsCalculator,
         'smds-sf': SmdsSfAssessment,
         'antipsychotic-metabolic': AntipsychoticMetabolicAssessment,

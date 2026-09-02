@@ -24,6 +24,16 @@ export const ASSESSMENT_INTERPRETATIONS: Record<string, AssessmentInterpretation
     psychometrics: 'At a cut-off of 8, sensitivity 92% and specificity 94% for detecting hazardous/harmful drinking across primary care populations (Saunders 1993; Reinert & Allen 2007).',
     clinicalAction: 'For scores ≥ 8 deliver brief intervention; for ≥ 16 add structured follow-up; for ≥ 20 refer to addiction services and consider pharmacotherapy (naltrexone, acamprosate) plus relapse-prevention counselling.',
   },
+  auditC: {
+    interpretation: 'Sex-specific cut-offs for unhealthy/heavy drinking: score ≥ 4 for men and ≥ 3 for women indicate a positive screen. Score 0-12.',
+    psychometrics: 'AUDIT-C has sensitivity ~98% and specificity ~57% for heavy drinking at standard cut-offs (Bush 1998); commonly combined with a higher cut-off (e.g. ≥ 5) to improve specificity (~85%).',
+    clinicalAction: 'Positive screens warrant the full 10-item AUDIT and clinical assessment for Alcohol Use Disorder. Negative screens: advise low-risk alcohol consumption and reassess periodically.',
+  },
+  alcoholSymptomChecklist: {
+    interpretation: 'Count of 11 DSM-5 criteria endorsed over the past 12 months. 0-1: none. 2-3: Mild AUD. 4-5: Moderate. 6+: Severe.',
+    psychometrics: 'DSM-5 AUD criteria have good construct validity; symptom count maps directly to specifiers of mild/moderate/severe severity (APA 2013).',
+    clinicalAction: 'For 2-3 symptoms assess severity, drinking pattern, withdrawal risk and treatment needs. For 4+ offer/arrange evidence-based treatment and assess withdrawal and medical risks.',
+  },
   cows: {
     interpretation: '5–12: mild withdrawal. 13–24: moderate. 25–36: moderately severe. > 36: severe withdrawal.',
     psychometrics: 'COWS is a validated 11-item clinician-rated instrument with high inter-rater reliability (ICC > 0.9) used to time buprenorphine induction (Wesson & Ling 2003).',
