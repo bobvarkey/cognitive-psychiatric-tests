@@ -34,6 +34,11 @@ export const ASSESSMENT_INTERPRETATIONS: Record<string, AssessmentInterpretation
     psychometrics: 'DSM-5 AUD criteria have good construct validity; symptom count maps directly to specifiers of mild/moderate/severe severity (APA 2013).',
     clinicalAction: 'For 2-3 symptoms assess severity, drinking pattern, withdrawal risk and treatment needs. For 4+ offer/arrange evidence-based treatment and assess withdrawal and medical risks.',
   },
+  alcoholUseScreeningApproach: {
+    interpretation: 'USPSTF approach: screen adults for unhealthy alcohol use (AUDIT-C or NIAAA single question). AUDIT-C positive ≥4 (men) / ≥3 (women); NIAAA positive if ≥1 heavy-drinking episode in the past year. Negative screens: advise safe consumption (≤2 drinks/24h men, ≤1 women; none with liver disease). Positive screens: assess for AUD via DSM-5-TR checklist.',
+    psychometrics: 'Based on USPSTF 2018 recommendation (grade B) for alcohol misuse screening and brief behavioral counseling interventions in adults 18+ in primary care (Bradley, Rehm, Naimi et al., Am J Med 2021;134:1014-1030).',
+    clinicalAction: 'For heavy drinking without AUD: brief behavioral counseling (discuss risks, motivational interviewing, goal setting, follow-up). For AUD: advise gradual reduction/abstinence, assess for medically supervised withdrawal, offer evidence-based treatment (medications, support groups) and arrange follow-up.',
+  },
   cows: {
     interpretation: '5–12: mild withdrawal. 13–24: moderate. 25–36: moderately severe. > 36: severe withdrawal.',
     psychometrics: 'COWS is a validated 11-item clinician-rated instrument with high inter-rater reliability (ICC > 0.9) used to time buprenorphine induction (Wesson & Ling 2003).',

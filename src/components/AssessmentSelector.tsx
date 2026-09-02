@@ -78,6 +78,7 @@ import { SdqAssessment } from '@/components/SdqAssessment';
 import { AuditAssessment } from '@/components/AuditAssessment';
 import { AuditCAssessment } from '@/components/AuditCAssessment';
 import { AlcoholSymptomChecklist } from '@/components/AlcoholSymptomChecklist';
+import { AlcoholUseScreeningApproach } from '@/components/AlcoholUseScreeningApproach';
 import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { BrainFogAssessment } from '@/components/BrainFogAssessment';
 import { LateOnsetPsychosisAssessment } from '@/components/LateOnsetPsychosisAssessment';
@@ -97,7 +98,7 @@ import {
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
   ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
-  Cloud, Clock, ShieldAlert,
+  Cloud, Clock, ShieldAlert, Map,
 } from 'lucide-react';
 import { MiniAppSearch, GlossaryDialog, ModeToggle } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
@@ -145,7 +146,7 @@ export type AssessmentKey =
   | 'adhd-outpatient' | 'opd-psych-eval' | 'fast' | 'cdr'
   | 'late-onset-psychosis' | 'pid5-unified' | 'audit' | 'alcohol-units'
   | 'ciwa-ar' | 'sds' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse'
-  | 'audit-c' | 'alcohol-symptom-checklist'
+  | 'audit-c' | 'alcohol-symptom-checklist' | 'alcohol-screening-approach'
   | 'chs' | 'fibromyalgia' | 'brain-fog' | 'somaticDelusions';
 
 export type Category =
@@ -217,6 +218,7 @@ export const assessments: AssessmentInfo[] = [
   { key: 'audit', name: 'AUDIT', subtitle: 'Alcohol Use Disorders', icon: ClipboardCheck, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'AUDIT — Alcohol Use Disorders Identification Test (WHO); 10-item screen for hazardous drinking, harmful use, and alcohol dependence. Score 0-40 with zone-based intervention guidance.' },
   { key: 'audit-c', name: 'AUDIT-C', subtitle: 'Alcohol Consumption Screen', icon: ClipboardCheck, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'AUDIT-C — 3-item consumption screen for unhealthy alcohol use and heavy drinking. Sex-specific cut-offs: ≥4 for men, ≥3 for women. Score 0-12.' },
   { key: 'alcohol-symptom-checklist', name: 'Alcohol Symptom Checklist', subtitle: 'DSM-5 AUD Criteria', icon: ClipboardList, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'Alcohol Symptom Checklist — screens the 11 DSM-5 criteria for Alcohol Use Disorder over the past 12 months. Severity: 2-3 Mild, 4-5 Moderate, 6+ Severe.' },
+  { key: 'alcohol-screening-approach', name: 'Approach to Alcohol Screening', subtitle: 'USPSTF Algorithm', icon: Map, gradient: 'from-teal-600 to-emerald-700', category: ['substance'], description: 'USPSTF approach to alcohol use screening — AUDIT-C or NIAAA single question, result interpretation, safe-consumption advice, and AUD assessment/treatment pathway (Am J Med 2021).' },
   { key: 'alcohol-units', name: 'Alcohol Units Calculator', subtitle: 'UK Units & Weekly Risk', icon: Gauge, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'Calculate UK alcohol units from drink volume and ABV. Estimates weekly intake against the 14-unit low-risk guideline with quick presets for common drinks.' },
   { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['substance'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
   { key: 'ciwa-ar', name: 'CIWA-Ar', subtitle: 'Alcohol Withdrawal', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'CIWA-Ar quantifies severity of alcohol withdrawal (10 items, 0–67).' },
@@ -560,6 +562,7 @@ export const AssessmentSelector = () => {
       audit: true,
       'audit-c': true,
       'alcohol-symptom-checklist': true,
+      'alcohol-screening-approach': true,
       'alcohol-units': true,
       'smds-sf': true,
       'antipsychotic-metabolic': true,
@@ -647,6 +650,7 @@ export const AssessmentSelector = () => {
         audit: AuditAssessment,
         'audit-c': AuditCAssessment,
         'alcohol-symptom-checklist': AlcoholSymptomChecklist,
+        'alcohol-screening-approach': AlcoholUseScreeningApproach,
         'alcohol-units': AlcoholUnitsCalculator,
         'smds-sf': SmdsSfAssessment,
         'antipsychotic-metabolic': AntipsychoticMetabolicAssessment,
