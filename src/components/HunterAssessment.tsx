@@ -287,10 +287,10 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         </Card>
 
         {/* Step 2: Clinical criteria */}
-        <Card className="mb-6 bg-slate-900 border-border text-white">
+        <Card className="mb-6 bg-black border-border text-white">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-              <AlertTriangle className="h-5 w-5 text-amber-700 dark:text-amber-400" />
+            <CardTitle className="text-lg flex items-center gap-2 text-white">
+              <AlertTriangle className="h-5 w-5 text-amber-400" />
               Step 2 — Clinical criteria (≥ 1 required)
             </CardTitle>
           </CardHeader>
@@ -300,15 +300,15 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
                 <label
                   key={c.key}
                   htmlFor={c.key}
-                  className="flex items-start gap-3 p-4 rounded-lg border border-border bg-slate-800/60 cursor-pointer hover:bg-slate-800 transition-colors"
+                  className="flex items-start gap-3 p-4 rounded-lg border border-white/20 bg-black cursor-pointer hover:bg-slate-900 transition-colors"
                 >
                   <Checkbox
                     id={c.key}
                     checked={criteria[c.key]}
                     onCheckedChange={() => toggleCriterion(c.key)}
-                    className="mt-0.5 border-slate-400 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600"
+                    className="mt-0.5 border-white/60 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600"
                   />
-                  <span className="text-base font-medium leading-relaxed text-foreground">{c.label}</span>
+                  <span className="text-base font-medium leading-relaxed text-white">{c.label}</span>
                 </label>
               ))}
             </div>
