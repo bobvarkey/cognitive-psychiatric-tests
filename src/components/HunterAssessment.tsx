@@ -242,10 +242,10 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         </Card>
 
         {/* Step 1: Exposure */}
-        <Card className="mb-6 bg-slate-900 border-border text-white">
+        <Card className="mb-6 bg-black border-border text-white">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-              <Pill className="h-5 w-5 text-rose-700 dark:text-rose-400" />
+            <CardTitle className="text-lg flex items-center gap-2 text-white">
+              <Pill className="h-5 w-5 text-rose-400" />
               Step 1 — Recent serotonergic exposure?
             </CardTitle>
             <CardDescription className="text-slate-300 text-base">
@@ -256,7 +256,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                className={exposure === true ? 'bg-rose-600 hover:bg-rose-700 border-rose-600 text-white' : 'bg-slate-800 border-input text-white hover:bg-slate-700 hover:text-white'}
+                className={exposure === true ? 'bg-rose-600 hover:bg-rose-700 border-rose-600 text-white' : 'bg-black border-white/30 text-white hover:bg-slate-900 hover:text-white'}
                 onClick={() => setExposure(true)}
               >
                 <CheckCircle2 className="h-4 w-4 mr-2" />
@@ -264,7 +264,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
               </Button>
               <Button
                 variant="outline"
-                className={exposure === false ? 'bg-emerald-600 hover:bg-emerald-700 border-emerald-600 text-white' : 'bg-slate-800 border-input text-white hover:bg-slate-700 hover:text-white'}
+                className={exposure === false ? 'bg-emerald-600 hover:bg-emerald-700 border-emerald-600 text-white' : 'bg-black border-white/30 text-white hover:bg-slate-900 hover:text-white'}
                 onClick={() => setExposure(false)}
               >
                 <XCircle className="h-4 w-4 mr-2" />
@@ -272,8 +272,8 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
               </Button>
             </div>
 
-            <div className="rounded-lg border border-border bg-slate-800/60 p-4">
-              <p className="text-sm font-semibold mb-2 text-foreground">Exposure clarifications</p>
+            <div className="rounded-lg border border-white/20 bg-black p-4">
+              <p className="text-sm font-semibold mb-2 text-white">Exposure clarifications</p>
               <ul className="list-disc pl-5 space-y-1 text-sm text-slate-200">
                 {exposureClarifications.map((c) => (
                   <li key={c}>{c}</li>
@@ -317,10 +317,10 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         </Card>
 
         {/* Implicated agents */}
-        <Card className="mb-6 bg-slate-900 border-border text-white">
+        <Card className="mb-6 bg-black border-border text-white">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-              <Pill className="h-5 w-5 text-indigo-700 dark:text-indigo-400" />
+            <CardTitle className="text-lg flex items-center gap-2 text-white">
+              <Pill className="h-5 w-5 text-indigo-400" />
               Implicated serotonergic agent(s) — tick all that apply
             </CardTitle>
             <CardDescription className="text-slate-300 text-base">
@@ -329,8 +329,8 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
           </CardHeader>
           <CardContent className="space-y-4">
             {serotonergicAgents.map((group) => (
-              <div key={group.mechanism} className="rounded-lg border border-border p-3 bg-slate-800/40">
-                <p className="text-base font-semibold mb-3 text-foreground">{group.mechanism}</p>
+              <div key={group.mechanism} className="rounded-lg border border-white/20 p-3 bg-black">
+                <p className="text-base font-semibold mb-3 text-white">{group.mechanism}</p>
 
                 {group.drugs.length > 0 && (
                   <div className="space-y-2">
@@ -442,10 +442,10 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         </Card>
 
         {/* Treatment options */}
-        <Card className="mb-6 bg-slate-900 border-border text-white">
+        <Card className="mb-6 bg-black border-border text-white">
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2 text-foreground">
-              <Stethoscope className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
+            <CardTitle className="text-lg flex items-center gap-2 text-white">
+              <Stethoscope className="h-5 w-5 text-emerald-400" />
               Treatment options by severity
             </CardTitle>
             <CardDescription className="text-slate-300 text-base">
@@ -454,9 +454,9 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
           </CardHeader>
           <CardContent className="space-y-4">
             {treatmentOptions.map((tier) => (
-              <div key={tier.severity} className="rounded-lg border border-border bg-slate-800/60 p-4">
+              <div key={tier.severity} className="rounded-lg border border-white/20 bg-black p-4">
                 <p className={`text-base font-semibold mb-2 ${tier.tone}`}>{tier.severity}</p>
-                <ul className="list-disc pl-5 space-y-1 text-sm text-foreground">
+                <ul className="list-disc pl-5 space-y-1 text-sm text-white">
                   {tier.items.map((it) => (
                     <li key={it}>{it}</li>
                   ))}
@@ -467,9 +467,9 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
         </Card>
 
         {/* Export */}
-        <Card className="mb-6 bg-slate-900 border-border text-white">
+        <Card className="mb-6 bg-black border-border text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="text-lg text-foreground">Export / final text</CardTitle>
+            <CardTitle className="text-lg text-white">Export / final text</CardTitle>
             <Button onClick={copyExport} variant="outline" size="sm" className="bg-slate-800 border-input text-white hover:bg-slate-700 hover:text-white gap-2">
               {copiedExport ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />} {copiedExport ? 'Copied' : 'Copy all'}
             </Button>
