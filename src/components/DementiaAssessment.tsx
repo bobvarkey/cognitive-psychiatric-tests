@@ -374,7 +374,7 @@ export const DementiaAssessment: React.FC<DementiaAssessmentProps> = ({ onBack }
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="behav5" className="w-full">
-              <TabsList className="grid w-full grid-cols-8 mb-6">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-6">
                 <TabsTrigger value="behav5" className="text-xs md:text-sm">
                   <AlertTriangle className="h-4 w-4 mr-1 hidden md:inline" />
                   BEHAV5+
