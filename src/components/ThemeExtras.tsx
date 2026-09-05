@@ -94,7 +94,7 @@ const GLOSSARY_TERMS: { term: string; definition: string }[] = [
   { term: 'Clonal Pluralization of the Self', definition: 'Delusional belief that there are multiple identical physical and psychological copies of oneself.' },
   { term: 'Delusional Autoscopy', definition: 'Out-of-body experience as a delusional belief of seeing oneself from outside the body.' },
   { term: 'Mirrored-Self Misidentification', definition: 'Delusional belief that one\'s mirror reflection is another person.' },
-  { term: 'Reduplicative Paramnesia', definition: 'Delusional belief that a familiar person, place, or object has been duplicated.' },
+  { term: 'Reduplicative Paramnesia', definition: 'Delusional misidentification of place (delusional misidentification syndrome of place): the core belief that “this is not my real home; my real home is elsewhere” — sometimes duplicated, sometimes in another location or country. It occurs as a fixed, specific delusion in an otherwise relatively clear consciousness. The person may insist the current place is a copy or that their true home has been moved. Also covers delusional belief that a familiar person or object has been duplicated.' },
   { term: 'Cotard Syndrome', definition: 'Delusional belief that one is dead, does not exist, or has lost organs or body parts.' },
   { term: 'Ekbom Syndrome', definition: 'Delusional parasitosis: fixed belief of being infested with parasites or bugs.' },
   { term: 'Othello Syndrome', definition: 'Delusional or morbid jealousy: irrational belief that a partner is unfaithful.' },
