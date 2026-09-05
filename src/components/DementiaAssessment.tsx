@@ -522,30 +522,30 @@ export const DementiaAssessment: React.FC<DementiaAssessmentProps> = ({ onBack }
               </TabsContent>
 
               {/* Short IQCODE Tab */}
-              <TabsContent value="iqcode" className="space-y-4">
+              <TabsContent value="iqcode" className="space-y-4 min-w-0">
                 <div className="bg-teal-50 p-4 rounded-lg mb-4">
-                  <h3 className="font-semibold text-teal-800 mb-2">
+                  <h3 className="font-semibold text-teal-800 mb-2 break-words">
                     {language === 'ml' ? 'ഷോർട്ട് IQCODE (വിവരദാതാവിന്റെ ചോദ്യാവലി)' : 'Short IQCODE (Informant Questionnaire)'}
                   </h3>
-                  <p className="text-sm text-teal-600 mb-3">
+                  <p className="text-sm text-teal-600 mb-3 break-words">
                     {language === 'ml' 
                       ? '10 വർഷം മുമ്പുമായി താരതമ്യം ചെയ്യുക. ഓരോ കാര്യത്തിലും ഈ വ്യക്തി എങ്ങനെയാണെന്ന് വിലയിരുത്തുക.'
                       : 'Compare with 10 years ago. Rate how this person is at each activity.'}
                   </p>
-                  <p className="text-xs text-teal-500 italic">
+                  <p className="text-xs text-teal-500 italic break-words">
                     {language === 'ml' 
                       ? 'ശ്രദ്ധിക്കുക: 10 വർഷം മുമ്പ് ഈ വ്യക്തി എപ്പോഴും കാര്യങ്ങൾ മറന്നിരുന്നെങ്കിൽ, ഇപ്പോഴും അങ്ങനെയാണെങ്കിൽ, "കാര്യമായ മാറ്റമില്ല" എന്ന് തിരഞ്ഞെടുക്കുക.'
                       : 'Note: If 10 years ago this person always forgot things, and still does, select "Not much change".'}
                   </p>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-4 min-w-0">
                   {IQCODE_ITEMS.map((item, index) => (
                     <Card key={item.id} className="border border-teal-100">
                       <CardContent className="p-4">
                         <div className="space-y-3">
                           <div className="flex items-start gap-2">
-                            <span className="font-bold text-teal-700 text-sm">{index + 1}.</span>
-                            <p className="font-medium text-teal-800 text-sm">
+                            <span className="font-bold text-teal-700 text-sm shrink-0">{index + 1}.</span>
+                            <p className="font-medium text-teal-800 text-sm min-w-0 break-words">
                               {language === 'ml' ? item.questionMl : item.question}
                             </p>
                           </div>
