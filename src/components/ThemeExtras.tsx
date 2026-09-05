@@ -201,6 +201,29 @@ const GLOSSARY_TERMS: { term: string; definition: string }[] = [
   { term: 'Allocentric Disorientation', definition: 'Inability to process spatial relationships between objects or landmarks in the environment.' },
   { term: 'Gegenhalten', definition: 'Paratonic rigidity; resistance to passive movement increasing with movement velocity.' },
   { term: 'Mitgehen', definition: 'Extreme cooperation where a patient moves a limb in response to light pressure.' },
+
+  // ─── Cognitive Biases ───
+  { term: 'Cognitive Bias', definition: 'A systematic pattern of deviation from rational judgment that affects how we perceive information, make decisions, and form beliefs. Arises from the brain\'s use of mental shortcuts (heuristics) that usually speed up thinking but can lead to predictable errors.' },
+  { term: 'Availability Bias', definition: 'Overestimating the likelihood of events that are recent, vivid, or emotionally charged because they come to mind more easily.' },
+  { term: 'Attentional Bias', definition: 'Focusing disproportionately on certain stimuli while ignoring other relevant information.' },
+  { term: 'Confirmation Bias', definition: 'Seeking, interpreting, and remembering information that supports existing beliefs while discounting contradictory evidence.' },
+  { term: 'Framing Effect', definition: 'Making different choices depending on how the same information is presented (e.g., “90% fat‑free” vs “10% fat”).' },
+  { term: 'Anchoring Bias', definition: 'Relying too heavily on the first piece of information encountered (the “anchor”) when estimating or deciding.' },
+  { term: 'Overconfidence Bias', definition: 'Overestimating one\'s knowledge, ability, or the accuracy of one\'s predictions. Includes the Dunning–Kruger effect, where the least competent overestimate their ability most.' },
+  { term: 'Hindsight Bias', definition: 'Seeing past events as more predictable than they actually were (“I knew it all along”).' },
+  { term: 'Sunk Cost Fallacy', definition: 'Continuing to invest in a failing course of action because of prior investment (time, money, effort).' },
+  { term: 'Status Quo Bias', definition: 'Preferring the current state of affairs and resisting change, even when change is beneficial.' },
+  { term: 'Optimism Bias', definition: 'Overestimating the likelihood of positive outcomes and underestimating risks.' },
+  { term: 'Negativity Bias', definition: 'Giving more weight to negative information than positive information of equal intensity.' },
+  { term: 'Fundamental Attribution Error', definition: 'Attributing others\' behavior to their character while attributing our own similar behavior to circumstances.' },
+  { term: 'Self-Serving Bias', definition: 'Taking credit for successes but blaming external factors for failures.' },
+  { term: 'Halo Effect', definition: 'Letting one positive trait (e.g., attractiveness, likability) color overall judgments of a person or thing.' },
+  { term: 'In-Group Bias / Affinity Bias', definition: 'Favoring people who are similar to us or belong to our group.' },
+  { term: 'Bandwagon Effect', definition: 'Adopting beliefs or behaviors because many others do.' },
+  { term: 'Groupthink', definition: 'Suppressing dissent and critical evaluation to maintain group harmony, leading to poor decisions.' },
+  { term: 'Clustering Illusion / Apophenia', definition: 'Perceiving meaningful patterns in random data.' },
+  { term: 'Belief Perseverance / Backfire Effect', definition: 'Holding onto beliefs even when faced with strong contradictory evidence; sometimes strengthening the belief when challenged.' },
+  { term: 'Just-World Hypothesis', definition: 'Assuming the world is fundamentally fair, so people “get what they deserve.”' },
 ];
 
 export const GlossaryDialog = () => {
