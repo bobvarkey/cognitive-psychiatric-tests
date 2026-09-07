@@ -1,6 +1,15 @@
-import { useState } from 'react';
-import { X, Check, Brain, Star, RefreshCw, AlertCircle } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { X, Lock, Bell, Star, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import heroImage from '@/assets/paywall-hero.jpg';
+import {
+  configure,
+  getOfferings,
+  purchasePackage,
+  restorePurchases,
+  isNativePurchasesAvailable,
+  type RcPackage,
+} from '@/lib/appbuild/revenuecat';
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -9,271 +18,180 @@ interface PaywallModalProps {
   isLoading?: boolean;
 }
 
+const BENEFITS = [
+  {
+    icon: Lock,
+    title: 'All tests',
+    description: 'Unlock unlimited access to 90+ tests.',
+    tone: 'bg-fuchsia-500/20 text-fuchsia-400 border-fuchsia-400/40',
+  },
+  {
+    icon: Bell,
+    title: 'Early releases',
+    description: 'Get notified when updates are available.',
+    tone: 'bg-violet-500/20 text-violet-300 border-violet-400/40',
+  },
+  {
+    icon: Star,
+    title: 'Premium support',
+    description: 'For your questions and feedback.',
+    tone: 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40',
+  },
+];
+
+const FALLBACK = {
+  monthly: { price: '$2.99', caption: '$2.99/month' },
+  yearly: { price: '$24.99', caption: 'Only $24.99/year' },
+};
+
 export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false }: PaywallModalProps) => {
-  const [selectedTier, setSelectedTier] = useState<'lite' | 'pro'>('lite');
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
+  const [packages, setPackages] = useState<RcPackage[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    let active = true;
+    (async () => {
+      try {
+        const ok = await configure();
+        if (!ok) return;
+        const pkgs = await getOfferings();
+        if (active) setPackages(pkgs);
+      } catch {
+        /* store options unavailable outside the mobile app */
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [isOpen]);
+
+  const pkgFor = useMemo(
+    () => (plan: 'monthly' | 'yearly') =>
+      packages.find((p) => `${p.identifier} ${p.period}`.toLowerCase().includes(plan === 'yearly' ? 'annual' : 'month')) ??
+      packages.find((p) => `${p.identifier} ${p.period}`.toLowerCase().includes(plan.slice(0, 4))) ??
+      null,
+    [packages]
+  );
 
   if (!isOpen) return null;
 
-  const tierPlans = {
-    lite: {
-      name: 'Lite',
-      description: 'Essential clinical tools',
-      yearly: {
-        price: 19.99,
-        renewal: 19.99,
-        period: '/year',
-        trial: '1 day free',
-      },
-      monthly: {
-        price: 3.99,
-        period: '/month',
-      },
-      features: [
-        'Full access to all assessments',
-        'Export to PDF',
-        'Basic analytics',
-      ],
-    },
-    pro: {
-      name: 'Pro',
-      description: 'Advanced clinical platform',
-      yearly: {
-        price: 19.99,
-        renewal: 19.99,
-        period: '/year',
-        trial: '1 day free',
-      },
-      monthly: {
-        price: 3.99,
-        period: '/month',
-      },
-      features: [
-        'Full access to 40+ assessments',
-        'Export to PDF & DOCX',
-        'Advanced clinical analytics',
-        'Patient tracking & history',
-        'Priority support',
-        'Offline access',
-      ],
-    },
+  const monthlyPkg = pkgFor('monthly');
+  const yearlyPkg = pkgFor('yearly');
+  const monthlyPrice = monthlyPkg?.priceString || FALLBACK.monthly.price;
+  const yearlyPrice = yearlyPkg?.priceString || FALLBACK.yearly.price;
+
+  const handleContinue = async () => {
+    const pkg = selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg;
+    if (pkg && isNativePurchasesAvailable()) {
+      setBusy(true);
+      try {
+        await purchasePackage(pkg);
+        toast.success('Purchase complete. Thank you!');
+        onSelectPlan(selectedPlan, 'pro');
+      } catch (e: any) {
+        if (!e?.userCancelled) toast.error(e?.message ?? 'Purchase failed.');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+    onSelectPlan(selectedPlan, 'pro');
   };
 
+  const handleRestore = async () => {
+    if (!isNativePurchasesAvailable()) {
+      toast.info('Purchases are restored inside the iOS and Android apps.');
+      return;
+    }
+    setRestoring(true);
+    try {
+      await restorePurchases();
+      toast.success('Purchases restored.');
+    } catch (e: any) {
+      toast.error(e?.message ?? 'Nothing to restore.');
+    } finally {
+      setRestoring(false);
+    }
+  };
+
+  const working = busy || isLoading;
+
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl glass-dark">
-        {/* Close Button */}
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-3xl bg-card border border-border shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10 transition"
+          aria-label="Close"
+          className="absolute top-4 right-4 z-10 rounded-full bg-background/70 p-2 text-muted-foreground hover:text-foreground transition"
         >
-          <X className="w-6 h-6" />
+          <X className="w-5 h-5" />
         </button>
 
-        {/* Header with Neon Gradient */}
-        <div className="relative px-6 pt-8 pb-6 text-center overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-magenta-600/30 to-cyan-500/20 blur-xl" />
+        <img
+          src={heroImage}
+          alt="Illustration of a phone unlocking premium features"
+          width={1024}
+          height={640}
+          loading="lazy"
+          className="w-full aspect-[16/10] object-cover rounded-t-3xl"
+        />
 
-          {/* Rating Section */}
-          <div className="relative mb-4">
-            <div className="flex justify-center gap-1 mb-2">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 star-pulse fill-yellow-400 text-yellow-700 dark:text-yellow-400" />
-              ))}
-            </div>
-            <p className="text-sm text-foreground/90">49 stars • 1,000+ reviews</p>
-          </div>
+        <div className="px-6 pt-6 pb-6 space-y-6">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground text-center">Unlock full access</h2>
 
-          {/* Icon */}
-          <div className="mb-4 flex justify-center relative z-10">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-magenta-600 to-cyan-500 rounded-3xl blur-xl opacity-60" />
-              <div className="relative w-20 h-20 bg-gradient-to-br from-magenta-600 to-cyan-500 rounded-3xl flex items-center justify-center shadow-[0_0_30px_rgba(255,0,255,0.5),0_0_60px_rgba(0,255,255,0.3)]">
-                <Brain className="w-10 h-10 text-foreground drop-shadow-[0_0_8px_rgba(255,0,255,0.8)]" />
-              </div>
-            </div>
-          </div>
+          <ul className="space-y-4">
+            {BENEFITS.map(({ icon: Icon, title, description, tone }) => (
+              <li key={title} className="flex items-start gap-4">
+                <span className={`flex-shrink-0 w-11 h-11 rounded-full border flex items-center justify-center ${tone}`}>
+                  <Icon className="w-5 h-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-semibold text-foreground leading-tight">{title}</span>
+                  <span className="block text-sm text-muted-foreground leading-snug">{description}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
 
-          {/* Title */}
-          <h2 className="text-3xl font-bold text-foreground mb-2 relative z-10">
-            Upgrade to Cognito Pro
-          </h2>
-          <p className="text-foreground/90 text-sm relative z-10 mb-3">
-            Unlock double the features, get priority support
-          </p>
-          <div className="relative z-10 space-y-2 text-xs text-muted-foreground bg-black/30 rounded-lg p-3">
-            <div className="flex justify-between">
-              <span>Lite: 20 core assessments</span>
-              <span>Pro: All 54 assessments</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 px-6 py-8 space-y-6">
-          {/* Tier Selection */}
-          <div className="space-y-2">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide">Choose your plan</p>
-            <div className="grid grid-cols-2 gap-3">
-              {(['lite', 'pro'] as const).map((tier) => (
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 p-1 rounded-full bg-muted">
+              {(['monthly', 'yearly'] as const).map((plan) => (
                 <button
-                  key={tier}
-                  onClick={() => setSelectedTier(tier)}
-                  className={`p-4 rounded-2xl transition-all duration-300 text-center ${
-                    selectedTier === tier
-                      ? 'bg-gradient-to-r from-magenta-600/40 to-cyan-600/40 border border-magenta-400/60 shadow-[0_0_20px_rgba(255,0,255,0.3)]'
-                      : 'bg-slate-800/40 border border-border/40 hover:border-magenta-400/40'
+                  key={plan}
+                  onClick={() => setSelectedPlan(plan)}
+                  className={`py-2.5 rounded-full text-sm font-semibold transition-colors ${
+                    selectedPlan === plan
+                      ? 'bg-primary text-primary-foreground shadow'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  <div className="font-bold text-foreground capitalize mb-1">{tierPlans[tier].name}</div>
-                  <div className="text-xs text-muted-foreground">{tierPlans[tier].description}</div>
+                  {plan === 'monthly' ? 'Monthly' : 'Yearly · Save 19%'}
                 </button>
               ))}
             </div>
+            <p className="text-center text-sm text-muted-foreground tabular-nums">
+              {selectedPlan === 'monthly' ? `${monthlyPrice}/month` : `Only ${yearlyPrice}/year`}
+            </p>
           </div>
 
-          {/* Features Comparison Table */}
-          <div className="relative z-10 space-y-1 text-xs text-muted-foreground bg-black/30 rounded-xl p-4">
-            <div className="grid grid-cols-3 gap-2 text-center font-semibold text-foreground/90 mb-2">
-              <span className="text-left">Feature</span><span>Lite</span><span>Pro</span>
-            </div>
-            {[
-              ['Assessments', '20', '54'],
-              ['PDF Export', '✓', '✓'],
-              ['DOCX Export', '—', '✓'],
-              ['Patient History', '—', '✓'],
-            ].map(([feature, lite, pro]) => (
-              <div key={feature} className="grid grid-cols-3 gap-2 text-center py-1 border-t border-white/5">
-                <span className="text-left text-muted-foreground">{feature}</span>
-                <span className={lite === '—' ? 'text-gray-600' : 'text-cyan-700 dark:text-cyan-400'}>{lite}</span>
-                <span className={pro === '—' ? 'text-gray-600' : 'text-fuchsia-400'}>{pro}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Features Pills */}
-          <div className="flex flex-wrap gap-2">
-            {tierPlans[selectedTier].features.map((f, i) => (
-              <span key={i} className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full text-foreground border ${
-                selectedTier === 'pro' ? 'bg-fuchsia-600/20 border-fuchsia-500/30' : 'bg-cyan-600/20 border-cyan-500/30'
-              }`}>
-                <Check className={`w-3 h-3 ${selectedTier === 'pro' ? 'text-fuchsia-400' : 'text-cyan-700 dark:text-cyan-400'}`} />
-                {f}
-              </span>
-            ))}
-          </div>
-
-          {/* Billing Period Selection */}
-          <div className="space-y-3 pt-4 border-t border-magenta-500/20">
-            {/* Yearly Plan */}
-            <button
-              onClick={() => setSelectedPlan('yearly')}
-              className={`w-full relative p-4 rounded-2xl transition-all duration-300 ${
-                selectedPlan === 'yearly'
-                  ? 'bg-gradient-to-r from-magenta-600/40 to-cyan-600/40 border border-magenta-400/60 shadow-[0_0_20px_rgba(255,0,255,0.3)]'
-                  : 'bg-slate-800/40 border border-border/40 hover:border-magenta-400/40'
-              }`}
-            >
-              <div className="flex items-center justify-between relative z-10">
-                <div className="text-left">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-foreground">Yearly</span>
-                    <span className="bg-gradient-to-r from-magenta-500 to-cyan-500 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-[0_0_10px_rgba(255,0,255,0.5)]">
-                      {tierPlans[selectedTier].yearly.trial}
-                    </span>
-                  </div>
-                  <div className="text-muted-foreground text-xs">
-                    Then ${tierPlans[selectedTier].yearly.renewal}/year
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-foreground">
-                    ${tierPlans[selectedTier].yearly.price}
-                  </div>
-                  <div className="text-muted-foreground text-xs">per year</div>
-                </div>
-              </div>
-              {selectedPlan === 'yearly' && (
-                <div className="absolute right-4 top-4">
-                  <div className="w-6 h-6 bg-gradient-to-r from-magenta-500 to-cyan-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(255,0,255,0.5)]">
-                    <Check className="w-4 h-4 text-foreground" />
-                  </div>
-                </div>
-              )}
-            </button>
-
-            {/* Monthly Plan */}
-            <button
-              onClick={() => setSelectedPlan('monthly')}
-              className={`w-full relative p-4 rounded-2xl transition-all duration-300 ${
-                selectedPlan === 'monthly'
-                  ? 'bg-gradient-to-r from-magenta-600/40 to-cyan-600/40 border border-magenta-400/60 shadow-[0_0_20px_rgba(255,0,255,0.3)]'
-                  : 'bg-slate-800/40 border border-border/40 hover:border-magenta-400/40'
-              }`}
-            >
-              <div className="flex items-center justify-between relative z-10">
-                <div className="text-left">
-                  <div className="font-bold text-foreground mb-1">Monthly</div>
-                  <div className="text-muted-foreground text-xs">
-                    Billed monthly
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-foreground">
-                    ${tierPlans[selectedTier].monthly.price}
-                  </div>
-                  <div className="text-muted-foreground text-xs">per month</div>
-                </div>
-              </div>
-              {selectedPlan === 'monthly' && (
-                <div className="absolute right-4 top-4">
-                  <div className="w-6 h-6 bg-gradient-to-r from-magenta-500 to-cyan-500 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(255,0,255,0.5)]">
-                    <Check className="w-4 h-4 text-foreground" />
-                  </div>
-                </div>
-              )}
-            </button>
-          </div>
-
-          {/* CTA Button */}
           <button
-            onClick={() => onSelectPlan(selectedPlan, selectedTier)}
-            disabled={isLoading}
-            className="w-full relative py-3.5 px-6 rounded-2xl font-bold text-lg text-foreground transition-all duration-300 overflow-hidden group"
+            onClick={handleContinue}
+            disabled={working}
+            className="w-full py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg transition hover:opacity-90 active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-magenta-600 to-cyan-600" />
-            <div className="absolute inset-0 bg-gradient-to-r from-magenta-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="absolute inset-0 shadow-lg shadow-magenta-500/50 group-hover:shadow-2xl group-hover:shadow-magenta-500/75 transition-shadow rounded-2xl" />
-            <span className="relative flex items-center justify-center">
-              {isLoading ? 'Processing...' : `Subscribe to ${tierPlans[selectedTier].name}`}
-            </span>
+            {working && <Loader2 className="w-5 h-5 animate-spin" />}
+            {working ? 'Processing…' : 'Continue'}
           </button>
 
-          {/* Footer Links */}
-          <div className="flex justify-center gap-4 pt-4 border-t border-magenta-500/20 flex-wrap">
-            <button className="text-magenta-400 hover:text-magenta-300 font-medium text-xs transition">
-              Restore Purchase
+          <div className="flex justify-center gap-6 text-xs text-muted-foreground">
+            <button onClick={handleRestore} disabled={restoring} className="hover:text-foreground transition">
+              {restoring ? 'Restoring…' : 'Restore Purchases'}
             </button>
-            <span className="text-gray-700">•</span>
-            <button className="text-muted-foreground hover:text-muted-foreground text-xs transition">
-              Terms
-            </button>
-            <span className="text-gray-700">•</span>
-            <button className="text-muted-foreground hover:text-muted-foreground text-xs transition">
-              Privacy
-            </button>
-            <span className="text-gray-700">•</span>
-            <button
-              onClick={() => {
-                const searchParams = new URLSearchParams();
-                searchParams.set('view', 'suggestions');
-                window.location.hash = searchParams.toString();
-                onClose();
-              }}
-              className="text-magenta-400 hover:text-magenta-300 font-medium text-xs transition flex items-center gap-1"
-            >
-              Suggestions
-            </button>
+            <a href="/terms" className="hover:text-foreground transition">Terms</a>
+            <a href="/privacy" className="hover:text-foreground transition">Privacy</a>
           </div>
         </div>
       </div>
