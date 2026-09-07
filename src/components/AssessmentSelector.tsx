@@ -336,6 +336,8 @@ const categoryAccent: Record<Exclude<Category, 'all'>, string> = {
   brainfog: 'from-slate-300/10 to-indigo-300/5',
 };
 
+type Section = 'assessments' | 'results' | 'settings';
+
 export const AssessmentSelector = () => {
   const navigate = useNavigate();
   const location = useLocation();
