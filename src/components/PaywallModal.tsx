@@ -40,19 +40,26 @@ const BENEFITS = [
   },
 ];
 
-const FALLBACK = {
-  monthly: { price: '$2.99', caption: '$2.99/month' },
-  yearly: { price: '$24.99', caption: 'Only $24.99/year' },
-};
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+const EMAIL_KEY = 'psycognito.billingEmail.v1';
 
 export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false }: PaywallModalProps) => {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [packages, setPackages] = useState<RcPackage[]>([]);
   const [busy, setBusy] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [email, setEmail] = useState(() => {
+    try {
+      return localStorage.getItem(EMAIL_KEY) ?? '';
+    } catch {
+      return '';
+    }
+  });
+
+  const native = isNativePurchasesAvailable();
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !native) return;
     let active = true;
     (async () => {
       try {
@@ -67,7 +74,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     return () => {
       active = false;
     };
-  }, [isOpen]);
+  }, [isOpen, native]);
 
   const pkgFor = useMemo(
     () => (plan: 'monthly' | 'yearly') =>
@@ -81,38 +88,83 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
   const monthlyPkg = pkgFor('monthly');
   const yearlyPkg = pkgFor('yearly');
-  const monthlyPrice = monthlyPkg?.priceString || FALLBACK.monthly.price;
-  const yearlyPrice = yearlyPkg?.priceString || FALLBACK.yearly.price;
+  const monthlyPrice = monthlyPkg?.priceString || WEB_PRICES.monthly.display;
+  const yearlyPrice = yearlyPkg?.priceString || WEB_PRICES.yearly.display;
+
+  const rememberEmail = (value: string) => {
+    setEmail(value);
+    try {
+      localStorage.setItem(EMAIL_KEY, value);
+    } catch {
+      /* ignore */
+    }
+  };
 
   const handleContinue = async () => {
-    const pkg = selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg;
-    if (pkg && isNativePurchasesAvailable()) {
-      setBusy(true);
-      try {
-        await purchasePackage(pkg);
-        toast.success('Purchase complete. Thank you!');
-        onSelectPlan(selectedPlan, 'pro');
-      } catch (e: any) {
-        if (!e?.userCancelled) toast.error(e?.message ?? 'Purchase failed.');
-      } finally {
-        setBusy(false);
+    if (native) {
+      const pkg = selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg;
+      if (pkg) {
+        setBusy(true);
+        try {
+          await purchasePackage(pkg);
+          toast.success('Purchase complete. Thank you!');
+          onSelectPlan(selectedPlan, 'pro');
+        } catch (e: any) {
+          if (!e?.userCancelled) toast.error(e?.message ?? 'Purchase failed.');
+        } finally {
+          setBusy(false);
+        }
+        return;
       }
+      onSelectPlan(selectedPlan, 'pro');
       return;
     }
-    onSelectPlan(selectedPlan, 'pro');
+
+    if (!EMAIL_RE.test(email.trim())) {
+      toast.error('Enter a valid email address so we can save your purchase.');
+      return;
+    }
+    setBusy(true);
+    try {
+      await startWebCheckout(selectedPlan, email.trim().toLowerCase());
+      toast.success('Payment successful. Everything is unlocked.');
+      onSelectPlan(selectedPlan, 'pro');
+    } catch (e: any) {
+      if (!e?.userCancelled) toast.error(e?.message ?? 'Payment failed.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleRestore = async () => {
-    if (!isNativePurchasesAvailable()) {
-      toast.info('Purchases are restored inside the iOS and Android apps.');
+    if (native) {
+      setRestoring(true);
+      try {
+        await restorePurchases();
+        toast.success('Purchases restored.');
+      } catch (e: any) {
+        toast.error(e?.message ?? 'Nothing to restore.');
+      } finally {
+        setRestoring(false);
+      }
+      return;
+    }
+
+    if (!EMAIL_RE.test(email.trim())) {
+      toast.error('Enter the email you paid with to restore access.');
       return;
     }
     setRestoring(true);
     try {
-      await restorePurchases();
-      toast.success('Purchases restored.');
+      const found = await restoreWebPurchase(email.trim().toLowerCase());
+      if (found) {
+        toast.success('Access restored.');
+        onSelectPlan(found.plan, 'pro');
+      } else {
+        toast.info('No active purchase found for that email.');
+      }
     } catch (e: any) {
-      toast.error(e?.message ?? 'Nothing to restore.');
+      toast.error(e?.message ?? 'Could not restore.');
     } finally {
       setRestoring(false);
     }
@@ -169,7 +221,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {plan === 'monthly' ? 'Monthly' : 'Yearly · Save 19%'}
+                  {plan === 'monthly' ? 'Monthly' : 'Yearly · Save 33%'}
                 </button>
               ))}
             </div>
@@ -177,6 +229,24 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               {selectedPlan === 'monthly' ? `${monthlyPrice}/month` : `Only ${yearlyPrice}/year`}
             </p>
           </div>
+
+          {!native && (
+            <div className="space-y-1.5">
+              <label htmlFor="billing-email" className="block text-sm font-medium text-foreground">
+                Email for your receipt
+              </label>
+              <input
+                id="billing-email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => rememberEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full min-h-[44px] rounded-2xl border border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+          )}
 
           <button
             onClick={handleContinue}
@@ -189,7 +259,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
           <div className="flex justify-center gap-6 text-xs text-muted-foreground">
             <button onClick={handleRestore} disabled={restoring} className="hover:text-foreground transition">
-              {restoring ? 'Restoring…' : 'Restore Purchases'}
+              {restoring ? 'Restoring…' : native ? 'Restore Purchases' : 'Restore access'}
             </button>
             <a href="/terms" className="hover:text-foreground transition">Terms</a>
             <a href="/privacy" className="hover:text-foreground transition">Privacy</a>
