@@ -311,7 +311,7 @@ const categoryLabels: Record<Category, { en: string; ml: string; icon: React.Ele
   mood: { en: 'Mood', ml: 'മൂഡ്', icon: Frown },
   personality: { en: 'Personality', ml: 'വ്യക്തിത്വം', icon: Heart },
   psychosis: { en: 'Psychosis', ml: 'സൈക്കോസിസ്', icon: Sparkles },
-  adverse: { en: 'Adverse', ml: 'പ്രതികൂലം', icon: Pill },
+  adverse: { en: 'Adverse effects', ml: 'പ്രതികൂലം', icon: Pill },
   movement: { en: 'Movement', ml: 'ചലനം', icon: Activity },
   epilepsy: { en: 'Epilepsy', ml: 'എപിലപ്സി', icon: Zap },
   substance: { en: 'Substance & Internet Abuse', ml: 'ലഹരി & ഇന്റർനെറ്റ് ദുരുപയോഗം', icon: FlaskConical },
