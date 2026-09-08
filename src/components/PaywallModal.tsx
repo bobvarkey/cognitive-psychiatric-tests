@@ -10,6 +10,7 @@ import {
   isNativePurchasesAvailable,
   type RcPackage,
 } from '@/lib/appbuild/revenuecat';
+import { startWebCheckout, restoreWebPurchase, WEB_PRICES } from '@/lib/webBilling';
 
 interface PaywallModalProps {
   isOpen: boolean;
