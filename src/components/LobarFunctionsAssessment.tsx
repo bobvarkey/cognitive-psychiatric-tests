@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Brain, ArrowLeft, ChevronDown, Stethoscope, ClipboardList, FileText, Activity, Info, RotateCcw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { cn } from '@/lib/utils';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { LOBES, LOBAR_NAVIGATION, LOBAR_SCORING, LOBAR_SCORE_LABELS, getLobeById } from '@/data/lobarFunctions';
 
@@ -23,6 +24,35 @@ function getScoreColor(value: number): string {
 function getInterpretation(value: number) {
   return LOBAR_SCORING.interpretation.thresholds.find((t) => value >= t.min) || LOBAR_SCORING.interpretation.thresholds[LOBAR_SCORING.interpretation.thresholds.length - 1];
 }
+
+const LOBE_COLORS: Record<string, { active: string; inactive: string; icon: string }> = {
+  frontal: {
+    active: 'bg-rose-600 text-white shadow-sm',
+    inactive: 'bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-950/40 dark:text-rose-200 dark:hover:bg-rose-900/60',
+    icon: 'text-rose-500',
+  },
+  parietal: {
+    active: 'bg-blue-600 text-white shadow-sm',
+    inactive: 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-950/40 dark:text-blue-200 dark:hover:bg-blue-900/60',
+    icon: 'text-blue-500',
+  },
+  temporal: {
+    active: 'bg-amber-500 text-white shadow-sm',
+    inactive: 'bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-950/40 dark:text-amber-200 dark:hover:bg-amber-900/60',
+    icon: 'text-amber-500',
+  },
+  occipital: {
+    active: 'bg-violet-600 text-white shadow-sm',
+    inactive: 'bg-violet-100 text-violet-800 hover:bg-violet-200 dark:bg-violet-950/40 dark:text-violet-200 dark:hover:bg-violet-900/60',
+    icon: 'text-violet-500',
+  },
+};
+
+const VIEW_COLORS: Record<string, { active: string; inactive: string }> = {
+  overview: { active: 'bg-emerald-600 text-white', inactive: 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-200' },
+  tests: { active: 'bg-sky-600 text-white', inactive: 'bg-sky-50 text-sky-800 hover:bg-sky-100 dark:bg-sky-950/30 dark:text-sky-200' },
+  summary: { active: 'bg-amber-500 text-white', inactive: 'bg-amber-50 text-amber-800 hover:bg-amber-100 dark:bg-amber-950/30 dark:text-amber-200' },
+};
 
 export default function LobarFunctionsAssessment({ onBack }: LobarFunctionsAssessmentProps) {
   const { isMl } = useLanguage();
@@ -101,30 +131,51 @@ export default function LobarFunctionsAssessment({ onBack }: LobarFunctionsAsses
         </Card>
 
         <Tabs value={activeView} onValueChange={setActiveView} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 md:w-fit">
-            {LOBAR_NAVIGATION.views.map((v) => (
-              <TabsTrigger key={v.id} value={v.id} className="gap-2">
-                {v.id === 'overview' && <Stethoscope className="h-4 w-4" />}
-                {v.id === 'tests' && <ClipboardList className="h-4 w-4" />}
-                {v.id === 'summary' && <FileText className="h-4 w-4" />}
-                <span className="hidden sm:inline">{v.label}</span>
-                <span className="sm:hidden">{v.id === 'overview' ? 'Overview' : v.id === 'tests' ? 'Tests' : 'Summary'}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
+          <div className="flex flex-wrap gap-2">
+            {LOBAR_NAVIGATION.views.map((v) => {
+              const isActive = activeView === v.id;
+              const colors = VIEW_COLORS[v.id];
+              return (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => setActiveView(v.id)}
+                  className={cn(
+                    "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors min-w-0",
+                    isActive ? colors.active : colors.inactive
+                  )}
+                >
+                  {v.id === 'overview' && <Stethoscope className="h-4 w-4 shrink-0" />}
+                  {v.id === 'tests' && <ClipboardList className="h-4 w-4 shrink-0" />}
+                  {v.id === 'summary' && <FileText className="h-4 w-4 shrink-0" />}
+                  <span className="truncate">{v.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
           <TabsContent value="overview" className="space-y-4">
             <Tabs value={activeLobe} onValueChange={setActiveLobe}>
-              <TabsList className="flex flex-wrap justify-start h-auto gap-1 mb-4">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {LOBAR_NAVIGATION.order.map((id) => {
                   const lobe = getLobeById(id)!;
+                  const isActive = activeLobe === id;
+                  const colors = LOBE_COLORS[id];
                   return (
-                    <TabsTrigger key={id} value={id} className="px-3 py-1.5 text-sm">
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setActiveLobe(id)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors min-w-0 truncate",
+                        isActive ? colors.active : colors.inactive
+                      )}
+                    >
                       {lobe.name}
-                    </TabsTrigger>
+                    </button>
                   );
                 })}
-              </TabsList>
+              </div>
               {LOBAR_NAVIGATION.order.map((id) => {
                 const lobe = getLobeById(id)!;
                 return (
@@ -132,7 +183,7 @@ export default function LobarFunctionsAssessment({ onBack }: LobarFunctionsAsses
                     <Card>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-xl">
-                          <Brain className="h-5 w-5 text-indigo-500" />
+                          <Brain className={cn("h-5 w-5", LOBE_COLORS[id].icon)} />
                           {lobe.name}
                         </CardTitle>
                       </CardHeader>
@@ -173,16 +224,26 @@ export default function LobarFunctionsAssessment({ onBack }: LobarFunctionsAsses
 
           <TabsContent value="tests" className="space-y-4">
             <Tabs value={activeLobe} onValueChange={setActiveLobe}>
-              <TabsList className="flex flex-wrap justify-start h-auto gap-1 mb-4">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {LOBAR_NAVIGATION.order.map((id) => {
                   const lobe = getLobeById(id)!;
+                  const isActive = activeLobe === id;
+                  const colors = LOBE_COLORS[id];
                   return (
-                    <TabsTrigger key={id} value={id} className="px-3 py-1.5 text-sm">
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setActiveLobe(id)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors min-w-0 truncate",
+                        isActive ? colors.active : colors.inactive
+                      )}
+                    >
                       {lobe.name}
-                    </TabsTrigger>
+                    </button>
                   );
                 })}
-              </TabsList>
+              </div>
               {LOBAR_NAVIGATION.order.map((id) => {
                 const lobe = getLobeById(id)!;
                 return (
