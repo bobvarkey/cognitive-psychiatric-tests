@@ -107,6 +107,18 @@ export const assessments: Assessment[] = [
 
   // Neurological Assessments
   {
+    id: 'lobar-functions',
+    name: 'Lobar Functions',
+    abbreviation: 'LFA',
+    description: 'Bedside testing and localization of cerebral lobar functions (frontal, parietal, temporal, occipital)',
+    category: ASSESSMENT_CATEGORIES.NEUROLOGICAL,
+    subcategory: 'Lobar Localization',
+    component: null,
+    icon: '🧠',
+    duration: '10-15 min',
+    items: 18,
+  },
+  {
     id: 'consciousness',
     name: 'Consciousness Assessment',
     abbreviation: 'CA',

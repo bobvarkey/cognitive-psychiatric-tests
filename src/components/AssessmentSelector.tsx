@@ -38,6 +38,7 @@ import { MmpiAssessment } from '@/components/MmpiAssessment';
 import { AdamAssessment } from '@/components/AdamAssessment';
 import { HunterAssessment } from '@/components/HunterAssessment';
 import { AdverseEffectsAssessment } from '@/components/AdverseEffectsAssessment';
+import LobarFunctionsAssessment from '@/components/LobarFunctionsAssessment';
 import { ChsAssessment } from '@/components/ChsAssessment';
 import { SomaticDelusionsAssessment } from '@/components/SomaticDelusionsAssessment';
 import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
@@ -134,7 +135,7 @@ export type AssessmentKey =
   | 'daphne6' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
-  | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
+  | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'lobarFunctions' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
   | 'bprs' | 'sapsSans' | 'crdpss' | 'sops' | 'psyrats' | 'vagus'
   | 'asrs6' | 'asrs18' | 'vanderbilt' | 'adhdScreener'
   | 'bdi' | 'ybocs' | 'ipde' | 'cage' | 'cows' | 'simpsonAngus' | 'eprs' | 'panss'
@@ -262,6 +263,7 @@ export const assessments: AssessmentInfo[] = [
 
   // ─── Adverse Reactions ───
   { key: 'nms', name: 'NMS', subtitle: 'Malignant Syndrome', icon: ThermometerSun, gradient: 'from-red-600 to-rose-700', category: ['adverse'], description: 'NMS — Neuroleptic Malignant Syndrome assessment (rigidity, hyperthermia, autonomic instability, altered mental state).' },
+  { key: 'lobarFunctions', name: 'Lobar Functions', subtitle: 'Cortical Localization', icon: Brain, gradient: 'from-indigo-500 to-violet-600', category: ['cognitive'], description: 'Bedside testing and localization of cerebral lobar functions: frontal, parietal, temporal, and occipital lobes.' },
   { key: 'hunter', name: 'Hunter Criteria', subtitle: 'Serotonin Syndrome', icon: FlaskConical, gradient: 'from-rose-500 to-pink-600', category: ['adverse'], description: 'Hunter Serotonin Toxicity Criteria — diagnostic decision rule for serotonin syndrome.' },
   { key: 'smarts', name: 'SMARTS', subtitle: 'Treatment Side Effects', icon: ClipboardList, gradient: 'from-orange-500 to-amber-500', category: ['adverse'], description: 'SMARTS — Systematic Monitoring of Adverse events Related to TreatmentS; patient-reported side-effect checklist.' },
   { key: 'adverseEffects', name: 'Adverse Effects', subtitle: 'Drug-Class Checklist', icon: Pill, gradient: 'from-fuchsia-500 to-purple-600', category: ['adverse'], description: 'Drug-class adverse-effect checklist for psychotropic medications.' },
@@ -612,6 +614,7 @@ export const AssessmentSelector = () => {
         mmpi: MmpiAssessment,
         adam: AdamAssessment,
         hunter: HunterAssessment,
+        lobarFunctions: LobarFunctionsAssessment,
         smarts: SmartsAssessment,
         adverseEffects: AdverseEffectsAssessment,
         callosal: CallosalAssessment,
