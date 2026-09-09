@@ -553,7 +553,7 @@ export const AssessmentSelector = () => {
       adhd: true, msibpd: true, hamd: true, hama: true, pss: true,
       dementia: true, catatonia: true, stressScreening: true,
       fallRisk: true, miniace: true, nms: true, mmpi: true, adam: true,
-      hunter: true, smarts: true, adverseEffects: true, cognitiveSyndromes: true,
+      hunter: true, smarts: true, adverseEffects: true, lobarFunctions: true, cognitiveSyndromes: true,
       callosal: true,
       mse: true,
       moca: true,
