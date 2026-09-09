@@ -131,51 +131,49 @@ export default function LobarFunctionsAssessment({ onBack }: LobarFunctionsAsses
         </Card>
 
         <Tabs value={activeView} onValueChange={setActiveView} className="space-y-4">
-          <div className="flex flex-wrap gap-2">
+          <TabsList className="flex flex-wrap h-auto gap-2 p-2 bg-muted/50">
             {LOBAR_NAVIGATION.views.map((v) => {
-              const isActive = activeView === v.id;
               const colors = VIEW_COLORS[v.id];
               return (
-                <button
+                <TabsTrigger
                   key={v.id}
-                  type="button"
-                  onClick={() => setActiveView(v.id)}
+                  value={v.id}
                   className={cn(
-                    "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors min-w-0",
-                    isActive ? colors.active : colors.inactive
+                    "gap-2 data-[state=active]:shadow-sm min-w-0",
+                    colors.active,
+                    colors.inactive
                   )}
                 >
                   {v.id === 'overview' && <Stethoscope className="h-4 w-4 shrink-0" />}
                   {v.id === 'tests' && <ClipboardList className="h-4 w-4 shrink-0" />}
                   {v.id === 'summary' && <FileText className="h-4 w-4 shrink-0" />}
                   <span className="truncate">{v.label}</span>
-                </button>
+                </TabsTrigger>
               );
             })}
-          </div>
+          </TabsList>
 
           <TabsContent value="overview" className="space-y-4">
             <Tabs value={activeLobe} onValueChange={setActiveLobe}>
-              <div className="flex flex-wrap gap-2 mb-4">
+              <TabsList className="flex flex-wrap h-auto gap-2 p-2 mb-4 bg-muted/50">
                 {LOBAR_NAVIGATION.order.map((id) => {
                   const lobe = getLobeById(id)!;
-                  const isActive = activeLobe === id;
                   const colors = LOBE_COLORS[id];
                   return (
-                    <button
+                    <TabsTrigger
                       key={id}
-                      type="button"
-                      onClick={() => setActiveLobe(id)}
+                      value={id}
                       className={cn(
-                        "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors min-w-0 truncate",
-                        isActive ? colors.active : colors.inactive
+                        "px-3 py-1.5 text-sm font-medium data-[state=active]:shadow-sm min-w-0 truncate",
+                        colors.active,
+                        colors.inactive
                       )}
                     >
                       {lobe.name}
-                    </button>
+                    </TabsTrigger>
                   );
                 })}
-              </div>
+              </TabsList>
               {LOBAR_NAVIGATION.order.map((id) => {
                 const lobe = getLobeById(id)!;
                 return (
@@ -224,26 +222,25 @@ export default function LobarFunctionsAssessment({ onBack }: LobarFunctionsAsses
 
           <TabsContent value="tests" className="space-y-4">
             <Tabs value={activeLobe} onValueChange={setActiveLobe}>
-              <div className="flex flex-wrap gap-2 mb-4">
+              <TabsList className="flex flex-wrap h-auto gap-2 p-2 mb-4 bg-muted/50">
                 {LOBAR_NAVIGATION.order.map((id) => {
                   const lobe = getLobeById(id)!;
-                  const isActive = activeLobe === id;
                   const colors = LOBE_COLORS[id];
                   return (
-                    <button
+                    <TabsTrigger
                       key={id}
-                      type="button"
-                      onClick={() => setActiveLobe(id)}
+                      value={id}
                       className={cn(
-                        "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors min-w-0 truncate",
-                        isActive ? colors.active : colors.inactive
+                        "px-3 py-1.5 text-sm font-medium data-[state=active]:shadow-sm min-w-0 truncate",
+                        colors.active,
+                        colors.inactive
                       )}
                     >
                       {lobe.name}
-                    </button>
+                    </TabsTrigger>
                   );
                 })}
-              </div>
+              </TabsList>
               {LOBAR_NAVIGATION.order.map((id) => {
                 const lobe = getLobeById(id)!;
                 return (
