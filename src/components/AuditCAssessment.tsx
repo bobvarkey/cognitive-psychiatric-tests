@@ -89,8 +89,11 @@ export const AuditCAssessment = ({ onBack }: AuditCAssessmentProps) => {
             <strong>Instructions:</strong> AUDIT-C is a 3-item screen for unhealthy alcohol
             consumption and heavy drinking. Answer each question about your drinking over the past year.
           </p>
-          <p className="text-xs text-blue-800">
+          <p className="text-xs text-blue-800 mb-2">
             Sex-specific cut-offs: <strong>Score ≥ 4</strong> for men, <strong>Score ≥ 3</strong> for women indicates a positive screen.
+          </p>
+          <p className="text-xs text-blue-800">
+            <strong>Spirits reference:</strong> 60 mL of spirits (40% ABV) ≈ 2.5 units; 500 mL ≈ 20 units; 1000 mL ≈ 40 units.
           </p>
         </CardContent>
       </Card>

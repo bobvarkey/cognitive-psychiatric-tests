@@ -25,6 +25,9 @@ const PRESET_DRINKS: Omit<Drink, 'id' | 'daysPerWeek'>[] = [
   { name: 'Wine 250 ml (13%)', volumeMl: 250, abv: 13 },
   { name: 'Spirit 25 ml (40%)', volumeMl: 25, abv: 40 },
   { name: 'Spirit 35 ml (40%)', volumeMl: 35, abv: 40 },
+  { name: 'Spirit 60 ml (40%) — 2.5 units', volumeMl: 60, abv: 40 },
+  { name: 'Spirit 500 ml (40%) — 20 units', volumeMl: 500, abv: 40 },
+  { name: 'Spirit 1000 ml (40%) — 40 units', volumeMl: 1000, abv: 40 },
 ];
 
 const FREQUENCY_PRESETS: { label: string; days: number }[] = [
