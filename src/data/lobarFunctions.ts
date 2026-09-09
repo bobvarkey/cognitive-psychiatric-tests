@@ -1,548 +1,847 @@
-export interface LobarTestOption {
-  value: number;
+export type ResponseStatus = "normal" | "abnormal" | "not_tested";
+
+export interface ResponseOption {
+  id: ResponseStatus;
   label: string;
 }
 
-export interface LobarTest {
+export interface BaselineTest {
   id: string;
   name: string;
-  instructions: string;
-  normal_findings: string;
-  abnormal_findings: string;
-  localization_hint: string;
-  ui: {
-    inputType: string;
-    options: LobarTestOption[];
-    helpText: string;
-  };
-  scoring: {
-    weight: number;
-    domain: string;
-  };
+  instruction?: string;
+  subtests?: string[];
+  responseType?: string;
+}
+
+export interface BaselineDomain {
+  id: string;
+  name: string;
+  tests: BaselineTest[];
+}
+
+export interface LobeTest {
+  id: string;
+  name: string;
+  instruction?: string;
+  abnormalFinding?: string;
+  target?: string;
+  example?: string;
+  subtests?: string[];
+}
+
+export interface LobeDomain {
+  id: string;
+  name: string;
+  tests: LobeTest[];
 }
 
 export interface Lobe {
   id: string;
   name: string;
-  icon: string;
-  key_functions: string[];
-  clinical_signs_of_lesion: string[];
-  tests: LobarTest[];
+  title: string;
+  description: string;
+  localizationHint: string;
+  domains: LobeDomain[];
 }
 
 export const LOBAR_META = {
-  title: "Lobar Functions Mini-App",
-  version: "1.1.0",
-  platform: "React + TypeScript",
-  purpose: "Bedside testing and localization of cerebral lobar functions in neurology",
-  sources: [
-    "Cleveland Clinic: Cerebral Cortex Functions",
-    "StatPearls: Physiology, Cerebral Cortex Functions",
-    "Queensland Brain Institute: Lobes of the Brain",
-    "BIAUSA: Functions of the Brain",
-    "Oxford Textbook of Neurological Surgery: Clinical assessment",
-    "Neurological Examination Made Practical (BM-Publisher)",
-    "Lobar Function Tests (Scribd/teaching slides)",
+  title: "Lobar Function Bedside Assessment",
+  shortTitle: "Lobar Testing",
+  version: "1.0.0",
+  category: "Neurology",
+  subCategory: "Higher Mental Function Examination",
+  audience: [
+    "Neurologists",
+    "Neurosurgeons",
+    "Physicians",
+    "Neurology Residents",
+    "Medical Students",
   ],
+  purpose: "Structured bedside assessment of higher cortical functions organized by cerebral lobe.",
+  clinicalDisclaimer:
+    "This application is an examination aid. Findings must be interpreted with the complete neurological examination and clinical context.",
+  source: {
+    title: "Higher Mental Function Examination",
+    framework: "Clinico-anatomical lobar assessment",
+    sourceType: "Uploaded reference chapter",
+  },
 };
 
-export const LOBAR_NAVIGATION = {
-  defaultLobe: "frontal",
-  order: ["frontal", "parietal", "temporal", "occipital"],
-  views: [
-    { id: "overview", label: "Overview", description: "Key functions and clinical signs for each lobe" },
-    { id: "tests", label: "Bedside Tests", description: "Interactive test cards with scoring" },
-    { id: "summary", label: "Summary & Localization", description: "Lobar scores and likely localization" },
+export const LOBAR_APP = {
+  type: "clinical_assessment",
+  navigation: "tabs",
+  primaryTabs: [
+    "baseline",
+    "frontal",
+    "left_parietal",
+    "right_parietal",
+    "occipital",
+    "temporal",
+    "summary",
   ],
+  features: {
+    autoSummary: true,
+    abnormalityCounter: true,
+    clinicalNotes: true,
+    localizationHints: true,
+    copyReport: true,
+    resetAssessment: true,
+    allowNotTested: true,
+    scoreEnabled: false,
+  },
 };
 
-export const LOBES: Lobe[] = [
+export const LOBAR_RESPONSE_OPTIONS: ResponseOption[] = [
+  { id: "normal", label: "Normal" },
+  { id: "abnormal", label: "Abnormal" },
+  { id: "not_tested", label: "Not Tested" },
+];
+
+export const LOBAR_BASELINE: BaselineDomain[] = [
   {
-    id: "frontal",
-    name: "Frontal Lobe",
-    icon: "brain-front",
-    key_functions: [
-      "Executive functions (planning, reasoning, problem-solving)",
-      "Attention and concentration",
-      "Personality, behavior, and emotional regulation",
-      "Motor planning and initiation (primary motor cortex)",
-      "Expressive language (Broca area, dominant hemisphere)",
-      "Judgment, insight, and inhibition",
-    ],
-    clinical_signs_of_lesion: [
-      "Executive dysfunction, poor planning/set-shifting",
-      "Personality change, disinhibition, apathy/abulia",
-      "Contralateral weakness (face/arm > leg if premotor/motor)",
-      "Expressive (Broca) aphasia if dominant inferior frontal",
-      "Primitive reflexes (grasp, snout), gait apraxia (medial frontal)",
-    ],
+    id: "consciousness",
+    name: "Level of Consciousness",
     tests: [
       {
-        id: "frontal_executive",
-        name: "Executive Function & Planning",
-        instructions: "Ask patient to plan a simple task (e.g., 'How would you go to the market?'), perform trail-making or verbal fluency (name as many animals as possible in 60 s).",
-        normal_findings: "Coherent, sequential plan; ≥12 animals in 60 s; completes trail-making without major errors.",
-        abnormal_findings: "Perseveration, concrete thinking, poor sequencing, reduced verbal fluency.",
-        localization_hint: "Dorsolateral prefrontal and superior frontal regions.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Use verbal fluency (animals in 60 s) and planning quality to guide scoring.",
-        },
-        scoring: { weight: 1, domain: "executive" },
-      },
-      {
-        id: "frontal_motor",
-        name: "Motor Cortex / Premotor",
-        instructions: "Test strength in face, arm, leg; look for pronator drift; assess fine finger movements and rapid alternating movements.",
-        normal_findings: "Symmetric strength, no drift, normal rapid alternating movements.",
-        abnormal_findings: "Contralateral weakness, pronator drift, clumsy fine movements.",
-        localization_hint: "Primary motor and premotor cortex (precentral gyrus).",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Score based on presence and degree of contralateral weakness or drift.",
-        },
-        scoring: { weight: 1, domain: "motor" },
-      },
-      {
-        id: "frontal_language",
-        name: "Expressive Language (Broca)",
-        instructions: "Ask patient to describe a picture, repeat sentences, and name objects; observe effortful, non-fluent speech with relatively preserved comprehension.",
-        normal_findings: "Fluent, grammatically correct speech; normal repetition and naming.",
-        abnormal_findings: "Non-fluent, effortful speech; agrammatism; impaired repetition/naming with relatively good comprehension.",
-        localization_hint: "Dominant (usually left) inferior frontal gyrus.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Focus on fluency, grammar, and effort; comprehension usually preserved.",
-        },
-        scoring: { weight: 1, domain: "language" },
-      },
-      {
-        id: "frontal_behavior",
-        name: "Behavior, Judgment & Inhibition",
-        instructions: "Ask social-judgment questions ('What would you do if you found a stamped letter on the street?'), assess impulse control, observe affect and appropriateness.",
-        normal_findings: "Reasonable, socially appropriate answers; stable affect.",
-        abnormal_findings: "Poor judgment, disinhibition, emotional lability, apathy.",
-        localization_hint: "Orbitofrontal and medial frontal regions.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Use history and bedside behavior; consider caregiver input if available.",
-        },
-        scoring: { weight: 1, domain: "behavior" },
-      },
-      {
-        id: "frontal_primitive",
-        name: "Primitive Reflexes & Gait",
-        instructions: "Check for grasp, snout, palmomental reflexes; observe gait (magnetic/gait apraxia).",
-        normal_findings: "Absent primitive reflexes; normal gait initiation and pattern.",
-        abnormal_findings: "Re-emergent primitive reflexes; magnetic gait, difficulty initiating steps.",
-        localization_hint: "Medial frontal and supplementary motor areas.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Any clear re-emergent primitive reflex or magnetic gait → abnormal.",
-        },
-        scoring: { weight: 1, domain: "motor" },
+        id: "consciousness_level",
+        name: "Level of Consciousness",
+        instruction: "Document alertness and responsiveness.",
+        responseType: "clinical_status",
       },
     ],
   },
   {
-    id: "parietal",
-    name: "Parietal Lobe",
-    icon: "brain-side",
-    key_functions: [
-      "Somatosensory processing (touch, pain, temperature, vibration, proprioception)",
-      "Sensory integration and stereognosis",
-      "Spatial perception and visuospatial orientation",
-      "Right–left orientation, constructional abilities",
-      "Dominant parietal: language-related functions (reading, writing, calculation)",
-    ],
-    clinical_signs_of_lesion: [
-      "Contralateral cortical sensory loss (astereognosis, agraphesthesia, extinction)",
-      "Neglect (non-dominant, usually right)",
-      "Gerstmann syndrome (dominant parietal): agraphia, acalculia, finger agnosia, left–right disorientation",
-      "Constructional apraxia, dressing apraxia",
-      "Superior quadrantanopia (inferior parietal/optic radiations)",
-    ],
+    id: "orientation",
+    name: "Orientation",
     tests: [
       {
-        id: "parietal_primary_sensory",
-        name: "Primary Sensory Modalities",
-        instructions: "Test light touch, pinprick, temperature, vibration, and joint position sense in all limbs; compare sides.",
-        normal_findings: "Symmetric perception of all modalities.",
-        abnormal_findings: "Reduced or absent sensation contralateral to lesion.",
-        localization_hint: "Postcentral gyrus and thalamocortical projections.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Score per side; mark abnormal if clear contralateral deficit.",
-        },
-        scoring: { weight: 1, domain: "sensory" },
+        id: "orientation_time",
+        name: "Orientation to Time",
+        instruction: "Ask year, season, month, day and date.",
       },
       {
-        id: "parietal_cortical_sensory",
-        name: "Cortical Sensory Functions",
-        instructions: "Stereognosis (identify objects in hand with eyes closed), graphesthesia (identify numbers traced on palm), two-point discrimination, double simultaneous stimulation.",
-        normal_findings: "Accurate object/number identification; normal two-point discrimination; no extinction.",
-        abnormal_findings: "Astereognosis, agraphesthesia, extinction on double stimulation.",
-        localization_hint: "Superior and inferior parietal lobules (sensory association cortex).",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Any clear cortical sensory loss → abnormal.",
-        },
-        scoring: { weight: 1, domain: "sensory" },
+        id: "orientation_place",
+        name: "Orientation to Place",
+        instruction: "Ask country, state, city, hospital and floor.",
       },
       {
-        id: "parietal_spatial",
-        name: "Visuospatial & Construction",
-        instructions: "Ask patient to copy a cube or intersecting pentagons, draw a clock, and perform line bisection.",
-        normal_findings: "Accurate drawings, normal line bisection, intact spatial orientation.",
-        abnormal_findings: "Distorted drawings, neglect of one side, mis-bisection.",
-        localization_hint: "Non-dominant (right) parietal for spatial/neglect; dominant for construction with language components.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Look for neglect, distortion, or consistent side errors.",
-        },
-        scoring: { weight: 1, domain: "visuospatial" },
+        id: "orientation_person",
+        name: "Orientation to Person",
+        instruction: "Assess awareness of self and relevant persons.",
+      },
+    ],
+  },
+  {
+    id: "attention",
+    name: "Attention and Concentration",
+    tests: [
+      {
+        id: "tap_a",
+        name: "Tap A Test",
+        instruction:
+          "Read a series of letters. Ask the patient to tap whenever the letter A is heard.",
       },
       {
-        id: "parietal_orientation",
-        name: "Right–Left Orientation & Finger Agnosia",
-        instructions: "Ask patient to show right/left hands, ears, etc.; test finger identification (name touched finger with eyes closed).",
-        normal_findings: "Accurate right–left identification and finger naming.",
-        abnormal_findings: "Left–right confusion, finger agnosia.",
-        localization_hint: "Dominant inferior parietal (Gerstmann syndrome).",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Errors in right–left or finger naming → abnormal.",
-        },
-        scoring: { weight: 1, domain: "orientation" },
+        id: "letter_cancellation",
+        name: "Random Letter Cancellation",
+        instruction:
+          "Ask the patient to cancel target letters among distractors within a fixed time.",
+      },
+    ],
+  },
+  {
+    id: "memory",
+    name: "Memory",
+    tests: [
+      {
+        id: "immediate_memory",
+        name: "Immediate Memory",
+        instruction: "Assess immediate registration and short-term retention.",
       },
       {
-        id: "parietal_language_related",
-        name: "Reading, Writing, Calculation",
-        instructions: "Ask patient to read a sentence, write a sentence, and perform simple calculations.",
-        normal_findings: "Normal reading, writing, and arithmetic.",
-        abnormal_findings: "Alexia, agraphia, acalculia out of proportion to primary motor/sensory deficits.",
-        localization_hint: "Dominant parietal (angular and supramarginal gyri).",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Mark abnormal if deficits exceed what primary sensory/motor issues explain.",
-        },
-        scoring: { weight: 1, domain: "language" },
+        id: "digit_forward",
+        name: "Digit Span Forward",
+        instruction: "Ask the patient to repeat progressively longer digit sequences.",
+      },
+      {
+        id: "recent_memory",
+        name: "Recent Memory",
+        instruction: "Ask the patient to recall three objects after 3 to 5 minutes.",
+      },
+      {
+        id: "recent_context",
+        name: "Recent Contextual Recall",
+        instruction: "Ask details such as breakfast or admission date.",
+      },
+      {
+        id: "story_recall",
+        name: "Delayed Story Recall",
+        instruction: "Present a brief story and request recall after 3 to 5 minutes.",
+      },
+      {
+        id: "visual_memory",
+        name: "Visual Memory",
+        instruction:
+          "Hide familiar objects after observation, distract the patient, then ask for retrieval.",
+      },
+      {
+        id: "paired_associate",
+        name: "Paired Association Memory",
+        instruction: "Present paired items and later cue recall of the associated item.",
+      },
+      {
+        id: "remote_memory",
+        name: "Remote Memory",
+        instruction:
+          "Ask established autobiographical details such as schooling or examination history.",
+      },
+      {
+        id: "semantic_memory",
+        name: "Semantic Memory",
+        instruction: "Assess knowledge of familiar facts, concepts and general information.",
+      },
+    ],
+  },
+  {
+    id: "language",
+    name: "Language Examination",
+    tests: [
+      {
+        id: "spontaneous_speech",
+        name: "Spontaneous Speech",
+        subtests: [
+          "Fluency",
+          "Prosody",
+          "Grammar and syntax",
+          "Phrase length",
+          "Paraphasia",
+          "Circumlocution",
+          "Word-finding difficulty",
+          "Initiation",
+          "Content",
+        ],
+      },
+      {
+        id: "comprehension",
+        name: "Comprehension",
+        subtests: ["One-step command", "Two-step command", "Three-step command", "Complex command"],
+      },
+      { id: "repetition", name: "Repetition" },
+      { id: "naming", name: "Naming" },
+      {
+        id: "reading",
+        name: "Reading",
+        subtests: ["Reading aloud", "Reading comprehension", "Reading symbols"],
+      },
+      { id: "writing", name: "Writing" },
+      { id: "automatic_speech", name: "Automatic Speech" },
+    ],
+  },
+];
+
+export const LOBAR_LOBES: Lobe[] = [
+  {
+    id: "frontal",
+    name: "Frontal Lobe",
+    title: "Frontal Lobe Testing",
+    description:
+      "Executive function, planning, inhibition, set shifting, fluency, sequencing, abstraction, attention, working memory and intentional motor control.",
+    localizationHint:
+      "Multiple abnormalities support a frontal-executive dysfunction pattern. Interpret results in relation to attention, language, education and motor performance.",
+    domains: [
+      {
+        id: "planning",
+        name: "Planning",
+        tests: [
+          {
+            id: "tower_of_london",
+            name: "Tower of London",
+            instruction:
+              "Ask the patient to reproduce a target arrangement using the fewest possible moves while moving only one piece at a time.",
+            abnormalFinding: "Inefficient planning, excessive moves, rule violations or inability to formulate a strategy.",
+          },
+        ],
+      },
+      {
+        id: "response_inhibition",
+        name: "Response Inhibition",
+        tests: [
+          {
+            id: "go_no_go",
+            name: "Go-No-Go Test",
+            instruction: "One tap: raise two fingers. Two taps: remain still.",
+            abnormalFinding: "Failure to inhibit a prepotent response.",
+          },
+          {
+            id: "stroop",
+            name: "Stroop Test",
+            instruction: "Ask the patient to name the ink colour rather than read the colour word.",
+            abnormalFinding: "Difficulty suppressing the automatic reading response.",
+          },
+        ],
+      },
+      {
+        id: "mental_flexibility",
+        name: "Mental Flexibility / Set Shifting",
+        tests: [
+          {
+            id: "trail_making_b",
+            name: "Trail Making Test B",
+            instruction: "Alternate sequentially between numbers and letters.",
+            abnormalFinding: "Set loss, perseveration, sequencing errors or marked slowing.",
+          },
+          {
+            id: "wisconsin_card_sorting",
+            name: "Wisconsin Card Sorting Test",
+            instruction: "Assess ability to infer and shift sorting rules according to colour, number or shape.",
+            abnormalFinding: "Perseveration or inability to shift conceptual set.",
+          },
+        ],
+      },
+      {
+        id: "fluency",
+        name: "Fluency",
+        tests: [
+          {
+            id: "fas",
+            name: "Phonemic Fluency - FAS",
+            instruction: "Generate as many words as possible beginning with F, A and S, usually one minute per letter.",
+          },
+          {
+            id: "semantic_fluency",
+            name: "Semantic Fluency",
+            instruction: "Generate as many items as possible from a semantic category such as animals.",
+          },
+          {
+            id: "design_fluency",
+            name: "Design Fluency",
+            instruction: "Generate as many novel designs as possible within a fixed time.",
+          },
+        ],
+      },
+      {
+        id: "sequencing",
+        name: "Sequencing",
+        tests: [
+          {
+            id: "luria_graphic_sequence",
+            name: "Luria Graphic Sequencing",
+            instruction: "Ask the patient to continue an alternating graphic sequence.",
+          },
+          {
+            id: "fist_edge_palm",
+            name: "Fist-Edge-Palm",
+            instruction: "Ask the patient to repeat the sequence fist, edge and palm.",
+          },
+          {
+            id: "fist_ring",
+            name: "Fist-Ring Sequence",
+            instruction: "Ask the patient to alternate a fist with a ring formed by thumb and forefinger.",
+          },
+        ],
+      },
+      {
+        id: "conceptual_series",
+        name: "Conceptual Series Completion",
+        tests: [
+          { id: "numeric_series", name: "Numeric Series", example: "1, 3, 5, ..." },
+          { id: "word_series", name: "Word Pattern", example: "Cat-tac, man-nam, big..." },
+          { id: "alphanumeric_series", name: "Alphanumeric Series", example: "A1, B2, C3, ..." },
+        ],
+      },
+      {
+        id: "abstraction",
+        name: "Abstract Thinking",
+        tests: [
+          { id: "proverbs", name: "Proverb Interpretation" },
+          {
+            id: "similarities",
+            name: "Similarities and Differences",
+            example: "Compare a cow and a goat.",
+          },
+        ],
+      },
+      {
+        id: "working_memory",
+        name: "Working Memory",
+        tests: [
+          { id: "digits_backward", name: "Digit Span Backward" },
+          {
+            id: "letter_number_span",
+            name: "Letter-Number Span",
+            instruction:
+              "Present mixed letters and numbers. Ask the patient to repeat numbers in ascending order followed by letters alphabetically.",
+          },
+        ],
+      },
+      {
+        id: "intentional_motor",
+        name: "Intentional Motor System",
+        tests: [
+          {
+            id: "motor_impersistence",
+            name: "Motor Impersistence",
+            instruction: "Ask the patient to sustain an instructed motor act such as keeping the eyes closed.",
+          },
+          {
+            id: "motor_perseveration",
+            name: "Motor Perseveration",
+            instruction: "Look for inappropriate continuation or repetition of a motor response.",
+          },
+          {
+            id: "echopraxia",
+            name: "Echopraxia",
+            instruction:
+              "Examiner shows one finger and patient should show two; examiner shows two and patient should show none. Observe for automatic imitation.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "left_parietal",
+    name: "Left Parietal Lobe",
+    title: "Dominant Parietal Lobe Testing",
+    description: "Praxis, calculation, finger gnosis and right-left orientation.",
+    localizationHint:
+      "Combined acalculia, finger agnosia and right-left disorientation may indicate dominant parietal dysfunction when supported by the remainder of the examination.",
+    domains: [
+      {
+        id: "apraxia",
+        name: "Apraxia",
+        tests: [
+          {
+            id: "conceptual_apraxia_tool_selection",
+            name: "Tool Selection Task",
+            instruction: "Select the correct tool for a familiar task, for example a hammer for a partially driven nail.",
+          },
+          {
+            id: "alternative_tool_selection",
+            name: "Alternative Tool Selection",
+            instruction: "Select a suitable substitute when the normal tool is unavailable.",
+          },
+          {
+            id: "gesture_recognition",
+            name: "Gesture Recognition",
+            instruction: "Name or identify gestures performed by the examiner.",
+          },
+          {
+            id: "ideational_apraxia",
+            name: "Ideational Apraxia",
+            instruction: "Ask the patient to prepare a letter for mailing.",
+          },
+          {
+            id: "ideomotor_transitive",
+            name: "Transitive Movement",
+            instruction: "Pantomime use of an object such as a hammer or screwdriver.",
+          },
+          {
+            id: "ideomotor_intransitive",
+            name: "Intransitive Movement",
+            instruction: "Perform commands such as waving goodbye or touching the nose.",
+          },
+          {
+            id: "movement_imitation",
+            name: "Movement Imitation",
+            instruction: "Imitate meaningful and meaningless movements, postures and sequences.",
+          },
+          { id: "actual_tool_use", name: "Actual Tool Use" },
+          {
+            id: "limb_kinetic_apraxia",
+            name: "Limb-Kinetic Praxis",
+            instruction: "Oppose thumb rapidly to index, middle, ring and little fingers in succession.",
+          },
+        ],
+      },
+      {
+        id: "calculation",
+        name: "Calculation",
+        tests: [
+          { id: "counting", name: "Forward and Backward Counting" },
+          {
+            id: "symbolic_transcoding",
+            name: "Symbolic Transcoding",
+            instruction: "Convert numerals to verbal form and verbal numbers to numerals.",
+          },
+          {
+            id: "arithmetic_signs",
+            name: "Arithmetic Signs",
+            instruction: "Read and write arithmetic signs.",
+          },
+          {
+            id: "mental_calculation",
+            name: "Mental Calculation",
+            instruction: "Addition, subtraction, multiplication and division.",
+          },
+          { id: "written_calculation", name: "Written Calculation" },
+          {
+            id: "column_alignment",
+            name: "Column Alignment",
+            instruction: "Assess correct spatial alignment of multidigit arithmetic.",
+          },
+          { id: "planned_arithmetic", name: "Arithmetic Requiring Planning" },
+        ],
+      },
+      {
+        id: "finger_gnosis",
+        name: "Finger Gnosis",
+        tests: [
+          {
+            id: "finger_visible",
+            name: "Finger Identification - Visible Hand",
+            instruction: "Touch a finger and ask the patient to localize and identify it.",
+          },
+          {
+            id: "finger_hidden",
+            name: "Finger Identification - Hidden Hand",
+            instruction: "Repeat with the hand hidden from view.",
+          },
+        ],
+      },
+      {
+        id: "right_left_orientation",
+        name: "Right-Left Orientation",
+        tests: [
+          { id: "own_body", name: "Orientation to Own Body" },
+          {
+            id: "crossed_commands",
+            name: "Crossed Commands",
+            example: "Touch the right ear with the left hand.",
+          },
+          { id: "examiner_body", name: "Orientation to Examiner" },
+          { id: "combined_orientation", name: "Combined Self-Examiner Orientation" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "right_parietal",
+    name: "Right Parietal Lobe",
+    title: "Right Parietal Lobe Testing",
+    description: "Hemispatial attention, construction, dressing and topographic orientation.",
+    localizationHint:
+      "Asymmetric omissions, line-bisection deviation, impaired construction or dressing and topographic disturbance support a right parietal dysfunction pattern.",
+    domains: [
+      {
+        id: "hemineglect",
+        name: "Hemispatial Neglect",
+        tests: [
+          {
+            id: "target_cancellation",
+            name: "Target Cancellation",
+            instruction: "Cancel targets among distractors and inspect for asymmetric omissions.",
+          },
+          {
+            id: "line_bisection",
+            name: "Horizontal Line Bisection",
+            instruction: "Ask the patient to mark the midpoint of a horizontal line.",
+          },
+          {
+            id: "clock_drawing",
+            name: "Clock Drawing",
+            instruction: "Draw a clock and inspect number placement and spatial organization.",
+          },
+          {
+            id: "spatial_localization",
+            name: "Spatial Localization",
+            instruction: "Assess location of objects relative to the patient.",
+          },
+        ],
+      },
+      {
+        id: "construction",
+        name: "Constructional Praxis",
+        tests: [
+          { id: "necker_cube", name: "Necker Cube Copy" },
+          { id: "overlapping_pentagons", name: "Overlapping Pentagons" },
+          { id: "clock_construction", name: "Clock Construction" },
+        ],
+      },
+      {
+        id: "dressing",
+        name: "Dressing Praxis",
+        tests: [
+          {
+            id: "jacket_test",
+            name: "Jacket Dressing Task",
+            instruction:
+              "Ask the patient to put on a jacket whose sleeves have been deliberately turned inside out and whose orientation has been reversed.",
+          },
+        ],
+      },
+      {
+        id: "topography",
+        name: "Topographic Function",
+        tests: [
+          {
+            id: "object_locations",
+            name: "Immediate Spatial Locations",
+            instruction: "Determine spatial locations of nearby objects.",
+          },
+          { id: "familiar_landmarks", name: "Familiar Landmark Recognition" },
+          {
+            id: "familiar_map",
+            name: "Map of Familiar Place",
+            instruction: "Ask the patient to draw a map of a familiar place.",
+          },
+          {
+            id: "new_route",
+            name: "Describe New Route",
+            instruction: "Ask the patient to describe a recently learned route.",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "occipital",
+    name: "Occipital and Visual Association Cortex",
+    title: "Occipital Lobe Testing",
+    description: "Primary vision and higher ventral and dorsal visual processing.",
+    localizationHint:
+      "Always assess basic visual fields before interpreting higher visual processing abnormalities.",
+    domains: [
+      {
+        id: "primary_visual",
+        name: "Primary Visual Cortex",
+        tests: [
+          {
+            id: "visual_fields",
+            name: "Visual Fields",
+            instruction: "Screen for visual field defects.",
+          },
+        ],
+      },
+      {
+        id: "ventral_stream",
+        name: "Ventral Stream",
+        tests: [
+          { id: "apperceptive_matching", name: "Visual Matching", target: "Apperceptive visual agnosia" },
+          { id: "copying", name: "Copying", target: "Apperceptive visual agnosia" },
+          { id: "incomplete_letters", name: "Incomplete Letter Test", target: "Perceptual categorization" },
+          { id: "silhouettes", name: "Silhouettes", target: "Perceptual categorization" },
+          { id: "gollin_figures", name: "Gollin Figures", target: "Perceptual categorization" },
+          { id: "unusual_view", name: "Usual / Unusual View Test", target: "Perceptual categorization" },
+          { id: "foreshortened_match", name: "Foreshortened Match", target: "Perceptual categorization" },
+          { id: "functional_matching", name: "Functional Object Matching", target: "Associative visual agnosia" },
+          { id: "real_unreal", name: "Real and Unreal Object Test", target: "Associative visual agnosia" },
+          { id: "pyramids_palm_trees", name: "Pyramids and Palm Trees", target: "Visual semantic association" },
+          { id: "prosopagnosia_informal", name: "Familiar Face Recognition", target: "Prosopagnosia" },
+          { id: "benton_face", name: "Benton Facial Recognition Concept", target: "Face perception" },
+        ],
+      },
+      {
+        id: "colour_processing",
+        name: "Cerebral Colour Processing",
+        tests: [
+          { id: "ishihara", name: "Ishihara Screening" },
+          { id: "colour_naming", name: "Colour Naming" },
+          { id: "colour_pointing", name: "Colour Pointing" },
+          { id: "colour_matching", name: "Colour Matching" },
+          { id: "colour_sorting", name: "Colour Sorting" },
+          { id: "conceptual_colour", name: "Conceptual Colour Naming" },
+          { id: "colour_painting", name: "Colour Painting" },
+        ],
+      },
+      {
+        id: "dorsal_stream",
+        name: "Dorsal Stream",
+        tests: [
+          {
+            id: "dorsal_simultanagnosia",
+            name: "Modified Letter Cancellation",
+            target: "Dorsal simultanagnosia",
+          },
+          {
+            id: "global_local",
+            name: "Global-Local Letter Test",
+            instruction: "Present a large global letter composed of smaller local letters.",
+          },
+          { id: "mixed_figures", name: "Mixed Figure Test", target: "Ventral simultanagnosia" },
+          {
+            id: "cookie_theft",
+            name: "Complex Scene Description",
+            example: "Cookie Theft picture",
+            target: "Ventral simultanagnosia",
+          },
+          {
+            id: "visual_disorientation_depth",
+            name: "Near-Far Object Localization",
+            target: "Visual disorientation",
+          },
+          { id: "circle_center", name: "Centre-of-Circle Test", target: "Visual disorientation" },
+          {
+            id: "optic_ataxia",
+            name: "Visually Guided Reaching",
+            instruction: "Ask the patient to touch the examiner's ear and then the patient's own ear.",
+            target: "Optic ataxia",
+          },
+        ],
       },
     ],
   },
   {
     id: "temporal",
     name: "Temporal Lobe",
-    icon: "brain-temporal",
-    key_functions: [
-      "Auditory processing (primary auditory cortex)",
-      "Language comprehension (Wernicke area, dominant)",
-      "Memory (hippocampus, medial temporal)",
-      "Emotion and behavior (amygdala)",
-      "Visual object and face recognition (inferotemporal)",
-    ],
-    clinical_signs_of_lesion: [
-      "Receptive (Wernicke) aphasia if dominant superior temporal",
-      "Memory impairment (especially recent/episodic)",
-      "Auditory or visual hallucinations, olfactory/gustatory phenomena",
-      "Emotional/behavioral changes (fear, aggression)",
-      "Superior quadrantanopia ('pie in the sky') from Meyer's loop involvement",
-    ],
-    tests: [
+    title: "Temporal Lobe Function",
+    description:
+      "Recent episodic memory, integrated topographic memory, visual identification, semantic memory and language.",
+    localizationHint:
+      "The reference source summarizes temporal functions rather than presenting a separate extensive temporal battery.",
+    domains: [
       {
-        id: "temporal_auditory",
-        name: "Auditory Processing",
-        instructions: "Check hearing acuity; ask patient to repeat words and sentences; assess sound localization if possible.",
-        normal_findings: "Normal hearing thresholds; accurate repetition and localization.",
-        abnormal_findings: "Impaired discrimination or localization; cortical deafness patterns with preserved brainstem reflexes.",
-        localization_hint: "Superior temporal gyrus (Heschl's gyrus).",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Differentiate peripheral hearing loss from cortical processing issues.",
-        },
-        scoring: { weight: 1, domain: "auditory" },
+        id: "episodic_memory",
+        name: "Recent Episodic Memory",
+        tests: [
+          {
+            id: "three_object_recall",
+            name: "Three-Object Delayed Recall",
+            instruction: "Ask the patient to recall three objects after 3 to 5 minutes.",
+          },
+          { id: "story_delayed_recall", name: "Delayed Story Recall" },
+          { id: "recent_event_memory", name: "Recent Event Memory" },
+        ],
       },
       {
-        id: "temporal_language_comprehension",
-        name: "Language Comprehension (Wernicke)",
-        instructions: "Give multi-step commands ('Touch your left ear with your right hand'), ask patient to explain a proverb or picture.",
-        normal_findings: "Accurate execution of commands; appropriate explanations.",
-        abnormal_findings: "Fluent but meaningless speech, poor comprehension, paraphasic errors.",
-        localization_hint: "Dominant posterior superior temporal gyrus.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Focus on comprehension and meaningfulness of speech.",
-        },
-        scoring: { weight: 1, domain: "language" },
+        id: "visual_memory",
+        name: "Visual Memory",
+        tests: [{ id: "hidden_objects", name: "Hidden Object Recall" }],
       },
       {
-        id: "temporal_memory",
-        name: "Memory (Recent & Remote)",
-        instructions: "Test recent memory (3-5 unrelated words and ask patient to recall them immediately and after a delay); test episodic recall of recent events.",
-        normal_findings: "Recalls ≥4/5 words after delay; coherent recent memory.",
-        abnormal_findings: "Rapid forgetting, poor encoding, confabulation, or semantic intrusions.",
-        localization_hint: "Hippocampus and medial temporal structures (bilateral or dominant).",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Score delayed recall; use standardized words or MoCA/memory tests if available.",
-        },
-        scoring: { weight: 1, domain: "memory" },
+        id: "associative_memory",
+        name: "Associative Memory",
+        tests: [{ id: "paired_associates", name: "Paired Associate Memory" }],
       },
       {
-        id: "temporal_emotion_behavior",
-        name: "Emotion & Behavior",
-        instructions: "Explore history of fear, aggression, déjà vu, olfactory/gustatory auras; observe affect.",
-        normal_findings: "Stable mood, no aura phenomena.",
-        abnormal_findings: "Episodic fear, olfactory/gustatory hallucinations, behavioral changes.",
-        localization_hint: "Amygdala and anterior temporal regions.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Use history and observed affect; consider seizure history.",
-        },
-        scoring: { weight: 1, domain: "behavior" },
+        id: "semantic_memory",
+        name: "Semantic Memory",
+        tests: [{ id: "general_knowledge", name: "General Knowledge" }],
       },
       {
-        id: "temporal_visual_recognition",
-        name: "Visual Object & Face Recognition",
-        instructions: "Ask patient to name common objects and familiar faces; test for prosopagnosia if suspected.",
-        normal_findings: "Accurate naming of objects and faces.",
-        abnormal_findings: "Visual agnosia or prosopagnosia.",
-        localization_hint: "Inferotemporal and fusiform regions.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Mark abnormal if object/face naming fails despite intact vision.",
-        },
-        scoring: { weight: 1, domain: "visuospatial" },
+        id: "topographic_memory",
+        name: "Integrated Topographic Memory",
+        tests: [{ id: "familiar_routes", name: "Familiar Routes and Places" }],
+      },
+      {
+        id: "visual_identification",
+        name: "Visual Identification",
+        tests: [
+          { id: "face_identification", name: "Face Identification" },
+          { id: "letter_identification", name: "Letter Identification" },
+          { id: "symbol_identification", name: "Symbol Identification" },
+        ],
+      },
+      {
+        id: "language_semantics",
+        name: "Language and Semantic Access",
+        tests: [
+          { id: "object_naming", name: "Object Naming" },
+          { id: "semantic_access", name: "Semantic Access" },
+          { id: "language_comprehension", name: "Language Comprehension" },
+        ],
       },
     ],
+  },
+];
+
+export const LOBAR_TAB_ORDER = [
+  { id: "baseline", label: "Baseline", subtitle: "Higher Mental Function" },
+  { id: "frontal", label: "Frontal", subtitle: "Executive" },
+  { id: "left_parietal", label: "Left Parietal", subtitle: "Praxis · Calculation" },
+  { id: "right_parietal", label: "Right Parietal", subtitle: "Spatial · Neglect" },
+  { id: "occipital", label: "Occipital", subtitle: "Visual Processing" },
+  { id: "temporal", label: "Temporal", subtitle: "Memory · Semantics" },
+  { id: "summary", label: "Summary", subtitle: "Report" },
+];
+
+export const LOBAR_TAB_COLORS: Record<
+  string,
+  { active: string; inactive: string; icon: string }
+> = {
+  baseline: {
+    active: "bg-slate-600 text-white shadow-sm",
+    inactive: "bg-slate-100 text-slate-800 hover:bg-slate-200 dark:bg-slate-950/40 dark:text-slate-200 dark:hover:bg-slate-900/60",
+    icon: "text-slate-500",
+  },
+  frontal: {
+    active: "bg-rose-600 text-white shadow-sm",
+    inactive: "bg-rose-100 text-rose-800 hover:bg-rose-200 dark:bg-rose-950/40 dark:text-rose-200 dark:hover:bg-rose-900/60",
+    icon: "text-rose-500",
+  },
+  left_parietal: {
+    active: "bg-blue-600 text-white shadow-sm",
+    inactive: "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-950/40 dark:text-blue-200 dark:hover:bg-blue-900/60",
+    icon: "text-blue-500",
+  },
+  right_parietal: {
+    active: "bg-cyan-600 text-white shadow-sm",
+    inactive: "bg-cyan-100 text-cyan-800 hover:bg-cyan-200 dark:bg-cyan-950/40 dark:text-cyan-200 dark:hover:bg-cyan-900/60",
+    icon: "text-cyan-500",
+  },
+  occipital: {
+    active: "bg-violet-600 text-white shadow-sm",
+    inactive: "bg-violet-100 text-violet-800 hover:bg-violet-200 dark:bg-violet-950/40 dark:text-violet-200 dark:hover:bg-violet-900/60",
+    icon: "text-violet-500",
+  },
+  temporal: {
+    active: "bg-amber-500 text-white shadow-sm",
+    inactive: "bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-amber-950/40 dark:text-amber-200 dark:hover:bg-amber-900/60",
+    icon: "text-amber-500",
+  },
+  summary: {
+    active: "bg-emerald-600 text-white shadow-sm",
+    inactive: "bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-200 dark:hover:bg-emerald-900/60",
+    icon: "text-emerald-500",
+  },
+};
+
+export const LOBAR_SUMMARY_RULES = [
+  {
+    id: "frontal_pattern",
+    condition: "multiple_abnormal_tests_in_frontal_domain",
+    output: "Findings indicate a frontal-executive dysfunction pattern.",
   },
   {
-    id: "occipital",
-    name: "Occipital Lobe",
-    icon: "eye",
-    key_functions: [
-      "Primary visual processing",
-      "Visual field interpretation",
-      "Color, motion, and form perception",
-      "Object and facial recognition pathways (with temporal)",
-    ],
-    clinical_signs_of_lesion: [
-      "Contralateral homonymous visual field defects",
-      "Cortical blindness with preserved pupillary reflexes",
-      "Visual agnosia, alexia without agraphia (dominant occipital + splenium)",
-      "Color anomia, motion perception deficits",
-    ],
-    tests: [
-      {
-        id: "occipital_visual_fields",
-        name: "Visual Field Testing",
-        instructions: "Perform confrontation visual fields in all quadrants; note any homonymous defects.",
-        normal_findings: "Full visual fields bilaterally.",
-        abnormal_findings: "Contralateral homonymous hemianopia or quadrantanopia.",
-        localization_hint: "Primary visual cortex and optic radiations.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline / Equivocal" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Use finger counting or red target in each quadrant; be systematic.",
-        },
-        scoring: { weight: 1, domain: "visual" },
-      },
-      {
-        id: "occipital_visual_acuity",
-        name: "Visual Acuity & Cortical Vision",
-        instructions: "Check Snellen acuity; assess for cortical blindness (patient reports blindness with normal pupillary reflexes and fundus).",
-        normal_findings: "Normal acuity; appropriate visual behavior.",
-        abnormal_findings: "Reduced acuity or cortical blindness patterns.",
-        localization_hint: "Occipital cortex and geniculocalcarine pathways.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Consider cortical blindness if acuity poor but pupils/fundus normal.",
-        },
-        scoring: { weight: 1, domain: "visual" },
-      },
-      {
-        id: "occipital_color_form",
-        name: "Color, Form, and Motion Perception",
-        instructions: "Ask patient to name colors, identify shapes, and describe moving objects.",
-        normal_findings: "Accurate color naming, shape identification, and motion perception.",
-        abnormal_findings: "Color anomia, form or motion perception deficits.",
-        localization_hint: "Extrastriate visual areas (V2–V5).",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Mark abnormal if specific modality (color/form/motion) is impaired.",
-        },
-        scoring: { weight: 1, domain: "visual" },
-      },
-      {
-        id: "occipital_reading",
-        name: "Reading & Visual Word Form",
-        instructions: "Ask patient to read words and sentences; distinguish alexia without agraphia.",
-        normal_findings: "Normal reading ability.",
-        abnormal_findings: "Alexia with preserved writing (dominant occipital + splenial lesions).",
-        localization_hint: "Dominant occipital and splenium of corpus callosum.",
-        ui: {
-          inputType: "select",
-          options: [
-            { value: 2, label: "Normal" },
-            { value: 1, label: "Borderline" },
-            { value: 0, label: "Abnormal" },
-          ],
-          helpText: "Suspect alexia without agraphia if reading impaired but writing preserved.",
-        },
-        scoring: { weight: 1, domain: "language" },
-      },
-    ],
+    id: "dominant_parietal_pattern",
+    condition: "abnormal_calculation_or_finger_gnosis_or_right_left_orientation_or_praxis",
+    output: "Findings suggest dominant parietal dysfunction.",
+  },
+  {
+    id: "right_parietal_pattern",
+    condition: "abnormal_neglect_or_construction_or_dressing_or_topography",
+    output: "Findings suggest right parietal visuospatial dysfunction.",
+  },
+  {
+    id: "ventral_visual_pattern",
+    condition: "abnormal_object_face_semantic_or_colour_recognition",
+    output: "Findings suggest ventral visual-stream dysfunction.",
+  },
+  {
+    id: "dorsal_visual_pattern",
+    condition: "abnormal_simultanagnosia_visual_disorientation_or_optic_ataxia",
+    output: "Findings suggest dorsal visual-stream dysfunction.",
+  },
+  {
+    id: "temporal_pattern",
+    condition: "abnormal_episodic_or_semantic_memory",
+    output: "Findings suggest temporal memory-system dysfunction.",
   },
 ];
 
-export const LOBAR_SCORING = {
-  scale: {
-    min: 0,
-    max: 2,
-    labels: {
-      0: "Abnormal",
-      1: "Borderline",
-      2: "Normal",
-    },
-  },
-  aggregation: {
-    method: "weighted_mean",
-    defaultWeight: 1,
-    perLobe: true,
-    perDomain: true,
-  },
-  interpretation: {
-    thresholds: [
-      { min: 1.7, label: "Likely normal", color: "green" },
-      { min: 1.2, label: "Possible involvement", color: "orange" },
-      { min: 0, label: "Likely lobar involvement", color: "red" },
-    ],
-    note: "Use as an adjunct to full neurological exam and imaging; not diagnostic on its own.",
-  },
+export const LOBAR_REPORT_TEMPLATE = {
+  title: "Higher Mental Function and Lobar Assessment",
+  sections: [
+    "Baseline cognition",
+    "Frontal lobe",
+    "Left parietal lobe",
+    "Right parietal lobe",
+    "Occipital and visual association cortex",
+    "Temporal lobe",
+    "Clinical impression",
+  ],
+  normalSentence: "{testName}: Normal.",
+  abnormalSentence: "{testName}: Abnormal. {observation}",
+  notTestedSentence: "{testName}: Not tested.",
+  impressionTemplate:
+    "The examination demonstrates {patternSummary}. Findings should be correlated with the complete neurological examination, language function, visual fields, sensory and motor deficits, educational background and clinical context.",
 };
-
-export const LOBAR_UI = {
-  testCard: {
-    showLocalizationHint: true,
-    showNormalAbnormalFindings: true,
-    defaultExpanded: false,
-  },
-  lobeSummary: {
-    showKeyFunctions: true,
-    showClinicalSigns: true,
-    showScoreHeatmap: true,
-  },
-};
-
-export const LOBAR_USAGE_NOTES = [
-  "Adapt test wording to local language and literacy levels.",
-  "Always interpret in context of full neurological exam and imaging.",
-  "Dominant hemisphere is usually left in right-handed individuals.",
-];
-
-export const LOBAR_SCORE_LABELS: Record<number, string> = {
-  2: "Normal",
-  1: "Borderline",
-  0: "Abnormal",
-};
-
-export function getLobeById(id: string): Lobe | undefined {
-  return LOBES.find((l) => l.id === id);
-}
-
-export function getTestById(id: string): { lobe: Lobe; test: LobarTest } | undefined {
-  for (const lobe of LOBES) {
-    const test = lobe.tests.find((t) => t.id === id);
-    if (test) return { lobe, test };
-  }
-  return undefined;
-}
