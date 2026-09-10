@@ -40,6 +40,7 @@ import { HunterAssessment } from '@/components/HunterAssessment';
 import { AdverseEffectsAssessment } from '@/components/AdverseEffectsAssessment';
 import LobarFunctionsAssessment from '@/components/LobarFunctionsAssessment';
 import OccipitalAssessment from '@/components/OccipitalAssessment';
+import FoodNoiseScaleAssessment from '@/components/FoodNoiseScaleAssessment';
 import { ChsAssessment } from '@/components/ChsAssessment';
 import { SomaticDelusionsAssessment } from '@/components/SomaticDelusionsAssessment';
 import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
@@ -136,7 +137,7 @@ export type AssessmentKey =
   | 'daphne6' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
-  | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'lobarFunctions' | 'occipitalTesting' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
+  | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'lobarFunctions' | 'occipitalTesting' | 'foodNoiseScale' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
   | 'bprs' | 'sapsSans' | 'crdpss' | 'sops' | 'psyrats' | 'vagus'
   | 'asrs6' | 'asrs18' | 'vanderbilt' | 'adhdScreener'
   | 'bdi' | 'ybocs' | 'ipde' | 'cage' | 'cows' | 'simpsonAngus' | 'eprs' | 'panss'
@@ -554,7 +555,7 @@ export const AssessmentSelector = () => {
       adhd: true, msibpd: true, hamd: true, hama: true, pss: true,
       dementia: true, catatonia: true, stressScreening: true,
       fallRisk: true, miniace: true, nms: true, mmpi: true, adam: true,
-      hunter: true, smarts: true, adverseEffects: true, lobarFunctions: true, occipitalTesting: true, cognitiveSyndromes: true,
+      hunter: true, smarts: true, adverseEffects: true, lobarFunctions: true, occipitalTesting: true, foodNoiseScale: true, cognitiveSyndromes: true,
       callosal: true,
       mse: true,
       moca: true,
