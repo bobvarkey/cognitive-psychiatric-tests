@@ -1,7 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { createDemoSubscription, setDemoUnlockAll, getDemoUnlockAll } from '@/services/subscriptionService';
+import {
+  createDemoSubscription,
+  setDemoUnlockAll,
+  getDemoUnlockAll,
+  getDemoTrialMsLeft,
+  resetDemoTrial,
+  DEMO_TRIAL_DAYS,
+} from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 import { usePremiumEntitlement } from '@/hooks/usePremiumEntitlement';
+import { getWebPremium, restoreWebPurchase, type WebPremium } from '@/lib/webBilling';
 
 interface PremiumFeatures {
   allAssessments: boolean;
