@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
-  Card, CardContent, CardHeader, CardTitle,
+  Card, CardContent, CardHeader, CardTitle, CardDescription,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
-  ArrowLeft, Pill, AlertTriangle, CheckCircle2, Info, RotateCcw, Activity,
+  ArrowLeft, Pill, AlertTriangle, CheckCircle2, Info, RotateCcw, Activity, Utensils,
 } from 'lucide-react';
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';

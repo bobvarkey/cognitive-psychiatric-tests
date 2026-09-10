@@ -32,6 +32,7 @@ export interface LobeTest {
 export interface LobeDomain {
   id: string;
   name: string;
+  instruction?: string;
   tests: LobeTest[];
 }
 
