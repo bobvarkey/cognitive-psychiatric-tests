@@ -33,6 +33,17 @@ interface SubscriptionContextType {
   refreshSubscription: () => void;
   demoUnlockAll: boolean;
   toggleDemoUnlockAll: (enabled: boolean) => void;
+  /** Whether the 2-day demo trial is still running. */
+  demoTrialActive: boolean;
+  /** Milliseconds remaining in the demo trial. */
+  demoTrialMsLeft: number;
+  demoTrialDays: number;
+  restartDemoTrial: () => void;
+  /** Website (Razorpay) subscription active on this device, if any. */
+  webPremium: WebPremium | null;
+  restoreWebAccess: (email: string) => Promise<boolean>;
+  /** Where the current premium access comes from. */
+  premiumSource: 'store' | 'web' | 'demo' | 'none';
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
