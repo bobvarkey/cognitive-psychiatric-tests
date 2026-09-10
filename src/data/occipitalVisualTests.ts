@@ -49,7 +49,7 @@ export interface TestModule {
   record?: Record<string, string[]>;
   questionTypes?: string[];
   imageRequired?: boolean;
-  interaction: Record<string, unknown>;
+  interaction?: Record<string, unknown>;
   scoring?: Record<string, unknown>;
   scoreOptions?: string[];
   copyrightRule?: string;
