@@ -5,6 +5,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   ArrowLeft, Pill, AlertTriangle, CheckCircle2, Info, RotateCcw, Activity,
@@ -12,6 +14,14 @@ import {
 import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ADVERSE_EFFECTS, ADVERSE_EFFECTS_PURPOSE } from '@/data/adverseEffectsData';
+import {
+  FOOD_NOISE_SCALE,
+  FNQ_ITEM_IDS,
+  findInterpretationBand,
+  calculateTotalScore,
+  isComplete,
+  calculateDomainScore,
+} from '@/data/foodNoiseScale';
 import { AssessmentReference } from '@/components/AssessmentReference';
 import { ExportButtons } from './ExportButtons';
 import type { ReportData } from '@/utils/reportGenerator';
@@ -31,9 +41,17 @@ export const AdverseEffectsAssessment = ({ onBack }: Props) => {
   const isMl = language === 'ml';
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [activeCat, setActiveCat] = useState<string>(ADVERSE_EFFECTS[0].id);
+  const [fnqResponses, setFnqResponses] = useState<Record<string, number | null>>({
+    fnq1: null, fnq2: null, fnq3: null, fnq4: null, fnq5: null,
+  });
 
   const toggle = (id: string) => setChecked(p => ({ ...p, [id]: !p[id] }));
   const reset = () => setChecked({});
+  const resetFnq = () => setFnqResponses({ fnq1: null, fnq2: null, fnq3: null, fnq4: null, fnq5: null });
+
+  const fnqScore = calculateTotalScore(fnqResponses);
+  const fnqBand = findInterpretationBand(fnqScore);
+  const fnqComplete = isComplete(fnqResponses);
 
   const positives = useMemo(
     () =>
@@ -78,6 +96,84 @@ export const AdverseEffectsAssessment = ({ onBack }: Props) => {
           <LanguageToggle />
         </div>
         <p className="text-sm text-muted-foreground">{ADVERSE_EFFECTS_PURPOSE}</p>
+
+        {/* Food Noise Scale (FNQ-5) */}
+        <Card className="border-l-4 border-l-orange-500">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Utensils className="h-5 w-5 text-orange-500" />
+                <CardTitle className="text-lg">Food Noise Scale (FNQ-5)</CardTitle>
+              </div>
+              <Button variant="ghost" size="sm" onClick={resetFnq} className="gap-1">
+                <RotateCcw className="h-4 w-4" /> Reset
+              </Button>
+            </div>
+            <CardDescription>
+              {FOOD_NOISE_SCALE.questionnaire.timeframe} · {FOOD_NOISE_SCALE.questionnaire.instructions}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            {FOOD_NOISE_SCALE.questionnaire.items.map((item) => (
+              <div key={item.id} className="space-y-2">
+                <p className="text-sm font-medium">
+                  {item.order}. {item.text}
+                </p>
+                <RadioGroup
+                  value={fnqResponses[item.id] !== null ? String(fnqResponses[item.id]) : undefined}
+                  onValueChange={(val) => setFnqResponses(p => ({ ...p, [item.id]: Number(val) }))}
+                  className="grid grid-cols-1 sm:grid-cols-5 gap-2"
+                >
+                  {FOOD_NOISE_SCALE.questionnaire.responseOptions.map((opt) => (
+                    <div key={opt.value} className="flex items-center space-x-2">
+                      <RadioGroupItem value={String(opt.value)} id={`${item.id}-${opt.value}`} />
+                      <Label htmlFor={`${item.id}-${opt.value}`} className="text-xs font-normal">{opt.label}</Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+            ))}
+
+            <div className="rounded-lg bg-muted p-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl font-bold">{fnqScore}</span>
+                <span className="text-lg text-muted-foreground">/ {FOOD_NOISE_SCALE.scoring.maximumScore}</span>
+                {fnqComplete && fnqBand && (
+                  <Badge className={`text-white ${
+                    fnqBand.severityLevel === 0 ? 'bg-emerald-500' :
+                    fnqBand.severityLevel === 1 ? 'bg-lime-500' :
+                    fnqBand.severityLevel === 2 ? 'bg-yellow-500' :
+                    fnqBand.severityLevel === 3 ? 'bg-orange-500' : 'bg-rose-500'
+                  }`}>{fnqBand.label}</Badge>
+                )}
+              </div>
+              {!fnqComplete && (
+                <p className="text-sm text-amber-600 dark:text-amber-400">
+                  {FOOD_NOISE_SCALE.scoring.missingDataPolicy.message}
+                </p>
+              )}
+              {fnqComplete && fnqBand && (
+                <p className="text-sm text-muted-foreground">{fnqBand.summary}</p>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {FOOD_NOISE_SCALE.domainAnalysis.domains.map((domain) => (
+                  <div key={domain.id} className="rounded-lg border bg-background p-2">
+                    <p className="text-xs text-muted-foreground">{domain.label}</p>
+                    <p className="text-base font-semibold">
+                      {calculateDomainScore(fnqResponses, domain.id)} / {domain.scoreRange.split('-')[1]}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 p-3 text-sm">
+              {FOOD_NOISE_SCALE.clinicalSafety.messages.map((msg, i) => (
+                <p key={i} className="mb-1 last:mb-0">• {msg}</p>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Live summary tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
