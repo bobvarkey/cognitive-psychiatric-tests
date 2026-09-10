@@ -69,9 +69,45 @@ export const setDemoUnlockAll = (enabled: boolean): void => {
   }
 };
 
+// ---- 2-day demo trial -------------------------------------------------
+const DEMO_START_KEY = 'psycognito.demoTrialStart.v1';
+export const DEMO_TRIAL_DAYS = 2;
+const DEMO_TRIAL_MS = DEMO_TRIAL_DAYS * 86400 * 1000;
+
+/** Start (once) and return the demo trial start timestamp. */
+export const getDemoTrialStart = (): number => {
+  try {
+    const raw = localStorage.getItem(DEMO_START_KEY);
+    if (raw) {
+      const n = Number(raw);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    const now = Date.now();
+    localStorage.setItem(DEMO_START_KEY, String(now));
+    return now;
+  } catch {
+    return Date.now();
+  }
+};
+
+/** Milliseconds left in the demo trial (0 when expired). */
+export const getDemoTrialMsLeft = (): number =>
+  Math.max(0, getDemoTrialStart() + DEMO_TRIAL_MS - Date.now());
+
+export const isDemoTrialActive = (): boolean => getDemoTrialMsLeft() > 0;
+
+/** Restart the 2-day demo trial (testing helper). */
+export const resetDemoTrial = (): void => {
+  try {
+    localStorage.setItem(DEMO_START_KEY, String(Date.now()));
+  } catch {
+    /* ignore */
+  }
+};
+
 // Check if user has premium access
 export const isPremiumUser = (): boolean => {
-  if (getDemoUnlockAll()) return true;
+  if (getDemoUnlockAll() && isDemoTrialActive()) return true;
   try {
     const user = localStorage.getItem(USER_KEY);
     if (!user) return false;
