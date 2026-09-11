@@ -25,8 +25,65 @@ export const SettingsView = () => {
   const isMl = language === 'ml';
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
-  const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
+  const {
+    demoUnlockAll,
+    toggleDemoUnlockAll,
+    setShowPaywall,
+    demoTrialActive,
+    demoTrialMsLeft,
+    demoTrialDays,
+    restartDemoTrial,
+    restoreWebAccess,
+    refreshSubscription,
+    premiumSource,
+    webPremium,
+  } = useSubscription();
   const { mode, toggleMode, theme, setTheme, fontSize, setFontSize, offlineMode, setOfflineMode } = useThemeStore();
+  const [restoring, setRestoring] = useState(false);
+  const [restoreMessage, setRestoreMessage] = useState<string | null>(null);
+
+  const hoursLeft = Math.max(0, Math.ceil(demoTrialMsLeft / 3600000));
+
+  const statusTitle =
+    premiumSource === 'store'
+      ? (isMl ? 'പ്രീമിയം സജീവം (ആപ്പ് സ്റ്റോർ)' : 'Premium active (app store)')
+      : premiumSource === 'web'
+        ? (isMl ? 'പ്രീമിയം സജീവം (വെബ്‌സൈറ്റ്)' : 'Premium active (website)')
+        : premiumSource === 'demo'
+          ? (isMl ? 'ഡെമോ ട്രയൽ സജീവം' : 'Demo trial active')
+          : (isMl ? 'സൗജന്യ പതിപ്പ്' : 'Free version');
+
+  const statusDetail =
+    premiumSource === 'web' && webPremium
+      ? `${webPremium.plan === 'yearly' ? 'Yearly' : 'Monthly'} · renews ${new Date(webPremium.currentPeriodEnd).toLocaleDateString()}`
+      : premiumSource === 'demo'
+        ? (isMl ? `${hoursLeft} മണിക്കൂർ ബാക്കി` : `${hoursLeft} hours left`)
+        : premiumSource === 'store'
+          ? (isMl ? 'എല്ലാ പരിശോധനകളും അൺലോക്ക് ചെയ്തു.' : 'All assessments unlocked.')
+          : (isMl ? 'പ്രീമിയം പരിശോധനകൾ ലോക്കാണ്.' : 'Premium assessments are locked.');
+
+  const handleRestore = async () => {
+    setRestoring(true);
+    setRestoreMessage(null);
+    try {
+      refreshSubscription();
+      const email = window.prompt(
+        isMl ? 'വാങ്ങലിന് ഉപയോഗിച്ച ഇമെയിൽ നൽകുക' : 'Enter the email used for your purchase',
+      );
+      if (email && email.trim()) {
+        const ok = await restoreWebAccess(email.trim().toLowerCase());
+        setRestoreMessage(
+          ok
+            ? (isMl ? 'പ്രീമിയം പുനഃസ്ഥാപിച്ചു.' : 'Premium restored on this device.')
+            : (isMl ? 'ഈ ഇമെയിലിൽ സജീവ വാങ്ങൽ കണ്ടെത്തിയില്ല.' : 'No active purchase found for that email.'),
+        );
+      }
+    } catch (e: any) {
+      setRestoreMessage(e?.message ?? (isMl ? 'പുനഃസ്ഥാപിക്കാനായില്ല.' : 'Could not restore purchases.'));
+    } finally {
+      setRestoring(false);
+    }
+  };
 
   const themes: { id: AppTheme; label: string; colors: string[] }[] = [
     { id: 'sunset', label: 'Sunset Blaze', colors: ['bg-[#ff4500]', 'bg-[#ff00ff]'] },
