@@ -298,7 +298,7 @@ export default function OccipitalAssessment({ onBack }: OccipitalAssessmentProps
             <p className="text-sm text-muted-foreground">
               This module requires image assets or bedside administration. Use the examiner controls below.
             </p>
-            {mod.interaction?.instruction && <p className="text-sm font-medium">{String(mod.interaction.instruction)}</p>}
+            {Boolean(mod.interaction?.instruction) && <p className="text-sm font-medium">{String(mod.interaction?.instruction)}</p>}
           </div>
         );
     }

@@ -1,7 +1,15 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { createDemoSubscription, setDemoUnlockAll, getDemoUnlockAll } from '@/services/subscriptionService';
+import {
+  createDemoSubscription,
+  setDemoUnlockAll,
+  getDemoUnlockAll,
+  getDemoTrialMsLeft,
+  resetDemoTrial,
+  DEMO_TRIAL_DAYS,
+} from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 import { usePremiumEntitlement } from '@/hooks/usePremiumEntitlement';
+import { getWebPremium, restoreWebPurchase, type WebPremium } from '@/lib/webBilling';
 
 interface PremiumFeatures {
   allAssessments: boolean;
@@ -25,6 +33,17 @@ interface SubscriptionContextType {
   refreshSubscription: () => void;
   demoUnlockAll: boolean;
   toggleDemoUnlockAll: (enabled: boolean) => void;
+  /** Whether the 2-day demo trial is still running. */
+  demoTrialActive: boolean;
+  /** Milliseconds remaining in the demo trial. */
+  demoTrialMsLeft: number;
+  demoTrialDays: number;
+  restartDemoTrial: () => void;
+  /** Website (Razorpay) subscription active on this device, if any. */
+  webPremium: WebPremium | null;
+  restoreWebAccess: (email: string) => Promise<boolean>;
+  /** Where the current premium access comes from. */
+  premiumSource: 'store' | 'web' | 'demo' | 'none';
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -55,6 +74,20 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(() => getDemoUnlockAll());
+  const [demoTrialMsLeft, setDemoTrialMsLeft] = useState<number>(() => getDemoTrialMsLeft());
+  const [webPremium, setWebPremium] = useState<WebPremium | null>(() => getWebPremium());
+
+  // Tick the trial countdown once a minute so access expires without a reload.
+  useEffect(() => {
+    const id = setInterval(() => setDemoTrialMsLeft(getDemoTrialMsLeft()), 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const sync = () => setWebPremium(getWebPremium());
+    window.addEventListener('psycognito:web-premium', sync);
+    return () => window.removeEventListener('psycognito:web-premium', sync);
+  }, []);
 
   // Real entitlement from the AppBuild wrapper's RevenueCat (Purchases) plugin.
   // isPremium is true only when the 'premium' entitlement is active in the native app.
