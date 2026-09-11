@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -25,8 +26,65 @@ export const SettingsView = () => {
   const isMl = language === 'ml';
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
-  const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
+  const {
+    demoUnlockAll,
+    toggleDemoUnlockAll,
+    setShowPaywall,
+    demoTrialActive,
+    demoTrialMsLeft,
+    demoTrialDays,
+    restartDemoTrial,
+    restoreWebAccess,
+    refreshSubscription,
+    premiumSource,
+    webPremium,
+  } = useSubscription();
   const { mode, toggleMode, theme, setTheme, fontSize, setFontSize, offlineMode, setOfflineMode } = useThemeStore();
+  const [restoring, setRestoring] = useState(false);
+  const [restoreMessage, setRestoreMessage] = useState<string | null>(null);
+
+  const hoursLeft = Math.max(0, Math.ceil(demoTrialMsLeft / 3600000));
+
+  const statusTitle =
+    premiumSource === 'store'
+      ? (isMl ? 'പ്രീമിയം സജീവം (ആപ്പ് സ്റ്റോർ)' : 'Premium active (app store)')
+      : premiumSource === 'web'
+        ? (isMl ? 'പ്രീമിയം സജീവം (വെബ്‌സൈറ്റ്)' : 'Premium active (website)')
+        : premiumSource === 'demo'
+          ? (isMl ? 'ഡെമോ ട്രയൽ സജീവം' : 'Demo trial active')
+          : (isMl ? 'സൗജന്യ പതിപ്പ്' : 'Free version');
+
+  const statusDetail =
+    premiumSource === 'web' && webPremium
+      ? `${webPremium.plan === 'yearly' ? 'Yearly' : 'Monthly'} · renews ${new Date(webPremium.currentPeriodEnd).toLocaleDateString()}`
+      : premiumSource === 'demo'
+        ? (isMl ? `${hoursLeft} മണിക്കൂർ ബാക്കി` : `${hoursLeft} hours left`)
+        : premiumSource === 'store'
+          ? (isMl ? 'എല്ലാ പരിശോധനകളും അൺലോക്ക് ചെയ്തു.' : 'All assessments unlocked.')
+          : (isMl ? 'പ്രീമിയം പരിശോധനകൾ ലോക്കാണ്.' : 'Premium assessments are locked.');
+
+  const handleRestore = async () => {
+    setRestoring(true);
+    setRestoreMessage(null);
+    try {
+      refreshSubscription();
+      const email = window.prompt(
+        isMl ? 'വാങ്ങലിന് ഉപയോഗിച്ച ഇമെയിൽ നൽകുക' : 'Enter the email used for your purchase',
+      );
+      if (email && email.trim()) {
+        const ok = await restoreWebAccess(email.trim().toLowerCase());
+        setRestoreMessage(
+          ok
+            ? (isMl ? 'പ്രീമിയം പുനഃസ്ഥാപിച്ചു.' : 'Premium restored on this device.')
+            : (isMl ? 'ഈ ഇമെയിലിൽ സജീവ വാങ്ങൽ കണ്ടെത്തിയില്ല.' : 'No active purchase found for that email.'),
+        );
+      }
+    } catch (e: any) {
+      setRestoreMessage(e?.message ?? (isMl ? 'പുനഃസ്ഥാപിക്കാനായില്ല.' : 'Could not restore purchases.'));
+    } finally {
+      setRestoring(false);
+    }
+  };
 
   const themes: { id: AppTheme; label: string; colors: string[] }[] = [
     { id: 'sunset', label: 'Sunset Blaze', colors: ['bg-[#ff4500]', 'bg-[#ff00ff]'] },
@@ -193,29 +251,58 @@ export const SettingsView = () => {
             </div>
           </section>
 
-          {/* Access mode */}
+          {/* Subscription */}
           <section>
             <div className="flex items-center gap-2 mb-2">
               <Unlock className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-semibold">
-                {isMl ? 'പ്രവേശന രീതി' : 'Access mode'}
+                {isMl ? 'സബ്‌സ്‌ക്രിപ്ഷൻ' : 'Subscription'}
               </h3>
             </div>
-            <div className="flex items-center justify-between rounded-xl border border-border p-3">
+
+            <div className="rounded-xl border border-border p-3 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">{statusTitle}</p>
+                  <p className="text-xs text-muted-foreground">{statusDetail}</p>
+                </div>
+                <Button size="sm" onClick={() => setShowPaywall(true)}>
+                  {isMl ? 'പ്ലാനുകൾ കാണുക' : 'View plans'}
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <Button size="sm" variant="outline" onClick={handleRestore} disabled={restoring}>
+                  {restoring
+                    ? (isMl ? 'പരിശോധിക്കുന്നു…' : 'Checking…')
+                    : (isMl ? 'വാങ്ങലുകൾ പുനഃസ്ഥാപിക്കുക' : 'Restore purchases')}
+                </Button>
+                {!demoTrialActive && demoUnlockAll && (
+                  <Button size="sm" variant="ghost" onClick={restartDemoTrial}>
+                    {isMl ? 'ഡെമോ വീണ്ടും തുടങ്ങുക' : 'Restart demo trial'}
+                  </Button>
+                )}
+              </div>
+              {restoreMessage && (
+                <p className="text-xs text-muted-foreground">{restoreMessage}</p>
+              )}
+            </div>
+
+            <div className="mt-3 flex items-center justify-between rounded-xl border border-border p-3">
               <div className="min-w-0 pr-3">
                 <p className="text-sm font-medium">
-                  {isMl ? 'എല്ലാ ടെസ്റ്റുകളും അൺലോക്ക് ചെയ്യുക (ഡെമോ)' : 'Unlock all tests (demo)'}
+                  {isMl ? `${demoTrialDays}-ദിവസ ഡെമോ` : `${demoTrialDays}-day demo`}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {demoUnlockAll
-                    ? (isMl ? 'എല്ലാ പരിശോധനകളും പൂർണ്ണമായി ലഭ്യമാണ്.' : 'All assessments fully unlocked.')
-                    : (isMl ? 'ഡെമോ പരിമിതി ബാധകം — Pro ടെസ്റ്റുകൾ ലോക്കാണ്.' : 'Demo limits apply — Pro tests are locked.')}
+                  {demoTrialActive
+                    ? (isMl ? 'എല്ലാ പരിശോധനകളും ഡെമോയിൽ ലഭ്യമാണ്.' : 'All assessments unlocked during the demo.')
+                    : (isMl ? 'ഡെമോ ഓഫ് അല്ലെങ്കിൽ കാലഹരണപ്പെട്ടു.' : 'Demo is off or has ended.')}
                 </p>
               </div>
               <Switch
                 checked={demoUnlockAll}
                 onCheckedChange={toggleDemoUnlockAll}
-                aria-label="Toggle demo unlock all"
+                aria-label="Toggle demo trial"
               />
             </div>
           </section>
