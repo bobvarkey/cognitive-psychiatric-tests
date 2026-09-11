@@ -15,7 +15,6 @@ import { OfflineProvider } from "@/contexts/OfflineContext";
 import { useEffect } from "react";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { GlobalPaywall } from "@/components/GlobalPaywall";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,7 +70,6 @@ const App = () => (
                 <LanguageToggle />
                 <NavigationButtons />
                 <OfflineIndicator />
-                <GlobalPaywall />
               </BrowserRouter>
             </PatientInfoProvider>
           </OfflineProvider>
