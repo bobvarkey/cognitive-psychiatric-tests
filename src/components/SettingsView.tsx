@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert, Palette, Moon, Sun, Type, WifiOff } from 'lucide-react';
+import { Settings as SettingsIcon, Languages, Trash2, Check, Unlock, ShieldAlert, Palette, Moon, Sun, Type, WifiOff, Clock } from 'lucide-react';
 import { useLanguage, LANGUAGES } from '@/contexts/LanguageContext';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
@@ -25,7 +25,7 @@ export const SettingsView = () => {
   const isMl = language === 'ml';
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
-  const { demoUnlockAll, toggleDemoUnlockAll } = useSubscription();
+  const { demoUnlockAll, toggleDemoUnlockAll, restartDemoTrial, demoTrialActive, demoTrialMsLeft, demoTrialDays } = useSubscription();
   const { mode, toggleMode, theme, setTheme, fontSize, setFontSize, offlineMode, setOfflineMode } = useThemeStore();
 
   const themes: { id: AppTheme; label: string; colors: string[] }[] = [

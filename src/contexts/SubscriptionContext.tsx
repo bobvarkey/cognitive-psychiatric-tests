@@ -6,6 +6,7 @@ import {
   getDemoTrialMsLeft,
   resetDemoTrial,
   DEMO_TRIAL_DAYS,
+  isDemoTrialActive,
 } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 import { usePremiumEntitlement } from '@/hooks/usePremiumEntitlement';
@@ -76,10 +77,14 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(() => getDemoUnlockAll());
   const [demoTrialMsLeft, setDemoTrialMsLeft] = useState<number>(() => getDemoTrialMsLeft());
   const [webPremium, setWebPremium] = useState<WebPremium | null>(() => getWebPremium());
+  const [demoTrialActive, setDemoTrialActive] = useState<boolean>(() => isDemoTrialActive());
 
   // Tick the trial countdown once a minute so access expires without a reload.
   useEffect(() => {
-    const id = setInterval(() => setDemoTrialMsLeft(getDemoTrialMsLeft()), 60000);
+    const id = setInterval(() => {
+      setDemoTrialMsLeft(getDemoTrialMsLeft());
+      setDemoTrialActive(isDemoTrialActive());
+    }, 60000);
     return () => clearInterval(id);
   }, []);
 
@@ -95,7 +100,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     usePremiumEntitlement('premium');
 
   // Demo unlock is a dev/test escape hatch. When ON it forces premium regardless of entitlement.
-  const isPremium = demoUnlockAll || entitlementActive;
+  const isPremium = demoUnlockAll || entitlementActive || demoTrialActive || !!webPremium;
 
   const features: PremiumFeatures = isPremium ? FULL_PREMIUM_FEATURES : FREE_FEATURES;
 
@@ -131,6 +136,22 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }
   }, [isPremium, subscription]);
 
+  const restartDemoTrial = () => {
+    resetDemoTrial();
+    setDemoTrialMsLeft(getDemoTrialMsLeft());
+    setDemoTrialActive(true);
+    refreshSubscription();
+  };
+
+  const restoreWebAccess = async (email: string): Promise<boolean> => {
+    const restored = await restoreWebPurchase(email);
+    if (restored) {
+      setWebPremium(getWebPremium());
+      refreshSubscription();
+    }
+    return restored;
+  };
+
   const value: SubscriptionContextType = {
     isPremium,
     subscription,
@@ -142,6 +163,13 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     refreshSubscription,
     demoUnlockAll,
     toggleDemoUnlockAll,
+    demoTrialActive,
+    demoTrialMsLeft,
+    demoTrialDays: DEMO_TRIAL_DAYS,
+    restartDemoTrial,
+    webPremium,
+    restoreWebAccess,
+    premiumSource: webPremium ? 'web' : entitlementActive ? 'store' : demoTrialActive ? 'demo' : 'none',
   };
 
   return (

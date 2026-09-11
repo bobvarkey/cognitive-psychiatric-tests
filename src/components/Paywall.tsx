@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Loader2, RefreshCw } from 'lucide-react';
+import { Check, Loader2, RefreshCw, Clock } from 'lucide-react';
 import {
   configure,
   getOfferings,
@@ -11,6 +11,7 @@ import {
   type RcPackage,
 } from '@/lib/appbuild/revenuecat';
 import { usePremiumEntitlement } from '@/hooks/usePremiumEntitlement';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 interface PaywallProps {
   entitlementId?: string;
@@ -24,6 +25,7 @@ export const Paywall = ({ entitlementId = 'premium', onPurchased }: PaywallProps
   const [restoring, setRestoring] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const { isPremium, refresh } = usePremiumEntitlement(entitlementId);
+  const { restartDemoTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
 
   useEffect(() => {
     let active = true;
@@ -128,6 +130,24 @@ export const Paywall = ({ entitlementId = 'premium', onPurchased }: PaywallProps
         )}
 
         {message && <p className="text-sm text-muted-foreground">{message}</p>}
+
+        {!isPremium && (
+          <Button
+            variant="secondary"
+            className="w-full gap-2"
+            onClick={() => {
+              restartDemoTrial();
+              refresh();
+              setMessage('Premium unlocked for 2-day demo trial.');
+              onPurchased?.();
+            }}
+          >
+            <Clock className="h-4 w-4" />
+            {demoTrialActive
+              ? `Restart 2-day demo (${Math.ceil(demoTrialMsLeft / 86400000)} days left)`
+              : 'Unlock premium for 2 days'}
+          </Button>
+        )}
 
         <Button
           variant="outline"
