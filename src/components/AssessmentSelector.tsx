@@ -1150,12 +1150,8 @@ export const AssessmentSelector = () => {
       />
 
 
-      {/* Paywall Modal */}
-      <PaywallModal
-        isOpen={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        onSelectPlan={initiatePurchase}
-      />
+      {/* Paywall is rendered globally in App.tsx */}
+
 
       
       
