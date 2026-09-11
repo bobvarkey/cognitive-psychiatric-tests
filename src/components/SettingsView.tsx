@@ -193,29 +193,58 @@ export const SettingsView = () => {
             </div>
           </section>
 
-          {/* Access mode */}
+          {/* Subscription */}
           <section>
             <div className="flex items-center gap-2 mb-2">
               <Unlock className="h-4 w-4 text-primary" />
               <h3 className="text-sm font-semibold">
-                {isMl ? 'പ്രവേശന രീതി' : 'Access mode'}
+                {isMl ? 'സബ്‌സ്‌ക്രിപ്ഷൻ' : 'Subscription'}
               </h3>
             </div>
-            <div className="flex items-center justify-between rounded-xl border border-border p-3">
+
+            <div className="rounded-xl border border-border p-3 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">{statusTitle}</p>
+                  <p className="text-xs text-muted-foreground">{statusDetail}</p>
+                </div>
+                <Button size="sm" onClick={() => setShowPaywall(true)}>
+                  {isMl ? 'പ്ലാനുകൾ കാണുക' : 'View plans'}
+                </Button>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <Button size="sm" variant="outline" onClick={handleRestore} disabled={restoring}>
+                  {restoring
+                    ? (isMl ? 'പരിശോധിക്കുന്നു…' : 'Checking…')
+                    : (isMl ? 'വാങ്ങലുകൾ പുനഃസ്ഥാപിക്കുക' : 'Restore purchases')}
+                </Button>
+                {!demoTrialActive && demoUnlockAll && (
+                  <Button size="sm" variant="ghost" onClick={restartDemoTrial}>
+                    {isMl ? 'ഡെമോ വീണ്ടും തുടങ്ങുക' : 'Restart demo trial'}
+                  </Button>
+                )}
+              </div>
+              {restoreMessage && (
+                <p className="text-xs text-muted-foreground">{restoreMessage}</p>
+              )}
+            </div>
+
+            <div className="mt-3 flex items-center justify-between rounded-xl border border-border p-3">
               <div className="min-w-0 pr-3">
                 <p className="text-sm font-medium">
-                  {isMl ? 'എല്ലാ ടെസ്റ്റുകളും അൺലോക്ക് ചെയ്യുക (ഡെമോ)' : 'Unlock all tests (demo)'}
+                  {isMl ? `${demoTrialDays}-ദിവസ ഡെമോ` : `${demoTrialDays}-day demo`}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {demoUnlockAll
-                    ? (isMl ? 'എല്ലാ പരിശോധനകളും പൂർണ്ണമായി ലഭ്യമാണ്.' : 'All assessments fully unlocked.')
-                    : (isMl ? 'ഡെമോ പരിമിതി ബാധകം — Pro ടെസ്റ്റുകൾ ലോക്കാണ്.' : 'Demo limits apply — Pro tests are locked.')}
+                  {demoTrialActive
+                    ? (isMl ? 'എല്ലാ പരിശോധനകളും ഡെമോയിൽ ലഭ്യമാണ്.' : 'All assessments unlocked during the demo.')
+                    : (isMl ? 'ഡെമോ ഓഫ് അല്ലെങ്കിൽ കാലഹരണപ്പെട്ടു.' : 'Demo is off or has ended.')}
                 </p>
               </div>
               <Switch
                 checked={demoUnlockAll}
                 onCheckedChange={toggleDemoUnlockAll}
-                aria-label="Toggle demo unlock all"
+                aria-label="Toggle demo trial"
               />
             </div>
           </section>
