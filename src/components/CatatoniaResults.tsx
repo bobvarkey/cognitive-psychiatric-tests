@@ -53,7 +53,7 @@ export const CatatoniaResults = ({ results }: CatatoniaResultsProps) => {
     <div className="space-y-6 animate-fade-in">
       {/* Summary Card */}
       <Card className="border-2 border-cyan-200 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white">
+        <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
           <CardTitle className="flex items-center gap-2">
             <Activity className="h-6 w-6" />
             {language === 'ml' ? 'ബുഷ് ഫ്രാൻസിസ് കാറ്ററ്റോണിയ ഫലങ്ങൾ' : 'Bush Francis Catatonia Results'}

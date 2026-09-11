@@ -66,7 +66,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50 to-violet-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {onBack && (
           <Button variant="ghost" onClick={onBack} className="mb-4 print:hidden">
@@ -76,7 +76,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
         )}
 
         <Card className="shadow-xl border-0">
-          <CardHeader className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white">
+          <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
             <div className="flex items-center gap-3">
               <Brain className="h-10 w-10" />
               <div>

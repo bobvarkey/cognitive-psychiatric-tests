@@ -139,7 +139,7 @@ export const IqcodeAssessment = ({ onBack }: IqcodeAssessmentProps) => {
     const isPositive = interp.severity === 'positive';
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {onBack && (
             <Button variant="ghost" onClick={onBack} className="mb-2">
@@ -237,7 +237,7 @@ export const IqcodeAssessment = ({ onBack }: IqcodeAssessmentProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {onBack && (
           <Button variant="ghost" onClick={onBack} className="mb-2">

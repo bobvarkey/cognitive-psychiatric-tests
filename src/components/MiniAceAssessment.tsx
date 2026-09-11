@@ -123,7 +123,7 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
         <LanguageToggle />
         <div className="max-w-3xl mx-auto space-y-6">
           <Button variant="ghost" onClick={() => setShowResults(false)} className="mb-4">
@@ -132,7 +132,7 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
           </Button>
 
           <Card className="border-0 shadow-xl">
-            <CardHeader className="bg-gradient-to-r from-emerald-600 to-green-600 text-white">
+            <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
               <CardTitle className="text-2xl flex items-center gap-2">
                 <Brain className="h-6 w-6" />
                 {language === 'ml' ? 'Mini-ACE ഫലങ്ങൾ' : 'Mini-ACE Results'} - {language === 'ml' ? 'പതിപ്പ്' : 'Version'} {results.version}
@@ -230,7 +230,7 @@ export const MiniAceAssessment: React.FC<MiniAceAssessmentProps> = ({ onBack }) 
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
       <LanguageToggle />
       <div className="max-w-4xl mx-auto space-y-6">
         {onBack && (

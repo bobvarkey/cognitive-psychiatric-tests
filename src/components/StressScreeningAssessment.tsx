@@ -145,7 +145,7 @@ export const StressScreeningAssessment = ({ onBack }: StressScreeningAssessmentP
   }, {} as Record<string, typeof STRESS_SCREENING_ITEMS>);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
       <LanguageToggle />
       <div className="max-w-4xl mx-auto space-y-6">
         {onBack && (
@@ -158,7 +158,7 @@ export const StressScreeningAssessment = ({ onBack }: StressScreeningAssessmentP
         <PatientInfoForm />
 
         <Card className="shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-500 text-white">
+          <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
             <CardTitle className="text-2xl">
               {language === 'ml' ? 'സ്ട്രെസ് vs മാനസിക വൈകല്യം സ്ക്രീനിംഗ്' : 'Stress vs Mental Disorder Screening'}
             </CardTitle>

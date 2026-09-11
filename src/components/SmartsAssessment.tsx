@@ -43,7 +43,7 @@ export const SmartsAssessment = ({ onBack }: SmartsAssessmentProps) => {
   const allAnswered = answered === SMARTS_ITEMS.length;
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <Button variant="ghost" onClick={onBack} className="gap-2">

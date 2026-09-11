@@ -80,7 +80,7 @@ export const YbocsAssessment = ({ onBack }: Props) => {
   if (showResults) {
     const interp = interpret(total);
     return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {onBack && <Button variant="ghost" onClick={onBack}><ArrowLeft className="mr-2 h-4 w-4" />{t('backToMenu')}</Button>}
           <Card className="shadow-xl"><CardContent className="p-6 md:p-8 space-y-6">
@@ -112,7 +112,7 @@ export const YbocsAssessment = ({ onBack }: Props) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {onBack && <Button variant="ghost" onClick={onBack}><ArrowLeft className="mr-2 h-4 w-4" />{t('backToMenu')}</Button>}
         <PatientInfoForm />

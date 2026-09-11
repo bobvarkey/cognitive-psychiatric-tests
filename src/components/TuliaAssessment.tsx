@@ -46,7 +46,7 @@ export const TuliaAssessment = ({ onBack }: TuliaAssessmentProps = {}) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-4 print:bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 print:bg-white">
       <div className="max-w-4xl mx-auto">
         {onBack && (
           <div className="flex items-center justify-between mb-4">

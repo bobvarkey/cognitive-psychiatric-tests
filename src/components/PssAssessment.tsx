@@ -78,7 +78,7 @@ export const PssAssessment = ({ onBack }: PssAssessmentProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
       <LanguageToggle />
       <div className="max-w-4xl mx-auto space-y-6">
         {onBack && (

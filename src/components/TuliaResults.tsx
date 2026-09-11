@@ -177,7 +177,7 @@ export const TuliaResults = ({ responses }: TuliaResultsProps) => {
   }, [results, responses, interpretationDetails]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 p-4 print:bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 print:bg-white">
       <div className="max-w-4xl mx-auto space-y-6">
         <Card className="shadow-2xl border-0">
           <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-t-lg">

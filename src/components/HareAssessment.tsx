@@ -75,7 +75,7 @@ export const HareAssessment = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 py-8 px-4">
       <div className="w-full">
         <div className="flex justify-end mb-4 print:hidden">
           <LanguageToggle />

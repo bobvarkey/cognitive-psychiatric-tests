@@ -201,7 +201,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
   };
 
   return (
-    <div className="min-h-screen bg-white text-black p-4 md:p-8" style={{ color: "black" }}>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 text-foreground p-4 md:p-8" style={{ color: "black" }}>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <Button variant="outline" onClick={onBack} className="gap-2 bg-white border-black/20 text-black hover:bg-white hover:text-black">

@@ -47,7 +47,7 @@ const links = [
 
 export const MocaAssessment = ({ onBack }: MocaAssessmentProps) => {
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between gap-3 flex-wrap">

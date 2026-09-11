@@ -102,7 +102,7 @@ export default function FoodNoiseScaleAssessment({ onBack }: FoodNoiseScaleAsses
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 text-foreground p-4 md:p-6">
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <Button variant="outline" onClick={onBack} className="gap-2">

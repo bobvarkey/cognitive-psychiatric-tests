@@ -61,7 +61,7 @@ export const HareResults = ({ results, onReset }: HareResultsProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 py-8 px-4">
       <div className="w-full space-y-6">
         <div className="flex justify-between items-center print:hidden">
           <h1 className="text-3xl font-bold text-slate-800">

@@ -82,7 +82,7 @@ export const SsriAdverseEventsAssessment = ({ onBack }: Props) => {
   }, [drug, weeks, wg, a1c, sexfx, bleed, sweat]);
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-6">
       <div className="max-w-5xl mx-auto space-y-4">
         <div className="flex items-center gap-3">
           {onBack && (

@@ -102,7 +102,7 @@ export const CcsaAssessment = ({ onBack }: CcsaAssessmentProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6 pt-16">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-6 pt-16">
       <ProgressIndicator 
         sections={[
           { id: 'sec-orientation', label: 'Orientation' },

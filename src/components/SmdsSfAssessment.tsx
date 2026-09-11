@@ -81,7 +81,7 @@ export const SmdsSfAssessment = ({ onBack }: Props) => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50">
       <div className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
           <Button variant="ghost" size="sm" onClick={onBack}>

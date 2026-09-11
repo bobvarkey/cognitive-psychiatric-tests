@@ -160,7 +160,7 @@ export const CatatoniaAssessment = ({ onBack }: CatatoniaAssessmentProps) => {
 
   if (results) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-cyan-50 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4">
         <LanguageToggle />
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
@@ -190,12 +190,12 @@ export const CatatoniaAssessment = ({ onBack }: CatatoniaAssessmentProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-cyan-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4">
       <LanguageToggle />
       <div className="max-w-4xl mx-auto">
         <PatientInfoForm />
         <Card className="shadow-xl border-0 mb-6">
-          <CardHeader className="bg-gradient-to-r from-cyan-500 to-teal-600 text-white">
+          <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Activity className="h-8 w-8" />

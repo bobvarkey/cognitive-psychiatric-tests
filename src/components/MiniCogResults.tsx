@@ -90,7 +90,7 @@ export const MiniCogResults = ({ results, patientInfo, onRestart }: MiniCogResul
   }), [results, patientInfo, wordList]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4">
       <div className="w-full space-y-6">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -107,7 +107,7 @@ export const MiniCogResults = ({ results, patientInfo, onRestart }: MiniCogResul
         {/* Patient Information */}
         {(patientInfo.name || patientInfo.age || patientInfo.date) && (
           <Card className="shadow-lg border-0">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white">
+            <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
                 {language === 'en' ? 'Patient Information' : 'രോഗിയുടെ വിവരങ്ങൾ'}

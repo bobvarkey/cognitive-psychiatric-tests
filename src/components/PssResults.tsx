@@ -43,7 +43,7 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
       <LanguageToggle />
       <div className="max-w-4xl mx-auto space-y-6">
         {onBack && (
@@ -54,7 +54,7 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
         )}
 
         <Card className="shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
+          <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
             <CardTitle className="text-2xl">{t('pssResults')}</CardTitle>
           </CardHeader>
           <CardContent className="p-6 md:p-8 space-y-6">
