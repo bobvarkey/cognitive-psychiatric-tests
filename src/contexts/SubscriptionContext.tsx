@@ -90,23 +90,45 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, []);
 
   // Real entitlement from the AppBuild wrapper's RevenueCat (Purchases) plugin.
-  // isPremium is true only when the 'premium' entitlement is active in the native app.
-  const { isPremium: entitlementActive, loading: entitlementLoading, refresh: refreshEntitlement } =
+  const { isPremium: entitlementActive, refresh: refreshEntitlement } =
     usePremiumEntitlement('premium');
 
-  // Demo unlock is a dev/test escape hatch. When ON it forces premium regardless of entitlement.
-  const isPremium = demoUnlockAll || entitlementActive;
+  // Access sources, in priority order.
+  const demoTrialActive = demoUnlockAll && demoTrialMsLeft > 0;
+  const webActive = !!webPremium;
+  const isPremium = entitlementActive || webActive || demoTrialActive;
+
+  const premiumSource: 'store' | 'web' | 'demo' | 'none' = entitlementActive
+    ? 'store'
+    : webActive
+      ? 'web'
+      : demoTrialActive
+        ? 'demo'
+        : 'none';
 
   const features: PremiumFeatures = isPremium ? FULL_PREMIUM_FEATURES : FREE_FEATURES;
 
   const refreshSubscription = () => {
-    // Re-check the native entitlement (e.g. after a purchase or restore).
     refreshEntitlement();
+    setWebPremium(getWebPremium());
+    setDemoTrialMsLeft(getDemoTrialMsLeft());
   };
 
   const toggleDemoUnlockAll = (enabled: boolean) => {
     setDemoUnlockAll(enabled);
     setDemoUnlockAllState(enabled);
+    setDemoTrialMsLeft(getDemoTrialMsLeft());
+  };
+
+  const restartDemoTrial = () => {
+    resetDemoTrial();
+    setDemoTrialMsLeft(getDemoTrialMsLeft());
+  };
+
+  const restoreWebAccess = async (email: string): Promise<boolean> => {
+    const restored = await restoreWebPurchase(email);
+    setWebPremium(restored);
+    return !!restored;
   };
 
   const initiatePurchase = async (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => {
@@ -124,13 +146,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     refreshSubscription();
   };
 
-  // Keep the local subscription record in sync with the entitlement state.
-  useEffect(() => {
-    if (isPremium && !subscription) {
-      // No-op: entitlement is the source of truth; we don't fabricate a local record.
-    }
-  }, [isPremium, subscription]);
-
   const value: SubscriptionContextType = {
     isPremium,
     subscription,
@@ -142,6 +157,13 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     refreshSubscription,
     demoUnlockAll,
     toggleDemoUnlockAll,
+    demoTrialActive,
+    demoTrialMsLeft,
+    demoTrialDays: DEMO_TRIAL_DAYS,
+    restartDemoTrial,
+    webPremium,
+    restoreWebAccess,
+    premiumSource,
   };
 
   return (
