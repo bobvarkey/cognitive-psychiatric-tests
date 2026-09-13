@@ -10,7 +10,12 @@ import {
   isNativePurchasesAvailable,
   type RcPackage,
 } from '@/lib/appbuild/revenuecat';
-import { startWebCheckout, restoreWebPurchase, getRegionalPrices } from '@/lib/webBilling';
+import {
+  startWebCheckout,
+  restoreWebPurchase,
+  getWebCurrency,
+  WEB_PRICES,
+} from '@/lib/webBilling';
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -57,6 +62,8 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   });
 
   const native = isNativePurchasesAvailable();
+  const webCurrency = useMemo(() => getWebCurrency(), []);
+  const webPrices = WEB_PRICES[webCurrency];
 
   useEffect(() => {
     if (!isOpen || !native) return;
@@ -88,9 +95,8 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
   const monthlyPkg = pkgFor('monthly');
   const yearlyPkg = pkgFor('yearly');
-  const regional = getRegionalPrices();
-  const monthlyPrice = monthlyPkg?.priceString || regional.monthly.display;
-  const yearlyPrice = yearlyPkg?.priceString || regional.yearly.display;
+  const monthlyPrice = monthlyPkg?.priceString || webPrices.monthly.display;
+  const yearlyPrice = yearlyPkg?.priceString || webPrices.yearly.display;
 
   const rememberEmail = (value: string) => {
     setEmail(value);
@@ -127,7 +133,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     }
     setBusy(true);
     try {
-      await startWebCheckout(selectedPlan, email.trim().toLowerCase());
+      await startWebCheckout(selectedPlan, email.trim().toLowerCase(), webCurrency);
       toast.success('Payment successful. Everything is unlocked.');
       onSelectPlan(selectedPlan, 'pro');
     } catch (e: any) {

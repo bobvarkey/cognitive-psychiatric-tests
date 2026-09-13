@@ -18,10 +18,8 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const plan = body?.plan;
+    const currency = body?.currency === 'INR' ? 'INR' : 'USD';
     const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
-    const region = body?.region === 'IN' ? 'IN' : 'GLOBAL';
-    const requestedCurrency = body?.currency === 'USD' || body?.currency === 'INR' ? body.currency : null;
-    const currency: 'INR' | 'USD' = requestedCurrency ?? (region === 'IN' ? 'INR' : 'USD');
 
     if (plan !== 'monthly' && plan !== 'yearly') {
       return json({ error: 'Invalid plan.' }, 400);
@@ -34,7 +32,7 @@ Deno.serve(async (req) => {
     const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
     if (!keyId || !keySecret) return json({ error: 'Payments are not configured.' }, 500);
 
-    const { amount, label } = PLANS[currency][plan as keyof typeof PLANS['INR']];
+    const { amount, label } = PLANS[currency][plan as 'monthly' | 'yearly'];
     const auth = btoa(`${keyId}:${keySecret}`);
 
     const rzpRes = await fetch('https://api.razorpay.com/v1/orders', {
@@ -63,7 +61,7 @@ Deno.serve(async (req) => {
       plan,
       order_id: order.id,
       amount,
-      currency,
+       currency,
       status: 'created',
     });
 

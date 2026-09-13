@@ -1,45 +1,29 @@
 import { supabase } from '@/integrations/supabase/client';
 
-export type Region = 'IN' | 'GLOBAL';
+export const WEB_PRICES = {
+  INR: {
+    monthly: { amount: 24900, display: '₹249' },
+    yearly: { amount: 199900, display: '₹1,999' },
+  },
+  USD: {
+    monthly: { amount: 299, display: '$2.99' },
+    yearly: { amount: 2499, display: '$24.99' },
+  },
+} as const;
 
-export interface PriceInfo {
-  amount: number; // smallest currency unit (paise / cents)
-  display: string;
-  currency: 'INR' | 'USD';
-  symbol: string;
-}
+export type WebCurrency = keyof typeof WEB_PRICES;
 
-const INR_PRICES: Record<'monthly' | 'yearly', PriceInfo> = {
-  monthly: { amount: 24900, display: '₹249', currency: 'INR', symbol: '₹' },
-  yearly: { amount: 199900, display: '₹1,999', currency: 'INR', symbol: '₹' },
-};
-
-const USD_PRICES: Record<'monthly' | 'yearly', PriceInfo> = {
-  monthly: { amount: 299, display: '$2.99', currency: 'USD', symbol: '$' },
-  yearly: { amount: 2499, display: '$24.99', currency: 'USD', symbol: '$' },
-};
-
-/** Detect India region from browser timezone and/or locale. */
-export function getUserRegion(): Region {
-  if (typeof window === 'undefined') return 'GLOBAL';
+/** Use INR for visitors in India and USD everywhere else. */
+export const getWebCurrency = (): WebCurrency => {
   try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const lang = navigator.language || '';
-    if (tz === 'Asia/Calcutta' || tz === 'Asia/Kolkata') return 'IN';
-    if (/^(en|hi|ml|ta|te|kn|bn|gu|mr|pa|ur)-IN$/i.test(lang)) return 'IN';
+    const locale = new Intl.Locale(navigator.language);
+    if (locale.region === 'IN') return 'INR';
+    if (Intl.DateTimeFormat().resolvedOptions().timeZone === 'Asia/Calcutta') return 'INR';
   } catch {
-    /* ignore */
+    /* Fall back to USD if locale detection is unavailable. */
   }
-  return 'GLOBAL';
-}
-
-/** Return regional prices: INR for India, USD for the rest of the world. */
-export function getRegionalPrices(region: Region = getUserRegion()): Record<'monthly' | 'yearly', PriceInfo> {
-  return region === 'IN' ? INR_PRICES : USD_PRICES;
-}
-
-/** Legacy constant kept for compatibility — defaults to INR. Prefer getRegionalPrices(). */
-export const WEB_PRICES = INR_PRICES;
+  return 'USD';
+};
 
 const STORE_KEY = 'psycognito.webPremium.v1';
 
@@ -82,14 +66,16 @@ const loadRazorpayScript = () =>
   });
 
 /** Open Razorpay checkout for a plan and verify the payment server-side. */
-export async function startWebCheckout(plan: 'monthly' | 'yearly', email: string): Promise<WebPremium> {
+export async function startWebCheckout(
+  plan: 'monthly' | 'yearly',
+  email: string,
+  currency: WebCurrency = getWebCurrency(),
+): Promise<WebPremium> {
   const ok = await loadRazorpayScript();
   if (!ok) throw new Error('Could not load the payment window. Check your connection.');
 
-  const region = getUserRegion();
-  const prices = getRegionalPrices(region);
   const { data, error } = await supabase.functions.invoke('razorpay-create-order', {
-    body: { plan, email, region, currency: prices[plan].currency },
+    body: { plan, email, currency },
   });
   if (error || data?.error) throw new Error(data?.error ?? 'Could not start checkout.');
 
