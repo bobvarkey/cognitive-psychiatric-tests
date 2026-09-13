@@ -10,7 +10,7 @@ import {
   isNativePurchasesAvailable,
   type RcPackage,
 } from '@/lib/appbuild/revenuecat';
-import { startWebCheckout, restoreWebPurchase, WEB_PRICES } from '@/lib/webBilling';
+import { startWebCheckout, restoreWebPurchase, getRegionalPrices } from '@/lib/webBilling';
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -88,8 +88,9 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
   const monthlyPkg = pkgFor('monthly');
   const yearlyPkg = pkgFor('yearly');
-  const monthlyPrice = monthlyPkg?.priceString || WEB_PRICES.monthly.display;
-  const yearlyPrice = yearlyPkg?.priceString || WEB_PRICES.yearly.display;
+  const regional = getRegionalPrices();
+  const monthlyPrice = monthlyPkg?.priceString || regional.monthly.display;
+  const yearlyPrice = yearlyPkg?.priceString || regional.yearly.display;
 
   const rememberEmail = (value: string) => {
     setEmail(value);
