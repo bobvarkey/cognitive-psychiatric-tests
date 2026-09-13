@@ -6,7 +6,6 @@ import {
   getDemoTrialMsLeft,
   resetDemoTrial,
   DEMO_TRIAL_DAYS,
-  isDemoTrialActive,
 } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 import { usePremiumEntitlement } from '@/hooks/usePremiumEntitlement';
@@ -77,14 +76,10 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(() => getDemoUnlockAll());
   const [demoTrialMsLeft, setDemoTrialMsLeft] = useState<number>(() => getDemoTrialMsLeft());
   const [webPremium, setWebPremium] = useState<WebPremium | null>(() => getWebPremium());
-  const [demoTrialActive, setDemoTrialActive] = useState<boolean>(() => isDemoTrialActive());
 
   // Tick the trial countdown once a minute so access expires without a reload.
   useEffect(() => {
-    const id = setInterval(() => {
-      setDemoTrialMsLeft(getDemoTrialMsLeft());
-      setDemoTrialActive(isDemoTrialActive());
-    }, 60000);
+    const id = setInterval(() => setDemoTrialMsLeft(getDemoTrialMsLeft()), 60000);
     return () => clearInterval(id);
   }, []);
 
@@ -95,23 +90,49 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, []);
 
   // Real entitlement from the AppBuild wrapper's RevenueCat (Purchases) plugin.
-  // isPremium is true only when the 'premium' entitlement is active in the native app.
-  const { isPremium: entitlementActive, loading: entitlementLoading, refresh: refreshEntitlement } =
+  const { isPremium: entitlementActive, refresh: refreshEntitlement } =
     usePremiumEntitlement('premium');
 
-  // Demo unlock is a dev/test escape hatch. When ON it forces premium regardless of entitlement.
-  const isPremium = demoUnlockAll || entitlementActive || demoTrialActive || !!webPremium;
+  const demoTrialActive = demoUnlockAll && demoTrialMsLeft > 0;
+  const webActive = !!webPremium;
+
+  const premiumSource: 'store' | 'web' | 'demo' | 'none' = entitlementActive
+    ? 'store'
+    : webActive
+      ? 'web'
+      : demoTrialActive
+        ? 'demo'
+        : 'none';
+
+  const isPremium = premiumSource !== 'none';
+
 
   const features: PremiumFeatures = isPremium ? FULL_PREMIUM_FEATURES : FREE_FEATURES;
 
   const refreshSubscription = () => {
-    // Re-check the native entitlement (e.g. after a purchase or restore).
     refreshEntitlement();
+    setWebPremium(getWebPremium());
+    setDemoTrialMsLeft(getDemoTrialMsLeft());
   };
 
   const toggleDemoUnlockAll = (enabled: boolean) => {
     setDemoUnlockAll(enabled);
     setDemoUnlockAllState(enabled);
+    setDemoTrialMsLeft(getDemoTrialMsLeft());
+  };
+
+  const restartDemoTrial = () => {
+    resetDemoTrial();
+    setDemoUnlockAll(true);
+    setDemoUnlockAllState(true);
+    setDemoTrialMsLeft(getDemoTrialMsLeft());
+    setShowPaywall(false);
+  };
+
+  const restoreWebAccess = async (email: string) => {
+    const found = await restoreWebPurchase(email);
+    setWebPremium(getWebPremium());
+    return !!found;
   };
 
   const initiatePurchase = async (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => {
@@ -127,29 +148,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     createDemoSubscription(plan, tier);
     setShowPaywall(false);
     refreshSubscription();
-  };
-
-  // Keep the local subscription record in sync with the entitlement state.
-  useEffect(() => {
-    if (isPremium && !subscription) {
-      // No-op: entitlement is the source of truth; we don't fabricate a local record.
-    }
-  }, [isPremium, subscription]);
-
-  const restartDemoTrial = () => {
-    resetDemoTrial();
-    setDemoTrialMsLeft(getDemoTrialMsLeft());
-    setDemoTrialActive(true);
-    refreshSubscription();
-  };
-
-  const restoreWebAccess = async (email: string): Promise<boolean> => {
-    const restored = await restoreWebPurchase(email);
-    if (restored) {
-      setWebPremium(getWebPremium());
-      refreshSubscription();
-    }
-    return restored;
   };
 
   const value: SubscriptionContextType = {
@@ -169,7 +167,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     restartDemoTrial,
     webPremium,
     restoreWebAccess,
-    premiumSource: webPremium ? 'web' : entitlementActive ? 'store' : demoTrialActive ? 'demo' : 'none',
+    premiumSource,
   };
 
   return (
