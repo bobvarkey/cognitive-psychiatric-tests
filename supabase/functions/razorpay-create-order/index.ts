@@ -2,8 +2,14 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const PLANS = {
-  monthly: { amount: 24900, label: 'PsyCognito Premium — Monthly' },
-  yearly: { amount: 199900, label: 'PsyCognito Premium — Yearly' },
+  INR: {
+    monthly: { amount: 24900, label: 'PsyCognito Premium — Monthly' },
+    yearly: { amount: 199900, label: 'PsyCognito Premium — Yearly' },
+  },
+  USD: {
+    monthly: { amount: 299, label: 'PsyCognito Premium — Monthly' },
+    yearly: { amount: 2499, label: 'PsyCognito Premium — Yearly' },
+  },
 } as const;
 
 Deno.serve(async (req) => {
@@ -12,6 +18,7 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json().catch(() => ({}));
     const plan = body?.plan;
+    const currency = body?.currency === 'INR' ? 'INR' : 'USD';
     const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
 
     if (plan !== 'monthly' && plan !== 'yearly') {
@@ -25,7 +32,7 @@ Deno.serve(async (req) => {
     const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
     if (!keyId || !keySecret) return json({ error: 'Payments are not configured.' }, 500);
 
-    const { amount, label } = PLANS[plan as keyof typeof PLANS];
+    const { amount, label } = PLANS[currency][plan as 'monthly' | 'yearly'];
     const auth = btoa(`${keyId}:${keySecret}`);
 
     const rzpRes = await fetch('https://api.razorpay.com/v1/orders', {
@@ -33,7 +40,7 @@ Deno.serve(async (req) => {
       headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         amount,
-        currency: 'INR',
+        currency,
         receipt: `psycog_${Date.now()}`,
         notes: { plan, email, label },
       }),
@@ -54,11 +61,11 @@ Deno.serve(async (req) => {
       plan,
       order_id: order.id,
       amount,
-      currency: 'INR',
+       currency,
       status: 'created',
     });
 
-    return json({ orderId: order.id, amount, currency: 'INR', keyId, label });
+    return json({ orderId: order.id, amount, currency, keyId, label });
   } catch (e) {
     console.error(e);
     return json({ error: 'Unexpected error starting checkout.' }, 500);
