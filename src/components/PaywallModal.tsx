@@ -60,6 +60,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       return '';
     }
   });
+  const { refreshSubscription } = useSubscription();
 
   const native = isNativePurchasesAvailable();
   const webCurrency = useMemo(() => getWebCurrency(), []);
@@ -110,20 +111,21 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   const handleContinue = async () => {
     if (native) {
       const pkg = selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg;
-      if (pkg) {
-        setBusy(true);
-        try {
-          await purchasePackage(pkg);
-          toast.success('Purchase complete. Thank you!');
-          onSelectPlan(selectedPlan, 'pro');
-        } catch (e: any) {
-          if (!e?.userCancelled) toast.error(e?.message ?? 'Purchase failed.');
-        } finally {
-          setBusy(false);
-        }
+      if (!pkg) {
+        toast.error('No store package is available. Try restoring purchases or check AppBuild configuration.');
         return;
       }
-      onSelectPlan(selectedPlan, 'pro');
+      setBusy(true);
+      try {
+        await purchasePackage(pkg);
+        await refreshSubscription();
+        toast.success('Purchase complete. Thank you!');
+        onSelectPlan(selectedPlan, 'pro');
+      } catch (e: any) {
+        if (!e?.userCancelled) toast.error(e?.message ?? 'Purchase failed.');
+      } finally {
+        setBusy(false);
+      }
       return;
     }
 
@@ -148,6 +150,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       setRestoring(true);
       try {
         await restorePurchases();
+        await refreshSubscription();
         toast.success('Purchases restored.');
       } catch (e: any) {
         toast.error(e?.message ?? 'Nothing to restore.');
@@ -257,7 +260,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
           <button
             onClick={handleContinue}
-            disabled={working}
+            disabled={working || (native && !(selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg))}
             className="w-full py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg transition hover:opacity-90 active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {working && <Loader2 className="w-5 h-5 animate-spin" />}

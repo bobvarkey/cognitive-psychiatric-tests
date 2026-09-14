@@ -15,6 +15,7 @@ import { OfflineProvider } from "@/contexts/OfflineContext";
 import { useEffect } from "react";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { registerPushNotifications } from "@/lib/appbuild/push";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,17 @@ const ThemeInitializer = () => {
     root.classList.add(`font-size-${fontSize}`);
   }, [mode, theme, fontSize]);
 
+  return null;
+};
+
+const PushInitializer = () => {
+  useEffect(() => {
+    registerPushNotifications().then((reg) => {
+      if (reg) {
+        console.log("Push registration token:", reg.token);
+      }
+    });
+  }, []);
   return null;
 };
 

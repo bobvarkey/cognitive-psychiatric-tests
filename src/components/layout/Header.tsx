@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X, Search, Bell } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 
@@ -13,6 +13,14 @@ interface HeaderProps {
 export const Header = ({ onMenuToggle, showSearch = true, onSearch, dark = false }: HeaderProps) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [pushReady, setPushReady] = useState(false);
+
+  useEffect(() => {
+    import("@/lib/appbuild/push").then(({ isNativePushAvailable, registerPushNotifications }) => {
+      if (!isNativePushAvailable()) return;
+      registerPushNotifications().then((reg) => setPushReady(!!reg?.token));
+    });
+  }, []);
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
@@ -57,6 +65,18 @@ export const Header = ({ onMenuToggle, showSearch = true, onSearch, dark = false
               onClick={() => setSearchOpen(!searchOpen)}
             >
               {searchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
+            </button>
+          )}
+
+          {/* Push Notifications Badge */}
+          {pushReady && (
+            <button
+              className={`relative p-2 rounded-lg ${dark ? 'hover:bg-white/10 text-foreground' : 'hover:bg-gray-100 text-gray-900'}`}
+              aria-label="Push notifications active"
+              title="Push notifications active"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-green-500 ring-2 ring-background" />
             </button>
           )}
 
