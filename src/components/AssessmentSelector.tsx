@@ -348,6 +348,10 @@ export const AssessmentSelector = () => {
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
   const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll } = useSubscription();
+  // TEMP-SCREENSHOT-TRIGGER
+  useEffect(() => {
+    if (window.location.hash === '#paywall') setShowPaywall(true);
+  }, [setShowPaywall]);
   const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
