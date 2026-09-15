@@ -16,6 +16,7 @@ import {
   getWebCurrency,
   WEB_PRICES,
 } from '@/lib/webBilling';
+import { useSubscription } from '@/contexts/SubscriptionContext';
 
 interface PaywallModalProps {
   isOpen: boolean;
