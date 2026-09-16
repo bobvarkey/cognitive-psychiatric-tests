@@ -243,8 +243,10 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           </ul>
 
           <div className="space-y-3">
-            <div className="grid grid-cols-2 p-1 rounded-full bg-muted">
-              {(['monthly', 'yearly'] as const).map((plan) => (
+            <div
+              className={`grid p-1 rounded-full bg-muted ${planOptions.length > 1 ? 'grid-cols-2' : 'grid-cols-1'}`}
+            >
+              {planOptions.map((plan) => (
                 <button
                   key={plan}
                   onClick={() => setSelectedPlan(plan)}
