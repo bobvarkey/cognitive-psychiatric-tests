@@ -93,32 +93,25 @@
  // src/lib/appbuild/revenuecat.ts's getOfferings() mapping works
  // unmodified against this mock.
  // ---------------------------------------------------------------------
- const MOCK_OFFERINGS = {
- current: {
- identifier: 'default',
+ const MOCK_ANNUAL_OFFERING = {
+ identifier: 'sale 2',
  availablePackages: [
- {
- identifier: '$rc_monthly',
- packageType: 'MONTHLY',
- product: {
- identifier: 'com.psycognito.clinical.premium.monthly',
- title: 'Cognito Premium (Monthly)',
- priceString: '$9.99',
- subscriptionPeriod: 'P1M',
- },
- },
  {
  identifier: '$rc_annual',
  packageType: 'ANNUAL',
  product: {
- identifier: 'com.psycognito.clinical.premium.annual',
- title: 'Cognito Premium (Annual)',
- priceString: '$79.99',
+ identifier: 'psycog_metric_annual',
+ title: 'Premium Annual',
+ priceString: '$24.99',
  subscriptionPeriod: 'P1Y',
  },
  },
  ],
- },
+ };
+
+ const MOCK_OFFERINGS = {
+ current: MOCK_ANNUAL_OFFERING,
+ all: { 'sale 2': MOCK_ANNUAL_OFFERING },
  };
 
  // ---------------------------------------------------------------------
