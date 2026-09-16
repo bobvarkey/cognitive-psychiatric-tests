@@ -126,7 +126,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
   const handleContinue = async () => {
     if (native) {
-      const pkg = selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg;
+      const pkg = activePlan === 'yearly' ? yearlyPkg : monthlyPkg;
       if (!pkg) {
         toast.error('No store package is available. Try restoring purchases or check AppBuild configuration.');
         return;
@@ -142,7 +142,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           return;
         }
         toast.success('Purchase complete. Thank you!');
-        onSelectPlan(selectedPlan, 'pro');
+        onSelectPlan(activePlan, 'pro');
       } catch (e: any) {
         if (!e?.userCancelled) toast.error(e?.message ?? 'Purchase failed.');
       } finally {
@@ -157,9 +157,9 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     }
     setBusy(true);
     try {
-      await startWebCheckout(selectedPlan, email.trim().toLowerCase(), webCurrency);
+      await startWebCheckout(activePlan, email.trim().toLowerCase(), webCurrency);
       toast.success('Payment successful. Everything is unlocked.');
-      onSelectPlan(selectedPlan, 'pro');
+      onSelectPlan(activePlan, 'pro');
     } catch (e: any) {
       if (!e?.userCancelled) toast.error(e?.message ?? 'Payment failed.');
     } finally {
@@ -177,7 +177,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
         if (ent) {
           setStoreError(null);
           toast.success('Purchases restored.');
-          onSelectPlan(selectedPlan, 'pro');
+          onSelectPlan(activePlan, 'pro');
         } else {
           toast.info('No active purchase found on this account.');
         }
@@ -257,7 +257,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                   key={plan}
                   onClick={() => setSelectedPlan(plan)}
                   className={`py-2.5 rounded-full text-sm font-semibold transition-colors ${
-                    selectedPlan === plan
+                    activePlan === plan
                       ? 'bg-primary text-primary-foreground shadow'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
@@ -267,7 +267,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               ))}
             </div>
             <p className="text-center text-sm text-muted-foreground tabular-nums">
-              {selectedPlan === 'monthly' ? `${monthlyPrice}/month` : `Only ${yearlyPrice}/year`}
+              {activePlan === 'monthly' ? `${monthlyPrice}/month` : `Only ${yearlyPrice}/year`}
             </p>
           </div>
 
@@ -292,7 +292,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           {storeError && (
             <p role="alert" className="text-sm text-destructive text-center">{storeError}</p>
           )}
-          {native && !storeError && !(selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg) && (
+          {native && !storeError && !(activePlan === 'yearly' ? yearlyPkg : monthlyPkg) && (
             <p role="alert" className="text-sm text-muted-foreground text-center">
               This plan is unavailable right now. Try Restore Purchases or check back shortly.
             </p>
@@ -300,7 +300,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
           <button
             onClick={handleContinue}
-            disabled={working || (native && !(selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg))}
+            disabled={working || (native && !(activePlan === 'yearly' ? yearlyPkg : monthlyPkg))}
             className="w-full py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg transition hover:opacity-90 active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {working && <Loader2 className="w-5 h-5 animate-spin" />}
