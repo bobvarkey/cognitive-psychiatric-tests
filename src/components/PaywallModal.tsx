@@ -281,6 +281,15 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             </div>
           )}
 
+          {storeError && (
+            <p role="alert" className="text-sm text-destructive text-center">{storeError}</p>
+          )}
+          {native && !storeError && !(selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg) && (
+            <p role="alert" className="text-sm text-muted-foreground text-center">
+              This plan is unavailable right now. Try Restore Purchases or check back shortly.
+            </p>
+          )}
+
           <button
             onClick={handleContinue}
             disabled={working || (native && !(selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg))}
