@@ -109,6 +109,12 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   const monthlyPrice = monthlyPkg?.priceString || webPrices.monthly.display;
   const yearlyPrice = yearlyPkg?.priceString || webPrices.yearly.display;
 
+  // In the native app only plans the store actually offers are shown.
+  const planOptions: Array<'monthly' | 'yearly'> = native
+    ? ([monthlyPkg && 'monthly', yearlyPkg && 'yearly'].filter(Boolean) as Array<'monthly' | 'yearly'>)
+    : ['monthly', 'yearly'];
+  const activePlan = planOptions.includes(selectedPlan) ? selectedPlan : (planOptions[0] ?? 'yearly');
+
   const rememberEmail = (value: string) => {
     setEmail(value);
     try {
