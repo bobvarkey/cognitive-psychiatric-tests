@@ -53,6 +53,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [packages, setPackages] = useState<RcPackage[]>([]);
   const [busy, setBusy] = useState(false);
+  const [storeError, setStoreError] = useState<string | null>(null);
   const [restoring, setRestoring] = useState(false);
   const [email, setEmail] = useState(() => {
     try {
@@ -72,12 +73,19 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     let active = true;
     (async () => {
       try {
+        setStoreError(null);
         const ok = await configure();
-        if (!ok) return;
+        if (!ok) {
+          if (active) setStoreError('The store could not be reached. Please try again later.');
+          return;
+        }
         const pkgs = await getOfferings();
-        if (active) setPackages(pkgs);
-      } catch {
-        /* store options unavailable outside the mobile app */
+        if (active) {
+          setPackages(pkgs);
+          if (pkgs.length === 0) setStoreError('No plans are available right now. Please try again later.');
+        }
+      } catch (e: any) {
+        if (active) setStoreError(e?.message ?? 'The store could not be reached. Please try again later.');
       }
     })();
     return () => {
