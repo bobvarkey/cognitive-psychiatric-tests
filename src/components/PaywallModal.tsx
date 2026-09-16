@@ -7,6 +7,7 @@ import {
   getOfferings,
   purchasePackage,
   restorePurchases,
+  getEntitlement,
   isNativePurchasesAvailable,
   type RcPackage,
 } from '@/lib/appbuild/revenuecat';
@@ -127,7 +128,13 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       setBusy(true);
       try {
         await purchasePackage(pkg);
+        const ent = await getEntitlement('premium');
         await refreshSubscription();
+        if (!ent) {
+          setStoreError('Your purchase went through but access is still pending. Tap Restore Purchases in a moment.');
+          toast.error('Purchase recorded, but access is not active yet. Try Restore Purchases.');
+          return;
+        }
         toast.success('Purchase complete. Thank you!');
         onSelectPlan(selectedPlan, 'pro');
       } catch (e: any) {
@@ -159,8 +166,15 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       setRestoring(true);
       try {
         await restorePurchases();
+        const ent = await getEntitlement('premium');
         await refreshSubscription();
-        toast.success('Purchases restored.');
+        if (ent) {
+          setStoreError(null);
+          toast.success('Purchases restored.');
+          onSelectPlan(selectedPlan, 'pro');
+        } else {
+          toast.info('No active purchase found on this account.');
+        }
       } catch (e: any) {
         toast.error(e?.message ?? 'Nothing to restore.');
       } finally {
