@@ -15,7 +15,7 @@ import { OfflineProvider } from "@/contexts/OfflineContext";
 import { useEffect } from "react";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { registerPushNotifications } from "@/lib/appbuild/push";
+import { NotificationsProvider } from "@/contexts/NotificationsContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,16 +47,6 @@ const ThemeInitializer = () => {
   return null;
 };
 
-const PushInitializer = () => {
-  useEffect(() => {
-    registerPushNotifications().then((reg) => {
-      if (reg) {
-        console.log("Push registration token:", reg.token);
-      }
-    });
-  }, []);
-  return null;
-};
 
 
 const App = () => (
@@ -67,6 +57,7 @@ const App = () => (
         <LanguageProvider>
           <OfflineProvider>
             <PatientInfoProvider>
+              <NotificationsProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -83,6 +74,7 @@ const App = () => (
                 <NavigationButtons />
                 <OfflineIndicator />
               </BrowserRouter>
+              </NotificationsProvider>
             </PatientInfoProvider>
           </OfflineProvider>
         </LanguageProvider>
