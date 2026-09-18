@@ -57,6 +57,7 @@ const App = () => (
         <LanguageProvider>
           <OfflineProvider>
             <PatientInfoProvider>
+              <NotificationsProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -73,6 +74,7 @@ const App = () => (
                 <NavigationButtons />
                 <OfflineIndicator />
               </BrowserRouter>
+              </NotificationsProvider>
             </PatientInfoProvider>
           </OfflineProvider>
         </LanguageProvider>
