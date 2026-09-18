@@ -1,7 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Menu, X, Search, Bell } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
+import { useNotifications } from '@/contexts/NotificationsContext';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -13,14 +20,9 @@ interface HeaderProps {
 export const Header = ({ onMenuToggle, showSearch = true, onSearch, dark = false }: HeaderProps) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [pushReady, setPushReady] = useState(false);
+  const { notifications, unreadCount, pushEnabled, markAllRead, clearAll } = useNotifications();
+  const showBell = pushEnabled || notifications.length > 0;
 
-  useEffect(() => {
-    import("@/lib/appbuild/push").then(({ isNativePushAvailable, registerPushNotifications }) => {
-      if (!isNativePushAvailable()) return;
-      registerPushNotifications().then((reg) => setPushReady(!!reg?.token));
-    });
-  }, []);
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
