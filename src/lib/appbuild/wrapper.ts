@@ -54,13 +54,18 @@ export function waitForWrapper(): Promise<WrapperReady | null> {
   return readyPromise;
 }
 
-/** Returns the wrapper's 'Purchases' (RevenueCat) plugin, or null outside the native app. */
-export function getPurchasesPlugin(): any | null {
+/** Returns a wrapper plugin by name, or null outside the native app. */
+export function getPlugin(name: string): any | null {
   const wrapper = typeof window !== 'undefined' ? window.AppbuildWrapper : undefined;
   if (!wrapper?.plugin) return null;
   try {
-    return wrapper.plugin('Purchases') ?? null;
+    return wrapper.plugin(name) ?? null;
   } catch {
     return null;
   }
+}
+
+/** Returns the wrapper's 'Purchases' (RevenueCat) plugin, or null outside the native app. */
+export function getPurchasesPlugin(): any | null {
+  return getPlugin('Purchases');
 }
