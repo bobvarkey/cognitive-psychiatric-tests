@@ -69,9 +69,9 @@ export const setDemoUnlockAll = (enabled: boolean): void => {
   }
 };
 
-// ---- 2-day demo trial -------------------------------------------------
+// ---- 3-day demo trial -------------------------------------------------
 const DEMO_START_KEY = 'psycognito.demoTrialStart.v1';
-export const DEMO_TRIAL_DAYS = 2;
+export const DEMO_TRIAL_DAYS = 3;
 const DEMO_TRIAL_MS = DEMO_TRIAL_DAYS * 86400 * 1000;
 
 /** Start (once) and return the demo trial start timestamp. */
@@ -96,7 +96,7 @@ export const getDemoTrialMsLeft = (): number =>
 
 export const isDemoTrialActive = (): boolean => getDemoTrialMsLeft() > 0;
 
-/** Restart the 2-day demo trial (testing helper). */
+/** Restart the 3-day demo trial (testing helper). */
 export const resetDemoTrial = (): void => {
   try {
     localStorage.setItem(DEMO_START_KEY, String(Date.now()));
