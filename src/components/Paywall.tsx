@@ -138,14 +138,14 @@ export const Paywall = ({ entitlementId = 'premium', onPurchased }: PaywallProps
             onClick={() => {
               restartDemoTrial();
               refresh();
-              setMessage('Premium unlocked for 2-day demo trial.');
+              setMessage('Premium unlocked for 3-day demo trial.');
               onPurchased?.();
             }}
           >
             <Clock className="h-4 w-4" />
             {demoTrialActive
-              ? `Restart 2-day demo (${Math.ceil(demoTrialMsLeft / 86400000)} days left)`
-              : 'Unlock premium for 2 days'}
+              ? `Restart 3-day demo (${Math.ceil(demoTrialMsLeft / 86400000)} days left)`
+              : 'Unlock premium for 3 days'}
           </Button>
         )}
 

@@ -63,7 +63,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       return '';
     }
   });
-  const { refreshSubscription } = useSubscription();
+  const { refreshSubscription, restartDemoTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
 
   const native = isNativePurchasesAvailable();
   const webCurrency = useMemo(() => getWebCurrency(), []);
@@ -306,6 +306,21 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             {working && <Loader2 className="w-5 h-5 animate-spin" />}
             {working ? 'Processing…' : 'Continue'}
           </button>
+
+          <div className="text-center">
+            <button
+              onClick={() => {
+                restartDemoTrial();
+                toast.success('3-day demo started — everything is unlocked.');
+                onClose();
+              }}
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              {demoTrialActive
+                ? `Demo active — ${Math.ceil(demoTrialMsLeft / 86400000)} day(s) left · restart`
+                : 'Or sign in with a free 3-day demo'}
+            </button>
+          </div>
 
           <div className="flex justify-center gap-6 text-xs text-muted-foreground">
             <button onClick={handleRestore} disabled={restoring} className="hover:text-foreground transition">
