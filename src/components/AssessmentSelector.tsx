@@ -111,6 +111,7 @@ import { useSubscription } from '@/contexts/SubscriptionContext';
 import { useDayCounter } from '@/hooks/useDayCounter';
 import { PaywallModal } from './PaywallModal';
 import { AdBanner } from './AdBanner';
+import { toast } from 'sonner';
 
 import { LanguageToggle } from './LanguageToggle';
 import { MobileBottomNav } from './MobileBottomNav';
