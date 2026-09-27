@@ -49,15 +49,15 @@ export const PRICING = {
 };
 
 // Demo override: when enabled, all tests are unlocked regardless of subscription.
+// Default OFF so first-time visitors see the paywall and must opt in to the demo.
 const DEMO_UNLOCK_KEY = 'psycognito.demoUnlockAll.v1';
 
 export const getDemoUnlockAll = (): boolean => {
   try {
     const v = localStorage.getItem(DEMO_UNLOCK_KEY);
-    // Default ON to preserve existing demo behaviour
-    return v === null ? true : v === 'true';
+    return v === 'true';
   } catch {
-    return true;
+    return false;
   }
 };
 

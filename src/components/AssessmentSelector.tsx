@@ -112,6 +112,13 @@ import { useDayCounter } from '@/hooks/useDayCounter';
 import { PaywallModal } from './PaywallModal';
 import { AdBanner } from './AdBanner';
 import { toast } from 'sonner';
+import {
+  configure,
+  restorePurchases,
+  getEntitlement,
+  isNativePurchasesAvailable,
+} from '@/lib/appbuild/revenuecat';
+import { WEB_PRICES, getWebCurrency } from '@/lib/webBilling';
 
 import { LanguageToggle } from './LanguageToggle';
 import { MobileBottomNav } from './MobileBottomNav';
@@ -348,11 +355,44 @@ export const AssessmentSelector = () => {
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll, isPremium, restartDemoTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
+  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll, isPremium, restartDemoTrial, demoTrialActive, demoTrialMsLeft, refreshSubscription } = useSubscription();
   // TEMP-SCREENSHOT-TRIGGER
   useEffect(() => {
     if (window.location.hash === '#paywall') setShowPaywall(true);
   }, [setShowPaywall]);
+  // Show the paywall when the app is first opened, for anyone without
+  // premium or an active demo. Dismissal lasts until the next app open.
+  useEffect(() => {
+    if (!isPremium) setShowPaywall(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const webCurrency = useMemo(() => getWebCurrency(), []);
+  const webPrices = WEB_PRICES[webCurrency];
+
+  // Restore from the banner: direct in the native app, via the paywall on web
+  // (web restore needs the purchase email, which is collected there).
+  const handleBannerRestore = async () => {
+    if (!isNativePurchasesAvailable()) {
+      setShowPaywall(true);
+      toast.info('Enter the email you paid with to restore access.');
+      return;
+    }
+    try {
+      toast.loading('Restoring purchases…', { id: 'restore' });
+      const ok = await configure();
+      if (!ok) {
+        toast.error('The store could not be reached. Please try again later.', { id: 'restore' });
+        return;
+      }
+      await restorePurchases();
+      const ent = await getEntitlement('premium');
+      refreshSubscription();
+      if (ent) toast.success('Purchases restored — premium unlocked.', { id: 'restore' });
+      else toast.info('No active purchase found on this account.', { id: 'restore' });
+    } catch (e: any) {
+      toast.error(e?.message ?? 'Could not restore purchases.', { id: 'restore' });
+    }
+  };
   const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
@@ -823,31 +863,44 @@ export const AssessmentSelector = () => {
 
                 {/* Paywall entry + 3-day demo sign-in for free users */}
                 {!isPremium && (
-                  <div className="rounded-2xl border border-primary/30 bg-card p-5 shadow-lg flex flex-col sm:flex-row items-center gap-4">
-                    <div className="flex-1 text-center sm:text-left">
-                      <p className="font-bold text-foreground">Unlock full access</p>
-                      <p className="text-sm text-muted-foreground">
-                        90+ assessments, reports and exports — or try everything free for 3 days.
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-center gap-2 w-full sm:w-auto">
-                      <button
-                        onClick={() => setShowPaywall(true)}
-                        className="w-full sm:w-auto min-h-[44px] px-6 rounded-full bg-primary text-primary-foreground font-semibold transition hover:opacity-90 active:scale-[0.99]"
-                      >
-                        View plans
-                      </button>
-                      <button
-                        onClick={() => {
-                          restartDemoTrial();
-                          toast.success('3-day demo started — everything is unlocked.');
-                        }}
-                        className="text-sm font-medium text-primary hover:underline min-h-[44px]"
-                      >
-                        {demoTrialActive
-                          ? `Demo active — ${Math.ceil(demoTrialMsLeft / 86400000)} day(s) left · restart`
-                          : 'Sign in with a free 3-day demo'}
-                      </button>
+                  <div className="rounded-2xl border border-primary/30 bg-card p-5 shadow-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                      <div className="flex-1 text-center sm:text-left">
+                        <p className="font-bold text-foreground">Unlock full access</p>
+                        <p className="text-sm text-muted-foreground">
+                          <span className="font-semibold text-foreground">Premium Annual</span> —{' '}
+                          <span className="tabular-nums">{webPrices.yearly.display}</span>/year (save 33%) or{' '}
+                          <span className="tabular-nums">{webPrices.monthly.display}</span>/month
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          90+ assessments, clinical reports and exports — or try everything free for 3 days.
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-center gap-2 w-full sm:w-auto shrink-0">
+                        <button
+                          onClick={() => setShowPaywall(true)}
+                          className="w-full sm:w-auto min-h-[44px] px-6 rounded-full bg-primary text-primary-foreground font-semibold transition hover:opacity-90 active:scale-[0.99]"
+                        >
+                          View plans
+                        </button>
+                        <button
+                          onClick={() => {
+                            restartDemoTrial();
+                            toast.success('3-day demo started — everything is unlocked.');
+                          }}
+                          className="text-sm font-medium text-primary hover:underline min-h-[44px]"
+                        >
+                          {demoTrialActive
+                            ? `Demo active — ${Math.ceil(demoTrialMsLeft / 86400000)} day(s) left · restart`
+                            : 'Sign in with a free 3-day demo'}
+                        </button>
+                        <button
+                          onClick={handleBannerRestore}
+                          className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 min-h-[44px] flex items-center"
+                        >
+                          Restore purchases
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
