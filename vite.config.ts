@@ -37,6 +37,7 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         // Precache only the app shell; large images are cached at runtime instead
         globPatterns: ['**/*.{js,css,html,ico,svg,woff2}'],
+        navigateFallbackDenylist: [/^\/~oauth/],
         maximumFileSizeToCacheInBytes: 8 * 1024 * 1024,
         runtimeCaching: [
           {

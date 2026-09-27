@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      user_trials: {
+        Row: {
+          ends_at: string
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          ends_at?: string
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          ends_at?: string
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       web_subscriptions: {
         Row: {
           amount: number
@@ -64,7 +82,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      start_trial: {
+        Args: never
+        Returns: {
+          ends_at: string
+          started_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_trials"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never
