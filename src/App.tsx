@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { NotificationsProvider } from "@/contexts/NotificationsContext";
+import { WebAccessGate } from "@/components/auth/WebAccessGate";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,6 +62,7 @@ const App = () => (
               <Toaster />
               <Sonner />
               <BrowserRouter>
+                <WebAccessGate>
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/history" element={<Index />} />
@@ -70,6 +72,7 @@ const App = () => (
                   <Route path="/assessment/:id" element={<Index />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                </WebAccessGate>
                 <LanguageToggle />
                 <NavigationButtons />
                 <OfflineIndicator />
