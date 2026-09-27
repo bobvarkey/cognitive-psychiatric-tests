@@ -355,11 +355,44 @@ export const AssessmentSelector = () => {
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll, isPremium, restartDemoTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
+  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll, isPremium, restartDemoTrial, demoTrialActive, demoTrialMsLeft, refreshSubscription } = useSubscription();
   // TEMP-SCREENSHOT-TRIGGER
   useEffect(() => {
     if (window.location.hash === '#paywall') setShowPaywall(true);
   }, [setShowPaywall]);
+  // Show the paywall when the app is first opened, for anyone without
+  // premium or an active demo. Dismissal lasts until the next app open.
+  useEffect(() => {
+    if (!isPremium) setShowPaywall(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const webCurrency = useMemo(() => getWebCurrency(), []);
+  const webPrices = WEB_PRICES[webCurrency];
+
+  // Restore from the banner: direct in the native app, via the paywall on web
+  // (web restore needs the purchase email, which is collected there).
+  const handleBannerRestore = async () => {
+    if (!isNativePurchasesAvailable()) {
+      setShowPaywall(true);
+      toast.info('Enter the email you paid with to restore access.');
+      return;
+    }
+    try {
+      toast.loading('Restoring purchases…', { id: 'restore' });
+      const ok = await configure();
+      if (!ok) {
+        toast.error('The store could not be reached. Please try again later.', { id: 'restore' });
+        return;
+      }
+      await restorePurchases();
+      const ent = await getEntitlement('premium');
+      refreshSubscription();
+      if (ent) toast.success('Purchases restored — premium unlocked.', { id: 'restore' });
+      else toast.info('No active purchase found on this account.', { id: 'restore' });
+    } catch (e: any) {
+      toast.error(e?.message ?? 'Could not restore purchases.', { id: 'restore' });
+    }
+  };
   const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
