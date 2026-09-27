@@ -863,31 +863,44 @@ export const AssessmentSelector = () => {
 
                 {/* Paywall entry + 3-day demo sign-in for free users */}
                 {!isPremium && (
-                  <div className="rounded-2xl border border-primary/30 bg-card p-5 shadow-lg flex flex-col sm:flex-row items-center gap-4">
-                    <div className="flex-1 text-center sm:text-left">
-                      <p className="font-bold text-foreground">Unlock full access</p>
-                      <p className="text-sm text-muted-foreground">
-                        90+ assessments, reports and exports — or try everything free for 3 days.
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-center gap-2 w-full sm:w-auto">
-                      <button
-                        onClick={() => setShowPaywall(true)}
-                        className="w-full sm:w-auto min-h-[44px] px-6 rounded-full bg-primary text-primary-foreground font-semibold transition hover:opacity-90 active:scale-[0.99]"
-                      >
-                        View plans
-                      </button>
-                      <button
-                        onClick={() => {
-                          restartDemoTrial();
-                          toast.success('3-day demo started — everything is unlocked.');
-                        }}
-                        className="text-sm font-medium text-primary hover:underline min-h-[44px]"
-                      >
-                        {demoTrialActive
-                          ? `Demo active — ${Math.ceil(demoTrialMsLeft / 86400000)} day(s) left · restart`
-                          : 'Sign in with a free 3-day demo'}
-                      </button>
+                  <div className="rounded-2xl border border-primary/30 bg-card p-5 shadow-lg">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                      <div className="flex-1 text-center sm:text-left">
+                        <p className="font-bold text-foreground">Unlock full access</p>
+                        <p className="text-sm text-muted-foreground">
+                          <span className="font-semibold text-foreground">Premium Annual</span> —{' '}
+                          <span className="tabular-nums">{webPrices.yearly.display}</span>/year (save 33%) or{' '}
+                          <span className="tabular-nums">{webPrices.monthly.display}</span>/month
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          90+ assessments, clinical reports and exports — or try everything free for 3 days.
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-center gap-2 w-full sm:w-auto shrink-0">
+                        <button
+                          onClick={() => setShowPaywall(true)}
+                          className="w-full sm:w-auto min-h-[44px] px-6 rounded-full bg-primary text-primary-foreground font-semibold transition hover:opacity-90 active:scale-[0.99]"
+                        >
+                          View plans
+                        </button>
+                        <button
+                          onClick={() => {
+                            restartDemoTrial();
+                            toast.success('3-day demo started — everything is unlocked.');
+                          }}
+                          className="text-sm font-medium text-primary hover:underline min-h-[44px]"
+                        >
+                          {demoTrialActive
+                            ? `Demo active — ${Math.ceil(demoTrialMsLeft / 86400000)} day(s) left · restart`
+                            : 'Sign in with a free 3-day demo'}
+                        </button>
+                        <button
+                          onClick={handleBannerRestore}
+                          className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 min-h-[44px] flex items-center"
+                        >
+                          Restore purchases
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
