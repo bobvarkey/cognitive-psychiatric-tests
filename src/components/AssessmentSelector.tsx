@@ -109,7 +109,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { useDayCounter } from '@/hooks/useDayCounter';
-import { PaywallModal } from './PaywallModal';
 import { AdBanner } from './AdBanner';
 import { toast } from 'sonner';
 import {
@@ -355,44 +354,7 @@ export const AssessmentSelector = () => {
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { showPaywall, setShowPaywall, initiatePurchase, subscription, demoUnlockAll: _demoUnlockAll, isPremium, restartDemoTrial, demoTrialActive, demoTrialMsLeft, refreshSubscription } = useSubscription();
-  // TEMP-SCREENSHOT-TRIGGER
-  useEffect(() => {
-    if (window.location.hash === '#paywall') setShowPaywall(true);
-  }, [setShowPaywall]);
-  // Show the paywall when the app is first opened, for anyone without
-  // premium or an active demo. Dismissal lasts until the next app open.
-  useEffect(() => {
-    if (!isPremium) setShowPaywall(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const webCurrency = useMemo(() => getWebCurrency(), []);
-  const webPrices = WEB_PRICES[webCurrency];
-
-  // Restore from the banner: direct in the native app, via the paywall on web
-  // (web restore needs the purchase email, which is collected there).
-  const handleBannerRestore = async () => {
-    if (!isNativePurchasesAvailable()) {
-      setShowPaywall(true);
-      toast.info('Enter the email you paid with to restore access.');
-      return;
-    }
-    try {
-      toast.loading('Restoring purchases…', { id: 'restore' });
-      const ok = await configure();
-      if (!ok) {
-        toast.error('The store could not be reached. Please try again later.', { id: 'restore' });
-        return;
-      }
-      await restorePurchases();
-      const ent = await getEntitlement('premium');
-      refreshSubscription();
-      if (ent) toast.success('Purchases restored — premium unlocked.', { id: 'restore' });
-      else toast.info('No active purchase found on this account.', { id: 'restore' });
-    } catch (e: any) {
-      toast.error(e?.message ?? 'Could not restore purchases.', { id: 'restore' });
-    }
-  };
+  const { subscription } = useSubscription();
   const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
@@ -861,50 +823,6 @@ export const AssessmentSelector = () => {
                 {/* Ad Banner for free users */}
                 <AdBanner />
 
-                {/* Paywall entry + 3-day demo sign-in for free users */}
-                {!isPremium && (
-                  <div className="rounded-2xl border border-primary/30 bg-card p-5 shadow-lg">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                      <div className="flex-1 text-center sm:text-left">
-                        <p className="font-bold text-foreground">Unlock full access</p>
-                        <p className="text-sm text-muted-foreground">
-                          <span className="font-semibold text-foreground">Premium Annual</span> —{' '}
-                          <span className="tabular-nums">{webPrices.yearly.display}</span>/year (save 33%) or{' '}
-                          <span className="tabular-nums">{webPrices.monthly.display}</span>/month
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          90+ assessments, clinical reports and exports — or try everything free for 3 days.
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-center gap-2 w-full sm:w-auto shrink-0">
-                        <button
-                          onClick={() => setShowPaywall(true)}
-                          className="w-full sm:w-auto min-h-[44px] px-6 rounded-full bg-primary text-primary-foreground font-semibold transition hover:opacity-90 active:scale-[0.99]"
-                        >
-                          View plans
-                        </button>
-                        <button
-                          onClick={() => {
-                            restartDemoTrial();
-                            toast.success('3-day demo started — everything is unlocked.');
-                          }}
-                          className="text-sm font-medium text-primary hover:underline min-h-[44px]"
-                        >
-                          {demoTrialActive
-                            ? `Demo active — ${Math.ceil(demoTrialMsLeft / 86400000)} day(s) left · restart`
-                            : 'Sign in with a free 3-day demo'}
-                        </button>
-                        <button
-                          onClick={handleBannerRestore}
-                          className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2 min-h-[44px] flex items-center"
-                        >
-                          Restore purchases
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {/* Hero banner — only when no search/filter */}
                 {!searchQuery.trim() && activeCategory === 'all' && (
                   <div className="relative overflow-hidden rounded-2xl border border-border shadow-lg dark:border-primary/20 bg-card">
@@ -1021,9 +939,7 @@ export const AssessmentSelector = () => {
                       { glow: '', bg: 'from-yellow-500 to-black', icon: 'rgba(255,255,0,0.8)', customGlow: 'box-shadow: 0_0_10px_rgba(255,255,0,0.5), 0_0_20px_rgba(255,255,0,0.3)' }, // Yellow
                     ];
 
-                    // const _isProSubscriber = true; // Always unlocked
-
-                    const renderTile = (a: AssessmentInfo, index: number, locked = false) => {
+                    const renderTile = (a: AssessmentInfo, index: number) => {
                       const Icon = a.icon;
                       const color = neonColorPalette[index % neonColorPalette.length];
                       const reference = getAssessmentReference(a.key);
@@ -1032,10 +948,8 @@ export const AssessmentSelector = () => {
                         <Tooltip key={a.key}>
                           <TooltipTrigger asChild>
                             <button
-                              onClick={() => locked ? setShowPaywall(true) : openAssessment(a.key)}
-                              className={`group w-full flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all border bg-card hover:bg-accent/40 active:scale-[0.98] h-full ${
-                                locked ? 'opacity-60' : ''
-                              }`}
+                              onClick={() => openAssessment(a.key)}
+                              className="group w-full flex flex-col items-center justify-center text-center p-4 rounded-2xl transition-all border bg-card hover:bg-accent/40 active:scale-[0.98] h-full"
                             >
                               <div
                                 className={`shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br ${color.bg} flex items-center justify-center border mb-3`}
@@ -1063,7 +977,7 @@ export const AssessmentSelector = () => {
                           </TooltipTrigger>
                           <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
                             <div className="space-y-2">
-                              <p>{locked ? `Pro feature — ${a.description}` : a.description}</p>
+                              <p>{a.description}</p>
                               {reference && (
                                 <p className="border-t border-border pt-2 text-muted-foreground">
                                   <span className="font-semibold text-foreground">Citation: </span>
@@ -1168,7 +1082,7 @@ export const AssessmentSelector = () => {
                               filteredAssessments.length,
                             )}
                           <div className={gridClass}>
-                            {filteredAssessments.map((a, idx) => renderTile(a, idx, false))}
+                            {filteredAssessments.map((a, idx) => renderTile(a, idx))}
                           </div>
                         </>
                       );
@@ -1194,7 +1108,7 @@ export const AssessmentSelector = () => {
                                 <div className={cat === 'substance'
                                   ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4'
                                   : 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4'}>
-                                  {items.map((a, idx) => renderTile(a, idx, false))}
+                                  {items.map((a, idx) => renderTile(a, idx))}
                                 </div>
                               </AccordionContent>
                             </AccordionItem>
@@ -1237,14 +1151,6 @@ export const AssessmentSelector = () => {
       />
 
 
-      {/* Paywall Modal */}
-      <PaywallModal
-        isOpen={showPaywall}
-        onClose={() => setShowPaywall(false)}
-        onSelectPlan={initiatePurchase}
-      />
-
-      
       
       {!navigator.onLine && (
         <div className="fixed inset-0 z-[100] bg-background">

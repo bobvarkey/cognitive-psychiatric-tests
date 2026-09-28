@@ -8,7 +8,6 @@ import {
   DEMO_TRIAL_DAYS,
 } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
-import { usePremiumEntitlement } from '@/hooks/usePremiumEntitlement';
 import { getWebPremium, restoreWebPurchase, type WebPremium } from '@/lib/webBilling';
 
 interface PremiumFeatures {
@@ -59,17 +58,6 @@ const FULL_PREMIUM_FEATURES: PremiumFeatures = {
   bannerAdsDisabled: true,
 };
 
-const FREE_FEATURES: PremiumFeatures = {
-  allAssessments: false,
-  exportToPDF: false,
-  exportToDOCX: false,
-  clinicalAnalytics: false,
-  patientTracking: false,
-  prioritySupport: false,
-  offlineSync: false,
-  bannerAdsDisabled: false,
-};
-
 export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -89,30 +77,16 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     return () => window.removeEventListener('psycognito:web-premium', sync);
   }, []);
 
-  // Real entitlement from the AppBuild wrapper's RevenueCat (Purchases) plugin.
-  const { isPremium: entitlementActive, refresh: refreshEntitlement } =
-    usePremiumEntitlement('premium');
+  // All features are unlocked for everyone — the paywall/entitlement gate has been removed.
+  const isPremium = true;
 
-  const demoTrialActive = demoUnlockAll && demoTrialMsLeft > 0;
-  const webActive = !!webPremium;
+  const demoTrialActive = false; // kept for API compatibility; gate removed
+  const premiumSource: 'store' | 'web' | 'demo' | 'none' = 'store';
 
-  const premiumSource: 'store' | 'web' | 'demo' | 'none' = entitlementActive
-    ? 'store'
-    : webActive
-      ? 'web'
-      : demoTrialActive
-        ? 'demo'
-        : 'none';
-
-  const isPremium = premiumSource !== 'none';
-
-
-  const features: PremiumFeatures = isPremium ? FULL_PREMIUM_FEATURES : FREE_FEATURES;
+  const features: PremiumFeatures = FULL_PREMIUM_FEATURES;
 
   const refreshSubscription = () => {
-    refreshEntitlement();
-    setWebPremium(getWebPremium());
-    setDemoTrialMsLeft(getDemoTrialMsLeft());
+    // No-op: the paywall/entitlement gate has been removed.
   };
 
   const toggleDemoUnlockAll = (enabled: boolean) => {

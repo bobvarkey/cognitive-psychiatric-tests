@@ -3,7 +3,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Card } from '@/components/ui/card';
 import { getAssessmentsByCategory, getAllCategories, ASSESSMENT_CATEGORIES } from '@/config/assessments';
-import { ArrowRight, BookOpen, Shield, Zap, Languages, Star, ChevronDown, Check, Sparkles, Brain } from 'lucide-react';
+import { ArrowRight, BookOpen, Shield, Zap, Languages, Star, ChevronDown, Sparkles, Brain } from 'lucide-react';
 
 const categoryIcons: Record<string, string> = {
   [ASSESSMENT_CATEGORIES.COGNITIVE]: '🧠',
@@ -67,11 +67,8 @@ export default function Landing() {
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4">
             <Link to="/">
-              <button className="btn-neon">Start Free — 25 Assessments</button>
+              <button className="btn-neon">Open the App</button>
             </Link>
-            <button className="px-6 py-3 rounded-xl border border-white/20 text-white hover:bg-white/10 transition font-semibold">
-              View Pro Plans
-            </button>
           </div>
 
           {/* Scroll indicator */}
@@ -114,40 +111,6 @@ export default function Landing() {
                 <div className="text-sm text-gray-500">{label}</div>
               </div>
             ))}
-          </div>
-        </section>
-
-        {/* Pricing Preview Section */}
-        <section className="py-16 px-4 border-t border-white/5">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white mb-3">Simple Pricing</h2>
-            <p className="text-gray-400 mb-8">Start free with 25 tools. Go Pro for all 65.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Lite card */}
-              <div className="p-6 rounded-2xl glass-dark border border-white/10 text-left">
-                <div className="text-sm text-gray-400 mb-1">Lite — 1 Day Free Trial</div>
-                <div className="text-4xl font-bold text-white mb-1">$19.99<span className="text-base text-gray-500">/yr</span></div>
-                <div className="text-xs text-gray-500 mb-4">Then $19.99/yr · or $3.99/mo</div>
-                <ul className="space-y-2 text-sm text-gray-300">
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-cyan-400" />Full clinical assessments</li>
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-cyan-400" />PDF export</li>
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-cyan-400" />Offline access</li>
-                </ul>
-              </div>
-              {/* Pro card */}
-              <div className="relative p-6 rounded-2xl border border-fuchsia-500/40 text-left bg-gradient-to-br from-fuchsia-600/10 to-cyan-600/5 shadow-[0_0_30px_rgba(255,0,255,0.15)]">
-                <div className="absolute -top-3 left-4 px-3 py-1 rounded-full bg-gradient-to-r from-fuchsia-600 to-cyan-500 text-xs font-bold text-white">RECOMMENDED</div>
-                <div className="text-sm text-gray-400 mb-1">Pro — 1 Day Free Trial</div>
-                <div className="text-4xl font-bold text-white mb-1">$19.99<span className="text-base text-gray-500">/yr</span></div>
-                <div className="text-xs text-gray-500 mb-4">Then $19.99/yr · or $3.99/mo</div>
-                <ul className="space-y-2 text-sm text-gray-300">
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />All assessments unlocked</li>
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />PDF & DOCX export</li>
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />Patient tracking</li>
-                  <li className="flex gap-2 items-center"><Check className="w-4 h-4 text-fuchsia-400" />Priority support</li>
-                </ul>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -199,11 +162,11 @@ export default function Landing() {
               Ready to elevate your clinical workflow?
             </h2>
             <p className="text-white/90 mb-8 max-w-2xl mx-auto">
-              Get started with 25 core assessments free, or upgrade to Pro for all 65.
+              Open the app and start using every assessment right away.
             </p>
             <Link to="/">
               <button className="px-8 py-3 rounded-xl bg-white text-fuchsia-600 hover:bg-gray-100 font-semibold transition">
-                Start Free Now <ArrowRight className="ml-2 h-5 w-5 inline" />
+                Open the App <ArrowRight className="ml-2 h-5 w-5 inline" />
               </button>
             </Link>
           </div>
