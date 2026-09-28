@@ -14,8 +14,15 @@ import { Loader2, LogOut } from 'lucide-react';
 
 type Trial = { started_at: string; ends_at: string } | null;
 
-/** Native app (AppBuild wrapper) keeps its own store paywall; gate applies to the website only. */
-const isNativeApp = () => typeof window !== 'undefined' && !!window.AppbuildWrapper;
+import { waitForWrapper } from '@/lib/appbuild/wrapper';
+
+/** Native app (AppBuild wrapper ready) keeps its own store paywall; gate applies to the website only.
+ *  The AppBuild SDK script defines window.AppbuildWrapper in browsers too, so only a resolved ready counts. */
+const useIsNativeApp = () => {
+  const [native, setNative] = useState<boolean | null>(null);
+  useEffect(() => { waitForWrapper().then((r) => setNative(!!r)); }, []);
+  return native;
+};
 
 const Shell = ({ children }: { children: ReactNode }) => (
   <main className="min-h-screen bg-background flex items-center justify-center p-4 pt-[max(1rem,env(safe-area-inset-top))]">
@@ -133,7 +140,7 @@ const ResetPassword = () => {
 
 export const WebAccessGate = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
-  const native = isNativeApp();
+  const native = useIsNativeApp();
   const { webPremium, restoreWebAccess } = useSubscription();
   const [session, setSession] = useState<Session | null>(null);
   const [authReady, setAuthReady] = useState(false);
@@ -143,7 +150,7 @@ export const WebAccessGate = ({ children }: { children: ReactNode }) => {
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
-    if (native) return;
+    if (native !== false) return;
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
     supabase.auth.getSession().then(({ data }) => { setSession(data.session); setAuthReady(true); });
     const id = setInterval(() => setNow(Date.now()), 60000);
@@ -153,7 +160,7 @@ export const WebAccessGate = ({ children }: { children: ReactNode }) => {
   const userId = session?.user.id;
   const userEmail = session?.user.email;
   useEffect(() => {
-    if (native || !userId) { setTrial(null); setTrialLoaded(false); return; }
+    if (native !== false || !userId) { setTrial(null); setTrialLoaded(false); return; }
     let cancelled = false;
     (async () => {
       const { data } = await supabase.from('user_trials').select('started_at, ends_at').eq('user_id', userId).maybeSingle();
@@ -164,6 +171,7 @@ export const WebAccessGate = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [native, userId]);
 
+  if (native === null) return <Shell><Loader2 className="mx-auto h-6 w-6 animate-spin" /></Shell>;
   if (native) return <>{children}</>;
   if (location.pathname === '/reset-password') return <ResetPassword />;
   if (!authReady) return <Shell><Loader2 className="mx-auto h-6 w-6 animate-spin" /></Shell>;
