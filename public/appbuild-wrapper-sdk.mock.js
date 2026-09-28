@@ -32,6 +32,13 @@
  */
 (function (window) {
  'use strict';
+ // Opt-in only: ?appbuildMock=1 (remembered) — never active for normal visitors.
+ try {
+ if (new URLSearchParams(window.location.search).get('appbuildMock') === '1') localStorage.setItem('__appbuild_mock__', '1');
+ if (new URLSearchParams(window.location.search).get('appbuildMock') === '0') localStorage.removeItem('__appbuild_mock__');
+ if (localStorage.getItem('__appbuild_mock__') !== '1') return;
+ } catch (e) { return; }
+ if (window.AppbuildWrapper) return;
 
  // ---------------------------------------------------------------------
  // Config — tweak these to simulate different environments.
