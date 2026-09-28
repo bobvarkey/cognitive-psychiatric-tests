@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ClipboardCheck, Scale } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface DementiaConsolidatedResultsProps {
   cdrScores: Record<string, number>;
@@ -35,6 +37,29 @@ export const DementiaConsolidatedResults: React.FC<DementiaConsolidatedResultsPr
     if (stage === 6) return language === 'ml' ? 'മിതമായ കഠിനമായ അൽഷിമേഴ്‌സ്' : 'Moderately severe Alzheimer\'s';
     if (stage === 7) return language === 'ml' ? 'കഠിനമായ അൽഷിമേഴ്‌സ്' : 'Severe Alzheimer\'s';
     return '';
+  };
+
+  const reportData: ReportData = {
+    assessmentName: 'Dementia Consolidated Results (CDR + FAST)',
+    date: new Date().toLocaleString(),
+    totalScore: `CDR ${cdrTotal} · FAST Stage ${fastStage ?? 'N/A'}`,
+    interpretation: `Patient demonstrates a CDR score of ${cdrTotal} (${cdrInterpretation()}) and a FAST stage of ${fastStage ?? 'N/A'} (${fastInterpretation(fastStage)}).`,
+    sections: [
+      {
+        title: 'CDR Domain Scores',
+        items: Object.entries(cdrScores).map(([domain, score]) => `${domain}: ${score}`),
+        type: 'info',
+      },
+      {
+        title: 'Summaries',
+        items: [
+          `CDR total: ${cdrTotal} — ${cdrInterpretation()}`,
+          `FAST stage: ${fastStage ?? 'N/A'} — ${fastInterpretation(fastStage)}`,
+        ],
+        type: 'info',
+      },
+    ],
+    disclaimer: 'CDR and FAST are clinician-rated staging tools; interpret within a comprehensive assessment.',
   };
 
   return (
@@ -95,6 +120,9 @@ export const DementiaConsolidatedResults: React.FC<DementiaConsolidatedResultsPr
               ? `രോഗിയുടെ CDR സ്കോർ ${cdrTotal} ആണ് (${cdrInterpretation()}). FAST ഘട്ടം ${fastStage ?? 'ലഭ്യമല്ല'} ആണ് (${fastInterpretation(fastStage)}).` 
               : `Patient demonstrates a CDR score of ${cdrTotal} (${cdrInterpretation()}) and a FAST stage of ${fastStage ?? 'N/A'} (${fastInterpretation(fastStage)}).`}
           </p>
+          <div className="mt-4">
+            <ExportButtons data={reportData} />
+          </div>
         </CardContent>
       </Card>
     </div>

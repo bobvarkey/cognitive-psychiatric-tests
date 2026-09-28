@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, FlaskConical, Plus, X } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface Props { onBack?: () => void }
 
@@ -92,6 +94,26 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
     0,
   );
   const category = riskCategory(weeklyTotal);
+
+  const reportData: ReportData = {
+    assessmentName: 'Alcohol Units Calculator',
+    date: new Date().toLocaleString(),
+    totalScore: `${weeklyTotal.toFixed(2)} units/week`,
+    severity: category.label,
+    interpretation: `Per occasion: ${perOccasionTotal.toFixed(2)} units. UK low-risk guideline: ≤ ${WEEKLY_LOW_RISK_LIMIT} units per week.`,
+    sections: [
+      {
+        title: 'Drinks',
+        items: drinks.map((d) => {
+          const units = calcUnits(d.volumeMl, d.abv);
+          return `${d.name}: ${d.volumeMl} ml @ ${d.abv}% ABV = ${units.toFixed(2)} u/occasion × ${d.daysPerWeek} days/week = ${(units * (d.daysPerWeek || 0)).toFixed(2)} u/week`;
+        }),
+        type: 'info',
+      },
+    ],
+    disclaimer:
+      'This calculator uses UK-style alcohol units and public low-risk guidance to support safer drinking decisions. It is not a substitute for medical advice or individualised risk assessment.',
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
@@ -247,6 +269,7 @@ export const AlcoholUnitsCalculator = ({ onBack }: Props) => {
                 safer drinking decisions. It is not a substitute for medical advice or individualised
                 risk assessment.
               </p>
+              <ExportButtons data={reportData} />
             </div>
           </CardContent>
         </Card>
