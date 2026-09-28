@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { FileBarChart, Trash2, Clock } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useResultsHistory, type AssessmentResult } from '@/hooks/useResultsHistory';
+import { ExportButtons } from './ExportButtons';
+import type { ReportData } from '@/utils/reportGenerator';
 
 interface ResultsViewProps {
   onOpenAssessment?: (key: string) => void;
@@ -21,6 +23,29 @@ export const ResultsView = ({ onOpenAssessment }: ResultsViewProps) => {
   const { language } = useLanguage();
   const isMl = language === 'ml';
   const { results, clear, remove } = useResultsHistory();
+
+  const historyReport: ReportData = {
+    assessmentName: isMl ? 'സംരക്ഷിച്ച ഫലങ്ങൾ' : 'Saved Results History',
+    date: new Date().toLocaleString(),
+    sections: [
+      {
+        title: isMl ? 'പൂർത്തിയാക്കിയ വിലയിരുത്തലുകൾ' : 'Completed assessments',
+        items: results.map((r) =>
+          [
+            r.name,
+            r.score !== undefined ? `Score: ${r.score}` : null,
+            r.interpretation ? `(${r.interpretation})` : null,
+            `— ${formatTime(r.completedAt, isMl)}`,
+            r.patient ? `· ${r.patient}` : null,
+          ]
+            .filter(Boolean)
+            .join(' '),
+        ),
+        type: 'info',
+      },
+    ],
+    disclaimer: 'Local history stored on this device only.',
+  };
 
   return (
     <div className="space-y-4">
@@ -42,10 +67,13 @@ export const ResultsView = ({ onOpenAssessment }: ResultsViewProps) => {
             </div>
           </div>
           {results.length > 0 && (
-            <Button variant="outline" size="sm" onClick={clear}>
-              <Trash2 className="h-3.5 w-3.5 mr-1" />
-              {isMl ? 'മായ്ക്കുക' : 'Clear all'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <ExportButtons data={historyReport} />
+              <Button variant="outline" size="sm" onClick={clear}>
+                <Trash2 className="h-3.5 w-3.5 mr-1" />
+                {isMl ? 'മായ്ക്കുക' : 'Clear all'}
+              </Button>
+            </div>
           )}
         </CardHeader>
 
