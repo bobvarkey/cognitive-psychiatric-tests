@@ -76,6 +76,7 @@ const App = () => (
                   <NavigationButtons />
                   <OfflineIndicator />
                 </BrowserRouter>
+              </AuthGuard>
               </NotificationsProvider>
             </PatientInfoProvider>
           </OfflineProvider>
