@@ -109,6 +109,7 @@ import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { Crown } from 'lucide-react';
 import { useDayCounter } from '@/hooks/useDayCounter';
 import { AdBanner } from './AdBanner';
 import { toast } from 'sonner';
@@ -360,7 +361,7 @@ export const AssessmentSelector = () => {
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { subscription } = useSubscription();
+  const { subscription, setShowPaywall, premiumSource } = useSubscription();
   const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');

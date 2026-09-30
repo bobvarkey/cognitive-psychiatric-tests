@@ -18,6 +18,10 @@ import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { useThemeStore, AppTheme, FontSize } from '@/hooks/useThemeStore';
+import { useState } from 'react';
+import { Crown } from 'lucide-react';
+import { toast } from 'sonner';
+import { configure, restorePurchases, getEntitlement, isNativePurchasesAvailable } from '@/lib/appbuild/revenuecat';
 
 
 export const SettingsView = () => {
@@ -25,7 +29,8 @@ export const SettingsView = () => {
   const isMl = language === 'ml';
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
-  const { demoUnlockAll, toggleDemoUnlockAll, restartDemoTrial, demoTrialActive, demoTrialMsLeft, demoTrialDays } = useSubscription();
+  const { demoUnlockAll, toggleDemoUnlockAll, restartDemoTrial, demoTrialActive, demoTrialMsLeft, demoTrialDays, setShowPaywall, refreshSubscription, premiumSource } = useSubscription();
+  const [restoring, setRestoring] = useState(false);
   const { mode, toggleMode, theme, setTheme, fontSize, setFontSize, offlineMode, setOfflineMode } = useThemeStore();
 
   const themes: { id: AppTheme; label: string; colors: string[] }[] = [
@@ -42,8 +47,51 @@ export const SettingsView = () => {
   ];
 
 
+  const handleRestore = async () => {
+    setRestoring(true);
+    try {
+      if (isNativePurchasesAvailable()) {
+        await configure();
+        await restorePurchases();
+        const ent = await getEntitlement('premium');
+        refreshSubscription();
+        if (ent) toast.success('Purchases restored. Cognito Pro is active.');
+        else toast.info('No active subscription found for this account.');
+      } else {
+        setShowPaywall(true);
+        toast.info('Enter the email you paid with, then tap Restore access.');
+      }
+    } catch (e: any) {
+      toast.error(e?.message ?? 'Could not restore purchases.');
+    } finally {
+      setRestoring(false);
+    }
+  };
+
   return (
     <div className="space-y-4 tabular-nums">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Subscription &amp; Membership</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Current plan:{' '}
+            <span className="font-semibold text-foreground">
+              {premiumSource === 'store' || premiumSource === 'web' ? 'Cognito Pro' : 'Free Tier'}
+            </span>
+            {premiumSource === 'demo' && ' (3-day demo active)'}
+          </p>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3 sm:flex-row">
+          <Button className="min-h-[44px] flex-1 gap-2" onClick={() => setShowPaywall(true)}>
+            <Crown className="h-4 w-4" />
+            Manage Subscription / Upgrade to Pro
+          </Button>
+          <Button variant="outline" className="min-h-[44px] flex-1" onClick={handleRestore} disabled={restoring}>
+            {restoring ? 'Restoring…' : 'Restore Purchases'}
+          </Button>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">

@@ -267,7 +267,9 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
               ))}
             </div>
             <p className="text-center text-sm text-muted-foreground tabular-nums">
-              {activePlan === 'monthly' ? `${monthlyPrice}/month` : `Only ${yearlyPrice}/year`}
+              {activePlan === 'monthly'
+                ? `Monthly plan · ${monthlyPrice} per month · auto-renews every month`
+                : `Yearly plan · ${yearlyPrice} per year · auto-renews every year`}
             </p>
           </div>
 
