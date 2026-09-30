@@ -76,16 +76,32 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     return () => window.removeEventListener('psycognito:web-premium', sync);
   }, []);
 
-  // All features are unlocked for everyone — the paywall/entitlement gate has been removed.
-  const isPremium = true;
+  // Restore gating logic
+  const isPremium = useMemo(() => {
+    // Admin bypass for the owner (Lovable login)
+    // If we have a way to identify the owner, we check it here.
+    // For now, we use the service's check which combines store/web/demo.
+    return isPremiumUser() || !!webPremium;
+  }, [webPremium]);
 
-  const demoTrialActive = false; // kept for API compatibility; gate removed
-  const premiumSource: 'store' | 'web' | 'demo' | 'none' = 'store';
+  const demoTrialActive = useMemo(() => {
+    return isDemoTrialActive();
+  }, []);
 
-  const features: PremiumFeatures = FULL_PREMIUM_FEATURES;
+  const premiumSource: 'store' | 'web' | 'demo' | 'none' = webPremium
+    ? 'web'
+    : isPremiumUser()
+      ? 'store'
+      : (isDemoTrialActive() && getDemoUnlockAll())
+        ? 'demo'
+        : 'none';
+
+  const features: PremiumFeatures = getPremiumFeatures();
 
   const refreshSubscription = () => {
-    // No-op: the paywall/entitlement gate has been removed.
+    setWebPremium(getWebPremium());
+    // Trigger a re-render by updating a dummy state or forcing update if needed,
+    // but since webPremium is a state, setWebPremium will handle it.
   };
 
   const toggleDemoUnlockAll = (enabled: boolean) => {

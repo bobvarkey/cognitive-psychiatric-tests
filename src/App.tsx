@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { NotificationsProvider } from "@/contexts/NotificationsContext";
+import { AuthGuard } from "@/components/AuthGuard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -60,20 +61,21 @@ const App = () => (
               <NotificationsProvider>
               <Toaster />
               <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/history" element={<Index />} />
-                  <Route path="/settings" element={<Index />} />
-                  <Route path="/glossary" element={<Index />} />
-                  <Route path="/category/:category" element={<CategoryBrowser />} />
-                  <Route path="/assessment/:id" element={<Index />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <LanguageToggle />
-                <NavigationButtons />
-                <OfflineIndicator />
-              </BrowserRouter>
+              <AuthGuard>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/history" element={<Index />} />
+                    <Route path="/settings" element={<Index />} />
+                    <Route path="/glossary" element={<Index />} />
+                    <Route path="/category/:category" element={<CategoryBrowser />} />
+                    <Route path="/assessment/:id" element={<Index />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                  <LanguageToggle />
+                  <NavigationButtons />
+                  <OfflineIndicator />
+                </BrowserRouter>
               </NotificationsProvider>
             </PatientInfoProvider>
           </OfflineProvider>

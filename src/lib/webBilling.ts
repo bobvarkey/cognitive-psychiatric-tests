@@ -5,7 +5,7 @@
 export const WEB_PRICES = {
   INR: {
     monthly: { amount: 24900, display: '₹249' },
-    yearly: { amount: 199900, display: '₹1,999' },
+    yearly: { amount: 287500, display: '₹2,875' },
   },
   USD: {
     monthly: { amount: 299, display: '$2.99' },
