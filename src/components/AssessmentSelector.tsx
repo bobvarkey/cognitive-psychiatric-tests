@@ -779,6 +779,15 @@ export const AssessmentSelector = () => {
                       : `${assessments.length} പരീക്ഷണങ്ങൾ`}
                   </span>
                 )}
+                <button
+                  type="button"
+                  onClick={() => setShowPaywall(true)}
+                  aria-label="Open subscription plans"
+                  className={`${section === 'assessments' ? '' : 'ml-auto '}inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-bold text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-95`}
+                >
+                  <Crown className="h-3.5 w-3.5" />
+                  {premiumSource === 'store' || premiumSource === 'web' ? 'Pro' : 'Upgrade'}
+                </button>
               </div>
 
               {/* Tab bar — switch between sections, with a back-to-previous-tab button */}
