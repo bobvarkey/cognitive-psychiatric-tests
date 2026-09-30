@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
   createDemoSubscription,
   setDemoUnlockAll,
@@ -6,6 +6,10 @@ import {
   getDemoTrialMsLeft,
   resetDemoTrial,
   DEMO_TRIAL_DAYS,
+  isPremiumUser,
+  isDemoTrialActive,
+  getPremiumFeatures,
+  getSubscription,
 } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 import { getWebPremium, restoreWebPurchase, type WebPremium } from '@/lib/webBilling';
@@ -77,31 +81,32 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, []);
 
   // Restore gating logic
-  const isPremium = useMemo(() => {
-    // Admin bypass for the owner (Lovable login)
-    // If we have a way to identify the owner, we check it here.
-    // For now, we use the service's check which combines store/web/demo.
-    return isPremiumUser() || !!webPremium;
-  }, [webPremium]);
+  const isPremium = useMemo(
+    () => isPremiumUser() || !!webPremium,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [webPremium, subscription, demoUnlockAll, demoTrialMsLeft],
+  );
 
-  const demoTrialActive = useMemo(() => {
-    return isDemoTrialActive();
-  }, []);
+  const demoTrialActive = useMemo(
+    () => isDemoTrialActive(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [demoTrialMsLeft],
+  );
 
   const premiumSource: 'store' | 'web' | 'demo' | 'none' = webPremium
     ? 'web'
-    : isPremiumUser()
-      ? 'store'
-      : (isDemoTrialActive() && getDemoUnlockAll())
-        ? 'demo'
+    : (demoTrialActive && demoUnlockAll)
+      ? 'demo'
+      : isPremium
+        ? 'store'
         : 'none';
 
-  const features: PremiumFeatures = getPremiumFeatures();
+  const features = getPremiumFeatures() as PremiumFeatures;
 
   const refreshSubscription = () => {
     setWebPremium(getWebPremium());
-    // Trigger a re-render by updating a dummy state or forcing update if needed,
-    // but since webPremium is a state, setWebPremium will handle it.
+    setSubscription(getSubscription());
+    setDemoTrialMsLeft(getDemoTrialMsLeft());
   };
 
   const toggleDemoUnlockAll = (enabled: boolean) => {
