@@ -17,6 +17,7 @@ import { useThemeStore } from "@/hooks/useThemeStore";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { NotificationsProvider } from "@/contexts/NotificationsContext";
 import { AuthGuard } from "@/components/AuthGuard";
+import LegalPage from "./pages/Legal";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,6 +71,8 @@ const App = () => (
                     <Route path="/glossary" element={<Index />} />
                     <Route path="/category/:category" element={<CategoryBrowser />} />
                     <Route path="/assessment/:id" element={<Index />} />
+                    <Route path="/terms" element={<LegalPage kind="terms" />} />
+                    <Route path="/privacy" element={<LegalPage kind="privacy" />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                   <LanguageToggle />

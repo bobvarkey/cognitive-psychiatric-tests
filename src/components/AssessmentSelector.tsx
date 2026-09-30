@@ -109,6 +109,7 @@ import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { Crown } from 'lucide-react';
 import { useDayCounter } from '@/hooks/useDayCounter';
 import { AdBanner } from './AdBanner';
 import { toast } from 'sonner';
@@ -360,7 +361,7 @@ export const AssessmentSelector = () => {
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { subscription } = useSubscription();
+  const { subscription, setShowPaywall, premiumSource } = useSubscription();
   const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
@@ -778,6 +779,15 @@ export const AssessmentSelector = () => {
                       : `${assessments.length} പരീക്ഷണങ്ങൾ`}
                   </span>
                 )}
+                <button
+                  type="button"
+                  onClick={() => setShowPaywall(true)}
+                  aria-label="Open subscription plans"
+                  className={`${section === 'assessments' ? '' : 'ml-auto '}inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-bold text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-95`}
+                >
+                  <Crown className="h-3.5 w-3.5" />
+                  {premiumSource === 'store' || premiumSource === 'web' ? 'Pro' : 'Upgrade'}
+                </button>
               </div>
 
               {/* Tab bar — switch between sections, with a back-to-previous-tab button */}
