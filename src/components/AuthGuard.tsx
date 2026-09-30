@@ -1,34 +1,38 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { PaywallModal } from '@/components/PaywallModal';
-import { Loader2 } from 'lucide-react';
 
 interface AuthGuardProps {
   children: React.ReactNode;
 }
 
+const PUBLIC_PATHS = ['/terms', '/privacy'];
+
 export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   const { isPremium, demoTrialActive, showPaywall, setShowPaywall } = useSubscription();
 
-  // Note: In a real production environment, we would also check
-  // a 'user' state from an AuthProvider (e.g., Supabase Auth).
-  // For this implementation, we are focusing on the entitlement gate.
-
+  const isPublic =
+    typeof window !== 'undefined' && PUBLIC_PATHS.includes(window.location.pathname);
   const hasAccess = isPremium || demoTrialActive;
 
-  if (!hasAccess) {
+  if (!hasAccess && !isPublic) {
     return (
       <div className="fixed inset-0 z-[100] bg-background flex items-center justify-center">
-        <PaywallModal
-          isOpen={true}
-          onClose={() => {}} // Cannot close if gating the app
-          onSelectPlan={() => {}} // Handled inside PaywallModal
-        />
-        {/* Overlay to prevent interaction with background */}
+        <PaywallModal isOpen={true} onClose={() => {}} onSelectPlan={() => {}} />
         <div className="absolute inset-0 -z-10 bg-background" />
       </div>
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      {/* Paywall opened on demand (Settings, header "Pro" button, banners). */}
+      <PaywallModal
+        isOpen={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        onSelectPlan={() => setShowPaywall(false)}
+      />
+    </>
+  );
 };

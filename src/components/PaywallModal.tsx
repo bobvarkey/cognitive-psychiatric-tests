@@ -322,12 +322,26 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             </button>
           </div>
 
+          <button
+            onClick={handleRestore}
+            disabled={restoring}
+            className="w-full min-h-[44px] rounded-full border border-border text-sm font-semibold text-foreground transition hover:bg-muted active:scale-[0.99] disabled:opacity-60"
+          >
+            {restoring ? 'Restoring…' : native ? 'Restore Purchases' : 'Restore access'}
+          </button>
+
+          {native && (
+            <ul className="space-y-1.5 text-[11px] leading-snug text-muted-foreground list-disc pl-4">
+              <li>Payment will be charged to your Apple ID account at confirmation of purchase.</li>
+              <li>Subscription automatically renews unless auto-renew is canceled at least 24 hours before the end of the current period.</li>
+              <li>Your account will be charged for renewal within 24 hours prior to the end of the current billing period.</li>
+              <li>You can manage and cancel your subscriptions in your App Store Account Settings after purchase.</li>
+            </ul>
+          )}
+
           <div className="flex justify-center gap-6 text-xs text-muted-foreground">
-            <button onClick={handleRestore} disabled={restoring} className="hover:text-foreground transition">
-              {restoring ? 'Restoring…' : native ? 'Restore Purchases' : 'Restore access'}
-            </button>
-            <a href="/terms" className="hover:text-foreground transition">Terms</a>
-            <a href="/privacy" className="hover:text-foreground transition">Privacy</a>
+            <a href="/terms" target="_blank" rel="noopener" className="underline hover:text-foreground transition">Terms of Use (EULA)</a>
+            <a href="/privacy" target="_blank" rel="noopener" className="underline hover:text-foreground transition">Privacy Policy</a>
           </div>
         </div>
       </div>
