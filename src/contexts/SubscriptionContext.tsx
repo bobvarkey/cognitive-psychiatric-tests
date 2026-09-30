@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
   createDemoSubscription,
   setDemoUnlockAll,
@@ -6,6 +6,9 @@ import {
   getDemoTrialMsLeft,
   resetDemoTrial,
   DEMO_TRIAL_DAYS,
+  isPremiumUser,
+  isDemoTrialActive,
+  getPremiumFeatures,
 } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 import { getWebPremium, restoreWebPurchase, type WebPremium } from '@/lib/webBilling';
@@ -86,7 +89,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const demoTrialActive = useMemo(() => {
     return isDemoTrialActive();
-  }, []);
+  }, [demoTrialMsLeft]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const premiumSource: 'store' | 'web' | 'demo' | 'none' = webPremium
     ? 'web'
