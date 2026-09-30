@@ -86,6 +86,7 @@ import { AlcoholUnitsCalculator } from '@/components/AlcoholUnitsCalculator';
 import { BrainFogAssessment } from '@/components/BrainFogAssessment';
 import { LateOnsetPsychosisAssessment } from '@/components/LateOnsetPsychosisAssessment';
 import { SmdsSfAssessment } from '@/components/SmdsSfAssessment';
+import { TobaccoNicotineDependence } from '@/components/TobaccoNicotineDependence';
 import { AntipsychoticMetabolicAssessment } from '@/components/AntipsychoticMetabolicAssessment';
 import { SsriAdverseEventsAssessment } from '@/components/SsriAdverseEventsAssessment';
 import { OpdPsychEvalAssessment } from '@/components/OpdPsychEvalAssessment';
@@ -101,7 +102,7 @@ import {
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
   ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
-  Cloud, Clock, ShieldAlert, Map,
+  Cloud, Clock, ShieldAlert, Map, Cigarette,
 } from 'lucide-react';
 import { MiniAppSearch, GlossaryDialog, ModeToggle } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
@@ -157,7 +158,8 @@ export type AssessmentKey =
   | 'late-onset-psychosis' | 'pid5-unified' | 'audit' | 'alcohol-units'
   | 'ciwa-ar' | 'sds' | 'smds-sf' | 'antipsychotic-metabolic' | 'ssri-adverse'
   | 'audit-c' | 'alcohol-symptom-checklist' | 'alcohol-screening-approach'
-  | 'chs' | 'fibromyalgia' | 'brain-fog' | 'somaticDelusions';
+  | 'chs' | 'fibromyalgia' | 'brain-fog' | 'somaticDelusions'
+  | 'ftnd' | 'nicotine-scales';
 
 export type Category =
   | 'all' | 'cognitive' | 'psychosis' | 'mood' | 'personality' | 'substance'
@@ -233,6 +235,8 @@ export const assessments: AssessmentInfo[] = [
   { key: 'cows', name: 'COWS', subtitle: 'Opiate Withdrawal', icon: Pill, gradient: 'from-orange-500 to-amber-600', category: ['substance'], description: 'COWS — Clinical Opiate Withdrawal Scale; 11-item clinician rating (0–48). Used to grade withdrawal severity and time buprenorphine induction.' },
   { key: 'ciwa-ar', name: 'CIWA-Ar', subtitle: 'Alcohol Withdrawal', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'CIWA-Ar quantifies severity of alcohol withdrawal (10 items, 0–67).' },
   { key: 'sds', name: 'SDS', subtitle: 'Dependence Scale', icon: FlaskConical, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'SDS — Severity of Dependence Scale, 5 items measuring psychological dependence and compulsive use.' },
+  { key: 'ftnd', name: 'FTND', subtitle: 'Nicotine Dependence', icon: Cigarette, gradient: 'from-amber-500 to-orange-600', category: ['substance'], description: 'FTND — Fagerström Test for Nicotine Dependence; 6 items, total 0–10, for cigarette smoking. Includes time to first cigarette and cigarettes per day. Scores ≥6 indicate high dependence.' },
+  { key: 'nicotine-scales', name: 'Tobacco & Nicotine Scales', subtitle: 'FTND · HSI · FTND-ST · PS-ECDI · HONC', icon: Cigarette, gradient: 'from-amber-600 to-red-600', category: ['substance'], description: 'Product-specific tobacco/nicotine dependence scales: FTND and HSI (cigarettes), FTND-ST (smokeless/chewing tobacco), PS-ECDI (vaping), and HONC (early loss of autonomy in young people). Record the product first, then use the best-matched scale.' },
   { key: 'substance', name: 'Substance Use Screener', subtitle: 'Global Screening', icon: Shield, gradient: 'from-blue-600 to-indigo-700', category: ['substance'], description: 'Unified substance use screening tool for various substances.' },
   { key: 'smds-sf', name: 'SMDS-SF', subtitle: 'Social Media Disorder — PUI', icon: MessageCircle, gradient: 'from-fuchsia-500 to-pink-600', category: ['substance'], description: 'Social Media Disorder Scale — Short Form (van den Eijnden 2016). Nine yes/no items across DSM-5 IGD-analogous domains (preoccupation, tolerance, withdrawal, persistence, displacement, escape, problems, deception, conflict). ≥5 "yes" flags probable disordered social media use.' },
 
@@ -311,6 +315,8 @@ const referenceKeyByAssessment: Partial<Record<AssessmentKey, string>> = {
   'alcohol-symptom-checklist': 'alcoholSymptomChecklist',
   'ciwa-ar': 'ciwaAr',
   sds: 'sds',
+  ftnd: 'ftnd',
+  'nicotine-scales': 'nicotineScales',
 };
 
 const getAssessmentReference = (key: AssessmentKey) =>
@@ -583,6 +589,8 @@ export const AssessmentSelector = () => {
       'alcohol-screening-approach': true,
       'alcohol-units': true,
       'smds-sf': true,
+      ftnd: true,
+      'nicotine-scales': true,
       'antipsychotic-metabolic': true,
       'ssri-adverse': true,
       chs: true,
@@ -672,6 +680,8 @@ export const AssessmentSelector = () => {
         'alcohol-screening-approach': AlcoholUseScreeningApproach,
         'alcohol-units': AlcoholUnitsCalculator,
         'smds-sf': SmdsSfAssessment,
+        ftnd: (props: any) => <TobaccoNicotineDependence {...props} initialTab="ftnd" />,
+        'nicotine-scales': (props: any) => <TobaccoNicotineDependence {...props} />,
         'antipsychotic-metabolic': AntipsychoticMetabolicAssessment,
         'ssri-adverse': SsriAdverseEventsAssessment,
         chs: ChsAssessment,
