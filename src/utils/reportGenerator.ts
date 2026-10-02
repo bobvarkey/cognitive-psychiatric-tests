@@ -49,13 +49,7 @@ export function generateTextReport(data: ReportData): string {
     lines.push('');
   }
 
-  if (data.disclaimer) {
-    lines.push(`DISCLAIMER: ${data.disclaimer}`);
-    lines.push('');
-  }
-
-  lines.push('This report is generated for clinical use only. Not a substitute for professional diagnosis.');
-  return lines.join('\n');
+  return lines.join('\n').trimEnd();
 }
 
 export function downloadTextReport(data: ReportData, filename?: string) {
