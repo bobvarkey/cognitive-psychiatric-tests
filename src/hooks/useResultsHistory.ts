@@ -11,12 +11,15 @@ export const useResultsHistory = () => {
   const [loading, setLoading] = useState(true);
   const { isOnline } = useOffline();
 
-  const loadResults = useCallback(async () => {
+  // `broadcast` notifies other hook instances after a mutation. Reloads that are
+  // themselves triggered by the broadcast must not re-dispatch, otherwise every
+  // listener re-fires the event and the reload loops forever.
+  const loadResults = useCallback(async (broadcast = false) => {
     try {
       const data = await getOfflineResults();
       // Sort by completedAt descending
       setResults([...data].sort((a, b) => b.completedAt - a.completedAt));
-      window.dispatchEvent(new Event('cognito:results-updated'));
+      if (broadcast) window.dispatchEvent(new Event('cognito:results-updated'));
     } catch (error) {
       console.error('Failed to load results:', error);
     } finally {
@@ -26,8 +29,8 @@ export const useResultsHistory = () => {
 
   useEffect(() => {
     loadResults();
-    
-    const sync = () => loadResults();
+
+    const sync = () => loadResults(false);
     window.addEventListener('cognito:results-updated', sync);
     return () => {
       window.removeEventListener('cognito:results-updated', sync);
@@ -49,7 +52,7 @@ export const useResultsHistory = () => {
 
     try {
       await saveResultOffline(newResult);
-      await loadResults();
+      await loadResults(true);
       toast.success('Result saved');
     } catch (error) {
       console.error('Failed to save result:', error);
@@ -60,7 +63,7 @@ export const useResultsHistory = () => {
   const clear = useCallback(async () => {
     try {
       await clearOfflineResults();
-      await loadResults();
+      await loadResults(true);
       toast.success('History cleared');
     } catch (error) {
       console.error('Failed to clear history:', error);
@@ -71,7 +74,7 @@ export const useResultsHistory = () => {
   const remove = useCallback(async (completedAt: number) => {
     try {
       await deleteOfflineResult(completedAt);
-      await loadResults();
+      await loadResults(true);
       toast.success('Result removed');
     } catch (error) {
       console.error('Failed to delete result:', error);
