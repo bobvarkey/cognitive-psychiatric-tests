@@ -8,6 +8,7 @@ import { DSS_DOMAIN_LABEL } from '@/data/dssScale';
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface Props {
   results: DssResult;
@@ -141,7 +142,7 @@ export const DssResults = ({ results, onReset, onBack }: Props) => {
         </AlertDescription>
       </Alert>
 
-      <div className="flex gap-4 justify-end">
+      <ResultsActionBar align="end">
         <Button
           variant="outline"
           onClick={() => {
@@ -250,7 +251,7 @@ export const DssResults = ({ results, onReset, onBack }: Props) => {
           <RotateCcw className="h-4 w-4 mr-2" />
           Retake Assessment
         </Button>
-      </div>
+      </ResultsActionBar>
     </div>
   );
 };

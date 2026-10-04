@@ -10,6 +10,7 @@ import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface FabResultsProps {
   responses: FabResponse[];
@@ -144,18 +145,18 @@ export const FabResults = ({ responses, onReset }: FabResultsProps) => {
                 const item = fabItems.find((i) => i.id === response.itemId);
                 if (!item) return null;
                 return (
-                  <div key={response.itemId} className="flex justify-between items-center p-3 bg-muted rounded">
+                  <div key={response.itemId} className="flex justify-between items-center gap-3 p-3 bg-muted rounded">
                     <span className="text-sm font-medium">
                       {language === 'en' ? item.domain : item.domainMl}
                     </span>
-                    <span className="font-bold">{response.score}/3</span>
+                    <span className="shrink-0 whitespace-nowrap font-bold">{response.score}/3</span>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <ResultsActionBar>
             <Button onClick={onReset} className="flex-1">
               {language === 'en' ? 'New Assessment' : 'പുതിയ വിലയിരുത്തൽ'}
             </Button>
@@ -274,7 +275,7 @@ export const FabResults = ({ responses, onReset }: FabResultsProps) => {
               <Download className="h-4 w-4" />
               Download .txt
             </Button>
-          </div>
+          </ResultsActionBar>
         </CardContent>
       </Card>
 

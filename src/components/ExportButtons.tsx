@@ -26,7 +26,7 @@ export function ExportButtons({ data, className = '' }: ExportButtonsProps) {
   const handleDownload = () => downloadTextReport(data);
 
   return (
-    <div className={`flex items-center gap-2 print:hidden ${className}`}>
+    <div className={`flex flex-wrap items-center gap-2 print:hidden ${className}`}>
       <Button variant="outline" size="sm" onClick={handleCopy} className="flex items-center gap-1.5">
         {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
         {copied ? 'Copied' : 'Copy all'}

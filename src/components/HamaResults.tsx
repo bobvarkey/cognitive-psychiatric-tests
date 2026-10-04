@@ -8,6 +8,7 @@ import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Ch
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface HamaResultsProps {
   result: HamaResult;
@@ -105,10 +106,10 @@ export const HamaResults = ({ result, onReset, onBack }: HamaResultsProps) => {
             <div className="bg-slate-50 p-6 rounded-lg">
               <h4 className="font-bold text-slate-800 mb-3">{t('scoringGuide')}:</h4>
               <ul className="space-y-2 text-sm text-slate-700">
-                <li className="flex items-start gap-2"><span className="font-semibold text-green-700">0–7:</span><span>No / minimal anxiety</span></li>
-                <li className="flex items-start gap-2"><span className="font-semibold text-blue-700">8–14:</span><span>Mild anxiety</span></li>
-                <li className="flex items-start gap-2"><span className="font-semibold text-amber-700">15–23:</span><span>Moderate anxiety</span></li>
-                <li className="flex items-start gap-2"><span className="font-semibold text-red-700">≥24:</span><span>Severe anxiety</span></li>
+                <li className="flex items-start gap-2"><span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-green-700">0–7:</span><span>No / minimal anxiety</span></li>
+                <li className="flex items-start gap-2"><span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-blue-700">8–14:</span><span>Mild anxiety</span></li>
+                <li className="flex items-start gap-2"><span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-amber-700">15–23:</span><span>Moderate anxiety</span></li>
+                <li className="flex items-start gap-2"><span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-red-700">≥24:</span><span>Severe anxiety</span></li>
               </ul>
             </div>
 
@@ -118,7 +119,7 @@ export const HamaResults = ({ result, onReset, onBack }: HamaResultsProps) => {
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <ResultsActionBar>
               <Button onClick={onReset} variant="outline" className="flex-1">
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {t('retakeAssessment')}
@@ -161,7 +162,7 @@ export const HamaResults = ({ result, onReset, onBack }: HamaResultsProps) => {
                   {t('backToMenu')}
                 </Button>
               )}
-            </div>
+            </ResultsActionBar>
           </CardContent>
         </Card>
       </div>

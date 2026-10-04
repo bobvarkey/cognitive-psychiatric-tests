@@ -295,9 +295,9 @@ export const AsrsAssessment = ({ onBack }: AsrsAssessmentProps) => {
                       <h3 className="font-semibold text-gray-900 mb-3">Scale Item Scores (Items 1-3, max score: 9):</h3>
                       <div className="space-y-1">
                         {scaleItems.map(item => (
-                          <div key={item.id} className="flex justify-between items-center py-1 border-b border-gray-100 last:border-0">
+                          <div key={item.id} className="flex justify-between items-center gap-3 py-1 border-b border-gray-100 last:border-0">
                             <span className="text-sm text-gray-700">{item.number}. {item.question}</span>
-                            <span className="text-sm font-semibold text-red-600">
+                            <span className="shrink-0 whitespace-nowrap text-sm font-semibold text-red-600">
                               {responses[item.id] || 0}/3
                             </span>
                           </div>
@@ -316,9 +316,9 @@ export const AsrsAssessment = ({ onBack }: AsrsAssessmentProps) => {
                       <h3 className="font-semibold text-gray-900 mb-3">Screening Questions (Items 4-7):</h3>
                       <div className="space-y-1">
                         {yesnoItems.map(item => (
-                          <div key={item.id} className="flex justify-between items-center py-1 border-b border-gray-100 last:border-0">
+                          <div key={item.id} className="flex justify-between items-center gap-3 py-1 border-b border-gray-100 last:border-0">
                             <span className="text-sm text-gray-700">{item.number}. {item.question}</span>
-                            <span className={`text-sm font-semibold ${responses[item.id] === 1 ? 'text-red-600' : 'text-green-600'}`}>
+                            <span className={`shrink-0 whitespace-nowrap text-sm font-semibold ${responses[item.id] === 1 ? 'text-red-600' : 'text-green-600'}`}>
                               {ASRS_YESNO_SCORING_GUIDE[responses[item.id]] || 'Not answered'}
                             </span>
                           </div>

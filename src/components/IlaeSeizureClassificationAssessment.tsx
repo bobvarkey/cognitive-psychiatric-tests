@@ -101,7 +101,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
 
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-bold text-fuchsia-400 text-sm">{type.code}</span>
+                <span className="shrink-0 whitespace-nowrap font-bold text-fuchsia-400 text-sm">{type.code}</span>
                 <span className="font-semibold text-foreground">{type.name}</span>
               </div>
               <p className="text-sm text-muted-foreground">{type.description}</p>

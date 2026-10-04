@@ -163,14 +163,14 @@ export const CatatoniaAssessment = ({ onBack }: CatatoniaAssessmentProps) => {
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4">
         <LanguageToggle />
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-3">
               <Activity className="h-8 w-8 text-cyan-600" />
               <h1 className="text-2xl font-bold text-slate-800">
                 {language === 'ml' ? 'BFCRS ഫലങ്ങൾ' : 'BFCRS Results'}
               </h1>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 ml-auto">
               {onBack && (
                 <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
                   <Home className="h-4 w-4" />
@@ -196,7 +196,7 @@ export const CatatoniaAssessment = ({ onBack }: CatatoniaAssessmentProps) => {
         <PatientInfoForm />
         <Card className="shadow-xl border-0 mb-6">
           <CardHeader className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <Activity className="h-8 w-8" />
                 <div>
@@ -284,13 +284,13 @@ export const CatatoniaAssessment = ({ onBack }: CatatoniaAssessmentProps) => {
                   </TabsContent>
                 </Tabs>
 
-                <div className="flex justify-between items-center mt-6 pt-4 border-t">
+                <div className="flex flex-wrap justify-between items-center gap-3 mt-6 pt-4 border-t">
                   <div className="text-sm text-slate-600">
                     {language === 'ml'
                       ? `${screeningAnswered + fullAnswered}/23 ഇനങ്ങൾ പൂർത്തിയാക്കി`
                       : `${screeningAnswered + fullAnswered}/23 items completed`}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2 ml-auto">
                     <Button variant="outline" onClick={handleReset}>
                       <RotateCcw className="h-4 w-4 mr-2" />
                       {language === 'ml' ? 'പുനഃക്രമീകരിക്കുക' : 'Reset'}

@@ -9,6 +9,7 @@ import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface AdamResultsProps {
   results: AdamResult;
@@ -154,7 +155,7 @@ export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3">
+          <ResultsActionBar>
             <Button onClick={onReset} className="flex-1">
               {language === 'en' ? 'New Assessment' : 'പുതിയ വിലയിരുത്തൽ'}
             </Button>
@@ -264,7 +265,7 @@ export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps
               <Download className="h-4 w-4" />
               Download .txt
             </Button>
-          </div>
+          </ResultsActionBar>
         </CardContent>
       </Card>
 

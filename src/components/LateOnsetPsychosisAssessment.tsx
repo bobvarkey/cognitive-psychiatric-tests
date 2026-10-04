@@ -623,7 +623,7 @@ export function LateOnsetPsychosisAssessment({ onBack }: Props) {
                 <Label className="text-sm">{row.label}</Label>
                 <div className="flex flex-wrap gap-1.5">
                   {row.options.map(o => (
-                    <Button key={o} size="sm" variant={row.value === o ? 'default' : 'outline'} onClick={() => row.set(o)}>{o}</Button>
+                    <Button key={o} size="sm" variant={row.value === o ? 'default' : 'outline'} onClick={() => row.set(o)} className="h-auto min-h-9 py-1.5 whitespace-normal text-left">{o}</Button>
                   ))}
                 </div>
               </div>

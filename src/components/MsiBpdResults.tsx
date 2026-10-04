@@ -8,6 +8,7 @@ import { AlertCircle, CheckCircle, ArrowLeft, RotateCcw, Copy, Check, FileDown, 
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface MsiBpdResultsProps {
   result: MsiBpdResult;
@@ -71,15 +72,15 @@ export const MsiBpdResults = ({ result, onReset, onBack }: MsiBpdResultsProps) =
               <h4 className="font-bold text-slate-800 mb-3">{t('scoringGuide')}:</h4>
               <ul className="space-y-2 text-sm text-slate-700">
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-green-700">0-4:</span>
+                  <span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-green-700">0-4:</span>
                   <span>{t('msiBpdNotConsistent')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-amber-700">5-6:</span>
+                  <span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-amber-700">5-6:</span>
                   <span>{t('msiBpdFurtherEval')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-red-700">7-10:</span>
+                  <span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-red-700">7-10:</span>
                   <span>{t('msiBpdAboveCutoff')}</span>
                 </li>
               </ul>
@@ -91,7 +92,7 @@ export const MsiBpdResults = ({ result, onReset, onBack }: MsiBpdResultsProps) =
               </p>
             </div>
 
-            <div className="flex gap-3">
+            <ResultsActionBar>
               <Button onClick={onReset} variant="outline" className="flex-1">
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {t('retakeAssessment')}
@@ -213,7 +214,7 @@ export const MsiBpdResults = ({ result, onReset, onBack }: MsiBpdResultsProps) =
                   {t('backToMenu')}
                 </Button>
               )}
-            </div>
+            </ResultsActionBar>
           </CardContent>
         </Card>
       </div>

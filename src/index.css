@@ -514,6 +514,14 @@ body * {
   word-break: break-word;
 }
 
+/* …but never squeeze single-line items (buttons, chips, score ranges marked
+   whitespace-nowrap) below their own content width: with min-width:0 their
+   labels spilled out and collided with neighbours. Such items keep their
+   intrinsic width and the row wraps (see ResultsActionBar / ExportButtons). */
+#root .flex > .whitespace-nowrap {
+  min-width: auto;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    Theme tokens (final word). Light: pure white surfaces + black text for maximum
    readability. Dark: light text on dark surfaces, all pairs >= WCAG AA.

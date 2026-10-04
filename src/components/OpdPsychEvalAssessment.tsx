@@ -282,9 +282,9 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
         ]} 
       />
 
-      <div className="flex items-center justify-between mb-4 print:hidden">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4 print:hidden">
         <Button variant="ghost" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-2" />Back</Button>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 ml-auto">
           <CopyTextButton text={report} label="Copy all" />
           <Button variant="outline" size="sm" onClick={() => window.print()}>
             <Printer className="h-4 w-4 mr-1" />Print / PDF

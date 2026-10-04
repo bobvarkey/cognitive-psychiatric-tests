@@ -376,9 +376,9 @@ export const SdqAssessment = ({ onBack }: SdqAssessmentProps) => {
                           <TabsContent key={key} value={key}>
                             <div className="space-y-1">
                               {SDQ_ITEMS.filter(item => item.domain === key).map(item => (
-                                <div key={item.id} className="flex justify-between items-center py-1 border-b border-gray-100 last:border-0">
+                                <div key={item.id} className="flex justify-between items-center gap-3 py-1 border-b border-gray-100 last:border-0">
                                   <span className="text-sm text-gray-700">{item.number}. {item.question}</span>
-                                  <span className="text-sm font-semibold text-teal-600">
+                                  <span className="shrink-0 whitespace-nowrap text-sm font-semibold text-teal-600">
                                     {responses[item.id]} ({SDQ_SCORING_GUIDE[responses[item.id]]})
                                   </span>
                                 </div>

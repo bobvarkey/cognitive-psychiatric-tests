@@ -11,6 +11,7 @@ import { delusionsScale } from '@/data/delusionsScale';
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface DelusionsResultsProps {
   results: DelusionResults;
@@ -274,7 +275,7 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
 
       <ClinicalContextTable />
 
-      <div className="flex justify-center gap-4">
+      <ResultsActionBar align="center">
         <Button onClick={onReset} size="lg">
           Start New Assessment
         </Button>
@@ -396,7 +397,7 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
           <Download className="h-4 w-4" />
           Download .txt
         </Button>
-      </div>
+      </ResultsActionBar>
     </div>
   );
 };

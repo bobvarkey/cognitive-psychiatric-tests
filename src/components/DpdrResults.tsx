@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface DpdrResultsProps {
   results: DpdrResult;
@@ -240,7 +241,7 @@ export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
         </CardContent>
       </Card>
 
-      <div className="flex gap-4 justify-end">
+      <ResultsActionBar align="end">
         <Button
           variant="outline"
           onClick={() => {
@@ -338,7 +339,7 @@ export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
           <RotateCcw className="h-4 w-4 mr-2" />
           {language === 'en' ? 'Retake Assessment' : 'വീണ്ടും വിലയിരുത്തുക'}
         </Button>
-      </div>
+      </ResultsActionBar>
     </div>
   );
 };

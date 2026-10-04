@@ -8,6 +8,7 @@ import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Ch
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface HamdResultsProps {
   result: HamdResult;
@@ -79,23 +80,23 @@ export const HamdResults = ({ result, onReset, onBack }: HamdResultsProps) => {
               <h4 className="font-bold text-slate-800 mb-3">{t('scoringGuide')}:</h4>
               <ul className="space-y-2 text-sm text-slate-700">
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-green-700">0-7:</span>
+                  <span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-green-700">0-7:</span>
                   <span>{t('hamdNormal')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-blue-700">8-13:</span>
+                  <span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-blue-700">8-13:</span>
                   <span>{t('hamdMild')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-amber-700">14-18:</span>
+                  <span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-amber-700">14-18:</span>
                   <span>{t('hamdModerate')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-orange-700">19-22:</span>
+                  <span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-orange-700">19-22:</span>
                   <span>{t('hamdSevere')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="font-semibold text-red-700">≥23:</span>
+                  <span className="font-semibold shrink-0 whitespace-nowrap tabular-nums text-red-700">≥23:</span>
                   <span>{t('hamdVerySevere')}</span>
                 </li>
               </ul>
@@ -107,7 +108,7 @@ export const HamdResults = ({ result, onReset, onBack }: HamdResultsProps) => {
               </p>
             </div>
 
-            <div className="flex gap-3">
+            <ResultsActionBar>
               <Button onClick={onReset} variant="outline" className="flex-1">
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {t('retakeAssessment')}
@@ -229,7 +230,7 @@ export const HamdResults = ({ result, onReset, onBack }: HamdResultsProps) => {
                   {t('backToMenu')}
                 </Button>
               )}
-            </div>
+            </ResultsActionBar>
           </CardContent>
         </Card>
       </div>

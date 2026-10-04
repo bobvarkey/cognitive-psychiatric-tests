@@ -453,9 +453,9 @@ export const CataplexyAssessment = ({ onBack }: CataplexyAssessmentProps) => {
                         {triggerItems.map(item => {
                           const score = triggerResponses[item.id] || 0;
                           return (
-                            <div key={item.id} className="flex justify-between items-center py-1 border-b border-gray-100 last:border-0">
+                            <div key={item.id} className="flex justify-between items-center gap-3 py-1 border-b border-gray-100 last:border-0">
                               <span className="text-sm text-gray-700">{item.number}. {item.question}</span>
-                              <span className={`text-sm font-semibold ${score === 2 ? 'text-red-600' : score === 1 ? 'text-yellow-600' : 'text-green-600'}`}>
+                              <span className={`shrink-0 whitespace-nowrap text-sm font-semibold ${score === 2 ? 'text-red-600' : score === 1 ? 'text-yellow-600' : 'text-green-600'}`}>
                                 {CATAPLEXY_TRIGGER_SCORING[score]}
                               </span>
                             </div>

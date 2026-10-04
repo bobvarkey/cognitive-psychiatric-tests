@@ -9,6 +9,7 @@ import { CATEGORY_LABELS } from '@/data/stressScreeningScale';
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface StressScreeningResultsProps {
   result: StressScreeningResult;
@@ -160,7 +161,7 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
               </p>
             </div>
 
-            <div className="flex gap-3">
+            <ResultsActionBar>
               <Button onClick={onReset} variant="outline" className="flex-1">
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {t('retakeAssessment')}
@@ -258,7 +259,7 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
                   {t('backToMenu')}
                 </Button>
               )}
-            </div>
+            </ResultsActionBar>
           </CardContent>
         </Card>
       </div>

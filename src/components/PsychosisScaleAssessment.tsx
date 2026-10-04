@@ -728,7 +728,7 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
   return (
     <div className="min-h-screen bg-gradient-subtle p-4 md:p-8">
       <div className="w-full space-y-6">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex flex-wrap justify-between items-center gap-2 mb-2">
           {onBack && (
             <Button variant="ghost" onClick={onBack}>
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -736,7 +736,7 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
             </Button>
           )}
           
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 ml-auto">
             {onPrevious && (
               <Button 
                 variant="outline" 
