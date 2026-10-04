@@ -73,7 +73,7 @@ const CheckCard = ({
             ? tone === 'danger'
               ? 'border-red-500 bg-red-500 text-white dark:border-red-400 dark:bg-red-500'
               : 'border-primary bg-primary text-primary-foreground'
-            : 'sk-box border-input bg-card',
+            : 'border-input bg-card',
         )}
       >
         {checked && <Check className="h-3.5 w-3.5" />}
@@ -115,8 +115,8 @@ const RatingChips = ({
               'rounded-full border px-3 py-1.5 text-xs font-medium transition sm:text-sm',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
               selected
-                ? 'sk-chip-on border-primary bg-primary text-primary-foreground shadow-sm'
-                : 'sk-chip border-border bg-card text-foreground hover:border-primary/60',
+                ? 'border-primary bg-primary text-primary-foreground shadow-sm'
+                : 'border-border bg-card text-foreground hover:border-primary/60',
             )}
           >
             {o.text}
@@ -132,8 +132,8 @@ const StatusPill = ({ met }: { met: boolean }) => (
     className={cn(
       'inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold',
       met
-        ? 'sk-ok bg-emerald-500/15 text-emerald-700'
-        : 'sk-off bg-muted/60 text-muted-foreground',
+        ? 'bg-emerald-500/15 text-emerald-700'
+        : 'bg-muted/60 text-muted-foreground',
     )}
   >
     {met ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
@@ -144,7 +144,7 @@ const StatusPill = ({ met }: { met: boolean }) => (
 const SectionHeader = ({ n, title, met }: { n: number; title: string; met?: boolean }) => (
   <div className="flex flex-wrap items-center justify-between gap-2">
     <CardTitle className="flex min-w-0 items-center gap-2 text-base sm:text-lg">
-      <span className="sk-primary flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-bold text-primary">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-bold text-primary">
         {n}
       </span>
       <span className="min-w-0 break-words">{title}</span>
@@ -174,7 +174,7 @@ export const SchoolerKaneAssessment = ({ onBack }: Props) => {
   const items8to10 = SK_AIMS_ITEMS.filter((i) => i.number >= 8 && i.number <= 10);
 
   return (
-    <div className="sk-scope mx-auto w-full max-w-3xl min-w-0 space-y-4 overflow-x-hidden p-3 sm:p-4">
+    <div className="mx-auto w-full max-w-3xl min-w-0 space-y-4 overflow-x-hidden p-3 sm:p-4">
       <div className="flex items-center gap-2">
         {onBack && (
           <Button variant="outline" size="sm" onClick={onBack} className="flex items-center gap-2">
@@ -259,7 +259,7 @@ export const SchoolerKaneAssessment = ({ onBack }: Props) => {
                     <li key={i} className="break-words">{step}</li>
                   ))}
                 </ol>
-                <p className="sk-warn rounded-md bg-amber-500/10 p-2 text-xs font-medium text-amber-800">
+                <p className="rounded-md bg-amber-500/10 p-2 text-xs font-medium text-amber-800">
                   {AIMS_ACTIVATION_NOTE}
                 </p>
               </div>
@@ -286,7 +286,7 @@ export const SchoolerKaneAssessment = ({ onBack }: Props) => {
                         {item.number}. {item.label}
                       </p>
                       {isQualifying && (
-                        <span className="sk-warn shrink-0 rounded-full bg-amber-500/20 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
+                        <span className="shrink-0 rounded-full bg-amber-500/20 px-2 py-0.5 text-[11px] font-semibold text-amber-800">
                           Qualifying
                         </span>
                       )}
@@ -305,7 +305,7 @@ export const SchoolerKaneAssessment = ({ onBack }: Props) => {
 
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-muted/40 p-3">
             <span className="text-sm font-medium text-foreground">AIMS total (items 1-7)</span>
-            <span className="sk-primary text-lg font-bold text-primary">{result.aimsTotal}/28</span>
+            <span className="text-lg font-bold text-primary">{result.aimsTotal}/28</span>
           </div>
         </CardContent>
       </Card>
@@ -363,7 +363,7 @@ export const SchoolerKaneAssessment = ({ onBack }: Props) => {
                     <span
                       className={cn(
                         'mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
-                        selected ? 'border-primary bg-primary text-primary-foreground' : 'sk-box border-input bg-card',
+                        selected ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-card',
                       )}
                     >
                       {selected && <Check className="h-3 w-3" />}
@@ -396,7 +396,7 @@ export const SchoolerKaneAssessment = ({ onBack }: Props) => {
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div className="min-w-0 rounded-lg border border-border bg-muted/50 p-3">
               <div className="text-xs text-muted-foreground">AIMS total (1-7)</div>
-              <div className="sk-primary text-2xl font-bold text-primary">{result.aimsTotal}<span className="text-sm font-medium text-muted-foreground">/28</span></div>
+              <div className="text-2xl font-bold text-primary">{result.aimsTotal}<span className="text-sm font-medium text-muted-foreground">/28</span></div>
             </div>
             {items8to10.map((item) => {
               const v = state.aims[item.id];
@@ -435,7 +435,7 @@ export const SchoolerKaneAssessment = ({ onBack }: Props) => {
             <p
               className={cn(
                 'break-words text-sm font-semibold',
-                result.meetsProbable ? 'sk-ok text-emerald-800' : 'sk-warn text-amber-900',
+                result.meetsProbable ? 'text-emerald-800' : 'text-amber-900',
               )}
             >
               {result.meetsProbable ? 'Meets Schooler-Kane criteria for probable TD' : 'Does not meet Schooler-Kane criteria for probable TD'}

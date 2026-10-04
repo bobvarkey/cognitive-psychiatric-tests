@@ -138,7 +138,7 @@ All colors MUST be HSL.
 }
 
 @layer base {
-  body.dark.theme-sunset {
+  .dark body.theme-sunset {
     background-color: hsl(240 10% 4%);
     background-image: 
       radial-gradient(at 0% 0%, hsla(320, 100%, 50%, 0.12) 0px, transparent 50%),
@@ -150,7 +150,7 @@ All colors MUST be HSL.
     background-attachment: fixed;
   }
 
-  body.dark.theme-midnight {
+  .dark body.theme-midnight {
     background-color: hsl(222 47% 4%);
     background-image: 
       radial-gradient(at 0% 0%, hsla(200, 100%, 30%, 0.15) 0px, transparent 50%),
@@ -161,7 +161,7 @@ All colors MUST be HSL.
     background-size: 100% 100%, 100% 100%, 100% 100%, 52px 52px, 52px 52px;
     background-attachment: fixed;
   }
-  body.dark.theme-forest {
+  .dark body.theme-forest {
     background-color: hsl(161 94% 4%);
     background-image: 
       radial-gradient(at 0% 0%, hsla(160, 84%, 39%, 0.15) 0px, transparent 50%),
@@ -199,20 +199,6 @@ All colors MUST be HSL.
   .font-size-large { --font-size-base: 18px; }
   .font-size-xlarge { --font-size-base: 20px; }
 
-  /* Enable dark mode for specific containers while keeping standard text defaults */
-  .dark .bg-card {
-    background-color: hsl(240 10% 6%) !important;
-    color: hsl(0 0% 100%) !important;
-  }
-  
-  .dark .text-foreground {
-    color: hsl(0 0% 100%) !important;
-  }
-
-  .dark .text-muted-foreground {
-    color: hsl(240 5% 85%) !important;
-  }
-
 
   /* Reset forced white/black overrides to respect themes */
   .bg-slate-900, .bg-slate-800, .bg-slate-700,
@@ -223,35 +209,36 @@ All colors MUST be HSL.
     @apply dark:bg-card dark:text-card-foreground;
   }
 
-  /* Preserve readable pastel info boxes on light background. */
-  .bg-blue-50   { background-color: hsl(210 100% 96%) !important; }
-  .bg-amber-50  { background-color: hsl(38 100% 95%) !important; }
-  .bg-green-50  { background-color: hsl(142 70% 95%) !important; }
-  .bg-red-50    { background-color: hsl(0 90% 96%) !important; }
-  .bg-rose-50   { background-color: hsl(350 90% 96%) !important; }
-  .bg-purple-50 { background-color: hsl(265 80% 96%) !important; }
-  .bg-pink-50   { background-color: hsl(325 80% 96%) !important; }
-  .bg-yellow-50 { background-color: hsl(48 100% 95%) !important; }
-  .bg-indigo-50 { background-color: hsl(230 90% 96%) !important; }
-  .bg-orange-50 { background-color: hsl(25 100% 95%) !important; }
-  .bg-teal-50   { background-color: hsl(180 75% 95%) !important; }
-  .bg-cyan-50   { background-color: hsl(190 90% 95%) !important; }
-  .bg-emerald-50{ background-color: hsl(155 75% 95%) !important; }
+  /* Preserve readable pastel info boxes on light background (light mode only;
+     dark equivalents live in src/styles/dark-mode.css). */
+  :where(:root:not(.dark)) .bg-blue-50   { background-color: hsl(210 100% 96%) !important; }
+  :where(:root:not(.dark)) .bg-amber-50  { background-color: hsl(38 100% 95%) !important; }
+  :where(:root:not(.dark)) .bg-green-50  { background-color: hsl(142 70% 95%) !important; }
+  :where(:root:not(.dark)) .bg-red-50    { background-color: hsl(0 90% 96%) !important; }
+  :where(:root:not(.dark)) .bg-rose-50   { background-color: hsl(350 90% 96%) !important; }
+  :where(:root:not(.dark)) .bg-purple-50 { background-color: hsl(265 80% 96%) !important; }
+  :where(:root:not(.dark)) .bg-pink-50   { background-color: hsl(325 80% 96%) !important; }
+  :where(:root:not(.dark)) .bg-yellow-50 { background-color: hsl(48 100% 95%) !important; }
+  :where(:root:not(.dark)) .bg-indigo-50 { background-color: hsl(230 90% 96%) !important; }
+  :where(:root:not(.dark)) .bg-orange-50 { background-color: hsl(25 100% 95%) !important; }
+  :where(:root:not(.dark)) .bg-teal-50   { background-color: hsl(180 75% 95%) !important; }
+  :where(:root:not(.dark)) .bg-cyan-50   { background-color: hsl(190 90% 95%) !important; }
+  :where(:root:not(.dark)) .bg-emerald-50{ background-color: hsl(155 75% 95%) !important; }
 
   /* Colored heading/label text stays dark and readable on pastel/white. */
-  .text-blue-900,   .text-blue-800,   .text-blue-700   { color: hsl(210 90% 25%) !important; }
-  .text-amber-900,  .text-amber-800,  .text-amber-700  { color: hsl(38 90% 28%) !important; }
-  .text-green-900,  .text-green-800,  .text-green-700  { color: hsl(142 70% 22%) !important; }
-  .text-red-900,    .text-red-800,    .text-red-700    { color: hsl(0 80% 35%) !important; }
-  .text-rose-900,   .text-rose-800,   .text-rose-700   { color: hsl(350 80% 35%) !important; }
-  .text-purple-900, .text-purple-800, .text-purple-700 { color: hsl(265 70% 32%) !important; }
-  .text-pink-900,   .text-pink-800,   .text-pink-700   { color: hsl(325 70% 32%) !important; }
-  .text-yellow-900, .text-yellow-800, .text-yellow-700 { color: hsl(48 90% 25%) !important; }
-  .text-indigo-900, .text-indigo-800, .text-indigo-700 { color: hsl(230 75% 32%) !important; }
-  .text-orange-900, .text-orange-800, .text-orange-700 { color: hsl(25 90% 30%) !important; }
-  .text-teal-900,   .text-teal-800,   .text-teal-700   { color: hsl(180 70% 22%) !important; }
-  .text-cyan-900,   .text-cyan-800,   .text-cyan-700   { color: hsl(190 80% 25%) !important; }
-  .text-emerald-900,.text-emerald-800,.text-emerald-700{ color: hsl(155 70% 22%) !important; }
+  :where(:root:not(.dark)) .text-blue-900,   :where(:root:not(.dark)) .text-blue-800,   :where(:root:not(.dark)) .text-blue-700   { color: hsl(210 90% 25%) !important; }
+  :where(:root:not(.dark)) .text-amber-900,  :where(:root:not(.dark)) .text-amber-800,  :where(:root:not(.dark)) .text-amber-700  { color: hsl(38 90% 28%) !important; }
+  :where(:root:not(.dark)) .text-green-900,  :where(:root:not(.dark)) .text-green-800,  :where(:root:not(.dark)) .text-green-700  { color: hsl(142 70% 22%) !important; }
+  :where(:root:not(.dark)) .text-red-900,    :where(:root:not(.dark)) .text-red-800,    :where(:root:not(.dark)) .text-red-700    { color: hsl(0 80% 35%) !important; }
+  :where(:root:not(.dark)) .text-rose-900,   :where(:root:not(.dark)) .text-rose-800,   :where(:root:not(.dark)) .text-rose-700   { color: hsl(350 80% 35%) !important; }
+  :where(:root:not(.dark)) .text-purple-900, :where(:root:not(.dark)) .text-purple-800, :where(:root:not(.dark)) .text-purple-700 { color: hsl(265 70% 32%) !important; }
+  :where(:root:not(.dark)) .text-pink-900,   :where(:root:not(.dark)) .text-pink-800,   :where(:root:not(.dark)) .text-pink-700   { color: hsl(325 70% 32%) !important; }
+  :where(:root:not(.dark)) .text-yellow-900, :where(:root:not(.dark)) .text-yellow-800, :where(:root:not(.dark)) .text-yellow-700 { color: hsl(48 90% 25%) !important; }
+  :where(:root:not(.dark)) .text-indigo-900, :where(:root:not(.dark)) .text-indigo-800, :where(:root:not(.dark)) .text-indigo-700 { color: hsl(230 75% 32%) !important; }
+  :where(:root:not(.dark)) .text-orange-900, :where(:root:not(.dark)) .text-orange-800, :where(:root:not(.dark)) .text-orange-700 { color: hsl(25 90% 30%) !important; }
+  :where(:root:not(.dark)) .text-teal-900,   :where(:root:not(.dark)) .text-teal-800,   :where(:root:not(.dark)) .text-teal-700   { color: hsl(180 70% 22%) !important; }
+  :where(:root:not(.dark)) .text-cyan-900,   :where(:root:not(.dark)) .text-cyan-800,   :where(:root:not(.dark)) .text-cyan-700   { color: hsl(190 80% 25%) !important; }
+  :where(:root:not(.dark)) .text-emerald-900,:where(:root:not(.dark)) .text-emerald-800,:where(:root:not(.dark)) .text-emerald-700{ color: hsl(155 70% 22%) !important; }
 
   /* Improve body text legibility globally */
   body { 
@@ -450,48 +437,9 @@ All colors MUST be HSL.
   }
 }
 
-/* Respect dark mode for text and override hardcoded slates/grays */
-.dark .text-slate-900,
-.dark .text-slate-800,
-.dark .text-slate-700,
-.dark .text-slate-600,
-.dark .text-slate-500,
-.dark .text-gray-900,
-.dark .text-gray-800,
-.dark .text-gray-700,
-.dark .text-gray-600,
-.dark .text-gray-500,
-.dark .text-zinc-900,
-.dark .text-zinc-800,
-.dark .text-zinc-700,
-.dark .text-zinc-600,
-.dark .text-zinc-500,
-.dark .text-neutral-900,
-.dark .text-neutral-800,
-.dark .text-neutral-700,
-.dark .text-neutral-600,
-.dark .text-neutral-500,
-.dark .text-blue-900,
-.dark h3.tracking-tight,
-.dark [class*="CardTitle"] {
-  color: hsl(var(--foreground)) !important;
-}
-
-.dark .text-slate-400,
-.dark .text-gray-400,
-.dark .text-zinc-400,
-.dark .text-neutral-400,
-.dark .text-muted-foreground {
-  color: hsl(var(--muted-foreground)) !important;
-}
-
-/* Light mode overrides for consistency if needed */
-.text-slate-700,
-.text-slate-600,
-.text-slate-500,
-.text-muted-foreground,
-h3.tracking-tight,
-[class*="CardTitle"] {
+/* Light mode: muted/slate text and card titles inherit the surrounding colour.
+   (Dark-mode gray remaps live in src/styles/dark-mode.css.) */
+:where(:root:not(.dark)) :is(.text-slate-700, .text-slate-600, .text-slate-500, .text-muted-foreground, h3.tracking-tight, [class*="CardTitle"]) {
   color: inherit;
 }
 
@@ -567,16 +515,13 @@ body * {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Forced readability override — pure white background + black text app-wide.
-   Placed last so it wins over the light/dark toggle and all theme variants,
-   guaranteeing maximum readability on every assessment and page.
+   Theme tokens (final word). Light: pure white surfaces + black text for maximum
+   readability. Dark: light text on dark surfaces, all pairs >= WCAG AA.
+   Every component should use these tokens (bg-background/card/muted,
+   text-foreground/muted-foreground, border-border) rather than fixed colours;
+   legacy fixed light-palette utilities are remapped in src/styles/dark-mode.css.
    ───────────────────────────────────────────────────────────────────────────── */
-:root,
-:root.light,
-:root.dark,
-:root.theme-sunset,
-:root.theme-midnight,
-:root.theme-forest {
+:root:not(.dark) {
   --background: 0 0% 100%;
   --foreground: 0 0% 0%;
 
@@ -605,67 +550,43 @@ body * {
   --sidebar-border: 0 0% 88%;
 }
 
-/* Neutralise any lingering dark-mode text/background utilities. */
-.dark body,
-body.dark {
-  background-color: hsl(0 0% 100%);
-  color: hsl(0 0% 0%);
-}
+:root.dark {
+  color-scheme: dark;
 
-.dark .bg-background,
-.dark .bg-card,
-.dark .bg-popover,
-.dark .bg-secondary,
-.dark .bg-muted,
-.dark .bg-accent,
-.dark .bg-card\/50,
-.dark .bg-background\/95,
-.dark .bg-background\/80 {
-  background-color: hsl(0 0% 100%);
-}
+  --background: 240 10% 4%;
+  --foreground: 0 0% 96%;
 
-.dark .text-foreground,
-.dark .text-card-foreground,
-.dark .text-popover-foreground,
-.dark .text-secondary-foreground,
-.dark .text-accent-foreground,
-.dark .text-primary-foreground,
-.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6,
-.dark p, .dark li, .dark span, .dark label,
-.dark .text-slate-900, .dark .text-slate-800, .dark .text-slate-700,
-.dark .text-slate-600, .dark .text-gray-900, .dark .text-gray-800,
-.dark .text-gray-700, .dark .text-gray-600, .dark .text-zinc-900,
-.dark .text-zinc-800, .dark .text-zinc-700, .dark .text-zinc-600,
-.dark .text-neutral-900, .dark .text-neutral-800, .dark .text-neutral-700 {
-  color: hsl(0 0% 0%) !important;
-}
+  --card: 240 8% 8%;
+  --card-foreground: 0 0% 96%;
 
-/* Schooler-Kane TD checklist: keep dark mode readable. The global dark-mode
-   neutraliser above forces black text on p/span/li/headings, so this scoped
-   block restores light-on-dark text for this screen only. */
-.dark .sk-scope :is(h1, h2, h3, h4, p, span, li, label, figcaption) {
-  color: hsl(0 0% 95%) !important;
-}
-.dark .sk-scope :is(p, span, li, figcaption).text-muted-foreground,
-.dark .sk-scope .sk-off {
-  color: hsl(240 5% 72%) !important;
-}
-.dark .sk-scope [class*="bg-muted"] {
-  background-color: hsl(240 8% 12%) !important;
-  border-color: hsl(240 6% 26%);
-}
-.dark .sk-scope .sk-ok { color: hsl(152 69% 62%) !important; }
-.dark .sk-scope .sk-warn { color: hsl(45 95% 70%) !important; }
-.dark .sk-scope a,
-.dark .sk-scope .sk-primary,
-.dark .sk-scope .sk-primary span { color: hsl(243 90% 78%) !important; }
-.dark .sk-scope .sk-chip,
-.dark .sk-scope .sk-box {
-  background-color: hsl(240 8% 14%) !important;
-  border-color: hsl(240 6% 32%);
-  color: hsl(0 0% 95%) !important;
-}
-.dark .sk-scope .sk-chip-on {
-  background-color: hsl(var(--primary)) !important;
-  color: hsl(0 0% 100%) !important;
+  --popover: 240 8% 9%;
+  --popover-foreground: 0 0% 96%;
+
+  --primary: 243 75% 62%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 240 6% 13%;
+  --secondary-foreground: 0 0% 96%;
+
+  --muted: 240 6% 15%;
+  --muted-foreground: 240 5% 72%;
+
+  --accent: 240 6% 18%;
+  --accent-foreground: 0 0% 96%;
+
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 240 6% 22%;
+  --input: 240 6% 28%;
+  --ring: 243 85% 70%;
+
+  --sidebar-background: 240 10% 6%;
+  --sidebar-foreground: 0 0% 96%;
+  --sidebar-primary: 243 75% 62%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 6% 15%;
+  --sidebar-accent-foreground: 0 0% 96%;
+  --sidebar-border: 240 6% 22%;
+  --sidebar-ring: 243 85% 70%;
 }
