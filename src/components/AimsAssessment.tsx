@@ -4,8 +4,17 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AIMS_ITEMS, AIMS_INTERPRETATION } from '@/data/aimsScale';
-import { ArrowLeft, RotateCcw, AlertCircle } from 'lucide-react';
+import {
+  SCHOOLER_KANE_NAME,
+  SK_CRITERIA_LABELS,
+  SK_EXPOSURE_LABEL,
+  SK_IMAGE_ALT,
+  SK_IMAGE_CAPTION,
+} from '@/data/schoolerKaneCriteria';
+import schoolerKaneImg from '@/assets/schooler-kane-criteria.png';
+import { ArrowLeft, RotateCcw, AlertCircle, BookOpen, Maximize2 } from 'lucide-react';
 import { ExportButtons } from './ExportButtons';
 import type { ReportData } from '@/utils/reportGenerator';
 
@@ -107,6 +116,75 @@ export const AimsAssessment = ({ onBack }: AimsAssessmentProps) => {
               Rate each area based on observation during the assessment.
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="overflow-hidden border-primary/30 bg-card">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <BookOpen className="h-5 w-5 shrink-0 text-primary" />
+            {SCHOOLER_KANE_NAME}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Clinical interpretation guidance for identifying probable tardive dyskinesia from AIMS findings.
+          </p>
+        </CardHeader>
+        <CardContent className="grid min-w-0 gap-4 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:items-start">
+          <figure className="min-w-0">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="group relative h-auto min-h-11 w-full overflow-hidden p-0"
+                  aria-label="Enlarge Schooler-Kane criteria infographic"
+                >
+                  <img
+                    src={schoolerKaneImg}
+                    alt={SK_IMAGE_ALT}
+                    className="h-auto w-full"
+                    loading="lazy"
+                  />
+                  <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-md bg-background/90 px-2 py-1 text-xs font-medium text-foreground shadow-sm">
+                    <Maximize2 className="h-3.5 w-3.5" /> Enlarge
+                  </span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-h-[95vh] max-w-[95vw] overflow-auto p-2 sm:p-4">
+                <DialogTitle className="sr-only">Schooler-Kane criteria infographic</DialogTitle>
+                <img
+                  src={schoolerKaneImg}
+                  alt={SK_IMAGE_ALT}
+                  className="mx-auto h-auto max-h-[88vh] w-auto max-w-full object-contain"
+                />
+              </DialogContent>
+            </Dialog>
+            <figcaption className="mt-2 text-center text-xs text-muted-foreground">
+              {SK_IMAGE_CAPTION}
+            </figcaption>
+          </figure>
+
+          <ol className="min-w-0 space-y-3">
+            <li className="rounded-lg border border-border bg-muted/40 p-3">
+              <p className="text-sm font-semibold text-foreground">1. {SK_CRITERIA_LABELS.exposure}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{SK_EXPOSURE_LABEL}.</p>
+            </li>
+            <li className="rounded-lg border border-border bg-muted/40 p-3">
+              <p className="text-sm font-semibold text-foreground">2. {SK_CRITERIA_LABELS.aims}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Moderate movements in at least one body area (AIMS ≥3), or mild movements in at least two body areas (AIMS ≥2).
+              </p>
+            </li>
+            <li className="rounded-lg border border-border bg-muted/40 p-3">
+              <p className="text-sm font-semibold text-foreground">3. {SK_CRITERIA_LABELS.exclusion}</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                Confirm that no other neurological, medical, or drug-related cause adequately explains the movements.
+              </p>
+            </li>
+            <li className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs leading-relaxed text-foreground">
+              Qualifying AIMS findings sustained for at least 3 months support probable TD; at least 6 months supports persistent TD.
+            </li>
+          </ol>
         </CardContent>
       </Card>
 
