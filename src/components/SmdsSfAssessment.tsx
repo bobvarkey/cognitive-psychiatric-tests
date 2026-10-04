@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, RotateCcw, Copy, Check } from 'lucide-react';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 type Domain =
   | 'preoccupation' | 'tolerance' | 'withdrawal' | 'persistence' | 'displacement'
@@ -73,9 +74,9 @@ export const SmdsSfAssessment = ({ onBack }: Props) => {
       `Severity band: ${severity}`,
       `Probable disordered social media use: ${probable ? 'YES' : 'no'}`,
       '',
-      ...ITEMS.map((it) => `- [${responses[it.id] ?? '—'}] ${domainLabel[it.domain]}: ${it.prompt}`),
+      ...ITEMS.filter((it) => responses[it.id]).map((it) => `${domainLabel[it.domain]}: ${responses[it.id] === 'yes' ? 'Yes' : 'No'}`),
     ];
-    await navigator.clipboard.writeText(lines.join('\n'));
+    await copyResultsToClipboard(lines.join('\n'));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

@@ -6,8 +6,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown, Download } from 'lucide-react';
 import { CATEGORY_LABELS } from '@/data/stressScreeningScale';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface StressScreeningResultsProps {
   result: StressScreeningResult;
@@ -174,7 +175,7 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
                       const label = CATEGORY_LABELS[cat];
                       flags.forEach(f => positiveFindings.push(`[${language === 'ml' ? label.ml : label.en}] ${f}`));
                     });
-                    const text = generateTextReport({
+                    const text = formatResultsForCopy({
                       assessmentName: 'Stress vs Mental Disorder Screening',
                       date: new Date().toLocaleDateString(),
                       totalScore: `${result.totalRedFlags} Red Flags`,
@@ -187,7 +188,7 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
                       disclaimer: 'This is a screening tool, not a diagnostic instrument.',
                       patientInfo: getPatientInfoForReport(),
                     });
-                    await navigator.clipboard.writeText(text);
+                    await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   } catch {}

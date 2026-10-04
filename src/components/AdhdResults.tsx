@@ -6,9 +6,10 @@ import { getPresentationLabel, DOMAIN_THRESHOLDS } from '@/data/adhdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { Brain, RotateCcw, Printer, AlertTriangle, CheckCircle2, Info, ArrowLeft, XCircle, Copy, Check, FileDown, Download } from 'lucide-react';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { ADHD_INATTENTION_SYMPTOMS, ADHD_HYPERACTIVITY_SYMPTOMS } from '@/data/adhdScale';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface AdhdResultsProps {
   results: AdhdResultsType;
@@ -300,7 +301,7 @@ export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
                       const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
                       return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
                     });
-                    const text = generateTextReport({
+                    const text = formatResultsForCopy({
                       assessmentName: 'DSM-5-TR ADHD Diagnostic Criteria Assessment',
                       date: new Date().toLocaleDateString(),
                       totalScore: `Inattention: ${results.inattentionCount}/9, Hyperactivity: ${results.hyperactivityCount}/9`,
@@ -314,7 +315,7 @@ export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
                       disclaimer: 'This is a screening tool only, not a diagnostic instrument.',
                       patientInfo: getPatientInfoForReport(),
                     });
-                    await navigator.clipboard.writeText(text);
+                    await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   } catch {}

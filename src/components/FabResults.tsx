@@ -5,10 +5,11 @@ import { fabItems } from '@/data/fabScale';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Copy, Check, FileDown, Download } from 'lucide-react';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
 import { useResultsHistory } from '@/hooks/useResultsHistory';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface FabResultsProps {
   responses: FabResponse[];
@@ -214,7 +215,7 @@ export const FabResults = ({ responses, onReset }: FabResultsProps) => {
                   });
                   const answeredIds = responses.map(r => r.itemId);
                   const notAssessed = fabItems.filter(i => !answeredIds.includes(i.id)).map(i => language === 'en' ? i.domain : i.domainMl);
-                  const text = generateTextReport({
+                  const text = formatResultsForCopy({
                     assessmentName: 'Frontal Assessment Battery (FAB)',
                     date: new Date().toLocaleDateString(),
                     totalScore: `${results.totalScore}/18`,
@@ -228,7 +229,7 @@ export const FabResults = ({ responses, onReset }: FabResultsProps) => {
                     disclaimer: 'A cut-off score of 12 on the FAB differentiates frontal dysexecutive dementias from Alzheimer\'s type. This is a screening tool.',
                     patientInfo: getPatientInfoForReport(),
                   });
-                  await navigator.clipboard.writeText(text);
+                  await copyResultsToClipboard(text);
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
                 } catch {}

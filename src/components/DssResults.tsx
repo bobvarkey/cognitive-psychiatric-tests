@@ -5,8 +5,9 @@ import { useState } from 'react';
 import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info, Download } from 'lucide-react';
 import { DssResult } from '@/types/dss';
 import { DSS_DOMAIN_LABEL } from '@/data/dssScale';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface Props {
   results: DssResult;
@@ -188,7 +189,7 @@ export const DssResults = ({ results, onReset, onBack }: Props) => {
               const normal = results.subscales
                 .filter((s) => !s.elevated)
                 .map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
-              const text = generateTextReport({
+              const text = formatResultsForCopy({
                 assessmentName: 'Dissociative Symptoms Scale (DSS)',
                 date: new Date().toLocaleDateString(),
                 totalScore: `${fmt(results.totalMean)}/4 (mean)`,
@@ -210,7 +211,7 @@ export const DssResults = ({ results, onReset, onBack }: Props) => {
                   'Screening tool only. A subscale or total mean ≥ 1.0 is the developers\' suggested clinical threshold; diagnosis requires structured clinical evaluation.',
                 patientInfo: getPatientInfoForReport(),
               });
-              await navigator.clipboard.writeText(text);
+              await copyResultsToClipboard(text);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             } catch {}

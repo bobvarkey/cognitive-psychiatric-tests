@@ -5,9 +5,10 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { MmpiResults as MmpiResultsType } from '@/types/mmpi';
 import { MMPI_ITEMS, getRiskLevel, SOMATIZATION_SCALES } from '@/data/mmpiScale';
 import { useState } from 'react';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { Brain, RotateCcw, Printer, AlertTriangle, ArrowLeft, Copy, Check, FileDown, Download } from 'lucide-react';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface MmpiResultsProps {
   results: MmpiResultsType;
@@ -224,7 +225,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
                     const positive = trueItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
                     const negative = falseItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
                     const notAssessed = notAnswered.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
-                    const text = generateTextReport({
+                    const text = formatResultsForCopy({
                       assessmentName: 'MMPI Ultra-Short OPD Screener',
                       date: new Date().toLocaleDateString(),
                       totalScore: `${results.trueCount}/10 True`,
@@ -239,7 +240,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
                       disclaimer: 'Clinician use only; not diagnostic. Tally per scale for targeted flags (e.g., Hs+D+Hy = somatization).',
                       patientInfo: getPatientInfoForReport(),
                     });
-                    await navigator.clipboard.writeText(text);
+                    await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   } catch {}

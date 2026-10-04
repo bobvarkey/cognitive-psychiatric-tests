@@ -24,6 +24,7 @@ import {
   type BaselineTest,
   type BaselineDomain,
 } from '@/data/lobarFunctions';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 interface LobarFunctionsAssessmentProps {
   onBack: () => void;
@@ -246,7 +247,7 @@ export default function LobarFunctionsAssessment({ onBack }: LobarFunctionsAsses
 
   const copyReport = async () => {
     try {
-      await navigator.clipboard.writeText(generatedReport);
+      await copyResultsToClipboard(generatedReport);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {

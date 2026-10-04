@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Brain, AlertTriangle, RotateCcw, Copy, Check } from 'lucide-react';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 interface Props { onBack?: () => void }
 
@@ -234,7 +235,7 @@ export const BrainFogAssessment = ({ onBack }: Props) => {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(exportText);
+      await copyResultsToClipboard(exportText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch { /* ignore */ }

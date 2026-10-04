@@ -5,8 +5,9 @@ import { HAMA_ITEMS, HAMA_OPTIONS } from '@/data/hamaScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown, Download } from 'lucide-react';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface HamaResultsProps {
   result: HamaResult;
@@ -135,8 +136,8 @@ export const HamaResults = ({ result, onReset, onBack }: HamaResultsProps) => {
                 size="sm"
                 onClick={async () => {
                   try {
-                    const text = generateTextReport(buildReport());
-                    await navigator.clipboard.writeText(text);
+                    const text = formatResultsForCopy(buildReport());
+                    await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   } catch {}

@@ -6,6 +6,7 @@ import { CASES_SCREENING_ITEMS } from '@/data/epilepsyScales';
 import { toast } from '@/hooks/use-toast';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { PatientInfoForm } from './PatientInfoForm';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 
 interface CasesToolAssessmentProps {
@@ -55,7 +56,7 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(buildClinicalReport());
+      await copyResultsToClipboard(buildClinicalReport());
       setCopied(true);
       toast({ title: 'Report copied to clipboard' });
       setTimeout(() => setCopied(false), 2000);

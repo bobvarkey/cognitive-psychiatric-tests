@@ -5,8 +5,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 import { ArrowLeft, RotateCcw, AlertCircle, Info, Copy, Check, FileDown, Download } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface DpdrResultsProps {
   results: DpdrResult;
@@ -280,7 +281,7 @@ export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
               ];
               const positive = findings.filter((_, i) => [results.depersonalizationScore, results.derealizationScore, results.distressScore][i] > 0);
               const negative = findings.filter((_, i) => [results.depersonalizationScore, results.derealizationScore, results.distressScore][i] === 0);
-              const text = generateTextReport({
+              const text = formatResultsForCopy({
                 assessmentName: 'Depersonalization-Derealization Disorder Screening',
                 date: new Date().toLocaleDateString(),
                 totalScore: `${results.totalScore}/80`,
@@ -293,7 +294,7 @@ export const DpdrResults = ({ results, onReset, onBack }: DpdrResultsProps) => {
                 disclaimer: 'This is a screening tool, not a diagnostic instrument. Only a qualified mental health professional can provide a formal diagnosis.',
                 patientInfo: getPatientInfoForReport(),
               });
-              await navigator.clipboard.writeText(text);
+              await copyResultsToClipboard(text);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             } catch {}

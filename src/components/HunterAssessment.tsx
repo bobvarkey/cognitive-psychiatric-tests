@@ -10,6 +10,7 @@ import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 interface HunterAssessmentProps {
   onBack: () => void;
@@ -194,7 +195,7 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
   const [copiedExport, setCopiedExport] = useState(false);
   const copyExport = async () => {
     try {
-      await navigator.clipboard.writeText(exportText);
+      await copyResultsToClipboard(exportText);
       setCopiedExport(true);
       setTimeout(() => setCopiedExport(false), 2000);
     } catch { /* ignore */ }

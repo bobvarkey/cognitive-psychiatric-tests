@@ -11,6 +11,7 @@ import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { toast } from '@/hooks/use-toast';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 
 interface Props {
@@ -140,7 +141,7 @@ export const FibromyalgiaAssessment = ({ onBack }: Props) => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(buildClinicalReport());
+      await copyResultsToClipboard(buildClinicalReport());
       setCopied(true);
       toast({ title: 'Report copied to clipboard' });
       setTimeout(() => setCopied(false), 2000);

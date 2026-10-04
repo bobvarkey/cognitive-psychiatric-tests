@@ -18,6 +18,7 @@ import {
   calculateComparison,
   type FnqItemId,
 } from '@/data/foodNoiseScale';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 interface FoodNoiseScaleAssessmentProps {
   onBack: () => void;
@@ -95,7 +96,7 @@ export default function FoodNoiseScaleAssessment({ onBack }: FoodNoiseScaleAsses
 
   const copySummary = async () => {
     try {
-      await navigator.clipboard.writeText(summaryText);
+      await copyResultsToClipboard(summaryText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {}

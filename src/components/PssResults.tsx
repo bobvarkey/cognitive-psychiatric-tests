@@ -6,8 +6,9 @@ import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown, Download } from 'lucide-react';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface PssResultsProps {
   result: PssResult;
@@ -157,7 +158,7 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
                     const allItemIds = PSS_ITEMS.map(i => i.id);
                     const answeredIds = result.responses.map(r => r.itemId);
                     const notAssessed = PSS_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
-                    const text = generateTextReport({
+                    const text = formatResultsForCopy({
                       assessmentName: 'Perceived Stress Scale (PSS-10)',
                       date: new Date().toLocaleDateString(),
                       totalScore: `${result.totalScore}/40`,
@@ -171,7 +172,7 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
                       disclaimer: 'The PSS is a self-report measure of perceived stress. It is not a diagnostic instrument. Clinical judgment is essential for interpretation.',
                       patientInfo: getPatientInfoForReport(),
                     });
-                    await navigator.clipboard.writeText(text);
+                    await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   } catch {}

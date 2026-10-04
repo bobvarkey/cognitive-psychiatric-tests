@@ -4,8 +4,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useState } from 'react';
 import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info, Download } from 'lucide-react';
 import { CdsResult } from '@/types/cds';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface Props {
   results: CdsResult;
@@ -164,7 +165,7 @@ export const CdsResults = ({ results, onReset, onBack }: Props) => {
           size="sm"
           onClick={async () => {
             try {
-              const text = generateTextReport({
+              const text = formatResultsForCopy({
                 assessmentName: 'Cambridge Depersonalisation Scale (CDS-29)',
                 date: new Date().toLocaleDateString(),
                 totalScore: `${results.totalScore}/290`,
@@ -185,7 +186,7 @@ export const CdsResults = ({ results, onReset, onBack }: Props) => {
                   'Screening tool only. A score ≥70 is the suggested clinical cutoff. Diagnosis requires structured clinical evaluation.',
                 patientInfo: getPatientInfoForReport(),
               });
-              await navigator.clipboard.writeText(text);
+              await copyResultsToClipboard(text);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             } catch {}

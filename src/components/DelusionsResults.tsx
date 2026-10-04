@@ -8,8 +8,9 @@ import { AlertCircle, Brain, Copy, Check, FileText, FileDown, Download } from 'l
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ClinicalContextTable } from './ClinicalContextTable';
 import { delusionsScale } from '@/data/delusionsScale';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface DelusionsResultsProps {
   results: DelusionResults;
@@ -333,7 +334,7 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
                   negativeFindings.push(`${item.type} (${item.section} — ${item.category})`);
                 }
               });
-              const text = generateTextReport({
+              const text = formatResultsForCopy({
                 assessmentName: 'Delusional Syndromes & Hallucinations Assessment',
                 date: new Date().toLocaleDateString(),
                 totalScore: `${results.totalPresent} symptoms present`,
@@ -347,7 +348,7 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
                 disclaimer: 'This assessment is a screening tool only. Comprehensive psychiatric evaluation is essential for accurate diagnosis and treatment planning.',
                 patientInfo: getPatientInfoForReport(),
               });
-              await navigator.clipboard.writeText(text);
+              await copyResultsToClipboard(text);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             } catch {}

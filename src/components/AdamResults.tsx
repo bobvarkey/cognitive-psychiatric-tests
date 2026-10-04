@@ -5,9 +5,10 @@ import { AdamResult, AdamDemographics } from '@/types/adam';
 import { adamItems } from '@/data/adamScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Copy, Check, FileDown, Download } from 'lucide-react';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface AdamResultsProps {
   results: AdamResult;
@@ -208,7 +209,7 @@ export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps
                       negativeFindings.push(`${label} (Score: ${r.score}/3)`);
                     }
                   });
-                  const text = generateTextReport({
+                  const text = formatResultsForCopy({
                     assessmentName: 'Apathy, Depression and Anhedonia Measure (ADAM)',
                     date: new Date().toLocaleDateString(),
                     totalScore: `${results.totalScore}/30`,
@@ -221,7 +222,7 @@ export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps
                     disclaimer: 'The ADAM is a screening instrument derived from machine learning. It does not substitute for a comprehensive clinical evaluation. Zhao et al. (2026) JNNP.',
                     patientInfo: getPatientInfoForReport(),
                   });
-                  await navigator.clipboard.writeText(text);
+                  await copyResultsToClipboard(text);
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
                 } catch {}

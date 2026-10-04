@@ -5,8 +5,9 @@ import { MSI_BPD_ITEMS } from '@/data/msiBpdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { AlertCircle, CheckCircle, ArrowLeft, RotateCcw, Copy, Check, FileDown, Download } from 'lucide-react';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface MsiBpdResultsProps {
   result: MsiBpdResult;
@@ -149,7 +150,7 @@ export const MsiBpdResults = ({ result, onReset, onBack }: MsiBpdResultsProps) =
                     });
                     const answeredIds = result.responses.map(r => r.itemId);
                     const notAssessed = MSI_BPD_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
-                    const text = generateTextReport({
+                    const text = formatResultsForCopy({
                       assessmentName: 'McLean Screening Instrument for BPD (MSI-BPD)',
                       date: new Date().toLocaleDateString(),
                       totalScore: `${result.totalScore}/10`,
@@ -163,7 +164,7 @@ export const MsiBpdResults = ({ result, onReset, onBack }: MsiBpdResultsProps) =
                       disclaimer: 'This is a screening tool only. A positive result does not confirm a diagnosis and should be followed by comprehensive clinical evaluation.',
                       patientInfo: getPatientInfoForReport(),
                     });
-                    await navigator.clipboard.writeText(text);
+                    await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   } catch {}

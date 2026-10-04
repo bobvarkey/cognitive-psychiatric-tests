@@ -6,6 +6,7 @@ import { DBS_CANDIDACY_CRITERIA } from '@/data/pdManagementTools';
 import { PatientInfoForm } from './PatientInfoForm';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useToast } from '@/hooks/use-toast';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 interface StimulusDbsAssessmentProps {
   onBack?: () => void;
@@ -191,7 +192,7 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
                 `Clinical Note: The Stimulus tool is evidence-based decision support for DBS referral in PD. A score of 7-9 suggests DBS is appropriate.`
               ].filter(Boolean).join('\n');
 
-              navigator.clipboard.writeText(report);
+              copyResultsToClipboard(report);
               setCopied(true);
               toast({ title: "Report copied to clipboard" });
               setTimeout(() => setCopied(false), 2000);

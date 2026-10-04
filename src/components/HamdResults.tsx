@@ -5,8 +5,9 @@ import { HAMD_ITEMS } from '@/data/hamdScale';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
 import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Check, FileDown, Download } from 'lucide-react';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface HamdResultsProps {
   result: HamdResult;
@@ -165,7 +166,7 @@ export const HamdResults = ({ result, onReset, onBack }: HamdResultsProps) => {
                     });
                     const answeredIds = result.responses.map(r => r.itemId);
                     const notAssessed = HAMD_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
-                    const text = generateTextReport({
+                    const text = formatResultsForCopy({
                       assessmentName: 'Hamilton Depression Rating Scale (HAM-D)',
                       date: new Date().toLocaleDateString(),
                       totalScore: `${result.totalScore}/52`,
@@ -179,7 +180,7 @@ export const HamdResults = ({ result, onReset, onBack }: HamdResultsProps) => {
                       disclaimer: 'The HAM-D is a clinician-rated scale. Scores should be interpreted in the context of a comprehensive clinical assessment.',
                       patientInfo: getPatientInfoForReport(),
                     });
-                    await navigator.clipboard.writeText(text);
+                    await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   } catch {}

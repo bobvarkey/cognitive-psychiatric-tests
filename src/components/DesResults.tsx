@@ -4,8 +4,9 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useState } from 'react';
 import { ArrowLeft, RotateCcw, AlertCircle, Copy, Check, FileDown, Info, Download } from 'lucide-react';
 import { DesResult } from '@/types/des';
-import { generatePdfReport, generateTextReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface Props {
   results: DesResult;
@@ -166,7 +167,7 @@ export const DesResults = ({ results, onReset, onBack }: Props) => {
           size="sm"
           onClick={async () => {
             try {
-              const text = generateTextReport({
+              const text = formatResultsForCopy({
                 assessmentName: 'Dissociative Experiences Scale (DES-II)',
                 date: new Date().toLocaleDateString(),
                 totalScore: `${fmt(results.totalMean)}/100 (mean)`,
@@ -187,7 +188,7 @@ export const DesResults = ({ results, onReset, onBack }: Props) => {
                   'Screening tool only. A mean score ≥30 suggests possible dissociative disorder; confirm with structured interview (e.g. SCID-D).',
                 patientInfo: getPatientInfoForReport(),
               });
-              await navigator.clipboard.writeText(text);
+              await copyResultsToClipboard(text);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
             } catch {}

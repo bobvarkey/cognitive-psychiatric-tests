@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Copy, FileText, Check, Download } from 'lucide-react';
-import { generateTextReport, generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
+import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
+import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
 
 interface ExportButtonsProps {
   data: ReportData;
@@ -14,8 +15,8 @@ export function ExportButtons({ data, className = '' }: ExportButtonsProps) {
 
   const handleCopy = async () => {
     try {
-      const text = generateTextReport(data);
-      await navigator.clipboard.writeText(text);
+      const text = formatResultsForCopy(data);
+      await copyResultsToClipboard(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {}

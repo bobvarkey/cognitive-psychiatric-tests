@@ -34,6 +34,7 @@ import {
   AlignmentType,
 } from 'docx';
 import { saveAs } from 'file-saver';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 interface Props {
   scale: PsychosisScale;
@@ -314,7 +315,7 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(buildNote());
+      await copyResultsToClipboard(buildNote());
       setCopied(true);
       toast({ title: 'Note copied to clipboard' });
       setTimeout(() => setCopied(false), 2000);
@@ -325,7 +326,7 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
 
   const handleCopySoap = async () => {
     try {
-      await navigator.clipboard.writeText(buildSoap());
+      await copyResultsToClipboard(buildSoap());
       setSoapCopied(true);
       toast({ title: 'SOAP report copied to clipboard' });
       setTimeout(() => setSoapCopied(false), 2000);
@@ -340,7 +341,7 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
       .join('\n\n');
     if (!text) return;
     try {
-      await navigator.clipboard.writeText(text);
+      await copyResultsToClipboard(text);
       toast({ title: 'All text copied to clipboard' });
     } catch {
       toast({ title: 'Copy failed', variant: 'destructive' });
@@ -512,7 +513,7 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
                     onClick={async () => {
                       try {
                         const report = buildClinicalReport(scale, totals, responses, patientInfo, currentDate);
-                        await navigator.clipboard.writeText(report);
+                        await copyResultsToClipboard(report);
                         setCopied(true);
                         toast({ title: 'Report copied to clipboard' });
                         setTimeout(() => setCopied(false), 2000);

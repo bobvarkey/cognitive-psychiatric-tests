@@ -12,6 +12,7 @@ import {
   OCCIPITAL_SCORE_OPTIONS,
   type TestModule,
 } from '@/data/occipitalVisualTests';
+import { copyResultsToClipboard } from '@/lib/copyResults';
 
 interface OccipitalAssessmentProps {
   onBack: () => void;
@@ -95,7 +96,7 @@ export default function OccipitalAssessment({ onBack }: OccipitalAssessmentProps
 
   const copyReport = async () => {
     try {
-      await navigator.clipboard.writeText(generatedReport);
+      await copyResultsToClipboard(generatedReport);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {}
