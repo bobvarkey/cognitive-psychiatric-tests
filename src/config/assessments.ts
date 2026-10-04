@@ -333,6 +333,19 @@ export const assessments: Assessment[] = [
     items: 11,
   },
 
+  {
+    id: 'schooler-kane',
+    name: 'Schooler-Kane Criteria for Tardive Dyskinesia (TD)',
+    abbreviation: 'Schooler-Kane',
+    description: 'Research diagnostic criteria for tardive dyskinesia with embedded AIMS, rule-outs and TD subclassification',
+    category: ASSESSMENT_CATEGORIES.MOVEMENT,
+    subcategory: 'Dyskinesia',
+    component: null,
+    icon: '📋',
+    duration: '10-15 min',
+    items: 20,
+  },
+
   // Movement Disorders - Dystonia
   {
     id: 'twstrs',

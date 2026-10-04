@@ -639,3 +639,33 @@ body.dark {
 .dark .text-neutral-900, .dark .text-neutral-800, .dark .text-neutral-700 {
   color: hsl(0 0% 0%) !important;
 }
+
+/* Schooler-Kane TD checklist: keep dark mode readable. The global dark-mode
+   neutraliser above forces black text on p/span/li/headings, so this scoped
+   block restores light-on-dark text for this screen only. */
+.dark .sk-scope :is(h1, h2, h3, h4, p, span, li, label, figcaption) {
+  color: hsl(0 0% 95%) !important;
+}
+.dark .sk-scope :is(p, span, li, figcaption).text-muted-foreground,
+.dark .sk-scope .sk-off {
+  color: hsl(240 5% 72%) !important;
+}
+.dark .sk-scope [class*="bg-muted"] {
+  background-color: hsl(240 8% 12%) !important;
+  border-color: hsl(240 6% 26%);
+}
+.dark .sk-scope .sk-ok { color: hsl(152 69% 62%) !important; }
+.dark .sk-scope .sk-warn { color: hsl(45 95% 70%) !important; }
+.dark .sk-scope a,
+.dark .sk-scope .sk-primary,
+.dark .sk-scope .sk-primary span { color: hsl(243 90% 78%) !important; }
+.dark .sk-scope .sk-chip,
+.dark .sk-scope .sk-box {
+  background-color: hsl(240 8% 14%) !important;
+  border-color: hsl(240 6% 32%);
+  color: hsl(0 0% 95%) !important;
+}
+.dark .sk-scope .sk-chip-on {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(0 0% 100%) !important;
+}

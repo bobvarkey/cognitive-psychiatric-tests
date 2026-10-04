@@ -304,6 +304,11 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Guy W. ECDEU Assessment Manual for Psychopharmacology, Revised. US Department of Health, Education, and Welfare; 1976. Includes the Abnormal Involuntary Movement Scale (AIMS).',
     url: 'https://archive.org/details/ecdeuassessmentm1933guyw',
   },
+  'schooler-kane': {
+    citation:
+      'Schooler NR, Kane JM. Research diagnoses for tardive dyskinesia. Arch Gen Psychiatry. 1982;39(4):486–487.',
+    url: 'https://www.researchgate.net/publication/17063863_Schooler_NR_Kane_JM_Research_diagnoses_for_tardive_dyskinesia_RD-TD_Arch_Gen_Psychiatry_39_486-487',
+  },
   twstrs: {
     citation:
       'Consky ES, Lang AE. Clinical assessments of patients with cervical dystonia. In: Jankovic J, Hallett M, eds. Therapy with Botulinum Toxin. Marcel Dekker; 1994:211–237.',

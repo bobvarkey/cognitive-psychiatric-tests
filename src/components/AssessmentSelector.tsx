@@ -8,6 +8,7 @@ import { HoehnYahrAssessment } from '@/components/HoehnYahrAssessment';
 import { EpworthAssessment } from '@/components/EpworthAssessment';
 import { StopBangAssessment } from '@/components/StopBangAssessment';
 import { AimsAssessment } from '@/components/AimsAssessment';
+import { SchoolerKaneAssessment } from '@/components/SchoolerKaneAssessment';
 import { TwstrsAssessment } from '@/components/TwstrsAssessment';
 import { MdsUpdrsAssessment } from '@/components/MdsUpdrsAssessment';
 import { CdrAssessment } from '@/components/CdrAssessment';
@@ -150,7 +151,7 @@ export type AssessmentKey =
   | 'bprs' | 'sapsSans' | 'crdpss' | 'sops' | 'psyrats' | 'vagus'
   | 'asrs6' | 'asrs18' | 'vanderbilt' | 'adhdScreener'
   | 'bdi' | 'ybocs' | 'ipde' | 'cage' | 'cows' | 'simpsonAngus' | 'eprs' | 'panss'
-  | 'mds-updrs' | 'hoehn-yahr' | 'aims' | 'twstrs' | 'epworth' | 'stop-bang'
+  | 'mds-updrs' | 'hoehn-yahr' | 'aims' | 'schooler-kane' | 'twstrs' | 'epworth' | 'stop-bang'
   | 'ilae-seizure-classification' | 'laep' | 'esgs' | 'cases' | 'engel'
   | 'five-two-one' | 'anage-pd' | 'd-dats' | 'stimulus-dbs'
   | 'sudep-7' | 'sudep-safety'
@@ -245,6 +246,7 @@ export const assessments: AssessmentInfo[] = [
   { key: 'mds-updrs', name: 'MDS-UPDRS', subtitle: 'Parkinson\'s Assessment', icon: Activity, gradient: 'from-blue-500 to-cyan-600', category: ['movement'], description: 'MDS-UPDRS — Gold-standard comprehensive assessment for motor and non-motor symptoms in Parkinson\'s disease. 27 items across three parts.' },
   { key: 'hoehn-yahr', name: 'Hoehn & Yahr', subtitle: 'Parkinson\'s Staging', icon: Gauge, gradient: 'from-indigo-500 to-purple-600', category: ['movement'], description: 'Hoehn and Yahr Scale — Stages Parkinson\'s disease severity from 0 (no signs) to 5 (confined to bed/wheelchair).' },
   { key: 'aims', name: 'AIMS', subtitle: 'Dyskinesia Assessment', icon: Activity, gradient: 'from-orange-500 to-red-600', category: ['movement'], description: 'AIMS — Abnormal Involuntary Movement Scale; evaluates dyskinesia severity and involuntary movements across body regions.' },
+  { key: 'schooler-kane', name: 'Schooler-Kane TD Criteria', subtitle: 'Tardive Dyskinesia', icon: ClipboardCheck, gradient: 'from-amber-500 to-orange-600', category: ['movement'], description: 'Schooler-Kane Criteria for Tardive Dyskinesia (TD) — research diagnostic checklist with embedded AIMS, exclusion of other causes and TD subclassification.' },
   { key: 'twstrs', name: 'TWSTRS', subtitle: 'Cervical Dystonia', icon: Activity, gradient: 'from-rose-500 to-pink-600', category: ['movement'], description: 'TWSTRS — Toronto Western Spasmodic Torticollis Rating Scale; assesses cervical dystonia severity and disability.' },
   { key: 'simpsonAngus', name: 'Simpson-Angus', subtitle: 'EPS — Parkinsonism', icon: Activity, gradient: 'from-cyan-500 to-blue-600', category: ['movement'], description: 'Simpson-Angus Scale (SAS) — 10-item clinician rating of antipsychotic-induced parkinsonism. Mean ≥ 0.3 = clinically significant.' },
   { key: 'eprs', name: 'EPRS', subtitle: 'Extrapyramidal Symptoms', icon: Zap, gradient: 'from-yellow-500 to-amber-600', category: ['movement'], description: 'EPRS — Extrapyramidal Symptom Rating Scale (Chouinard); brief CGI form across the four EPS dimensions: parkinsonism, akathisia, dystonia, dyskinesia.' },
@@ -578,7 +580,7 @@ export const AssessmentSelector = () => {
       iqcode: true,
       bdi: true, ybocs: true, ipde: true, cage: true, cows: true,
       simpsonAngus: true, eprs: true, panss: true,
-      'mds-updrs': true, 'hoehn-yahr': true, aims: true, twstrs: true,
+      'mds-updrs': true, 'hoehn-yahr': true, aims: true, 'schooler-kane': true, twstrs: true,
       epworth: true, 'stop-bang': true,
       'ilae-seizure-classification': true, laep: true, esgs: true, cases: true, engel: true,
       'five-two-one': true, 'anage-pd': true, 'd-dats': true, 'stimulus-dbs': true,
@@ -653,6 +655,7 @@ export const AssessmentSelector = () => {
         'mds-updrs': MdsUpdrsAssessment,
         'hoehn-yahr': HoehnYahrAssessment,
         aims: AimsAssessment,
+        'schooler-kane': SchoolerKaneAssessment,
         twstrs: TwstrsAssessment,
         epworth: EpworthAssessment,
         'stop-bang': StopBangAssessment,
