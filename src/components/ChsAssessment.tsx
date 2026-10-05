@@ -251,19 +251,19 @@ export const ChsAssessment: React.FC<ChsAssessmentProps> = ({ onBack }) => {
                     {item.examples && (
                       <ul className="mt-2 space-y-1">
                         {item.examples.map((ex, j) => (
-                          <li key={j} className="text-sm text-muted-foreground flex items-center gap-2">
-                            <span className="text-primary">•</span>
-                            <span className="font-medium text-foreground">{ex.drug}</span>
-                            <span>{ex.dose}</span>
+                          <li key={j} className="text-sm text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                            <span className="text-primary shrink-0">•</span>
+                            <span className="shrink-0 font-medium text-foreground">{ex.drug}</span>
+                            <span className="min-w-0">{ex.dose}</span>
                           </li>
                         ))}
                       </ul>
                     )}
                     {item.example && (
-                      <p className="mt-2 text-sm text-muted-foreground flex items-center gap-2">
-                        <span className="text-primary">•</span>
-                        <span className="font-medium text-foreground">{item.example.drug}</span>
-                        <span>{item.example.dose}</span>
+                      <p className="mt-2 text-sm text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                        <span className="text-primary shrink-0">•</span>
+                        <span className="shrink-0 font-medium text-foreground">{item.example.drug}</span>
+                        <span className="min-w-0">{item.example.dose}</span>
                       </p>
                     )}
                     {item.mechanism && (

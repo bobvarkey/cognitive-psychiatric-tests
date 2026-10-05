@@ -1044,12 +1044,12 @@ export const AssessmentSelector = () => {
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/20" />
                           <div className="relative h-full flex flex-col justify-end p-6 sm:p-8">
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 mb-2">
                               <CatIcon className="h-6 w-6 text-white shrink-0" />
-                              <h3 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">
+                              <h3 className="min-w-0 flex-1 basis-[min(100%,12rem)] text-xl sm:text-3xl font-bold text-white drop-shadow">
                                 {language === 'en' ? categoryLabels[cat].en : categoryLabels[cat].ml}
                               </h3>
-                              <span className="ml-auto text-sm font-semibold px-3 py-1 rounded-full bg-primary/90 text-white tabular-nums">
+                              <span className="shrink-0 text-sm font-semibold px-3 py-1 rounded-full bg-primary/90 text-white tabular-nums whitespace-nowrap">
                                 {count} assessments
                               </span>
                             </div>

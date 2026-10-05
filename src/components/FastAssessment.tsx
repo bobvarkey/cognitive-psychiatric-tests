@@ -92,11 +92,11 @@ export const FastAssessment: React.FC<FastAssessmentProps> = ({ onBack, cdrScore
                 <div key={item.id} className="group relative flex items-start space-x-2 p-3 border rounded-lg bg-card dark:bg-card hover:bg-accent/5 transition-colors">
                   <RadioGroupItem value={item.stage.toString()} id={item.id} className="mt-1" />
                   <div className="flex-1 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor={item.id} className="font-bold text-sm cursor-pointer">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Label htmlFor={item.id} className="min-w-0 font-bold text-sm cursor-pointer">
                         {language === 'ml' ? item.titleMl : item.title}
                       </Label>
-                      <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">Stage {item.stage}</span>
+                      <span className="shrink-0 whitespace-nowrap text-[11px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-bold">Stage {item.stage}</span>
                       
                       {item.tooltip && (
                         <Tooltip>

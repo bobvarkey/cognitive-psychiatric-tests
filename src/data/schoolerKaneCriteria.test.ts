@@ -79,7 +79,7 @@ describe('Schooler-Kane overall criteria', () => {
     const lines = text.split('\n');
     expect(lines[0]).toBe('Schooler-Kane Criteria for Tardive Dyskinesia (TD)');
     expect(lines).toContain('AIMS 4 Tongue: 3 (Moderate)');
-    expect(lines).toContain('Total score: AIMS total (items 1-7) 4/28');
+    expect(lines).toContain('Total score: 4/28 (AIMS items 1-7)');
     expect(lines).toContain('Interpretation: Meets Schooler-Kane criteria for probable TD');
     expect(text).not.toMatch(/AIMS 1 Facial/); // unanswered items omitted
     expect(text).not.toMatch(/\n\s*\n/);

@@ -157,11 +157,11 @@ export const IrlsAssessment = ({ onBack }: IrlsAssessmentProps) => {
           <p className="text-sm text-purple-900 mb-3">
             <strong>Instructions:</strong> For each question, rate the severity of your RLS symptoms over the <strong>past week</strong> using the scale:
           </p>
-          <div className="grid grid-cols-5 gap-2 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
             {Object.entries(IRLS_SCORING_GUIDE).map(([score, label]) => (
               <div key={score} className="bg-white p-2 rounded border border-purple-200">
                 <div className="font-semibold text-center">{score}</div>
-                <div className="text-center">{label}</div>
+                <div className="text-center leading-snug">{label}</div>
               </div>
             ))}
           </div>
@@ -182,14 +182,14 @@ export const IrlsAssessment = ({ onBack }: IrlsAssessmentProps) => {
                     value={responses[item.id]?.toString() || ''}
                     onValueChange={(val) => handleResponseChange(item.id, parseInt(val))}
                   >
-                    <div className="grid grid-cols-5 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 sm:gap-3">
                       {[0, 1, 2, 3, 4].map((score) => (
-                        <div key={score} className="flex items-center space-x-2">
+                        <div key={score} className="flex items-center gap-2 sm:flex-col sm:items-center sm:space-x-0">
                           <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} />
-                          <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer">
-                            <div className="text-center">
-                              <div className="font-semibold">{score}</div>
-                              <div className="text-xs text-gray-600">{IRLS_SCORING_GUIDE[score]}</div>
+                          <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer min-w-0">
+                            <div className="flex items-baseline gap-2 sm:flex-col sm:items-center sm:gap-0 sm:text-center">
+                              <div className="font-semibold shrink-0">{score}</div>
+                              <div className="text-xs text-gray-600 whitespace-nowrap sm:whitespace-normal">{IRLS_SCORING_GUIDE[score]}</div>
                             </div>
                           </Label>
                         </div>

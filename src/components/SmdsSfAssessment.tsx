@@ -124,7 +124,7 @@ export const SmdsSfAssessment = ({ onBack }: Props) => {
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {idx + 1}. {domainLabel[it.domain]}
                 </span>
-                <span className="text-[10px] font-mono text-muted-foreground">{it.id}</span>
+                <span className="shrink-0 whitespace-nowrap text-[10px] font-mono text-muted-foreground">{it.id}</span>
               </div>
               <CardTitle className="text-base font-medium leading-snug pt-1">
                 {it.prompt}

@@ -243,7 +243,7 @@ export function buildSchoolerKaneReport(state: SchoolerKaneState): ReportData {
   return {
     assessmentName: SCHOOLER_KANE_NAME,
     date: new Date().toLocaleDateString(),
-    totalScore: `AIMS total (items 1-7) ${r.aimsTotal}/28`,
+    totalScore: `${r.aimsTotal}/28 (AIMS items 1-7)`,
     interpretation: r.interpretation,
     sections: [
       { title: 'Findings', items: itemLines, type: 'info' },

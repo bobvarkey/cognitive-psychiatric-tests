@@ -103,10 +103,10 @@ export const DDatsAssessment = ({ onBack }: DDatsAssessmentProps) => {
                           {isMet && <CheckCircle2 className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />}
                         </button>
                         <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <div className="font-semibold text-foreground">{criterion.name}</div>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="min-w-0 font-semibold text-foreground">{criterion.name}</div>
                             {isRequired && (
-                              <span className="text-xs font-bold text-red-700 dark:text-red-400 bg-red-500/20 px-2 py-0.5 rounded">
+                              <span className="shrink-0 whitespace-nowrap text-xs font-bold text-red-700 dark:text-red-400 bg-red-500/20 px-2 py-0.5 rounded">
                                 REQUIRED
                               </span>
                             )}

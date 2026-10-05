@@ -508,10 +508,14 @@ body * {
   min-width: 0;
 }
 
+/* Wrap at spaces/hyphens first. Do NOT set word-break:break-word/break-all —
+   that forces mid-word breaks on short labels (tab text, score chips, codes)
+   whenever a flex/grid child is narrow. overflow-wrap:break-word alone only
+   splits a token that is itself longer than the container (last resort). */
 #root .flex > *,
 #root .grid > * {
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: normal;
 }
 
 /* …but never squeeze single-line items (buttons, chips, score ranges marked
