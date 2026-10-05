@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import CategoryBrowser from "./pages/CategoryBrowser";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import AccountDeleted from "./pages/AccountDeleted";
 import { NavigationButtons } from "@/components/NavigationButtons";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { OfflineProvider } from "@/contexts/OfflineContext";
@@ -68,6 +69,7 @@ const App = () => (
                     <Route path="/" element={<Index />} />
                     <Route path="/history" element={<Index />} />
                     <Route path="/settings" element={<Index />} />
+                    <Route path="/account-deleted" element={<AccountDeleted />} />
                     <Route path="/glossary" element={<Index />} />
                     <Route path="/category/:category" element={<CategoryBrowser />} />
                     <Route path="/assessment/:id" element={<Index />} />

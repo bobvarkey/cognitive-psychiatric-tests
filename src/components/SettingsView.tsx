@@ -22,9 +22,12 @@ import { useState } from 'react';
 import { Crown } from 'lucide-react';
 import { toast } from 'sonner';
 import { configure, restorePurchases, getEntitlement, isNativePurchasesAvailable } from '@/lib/appbuild/revenuecat';
+import { deleteLocalAccount } from '@/services/accountService';
+import { useNavigate } from 'react-router-dom';
 
 
 export const SettingsView = () => {
+  const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const isMl = language === 'ml';
   const { results, clear } = useResultsHistory();
@@ -348,42 +351,9 @@ export const SettingsView = () => {
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       onClick={async () => {
                         try {
-                          clear();
-                          clearPatientInfo();
-                          try { localStorage.clear(); } catch { /* ignore */ }
-                          try { sessionStorage.clear(); } catch { /* ignore */ }
-                          try {
-                            if ('indexedDB' in window && typeof (indexedDB as unknown as { databases?: () => Promise<Array<{ name?: string }>> }).databases === 'function') {
-                              const dbs = await (indexedDB as unknown as { databases: () => Promise<Array<{ name?: string }>> }).databases();
-                              await Promise.all(
-                                dbs.map((db) =>
-                                  db.name
-                                    ? new Promise<void>((resolve) => {
-                                        const req = indexedDB.deleteDatabase(db.name!);
-                                        req.onsuccess = req.onerror = req.onblocked = () => resolve();
-                                      })
-                                    : Promise.resolve()
-                                )
-                              );
-                            }
-                          } catch { /* ignore */ }
-                          try {
-                            if ('caches' in window) {
-                              const keys = await caches.keys();
-                              await Promise.all(keys.map((k) => caches.delete(k)));
-                            }
-                          } catch { /* ignore */ }
-                          try {
-                            document.cookie.split(';').forEach((c) => {
-                              const eq = c.indexOf('=');
-                              const name = (eq > -1 ? c.substr(0, eq) : c).trim();
-                              if (name) {
-                                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
-                              }
-                            });
-                          } catch { /* ignore */ }
+                          await deleteLocalAccount();
                         } finally {
-                          window.location.replace('/');
+                          navigate('/account-deleted', { replace: true });
                         }
                       }}
                     >
