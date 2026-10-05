@@ -33,3 +33,4 @@ export const AccountDeleted = () => {
     </div>
   );
 };
+export default AccountDeleted;
