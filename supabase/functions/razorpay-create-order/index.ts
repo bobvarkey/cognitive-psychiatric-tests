@@ -4,7 +4,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const PLANS = {
   INR: {
     monthly: { amount: 24900, label: 'PsyCognito Premium — Monthly' },
-    yearly: { amount: 199900, label: 'PsyCognito Premium — Yearly' },
+    yearly: { amount: 299000, label: 'PsyCognito Premium — Yearly' },
   },
   USD: {
     monthly: { amount: 299, label: 'PsyCognito Premium — Monthly' },
