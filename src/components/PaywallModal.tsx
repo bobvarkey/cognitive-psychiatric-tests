@@ -15,6 +15,7 @@ import {
   startWebCheckout,
   restoreWebPurchase,
   getWebCurrency,
+  isDeveloperEmail,
   WEB_PRICES,
 } from '@/lib/webBilling';
 import { useSubscription } from '@/contexts/SubscriptionContext';
@@ -195,9 +196,14 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     }
     setRestoring(true);
     try {
-      const found = await restoreWebPurchase(email.trim().toLowerCase());
+      const restoredEmail = email.trim().toLowerCase();
+      const found = await restoreWebPurchase(restoredEmail);
       if (found) {
-        toast.success('Access restored.');
+        toast.success(
+          isDeveloperEmail(restoredEmail)
+            ? 'Developer access activated — everything is unlocked permanently.'
+            : 'Access restored.'
+        );
         onSelectPlan(found.plan, 'pro');
       } else {
         toast.info('No active purchase found for that email.');
