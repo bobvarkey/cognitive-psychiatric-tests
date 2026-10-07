@@ -66,7 +66,18 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   });
   const { refreshSubscription, restartDemoTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
 
-  const native = isNativePurchasesAvailable();
+  // The AppBuild script can define the wrapper in browsers too; only treat this
+  // as the native app once the wrapper's ready promise actually resolves.
+  const [native, setNative] = useState(false);
+  useEffect(() => {
+    let active = true;
+    waitForWrapper().then((r) => {
+      if (active) setNative(!!r && isNativePurchasesAvailable());
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
   const webCurrency = useMemo(() => getWebCurrency(), []);
   const webPrices = WEB_PRICES[webCurrency];
 
