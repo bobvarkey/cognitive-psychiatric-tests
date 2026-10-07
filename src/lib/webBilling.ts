@@ -89,37 +89,77 @@ const saveWebPremium = (value: WebPremium) => {
   }
 };
 
-/**
- * Web checkout has been removed. Kept as a typed no-op so callers compile;
- * it always reports that the purchase flow is unavailable.
- */
+const loadRazorpay = (): Promise<any> =>
+  new Promise((resolve, reject) => {
+    const w = window as any;
+    if (w.Razorpay) return resolve(w.Razorpay);
+    const s = document.createElement('script');
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.onload = () => (w.Razorpay ? resolve(w.Razorpay) : reject(new Error('Checkout failed to load.')));
+    s.onerror = () => reject(new Error('Checkout could not be loaded. Check your connection.'));
+    document.body.appendChild(s);
+  });
+
+/** Website checkout via Razorpay (browser only; native app uses the store). */
 export async function startWebCheckout(
-  _plan: 'monthly' | 'yearly',
-  _email: string,
-  _currency: WebCurrency = getWebCurrency(),
+  plan: 'monthly' | 'yearly',
+  email: string,
+  currency: WebCurrency = getWebCurrency(),
 ): Promise<WebPremium> {
-  throw new Error('Web checkout is no longer available.');
+  const { supabase } = await import('@/integrations/supabase/client');
+  const { data, error } = await supabase.functions.invoke('razorpay-create-order', {
+    body: { plan, email, currency },
+  });
+  if (error || !data?.orderId) throw new Error(data?.error ?? 'Could not start checkout.');
+  const Razorpay = await loadRazorpay();
+  return new Promise<WebPremium>((resolve, reject) => {
+    const rzp = new Razorpay({
+      key: data.keyId,
+      order_id: data.orderId,
+      amount: data.amount,
+      currency: data.currency,
+      name: 'PsyCognito',
+      description: data.label,
+      prefill: { email },
+      handler: async (resp: any) => {
+        const { data: v, error: vErr } = await supabase.functions.invoke('razorpay-verify', {
+          body: { orderId: resp.razorpay_order_id, paymentId: resp.razorpay_payment_id, signature: resp.razorpay_signature },
+        });
+        if (vErr || !v?.success) return reject(new Error(v?.error ?? 'Payment could not be verified.'));
+        const value: WebPremium = { email, plan: v.plan, currentPeriodEnd: v.currentPeriodEnd };
+        saveWebPremium(value);
+        resolve(value);
+      },
+      modal: { ondismiss: () => reject({ userCancelled: true }) },
+    });
+    rzp.on?.('payment.failed', (r: any) => reject(new Error(r?.error?.description ?? 'Payment failed.')));
+    rzp.open();
+  });
 }
 
-/**
- * Web purchase restore. Web checkout no longer exists, so this reports
- * "no purchase found" (null). Dev builds only: a whitelisted developer email
- * unlocks this device with a long-lived entitlement marked `source: 'dev'`.
- */
+/** Restore a website purchase by email (dev builds also honour developer emails). */
 export async function restoreWebPurchase(email: string): Promise<WebPremium | null> {
-  if (import.meta.env.DEV) {
-    const normalized = email.trim().toLowerCase();
-    if (isDeveloperEmail(normalized)) {
-      const devAccess: WebPremium = {
-        email: normalized,
-        plan: 'yearly',
-        // 100 years — lifetime for any practical purpose.
-        currentPeriodEnd: new Date(Date.now() + 100 * 365 * 86400 * 1000).toISOString(),
-        source: 'dev',
-      };
-      saveWebPremium(devAccess);
-      return devAccess;
+  const normalized = email.trim().toLowerCase();
+  if (import.meta.env.DEV && isDeveloperEmail(normalized)) {
+    const devAccess: WebPremium = {
+      email: normalized,
+      plan: 'yearly',
+      currentPeriodEnd: new Date(Date.now() + 100 * 365 * 86400 * 1000).toISOString(),
+      source: 'dev',
+    };
+    saveWebPremium(devAccess);
+    return devAccess;
+  }
+  try {
+    const { supabase } = await import('@/integrations/supabase/client');
+    const { data } = await supabase.functions.invoke('razorpay-status', { body: { email: normalized } });
+    if (data?.active && data.currentPeriodEnd) {
+      const value: WebPremium = { email: normalized, plan: data.plan, currentPeriodEnd: data.currentPeriodEnd };
+      saveWebPremium(value);
+      return value;
     }
+  } catch {
+    /* treat as not found */
   }
   return null;
 }

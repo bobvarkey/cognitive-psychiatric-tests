@@ -87,10 +87,11 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     [webPremium, subscription, demoUnlockAll, demoTrialMsLeft],
   );
 
+  // The demo only counts once the user has explicitly started it.
   const demoTrialActive = useMemo(
-    () => isDemoTrialActive(),
+    () => demoUnlockAll && isDemoTrialActive(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [demoTrialMsLeft],
+    [demoTrialMsLeft, demoUnlockAll],
   );
 
   const premiumSource: 'store' | 'web' | 'demo' | 'none' = webPremium
