@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
       return json({ error: 'Missing payment details.' }, 400);
     }
 
-    const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
+    const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET')?.trim();
     if (!keySecret) return json({ error: 'Payments are not configured.' }, 500);
 
     const expected = await hmacSha256Hex(keySecret, `${orderId}|${paymentId}`);
