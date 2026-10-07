@@ -28,8 +28,8 @@ Deno.serve(async (req) => {
       return json({ error: 'A valid email address is required.' }, 400);
     }
 
-    const keyId = Deno.env.get('RAZORPAY_KEY_ID');
-    const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET');
+    const keyId = Deno.env.get('RAZORPAY_KEY_ID')?.trim();
+    const keySecret = Deno.env.get('RAZORPAY_KEY_SECRET')?.trim();
     if (!keyId || !keySecret) return json({ error: 'Payments are not configured.' }, 500);
 
     const { amount, label } = PLANS[currency][plan as 'monthly' | 'yearly'];
