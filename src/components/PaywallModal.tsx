@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { X, Lock, Bell, Star, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/paywall-hero.jpg';
+import { waitForWrapper } from '@/lib/appbuild/wrapper';
 import {
   configure,
   getOfferings,
