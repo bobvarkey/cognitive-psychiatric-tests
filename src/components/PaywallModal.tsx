@@ -200,8 +200,9 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       const found = await restoreWebPurchase(restoredEmail);
       if (found) {
         toast.success(
-          isDeveloperEmail(restoredEmail)
-            ? 'Developer access activated — everything is unlocked permanently.'
+          // Dev builds only; this branch and its text are stripped from production.
+          import.meta.env.DEV && isDeveloperEmail(restoredEmail)
+            ? 'Developer access activated (dev build) — everything is unlocked on this device.'
             : 'Access restored.'
         );
         onSelectPlan(found.plan, 'pro');

@@ -1,5 +1,7 @@
-// Web billing helpers. Web checkout has been removed; restore access now only
-// recognises whitelisted developer emails (see DEVELOPER_EMAILS below).
+// Web billing helpers. Web checkout has been removed, so web restore never
+// finds a purchase in production builds. In local development only
+// (`vite` dev server, import.meta.env.DEV === true) restore can also unlock a
+// device for whitelisted developer emails — see DEVELOPER_EMAILS below.
 
 export const WEB_PRICES = {
   INR: {
@@ -26,18 +28,29 @@ export const getWebCurrency = (): WebCurrency => {
   return 'USD';
 };
 
-// Developer / tester emails with permanent full access. Keep personal
-// addresses out of this file — configure them in .env.local instead:
+/** Parse a comma-separated email list, normalised to lowercase. */
+export function parseDeveloperEmails(raw: string | undefined): string[] {
+  return (raw ?? '')
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+// DEV-ONLY developer unlock. Configure locally (never commit):
 //   VITE_DEVELOPER_EMAILS=you@example.com,teammate@example.com
-// (.env.local is gitignored, so the list never reaches the public repo.)
-const DEVELOPER_EMAILS_ENV = (import.meta.env.VITE_DEVELOPER_EMAILS as string | undefined) ?? '';
+// IMPORTANT: VITE_* variables are inlined into the client bundle, so this list
+// is only read behind `import.meta.env.DEV`. In production builds that is the
+// literal `false`, so the minifier drops the env read, the email strings and
+// the unlock branch entirely: production never contains the list and typing a
+// developer email there does nothing. There is no server-side ownership check,
+// which is exactly why this must never ship.
+export const DEVELOPER_EMAILS: readonly string[] = import.meta.env.DEV
+  ? parseDeveloperEmails(import.meta.env.VITE_DEVELOPER_EMAILS as string | undefined)
+  : [];
 
-/** All emails that unlock permanent developer access, normalised to lowercase. */
-export const DEVELOPER_EMAILS: string[] = DEVELOPER_EMAILS_ENV.split(',')
-  .map((entry) => entry.trim().toLowerCase())
-  .filter(Boolean);
-
+/** True only in dev builds, for an email in VITE_DEVELOPER_EMAILS. */
 export const isDeveloperEmail = (email: string): boolean => {
+  if (!import.meta.env.DEV) return false;
   if (!email) return false;
   return DEVELOPER_EMAILS.includes(email.trim().toLowerCase());
 };
@@ -48,6 +61,8 @@ export interface WebPremium {
   email: string;
   plan: 'monthly' | 'yearly';
   currentPeriodEnd: string;
+  /** Set on entitlements created by the dev-only developer unlock. */
+  source?: 'dev';
 }
 
 export const getWebPremium = (): WebPremium | null => {
@@ -56,6 +71,8 @@ export const getWebPremium = (): WebPremium | null => {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as WebPremium;
     if (!parsed?.currentPeriodEnd) return null;
+    // Production ignores (but does not delete) dev-only entitlements.
+    if (!import.meta.env.DEV && parsed.source === 'dev') return null;
     if (new Date(parsed.currentPeriodEnd).getTime() < Date.now()) return null;
     return parsed;
   } catch {
@@ -85,20 +102,24 @@ export async function startWebCheckout(
 }
 
 /**
- * Web purchase restore. Recognises whitelisted developer emails and grants
- * them a long-lived (100-year) entitlement on this device. Everyone else gets
- * "no purchase found" — web checkout no longer exists.
+ * Web purchase restore. Web checkout no longer exists, so this reports
+ * "no purchase found" (null). Dev builds only: a whitelisted developer email
+ * unlocks this device with a long-lived entitlement marked `source: 'dev'`.
  */
 export async function restoreWebPurchase(email: string): Promise<WebPremium | null> {
-  const normalized = email.trim().toLowerCase();
-  if (!isDeveloperEmail(normalized)) return null;
-
-  const devAccess: WebPremium = {
-    email: normalized,
-    plan: 'yearly',
-    // 100 years — lifetime for any practical purpose.
-    currentPeriodEnd: new Date(Date.now() + 100 * 365 * 86400 * 1000).toISOString(),
-  };
-  saveWebPremium(devAccess);
-  return devAccess;
+  if (import.meta.env.DEV) {
+    const normalized = email.trim().toLowerCase();
+    if (isDeveloperEmail(normalized)) {
+      const devAccess: WebPremium = {
+        email: normalized,
+        plan: 'yearly',
+        // 100 years — lifetime for any practical purpose.
+        currentPeriodEnd: new Date(Date.now() + 100 * 365 * 86400 * 1000).toISOString(),
+        source: 'dev',
+      };
+      saveWebPremium(devAccess);
+      return devAccess;
+    }
+  }
+  return null;
 }
