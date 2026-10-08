@@ -1354,7 +1354,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ### Task 7: Operator handoff — grant, regenerate, verify end to end
 
 **Files:**
-- Modify: `src/lib/entitlement.ts` (delete the two RPC casts once types exist)
+- Modify: `src/lib/entitlement.ts` (delete the generic `callRpc` cast once the types exist)
 
 **Interfaces:**
 - Consumes: everything above.
