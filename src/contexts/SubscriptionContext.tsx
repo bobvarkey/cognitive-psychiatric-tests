@@ -13,7 +13,7 @@ import {
 } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 import { toast } from 'sonner';
-import { completeRestoreFromEmailLink, getWebPremium, restoreWebPurchase, type WebPremium } from '@/lib/webBilling';
+import { completeRestoreFromEmailLink, getWebPremium, restoreWebPurchase, restoreWebPurchaseForSession, type WebPremium } from '@/lib/webBilling';
 
 interface PremiumFeatures {
   allAssessments: boolean;
@@ -96,6 +96,30 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       });
     return () => {
       active = false;
+    };
+  }, []);
+
+  // Signed-in users (incl. whitelisted developer accounts, which hold a
+  // permanent server-side record) get their access checked automatically.
+  useEffect(() => {
+    let cancelled = false;
+    let sub: { unsubscribe: () => void } | undefined;
+    const check = () =>
+      restoreWebPurchaseForSession().then(() => {
+        if (!cancelled) setWebPremium(getWebPremium());
+      });
+    import('@/integrations/supabase/client').then(({ supabase }) => {
+      if (cancelled) return;
+      const { data } = supabase.auth.onAuthStateChange((event, session) => {
+        if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+          setTimeout(() => void check(), 0);
+        }
+      });
+      sub = data.subscription;
+    });
+    return () => {
+      cancelled = true;
+      sub?.unsubscribe();
     };
   }, []);
 
