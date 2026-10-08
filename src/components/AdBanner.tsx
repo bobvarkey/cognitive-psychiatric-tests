@@ -2,7 +2,7 @@ import { useSubscription } from '@/contexts/SubscriptionContext';
 import { Zap, X, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { getWebCurrency, WEB_PRICES } from '@/lib/webBilling';
+import { getWebCurrency, yearlySavingPercent, WEB_PRICES } from '@/lib/webBilling';
 
 export const AdBanner = () => {
   const { features, setShowPaywall, isPremium, demoTrialActive } = useSubscription();
@@ -10,6 +10,11 @@ export const AdBanner = () => {
 
   const currency = getWebCurrency();
   const prices = WEB_PRICES[currency];
+  // The banner used to claim a flat "save 20%", which was wrong in both
+  // currencies: INR yearly currently costs slightly more than twelve monthly
+  // payments, and the USD saving is 30%. Derive it, and say nothing when there
+  // is nothing to claim.
+  const savingPercent = yearlySavingPercent(prices.monthly.amount, prices.yearly.amount);
 
   if (isPremium || demoTrialActive || isDismissed) return null;
 
@@ -34,7 +39,7 @@ export const AdBanner = () => {
               Upgrade to Cognito Pro
             </p>
             <p className="text-xs font-bold text-foreground" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.6)' }}>
-              {prices.yearly.display} /year · save 20%, or {prices.monthly.display} /month
+              {prices.yearly.display} /year{savingPercent ? ` · save ${savingPercent}%` : ''}, or {prices.monthly.display} /month
             </p>
           </div>
         </button>

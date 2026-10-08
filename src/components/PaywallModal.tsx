@@ -18,6 +18,7 @@ import {
   verifyRestoreCode,
   getWebCurrency,
   isDeveloperEmail,
+  yearlySavingPercent,
   WEB_PRICES,
   type WebPremium,
 } from '@/lib/webBilling';
@@ -54,20 +55,6 @@ const BENEFITS = [
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const EMAIL_KEY = 'psycognito.billingEmail.v1';
 const RESEND_SECONDS = 60;
-
-/**
- * Percentage saved by paying yearly, or null when that is not a saving.
- *
- * Derived from the prices actually charged rather than hardcoded, because the
- * two catalogues do not agree: in USD the yearly plan is about 30% cheaper than
- * twelve monthly payments, while in INR it is currently slightly *more*
- * expensive. Anything under 1% is rounding noise, not a discount to advertise.
- */
-const yearlySavingPercent = (monthlyAmount: number, yearlyAmount: number): number | null => {
-  if (!(monthlyAmount > 0) || !(yearlyAmount > 0)) return null;
-  const percent = Math.round((1 - yearlyAmount / (monthlyAmount * 12)) * 100);
-  return percent >= 1 ? percent : null;
-};
 
 type RestoreStep = 'closed' | 'email' | 'code';
 
