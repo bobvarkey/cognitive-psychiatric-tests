@@ -10,6 +10,14 @@
 
 **Spec:** `Docs/superpowers/specs/2026-10-08-paywall-developer-access-design.md`
 
+**Reconciled 2026-10-08, after `83551f8`.** That commit landed `entitlement_tier()` and `start_trial()` in `20261008130000_trial.sql`, and `entitlementTier()` and `startTrial()` in `src/lib/entitlement.ts`. This plan was written before it, so three things changed:
+
+- **Task 1 adds a new migration** rather than editing `20261008120000`, which may already be applied, and it also re-expresses `entitlement_tier()` over the new grant reader so the access rule has one home.
+- **Task 3 reuses the generic `callRpc`** that commit introduced, instead of adding a second RPC cast, and re-expresses `entitlementTier()` over the new grant reader. That is what makes the native-build suppression apply to the trial path as well; `entitlement_tier()` collapses `source`, so on its own it cannot tell an admin comp from a paid plan.
+- **Task 4 absorbs the access tier and the `checkingServerAccess` flag** the companion trial plan needs, so that plan's Task 2 no longer adds them: two tasks adding the same state to the same context would fight, and two sources for the tier could disagree. What remains of that task is the server-backed trial start and the retirement of the client-side restart, which it keeps.
+
+**Sequence:** Tasks 1–6 here, then Tasks 1, 3 and 4 of `2026-10-08-paywall-trial-scoping.md`.
+
 ## Global Constraints
 
 - **Additive only.** Nothing existing is removed or changed in behaviour. One more way to hold Pro. The existing RevenueCat store path, the `localStorage` web path, and the demo trial all keep working exactly as they do today.
@@ -36,22 +44,31 @@ Failure modes this plan's tests pin, listed most likely to bite first. Each has 
 ### Task 1: Server — `current_entitlement()` and a `has_premium()` wrapper
 
 **Files:**
-- Modify: `supabase/migrations/20261008120000_entitlements.sql`
+- Create: `supabase/migrations/20261008140000_current_entitlement.sql`
 
 **Interfaces:**
-- Consumes: nothing.
-- Produces: `public.current_entitlement() RETURNS TABLE (plan text, source text, expires_at timestamptz, permanent boolean)`, executable by `authenticated` only, returning at most one row — the caller's own active grant. `public.has_premium() RETURNS boolean`, unchanged in signature and meaning.
+- Consumes: `public.entitlements`, created by `20261008120000_entitlements.sql`.
+- Produces: `public.current_entitlement() RETURNS TABLE (plan text, source text, expires_at timestamptz, permanent boolean)`, executable by `authenticated` only, returning at most one row — the caller's own active grant. `public.has_premium() RETURNS boolean` and `public.entitlement_tier() RETURNS text`, both unchanged in signature and meaning, now both thin wrappers over it.
 
 **Why a table-returning function:** the client needs `source` to apply the native suppression rule. Returning it from the same call that answers "do they hold a grant" keeps the check to one round trip and one source of truth.
 
+**Why a new file, not an edit.** `20261008120000` may already have been applied, and `20261008130000` has since been added on top of it. Rewriting an applied migration makes the repository disagree with the database. A new file is idempotent either way: `CREATE OR REPLACE` on functions that may or may not already exist.
+
+**Why `entitlement_tier()` is re-expressed too.** That function (`20261008130000`) currently decides the tier itself. Left alone there would be two SQL access rules, and the tier path — the one the trial uses — would keep returning `'full'` for an admin comp inside the App Store build, which is exactly what this plan exists to prevent. Making it delegate to `current_entitlement()` gives the rule one home, and keeps `start_trial()`'s return value working since it calls this function.
+
 **Note on `has_premium()`:** it keeps a caller — `AccountAccessCard.tsx:41` calls `hasPremium()` to render the access badge. It is *not* an uncalled function, so it stays.
 
-- [ ] **Step 1: Edit the migration**
+- [ ] **Step 1: Create the migration**
 
-Open `supabase/migrations/20261008120000_entitlements.sql`. Replace the existing `has_premium()` definition and its `REVOKE`/`GRANT` block (currently lines 34–54) with the following. Leave the table definition, the RLS policy, the no-write-policy comment and the admin-grant footer exactly as they are.
+Create `supabase/migrations/20261008140000_current_entitlement.sql`:
 
 ```sql
--- The caller's active grant, in full.
+-- The caller's active grant, in full, and the two functions derived from it.
+--
+-- Adds no table and no policy: it only reads what `20261008120000` created. Run
+-- after `20261008120000` and `20261008130000`.
+
+-- The caller's active grant.
 --
 -- SECURITY INVOKER (the default) on purpose: the caller's own RLS read policy
 -- applies, so this can only ever see the caller's own row. `now()` is the
@@ -91,27 +108,48 @@ $$;
 -- Kept verbatim: anonymous callers cannot ask; signed-in callers can.
 REVOKE EXECUTE ON FUNCTION public.has_premium() FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.has_premium() TO authenticated;
+
+-- The tier, as `start_trial()` expects to return it. Rewritten from
+-- `20261008130000` to delegate, so there is one rule rather than two.
+CREATE OR REPLACE FUNCTION public.entitlement_tier()
+RETURNS text
+LANGUAGE sql
+STABLE
+SET search_path = public
+AS $$
+  SELECT COALESCE((
+    SELECT CASE WHEN e.source = 'trial' THEN 'trial' ELSE 'full' END
+    FROM public.current_entitlement() e
+  ), 'none');
+$$;
+
+REVOKE EXECUTE ON FUNCTION public.entitlement_tier() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.entitlement_tier() TO authenticated;
 ```
 
-- [ ] **Step 2: Operator applies the migration**
+- [ ] **Step 2: Operator applies the migrations**
 
-Claude cannot reach the Supabase project. The operator runs the edited file against project `lusgyknbmprhmxbkkdbo` (Supabase SQL editor, or `supabase db push`).
+Claude cannot reach the Supabase project. The operator applies, in order, against project `lusgyknbmprhmxbkkdbo` (Supabase SQL editor, or `supabase db push`):
 
-Expected: no error. If the table already exists under a different definition, stop and re-check before applying — the edit assumes the table is absent, which `src/integrations/supabase/types.ts` confirms (it lists `web_subscriptions` but not `entitlements`).
+1. `supabase/migrations/20261008120000_entitlements.sql` — the table, its RLS policy and `has_premium()`
+2. `supabase/migrations/20261008130000_trial.sql` — `entitlement_tier()` and `start_trial()`
+3. `supabase/migrations/20261008140000_current_entitlement.sql` — this task
+
+Expected: no error. `src/integrations/supabase/types.ts` currently contains no `entitlements` entry at all, which confirms none of the three has been applied.
 
 - [ ] **Step 3: Operator verifies the functions exist and are correctly locked down**
 
 Run in the Supabase SQL editor:
 
 ```sql
--- 1. Both functions exist, with the right shape.
+-- 1. All three functions exist, with the right shape.
 SELECT proname, prosecdef AS security_definer, proretset AS returns_set
 FROM pg_proc
-WHERE proname IN ('current_entitlement', 'has_premium')
+WHERE proname IN ('current_entitlement', 'has_premium', 'entitlement_tier')
 ORDER BY proname;
 ```
 
-Expected: two rows. `returns_set` is `true` for `current_entitlement`, `false` for `has_premium`. `security_definer` is `false` for both — that is what makes the caller's RLS policy apply.
+Expected: three rows. `returns_set` is `true` for `current_entitlement`, `false` for the other two. `security_definer` is `false` for all three — that is what makes the caller's RLS policy apply. `start_trial` is the only `DEFINER` function in this schema, and it is deliberately not in this list.
 
 ```sql
 -- 2. anon cannot execute, authenticated can.
@@ -119,7 +157,7 @@ SELECT p.proname, r.rolname
 FROM pg_proc p
 JOIN pg_proc_acl a ON a.prooid = p.oid
 JOIN pg_roles r ON r.oid = a.grantee
-WHERE p.proname IN ('current_entitlement', 'has_premium');
+WHERE p.proname IN ('current_entitlement', 'has_premium', 'entitlement_tier');
 ```
 
 Expected: rows naming `authenticated` only. No row granting `anon` or `PUBLIC`.
@@ -134,12 +172,16 @@ Expected: exactly one policy (`Users read own entitlement`), `polcmd = 'r'` (SEL
 - [ ] **Step 4: Commit**
 
 ```bash
-git add supabase/migrations/20261008120000_entitlements.sql
+git add supabase/migrations/20261008140000_current_entitlement.sql
 git commit -m "feat(entitlement): report the caller's grant from current_entitlement()
 
-has_premium() becomes a thin wrapper so the access rule lives in one
-place. The table, its RLS policy and the deliberate absence of write
-policies are unchanged.
+has_premium() and entitlement_tier() become thin wrappers, so the access
+rule lives in one place rather than two. entitlement_tier() in particular
+had to delegate: it collapses source, so on its own it cannot tell an
+admin comp from a paid plan, which is what the native suppression needs.
+
+A new migration rather than an edit, since 20261008120000 may already be
+applied.
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ```
@@ -307,8 +349,8 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Test: `src/lib/entitlement.test.ts`
 
 **Interfaces:**
-- Consumes: `isNativeApp()` from Task 2.
-- Produces: `EntitlementPlan`, `EntitlementSource`, `Entitlement`; `currentEntitlement(): Promise<Entitlement | null>`; `serverEntitlement(): Promise<Entitlement | null>`; `serverPremium(): Promise<boolean>`.
+- Consumes: `isNativeApp()` from Task 2; the existing generic `callRpc` in `entitlement.ts`.
+- Produces: `EntitlementPlan`, `EntitlementSource`, `Entitlement`; `currentEntitlement(): Promise<Entitlement | null>`; `serverEntitlement(): Promise<Entitlement | null>`; `serverPremium(): Promise<boolean>`. **Changes** `entitlementTier()` and `startTrial()` to derive from the same grant, so the native rule applies to them too.
 
 **Existing exports unchanged:** `requestEmailCode`, `verifyEmailCode`, `signOut`, `currentAuthUser`, `hasPremium`, `onAuthChange`, `AuthResult`, `AuthUser`.
 
@@ -327,7 +369,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 const native = vi.hoisted(() => ({ isNativeApp: vi.fn() }));
 vi.mock('@/lib/appbuild/revenuecat', () => ({ isNativeApp: native.isNativeApp }));
 
-import { currentEntitlement, serverEntitlement, serverPremium } from './entitlement';
+import { currentEntitlement, entitlementTier, serverEntitlement, serverPremium, startTrial } from './entitlement';
 
 const row = (over: Partial<Record<string, unknown>> = {}) => ({
   plan: 'developer',
@@ -443,6 +485,71 @@ describe('serverEntitlement', () => {
     expect(await serverEntitlement()).toBeNull();
   });
 });
+
+describe('entitlementTier', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('is none with no grant', async () => {
+    native.isNativeApp.mockResolvedValue(false);
+    sb.rpc.mockResolvedValue({ data: [], error: null });
+    expect(await entitlementTier()).toBe('none');
+  });
+
+  it('is full for a paid grant', async () => {
+    native.isNativeApp.mockResolvedValue(false);
+    sb.rpc.mockResolvedValue({
+      data: [row({ plan: 'yearly', source: 'razorpay', permanent: false })],
+      error: null,
+    });
+    expect(await entitlementTier()).toBe('full');
+  });
+
+  it('is trial for a trial grant', async () => {
+    native.isNativeApp.mockResolvedValue(false);
+    sb.rpc.mockResolvedValue({
+      data: [row({ plan: 'demo', source: 'trial', permanent: false })],
+      error: null,
+    });
+    expect(await entitlementTier()).toBe('trial');
+  });
+
+  it('is none for an admin grant inside the native app', async () => {
+    // The whole reason the tier is derived rather than asked for. Asking
+    // `entitlement_tier()` directly would answer 'full' here.
+    native.isNativeApp.mockResolvedValue(true);
+    sb.rpc.mockResolvedValue({ data: [row()], error: null });
+    expect(await entitlementTier()).toBe('none');
+  });
+});
+
+describe('startTrial', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useRealTimers();
+    native.isNativeApp.mockResolvedValue(false);
+  });
+
+  it('re-reads the grant rather than trusting the returned string', async () => {
+    sb.rpc.mockImplementation((fn: string) =>
+      Promise.resolve(
+        fn === 'start_trial'
+          ? { data: 'trial', error: null }
+          : { data: [row({ plan: 'demo', source: 'trial', permanent: false })], error: null },
+      ),
+    );
+    expect(await startTrial()).toBe('trial');
+    expect(sb.rpc).toHaveBeenCalledWith('start_trial');
+    expect(sb.rpc).toHaveBeenCalledWith('current_entitlement');
+  });
+
+  it('is none when the trial cannot be started', async () => {
+    sb.rpc.mockResolvedValue({ data: null, error: { message: 'not authenticated' } });
+    expect(await startTrial()).toBe('none');
+  });
+});
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
@@ -473,7 +580,7 @@ export interface Entitlement {
 }
 ```
 
-Add below the existing `callHasPremium` cast:
+`entitlement.ts` already has a generic `callRpc` cast, added by `83551f8`. Reuse it; do not add a second one. Add beside it:
 
 ```ts
 /** A row as PostgREST returns it: snake_case, and strings for the TEXT columns. */
@@ -485,14 +592,11 @@ interface EntitlementRow {
 }
 
 /**
- * `current_entitlement` is likewise absent from the generated `Database` types
- * until the migration is applied and the types are regenerated. The cast is
- * confined to this one call; delete it once the types catch up (Task 7).
- * It returns a set, so the payload is an array of rows.
+ * `current_entitlement` returns a set, so the payload is an array of rows —
+ * PostgREST does not unwrap it. Anything that is not an array means no rows.
  */
-const callCurrentEntitlement = supabase.rpc as unknown as (
-  fn: 'current_entitlement',
-) => Promise<{ data: EntitlementRow[] | null; error: { message: string } | null }>;
+const asEntitlementRows = (data: unknown): EntitlementRow[] =>
+  Array.isArray(data) ? (data as EntitlementRow[]) : [];
 
 /** A hung request is a failed request. Bound it so the gate can always clear. */
 const RPC_TIMEOUT_MS = 5000;
@@ -519,13 +623,13 @@ async function withTimeout<T>(work: Promise<T>, fallback: T): Promise<T> {
  * its cache or its clock can turn that into a grant.
  */
 export async function currentEntitlement(): Promise<Entitlement | null> {
-  const { data, error } = await withTimeout(
-    callCurrentEntitlement('current_entitlement'),
-    { data: null, error: { message: 'timed out' } },
-  );
+  const { data, error } = await withTimeout(callRpc('current_entitlement'), {
+    data: null,
+    error: { message: 'timed out' },
+  });
   if (error) return null;
 
-  const row = Array.isArray(data) ? data[0] : null;
+  const row = asEntitlementRows(data)[0];
   if (!row) return null;
 
   return {
@@ -563,10 +667,46 @@ export async function serverPremium(): Promise<boolean> {
 }
 ```
 
+Then **change the two functions `83551f8` added**, so the same device rule governs them. `entitlement_tier()` is a second access rule that collapses `source`: it answers `'full'` for an admin comp and for a paid plan alike, so on its own it would honour the owner's comp inside the App Store build — the exact thing this plan exists to prevent. Replace the existing `entitlementTier()` body and delete the now-unused `asTier` helper:
+
+```ts
+/**
+ * The tier a grant represents. Pure, and exported, so the context can derive a
+ * tier from the grant it already holds instead of making a second round trip —
+ * and so there is one derivation rather than two that could drift.
+ */
+export const tierOf = (ent: Entitlement | null): EntitlementTier =>
+  !ent ? 'none' : ent.source === 'trial' || ent.source === 'demo' ? 'trial' : 'full';
+
+/**
+ * The access tier, derived from the same grant `serverPremium()` reads.
+ *
+ * Derived, not asked separately: `entitlement_tier()` collapses `source`, so it
+ * cannot tell an admin comp from a paid plan, and the native suppression above
+ * has to apply to the trial path as well as the paid one.
+ */
+export async function entitlementTier(): Promise<EntitlementTier> {
+  return tierOf(await serverEntitlement());
+}
+```
+
+And replace `startTrial()`'s body, so it reports the tier this device will actually get rather than the string the database returned:
+
+```ts
+export async function startTrial(): Promise<EntitlementTier> {
+  const { error } = await callRpc('start_trial');
+  if (error) return 'none';
+  // Re-derive rather than trusting the returned string: a developer account in
+  // the native build would otherwise be told its trial started while the gate
+  // still refuses it.
+  return entitlementTier();
+}
+```
+
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `npx vitest run src/lib/entitlement.test.ts`
-Expected: PASS, 12 tests.
+Expected: PASS, 18 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -580,6 +720,10 @@ gate permanently blank. serverEntitlement() applies the native
 suppression rule and keeps the source visible, so a three-day trial can
 be told apart from a paid plan; serverPremium() is that, narrowed.
 
+entitlementTier() and startTrial() now derive from the same grant.
+Asking entitlement_tier() directly would answer full for an admin comp,
+honouring it inside the App Store build.
+
 Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ```
 
@@ -592,10 +736,12 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 - Test: `src/contexts/SubscriptionContext.test.tsx`
 
 **Interfaces:**
-- Consumes: `currentAuthUser`, `onAuthChange`, `serverPremium` from Task 3.
-- Produces: context value gains `serverPremium: boolean`, `checkingServerAccess: boolean`; `premiumSource` widens to `'store' | 'web' | 'demo' | 'developer' | 'none'`.
+- Consumes: `currentAuthUser`, `onAuthChange`, `serverEntitlement`, `tierOf` from Task 3.
+- Produces: context value gains `entitlement: Entitlement | null`, `tier: EntitlementTier`, `serverPremium: boolean`, `checkingServerAccess: boolean`, `refreshEntitlement: () => Promise<void>`; `premiumSource` widens to `'store' | 'web' | 'demo' | 'developer' | 'none'`.
 
-**Additive.** `isPremium = isPremiumUser() || !!webPremium || serverPremium`. Do not change `isPremiumUser`, the `webPremium` path, the demo trial, or `restoreWebPurchaseForSession`.
+**Additive.** `isPremium = isPremiumUser() || !!webPremium || serverPremium`. Do not change `isPremiumUser`, the `webPremium` path, the demo trial, or `restoreWebPurchaseForSession`. Nothing is removed here — the trial plan's Task 2 removes the restart path, and separating that from this task is what keeps this one additive.
+
+**The grant is kept, not a boolean.** Its `source` is what distinguishes a three-day trial from a paid plan, and the trial plan's assessment lock needs exactly that. `tierOf()` derives the tier from it. `refreshEntitlement` is exposed so a caller that has just changed the account's state — by starting a trial — can adopt the server's new answer rather than assume one.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -610,7 +756,10 @@ const ent = vi.hoisted(() => ({
   serverEntitlement: vi.fn(),
   onAuthChange: vi.fn(),
 }));
-vi.mock('@/lib/entitlement', () => ({
+vi.mock('@/lib/entitlement', async (orig) => ({
+  // `tierOf` is pure, so the real one is used rather than a stub — stubbing it
+  // would let the context and the module it derives from disagree.
+  ...(await orig<typeof import('@/lib/entitlement')>()),
   currentAuthUser: ent.currentAuthUser,
   serverEntitlement: ent.serverEntitlement,
   onAuthChange: ent.onAuthChange,
@@ -777,7 +926,7 @@ Expected: FAIL — `checkingServerAccess` and `serverPremium` are `undefined`, s
 In `src/contexts/SubscriptionContext.tsx`, add an import line:
 
 ```ts
-import { currentAuthUser, onAuthChange, serverEntitlement, type Entitlement } from '@/lib/entitlement';
+import { currentAuthUser, onAuthChange, serverEntitlement, tierOf, type Entitlement, type EntitlementTier } from '@/lib/entitlement';
 ```
 
 Extend `SubscriptionContextType` (inside the interface, after `premiumSource`):
@@ -785,59 +934,57 @@ Extend `SubscriptionContextType` (inside the interface, after `premiumSource`):
 ```ts
   /** Where the current premium access comes from. */
   premiumSource: 'store' | 'web' | 'demo' | 'developer' | 'none';
+  /** The caller's grant as this device may honour it, or null. Keeps `source`. */
+  entitlement: Entitlement | null;
+  /** The tier that grant represents, or 'none'. Derived from `entitlement`. */
+  tier: EntitlementTier;
   /** The server's decision for this device, composed with the native rule. */
   serverPremium: boolean;
   /** True from mount until the first server answer, right or wrong. */
   checkingServerAccess: boolean;
+  /** Re-ask the server. For callers that have just changed the account's state. */
+  refreshEntitlement: () => Promise<void>;
 ```
 
 Replace the existing `premiumSource` property declaration in the interface (it is currently typed `'store' | 'web' | 'demo' | 'none'` on one line) with the widened one above — do not leave two declarations.
 
-Add the state, beside the existing `webPremium` state. The whole grant is kept,
-not a boolean, because its `source` is what distinguishes a three-day trial from
-a paid plan:
+Add the state, beside the existing `webPremium` state:
 
 ```ts
   const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
   const [checkingServerAccess, setCheckingServerAccess] = useState(true);
+  // Guards against a slow earlier check overwriting a newer one: a sign-out
+  // followed by a sign-in can leave two in flight, and the older must not win.
+  const seqRef = useRef(0);
 ```
 
-Add the effect, after the existing session-restore effect (the one ending at what is currently line 124):
+Extend the `react` import at the top of the file to include `useCallback` and `useRef`.
+
+Add the reader after the existing session-restore effect (the one currently ending at line 124). It is a `useCallback` rather than an effect-local function so `refreshEntitlement` can be handed to callers:
 
 ```ts
-  // The server's answer, asked once on mount and again whenever the session
-  // changes. `seq` guards against a slow earlier check overwriting a newer one:
-  // a sign-out followed by a sign-in can leave two checks in flight, and the
-  // older answer must not win.
-  useEffect(() => {
-    let cancelled = false;
-    let seq = 0;
-
-    const check = async () => {
-      const mine = ++seq;
-      let grant: Entitlement | null = null;
-      try {
-        const who = await currentAuthUser();
-        // No session, no question: an anonymous caller can hold no grant.
-        if (who) grant = await serverEntitlement();
-      } catch {
-        grant = null;
-      }
-      if (cancelled || mine !== seq) return;
-      setEntitlement(grant);
-      setCheckingServerAccess(false);
-    };
-
-    void check();
-    const unsubscribe = onAuthChange(() => {
-      void check();
-    });
-
-    return () => {
-      cancelled = true;
-      unsubscribe();
-    };
+  const refreshEntitlement = useCallback(async () => {
+    const mine = ++seqRef.current;
+    let grant: Entitlement | null = null;
+    try {
+      const who = await currentAuthUser();
+      // No session, no question: an anonymous caller can hold no grant.
+      if (who) grant = await serverEntitlement();
+    } catch {
+      grant = null;
+    }
+    // A newer check has started; this answer is stale and must be discarded.
+    if (mine !== seqRef.current) return;
+    setEntitlement(grant);
+    setCheckingServerAccess(false);
   }, []);
+
+  useEffect(() => {
+    void refreshEntitlement();
+    return onAuthChange(() => {
+      void refreshEntitlement();
+    });
+  }, [refreshEntitlement]);
 ```
 
 Change the premium computation:
@@ -871,11 +1018,14 @@ everything. `developer` outranks `demo` so the owner sees why they have access:
               : 'none';
 ```
 
-Add both fields to the `value` object literal, after `premiumSource`:
+Add these to the `value` object literal, after `premiumSource`:
 
 ```ts
+    entitlement,
+    tier: tierOf(entitlement),
     serverPremium: entitlement !== null,
     checkingServerAccess,
+    refreshEntitlement,
 ```
 
 - [ ] **Step 4: Run the test to verify it passes**
@@ -1249,9 +1399,9 @@ supabase gen types typescript --project-id lusgyknbmprhmxbkkdbo > src/integratio
 Run: `grep -n "current_entitlement\|has_premium" src/integrations/supabase/types.ts`
 Expected: both names present. If either is missing the regeneration did not pick up the migration — stop and re-run step 1.
 
-- [ ] **Step 5: Delete the two RPC casts**
+- [ ] **Step 5: Delete the RPC cast**
 
-In `src/lib/entitlement.ts`, remove `callHasPremium` and `callCurrentEntitlement` and their doc comments, and call `supabase.rpc(...)` directly:
+`83551f8` left one generic cast, `callRpc`, covering every function. Once the types regenerate it is unnecessary. In `src/lib/entitlement.ts`, remove `callRpc` and its doc comment, delete the `asEntitlementRows` helper, and call `supabase.rpc(...)` directly, narrowing with the generated type. If the generated types name the row shape, prefer it over the hand-written `EntitlementRow` interface, which can then go too:
 
 ```ts
 export async function hasPremium(): Promise<boolean> {
@@ -1263,12 +1413,14 @@ export async function hasPremium(): Promise<boolean> {
 
 ```ts
 export async function currentEntitlement(): Promise<Entitlement | null> {
-  const { data, error } = await withTimeout(
-    supabase.rpc('current_entitlement'),
-    { data: null, error: { message: 'timed out' } },
-  );
+  const { data, error } = await withTimeout(supabase.rpc('current_entitlement'), {
+    data: null,
+    error: { message: 'timed out' },
+  });
   if (error) return null;
 
+  // A set-returning function comes back as an array of rows; PostgREST does not
+  // unwrap it.
   const row = Array.isArray(data) ? data[0] : null;
   if (!row) return null;
 
@@ -1281,8 +1433,10 @@ export async function currentEntitlement(): Promise<Entitlement | null> {
 }
 ```
 
+Leave the other callers of `callRpc` — `entitlementTier` is gone, but `startTrial` still calls `supabase.rpc('start_trial')` and can be switched the same way.
+
 Run: `npx tsc --noEmit -p tsconfig.app.json`
-Expected: exit 0. If `supabase.rpc` does not accept these names, the types did not regenerate — do not re-add the casts, fix step 3.
+Expected: exit 0. If `supabase.rpc` does not accept these names, the types did not regenerate — do not re-add the cast, fix step 3.
 
 Run: `npx vitest run src/lib/entitlement.test.ts`
 Expected: PASS. The test mocks `supabase.rpc` directly, so it is indifferent to the cast.
@@ -1310,10 +1464,10 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 ## What this plan does not do
 
-Deliberately out of scope, to be covered by a separate follow-on plan:
+Deliberately out of scope, and carried by `2026-10-08-paywall-trial-scoping.md` (Tasks 1, 3 and 4):
 
-- **Scoping the trial to 25% of assessments.** Requires a `trial` flag on registry entries, a per-assessment lock in `AssessmentSelector`, a route-level guard, and the paywall trigger for a locked test.
-- **Anchoring the trial server-side so it cannot be restarted.** Requires a trial-start edge function writing `entitlements` with `source: 'trial'`, and the paywall's restart button removed.
+- **Scoping the trial to a hand-picked 20 assessments.** Requires `src/config/trialScope.ts` to key on assessment keys rather than categories, a lock at the three points `AssessmentSelector` can open a test, and `AuthGuard` refusing a direct URL to one outside the set.
+- **Anchoring the trial server-side so it cannot be restarted.** The SQL half already landed in `20261008130000_trial.sql` (`start_trial()`, idempotent, keyed to `auth.uid()`, expiring on the database clock); the client half — the paywall's restart button removed — has not.
 - **Removing the dead close button** at `PaywallModal.tsx:320`, which is wired to a no-op `onClose` and so looks dismissable when it is not.
 
-Both of the first two contradict the current spec's non-goals ("No change to the demo trial, its length, or its restartability"; "No change to how the paywall looks, where it appears, or when it is shown"), so the spec must be revised before that plan is written.
+The first two contradict the spec as it stood when this plan was written ("No change to the demo trial, its length, or its restartability"; "No change to how the paywall looks, where it appears, or when it is shown"). The spec was revised for them in `ad34012`, and that follow-on plan argues from the revised text. This plan's own Task 4 is the one interface the trial plan depends on — the `entitlement`, `tier` and `refreshEntitlement` fields it needs to tell a trial's subset apart from a paid plan's full library — so run this plan first.

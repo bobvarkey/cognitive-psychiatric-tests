@@ -4,13 +4,15 @@
 
 **Goal:** Make the three-day trial a real gate: it unlocks the 20 assessments of the registry's Triage & Core Flows section and nothing else, it is startable once per account because the server records it, and every other assessment meets the paywall.
 
-**Architecture:** The server half is already built and committed (`83551f8`) — `entitlement_tier()` and `start_trial()` in `20261008130000_trial.sql`, `entitlementTier()` and `startTrial()` in `src/lib/entitlement.ts`. This plan does not rebuild it. It swaps the one thing that half gets wrong — the scope rule, which currently opens 38 assessments by category and excludes `triage` — then wires the tier into the app and enforces it at the three points that can reach an assessment.
+**Architecture:** The server half is already built and committed (`83551f8`) — `entitlement_tier()` and `start_trial()` in `20261008130000_trial.sql`, `entitlementTier()` and `startTrial()` in `src/lib/entitlement.ts`. This plan does not rebuild it. It swaps the one thing that half gets wrong — the scope rule, which currently opens 38 assessments by category and excludes `triage` — retires the client-side demo restart, and enforces the resulting tier at the three points that can reach an assessment. The tier itself reaches the UI through the foundation plan's `SubscriptionContext`, which this plan consumes rather than extends.
 
 **Tech Stack:** Vite + React 18 + TypeScript, Supabase (Postgres RLS, SQL functions), Tailwind + shadcn/ui, Vitest 4 + @testing-library/react (jsdom).
 
 **Spec:** `Docs/superpowers/specs/2026-10-08-paywall-developer-access-design.md` — sections 8, 9 and 10. Global Constraints and Review Focus below are this plan's own; the spec's apply as well.
 
-**Depends on:** `Docs/superpowers/plans/2026-10-08-paywall-developer-access.md` (the foundation) for the native-build work only. The trial no longer depends on it: the tier comes from `entitlement_tier()`, not from the foundation's `premiumSource`. See "Open interface" at the end.
+**Depends on:** `Docs/superpowers/plans/2026-10-08-paywall-developer-access.md` (the foundation). **Run that plan's Tasks 1–6 first.** Its Task 4 puts `tier`, `checkingServerAccess` and `refreshEntitlement` on `SubscriptionContext`; Tasks 3 and 4 here consume all three. Two tasks adding `checkingServerAccess` to the same context would fight, so this plan adds none of them.
+
+The tier itself comes from `entitlement_tier()`, which the foundation's Task 3 re-expresses over `serverEntitlement()` — that is what makes the App Store's admin-comp suppression cover the trial path as well as the paid one. See "The interface this plan takes from the foundation" at the end.
 
 ## Global Constraints
 
@@ -215,19 +217,21 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 ---
 
-### Task 2: Put the tier in the subscription context
+### Task 2: Retire the client-minted demo restart
 
 **Files:**
 - Modify: `src/contexts/SubscriptionContext.tsx`
 - Modify: `src/components/SettingsView.tsx:36` (the only other consumer of the removed `restartDemoTrial`)
 - Modify: `src/services/subscriptionService.ts` (delete `resetDemoTrial` at line 100)
-- Test: `src/contexts/SubscriptionContext.test.tsx` (extend)
+- Test: `src/contexts/SubscriptionContext.trial.test.tsx` (new)
 
 **Interfaces:**
-- Consumes: `entitlementTier()`, `startTrial()`, `onAuthChange()` from `@/lib/entitlement` (all already committed).
-- Produces: the context gains `tier: EntitlementTier`, `hasFullAccess: boolean`, `checkingServerAccess: boolean`, and `startTrial: () => Promise<EntitlementTier>`; it loses `restartDemoTrial`.
+- Consumes: `tier`, `checkingServerAccess` and `refreshEntitlement` from the foundation plan's Task 4 — **do not re-add them here**; the context already has them by the time this task runs. Also `startTrial()` from `@/lib/entitlement`, already committed by `83551f8`.
+- Produces: the context gains `startTrial: () => Promise<EntitlementTier>`; it loses `restartDemoTrial`. Task 4 here calls the new member.
 
-**The client could mint itself a fresh three days,** and a button in the paywall did exactly that. `startTrial()` now asks the server, which refuses a second trial for any account that already holds a row.
+**Why a new test file.** The foundation's Task 4 owns `src/contexts/SubscriptionContext.test.tsx` and mocks `@/lib/entitlement` there. Two tasks editing one test file — and two different `vi.mock` factories for the same module — would collide. This task gets its own file instead.
+
+**The client could mint itself a fresh three days,** and a button in the paywall did exactly that. `startTrial()` now asks the server, which refuses a second trial for any account that already holds a row. What remains for the client is to adopt the tier the server reports and to stop offering the reset.
 
 - [ ] **Step 1: Find every consumer of the restart path**
 
@@ -236,104 +240,61 @@ Expected: the definition in `subscriptionService.ts:100`, the context wiring at 
 
 - [ ] **Step 2: Write the failing test**
 
-Append to `src/contexts/SubscriptionContext.test.tsx`. Add an `ent` mock for the entitlement module if the file does not already have one:
-
-```ts
-const ent = vi.hoisted(() => ({
-  entitlementTier: vi.fn(),
-  startTrial: vi.fn(),
-  onAuthChange: vi.fn(),
-}));
-vi.mock('@/lib/entitlement', () => ent);
-```
-
-Add a module-level capture and a `Probe` that exposes the new fields:
+Create `src/contexts/SubscriptionContext.trial.test.tsx`. The entitlement module is stubbed only for `startTrial` and `onAuthChange`; `currentEntitlement` is what the foundation's Task 4 effect already calls, so it is stubbed too, and `tierOf` is left real:
 
 ```tsx
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, act, waitFor, screen } from '@testing-library/react';
+
+const ent = vi.hoisted(() => ({
+  currentAuthUser: vi.fn(),
+  serverEntitlement: vi.fn(),
+  onAuthChange: vi.fn(),
+  startTrial: vi.fn(),
+}));
+vi.mock('@/lib/entitlement', async (orig) => ({
+  // `tierOf` stays real: stubbing it would let the context and the module it
+  // derives its tier from disagree, which is the bug this test exists to catch.
+  ...(await orig<typeof import('@/lib/entitlement')>()),
+  currentAuthUser: ent.currentAuthUser,
+  serverEntitlement: ent.serverEntitlement,
+  onAuthChange: ent.onAuthChange,
+  startTrial: ent.startTrial,
+}));
+
+import { useSubscription, SubscriptionProvider } from './SubscriptionContext';
+
 let current: ReturnType<typeof useSubscription> | null = null;
 
 const Probe = () => {
-  const value = useSubscription();
-  current = value;
+  current = useSubscription();
   return (
     <div>
-      <span data-testid="tier">{value.tier}</span>
-      <span data-testid="full">{String(value.hasFullAccess)}</span>
-      <span data-testid="checking">{String(value.checkingServerAccess)}</span>
+      <span data-testid="tier">{current.tier}</span>
+      <span data-testid="checking">{String(current.checkingServerAccess)}</span>
+      <span data-testid="restart">{String('restartDemoTrial' in current)}</span>
     </div>
   );
 };
-```
 
-```ts
-describe('SubscriptionContext tier', () => {
+const renderProbe = () =>
+  render(
+    <SubscriptionProvider>
+      <Probe />
+    </SubscriptionProvider>,
+  );
+
+describe('SubscriptionContext trial start', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     ent.onAuthChange.mockReturnValue(() => {});
+    ent.currentAuthUser.mockResolvedValue({ id: 'u1', email: 'someone@example.com' });
+    ent.serverEntitlement.mockResolvedValue(null);
   });
 
-  it('starts at none, then reports the server tier', async () => {
-    ent.entitlementTier.mockResolvedValue('trial');
-    render(
-      <SubscriptionProvider>
-        <Probe />
-      </SubscriptionProvider>,
-    );
-    await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
-    expect(screen.getByTestId('tier').textContent).toBe('trial');
-    expect(screen.getByTestId('full').textContent).toBe('false');
-  });
-
-  it('reports full access for a full tier', async () => {
-    ent.entitlementTier.mockResolvedValue('full');
-    render(
-      <SubscriptionProvider>
-        <Probe />
-      </SubscriptionProvider>,
-    );
-    await waitFor(() => expect(screen.getByTestId('full').textContent).toBe('true'));
-  });
-
-  it('fails closed when the tier cannot be read', async () => {
-    ent.entitlementTier.mockRejectedValue(new Error('offline'));
-    render(
-      <SubscriptionProvider>
-        <Probe />
-      </SubscriptionProvider>,
-    );
-    await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
-    expect(screen.getByTestId('tier').textContent).toBe('none');
-  });
-
-  it('re-reads the tier when the session changes', async () => {
-    ent.entitlementTier.mockResolvedValue('none');
-    let fire: (() => void) | null = null;
-    ent.onAuthChange.mockImplementation((cb: () => void) => {
-      fire = cb;
-      return () => {};
-    });
-    render(
-      <SubscriptionProvider>
-        <Probe />
-      </SubscriptionProvider>,
-    );
-    await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
-
-    ent.entitlementTier.mockResolvedValue('full');
-    await act(async () => {
-      fire!();
-    });
-    await waitFor(() => expect(screen.getByTestId('tier').textContent).toBe('full'));
-  });
-
-  it('adopts the tier the server returns when a trial starts', async () => {
-    ent.entitlementTier.mockResolvedValue('none');
+  it('starts a trial through the server and adopts the tier it reports', async () => {
     ent.startTrial.mockResolvedValue('trial');
-    render(
-      <SubscriptionProvider>
-        <Probe />
-      </SubscriptionProvider>,
-    );
+    renderProbe();
     await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
 
     let result: string | undefined;
@@ -341,18 +302,14 @@ describe('SubscriptionContext tier', () => {
       result = await current!.startTrial();
     });
 
+    expect(ent.startTrial).toHaveBeenCalled();
     expect(result).toBe('trial');
-    expect(screen.getByTestId('tier').textContent).toBe('trial');
+    await waitFor(() => expect(screen.getByTestId('tier').textContent).toBe('trial'));
   });
 
-  it('stays at none when the server refuses to start a trial', async () => {
-    ent.entitlementTier.mockResolvedValue('none');
+  it('stays at none when the server refuses a second trial', async () => {
     ent.startTrial.mockResolvedValue('none');
-    render(
-      <SubscriptionProvider>
-        <Probe />
-      </SubscriptionProvider>,
-    );
+    renderProbe();
     await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
 
     await act(async () => {
@@ -361,95 +318,52 @@ describe('SubscriptionContext tier', () => {
 
     expect(screen.getByTestId('tier').textContent).toBe('none');
   });
+
+  it('no longer exposes the client-side restart', async () => {
+    renderProbe();
+    await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
+    expect(screen.getByTestId('restart').textContent).toBe('false');
+  });
 });
 ```
 
 - [ ] **Step 3: Run the test to verify it fails**
 
-Run: `npx vitest run src/contexts/SubscriptionContext.test.tsx`
-Expected: FAIL — `value.tier` and `value.startTrial` are undefined.
+Run: `npx vitest run src/contexts/SubscriptionContext.trial.test.tsx`
+Expected: FAIL — `current.startTrial` is not a function, and `restartDemoTrial` is still present.
 
 - [ ] **Step 4: Implement**
 
-In `src/contexts/SubscriptionContext.tsx`, add the import:
+In `src/contexts/SubscriptionContext.tsx`, extend the existing entitlement import (added by the foundation's Task 4) to bring in `startTrial`, aliased so it does not shadow the context member of the same name:
 
 ```ts
-import { entitlementTier, onAuthChange, startTrial as requestTrial, type EntitlementTier } from '@/lib/entitlement';
+import { currentAuthUser, onAuthChange, serverEntitlement, startTrial as requestTrial, tierOf, type Entitlement, type EntitlementTier } from '@/lib/entitlement';
 ```
 
 Add to `SubscriptionContextType`, replacing the `restartDemoTrial` member:
 
 ```ts
-  /** The access tier the server reports: everything, the trial section, or nothing. */
-  tier: EntitlementTier;
-  /** True only for a paid or developer entitlement — everything is open. */
-  hasFullAccess: boolean;
-  /** True until the first tier read settles, so the UI can avoid a flash of paywall. */
-  checkingServerAccess: boolean;
   /** Ask the server to start the 3-day trial. Returns the tier afterwards. */
   startTrial: () => Promise<EntitlementTier>;
 ```
 
-Add the state beside the existing `webPremium` state:
-
-```ts
-  const [tier, setTier] = useState<EntitlementTier>('none');
-  const [checkingServerAccess, setCheckingServerAccess] = useState(true);
-```
-
-Add the effect after the existing auth-state effect:
-
-```ts
-  // The server decides access. Read the tier once on mount and again whenever the
-  // session changes, which is what makes a sign-in, a sign-out or a new
-  // subscription take effect without a reload. A failure is not a retry loop: it
-  // settles at 'none', which shows the paywall rather than guessing.
-  useEffect(() => {
-    let cancelled = false;
-    const read = () => {
-      entitlementTier()
-        .then((next) => {
-          if (!cancelled) setTier(next);
-        })
-        .catch(() => {
-          if (!cancelled) setTier('none');
-        })
-        .finally(() => {
-          if (!cancelled) setCheckingServerAccess(false);
-        });
-    };
-    read();
-    const unsubscribe = onAuthChange(read);
-    return () => {
-      cancelled = true;
-      unsubscribe();
-    };
-  }, []);
-```
-
-Add the handler, replacing `restartDemoTrial`:
+Add the handler. It re-derives through `refreshEntitlement` rather than setting a tier itself, so a started trial and a reloaded page agree:
 
 ```ts
   // The server owns this decision. If the account already holds any entitlement
   // row — a spent trial, a paid plan, an admin grant — nothing is written and the
-  // tier it already has comes back. Adopting the returned tier rather than
-  // assuming a trial started keeps one source of truth.
+  // grant it already has comes back. Re-reading rather than assuming a trial
+  // started keeps one source of truth, and covers the native build, where the
+  // server's answer and the device's may differ.
   const startTrial = async (): Promise<EntitlementTier> => {
     const next = await requestTrial();
-    setTier(next);
-    setCheckingServerAccess(false);
+    await refreshEntitlement();
     if (next !== 'none') setShowPaywall(false);
     return next;
   };
 ```
 
-Derive `hasFullAccess` beside `premiumSource`:
-
-```ts
-  const hasFullAccess = tier === 'full';
-```
-
-Add `tier`, `hasFullAccess`, `checkingServerAccess` and `startTrial` to the `value` object literal, and delete `restartDemoTrial` from it. Leave `isPremium`, `premiumSource`, `demoTrialActive` and `demoTrialMsLeft` as they are: they describe the store and device-local demo paths, which this task does not change, and `PaywallModal.restore.test.tsx` mocks them.
+Add `startTrial` to the `value` object literal, and delete `restartDemoTrial` from it. Leave `isPremium`, `premiumSource`, `demoTrialActive` and `demoTrialMsLeft` as they are: they describe the store and device-local demo paths, which this task does not change, and `PaywallModal.restore.test.tsx` mocks them.
 
 - [ ] **Step 5: Handle the consumers found in step 1**
 
@@ -461,8 +375,11 @@ In `src/services/subscriptionService.ts`, delete `resetDemoTrial`. Leave `DEMO_T
 
 - [ ] **Step 6: Run the test to verify it passes**
 
+Run: `npx vitest run src/contexts/SubscriptionContext.trial.test.tsx`
+Expected: PASS, 3 tests.
+
 Run: `npx vitest run src/contexts/SubscriptionContext.test.tsx`
-Expected: PASS.
+Expected: PASS, unchanged. The foundation's Task 4 wrote it; this task does not touch it.
 
 - [ ] **Step 7: Check nothing still references the removed path**
 
@@ -475,12 +392,13 @@ Expected: no output.
 - [ ] **Step 8: Commit**
 
 ```bash
-git add src/contexts/SubscriptionContext.tsx src/components/SettingsView.tsx src/services/subscriptionService.ts src/contexts/SubscriptionContext.test.tsx
-git commit -m "feat(trial): read the access tier from the server in the context
+git add src/contexts/SubscriptionContext.tsx src/components/SettingsView.tsx src/services/subscriptionService.ts src/contexts/SubscriptionContext.trial.test.tsx
+git commit -m "feat(trial): start the trial through the server, and retire the restart
 
 The client could mint itself a fresh three days, and a button in the
 paywall did exactly that. Both go: startTrial asks the server, which
-refuses an account that already holds any entitlement row.
+refuses an account that already holds any entitlement row, and the
+localStorage reset path is deleted.
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ```
@@ -490,15 +408,14 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ### Task 3: Lock enforcement at all three points
 
 **Files:**
-- Modify: `src/components/AuthGuard.tsx`
 - Modify: `src/components/AssessmentSelector.tsx`
 - Test: `src/components/AssessmentSelector.lock.test.tsx`
 
 **Interfaces:**
-- Consumes: `canOpenAssessment` and `isVisibleInTrial` from Task 1; `tier` from Task 2.
+- Consumes: `canOpenAssessment` and `isVisibleInTrial` from Task 1; `tier` from the foundation plan's Task 4.
 - Produces: nothing new.
 
-`AuthGuard` gains the trial: it currently admits `isPremium || demoTrialActive`, which would shut a trial user out of the 20 they are entitled to.
+**`AuthGuard` needs no change here.** The foundation plan's Task 5 rewrote it, and its `hasAccess` is `isPremium || demoTrialActive` where `isPremium` already includes `entitlement !== null` — so a trial holder is admitted, and `waiting` already covers the window before the first answer. Step 1 below is a check that this still holds, not an edit. Do not add a second `tier !== 'none'` clause: it would duplicate a condition the context has already folded into `isPremium`, and the two could disagree.
 
 The three points in the selector, all in one component:
 
@@ -508,23 +425,12 @@ The three points in the selector, all in one component:
 | 2 | the `if (selectedAssessment)` branch (line 493) | A deep link sets the state at line 407 without passing through `openAssessment` |
 | 3 | `renderTile` (line 965) | So the free set is legible before anyone clicks |
 
-- [ ] **Step 1: Admit a trial in AuthGuard**
+- [ ] **Step 1: Confirm the guard already admits a trial**
 
-In `src/components/AuthGuard.tsx`, add `tier` and `checkingServerAccess` to the `useSubscription()` destructure, and settle before deciding:
+Read `src/components/AuthGuard.tsx` and `src/contexts/SubscriptionContext.tsx`.
 
-```ts
-  // A trial is access, just not to everything: without this a trial user is shut
-  // out of the very assessments their trial is for. What each tier may open is
-  // decided per assessment, in the selector.
-  const hasAccess = isPremium || demoTrialActive || tier !== 'none';
-
-  // Do not decide, or flash the paywall, before the first tier read settles.
-  if (checkingServerAccess && !isPremium && !demoTrialActive) {
-    return <div className="fixed inset-0 z-[100] bg-background" aria-busy="true" />;
-  }
-```
-
-Place the settle check above the existing `hasAccess` render and leave `PUBLIC_PATHS` and the rest of the component as they are.
+Run: `grep -n "hasAccess\|isPremium" src/components/AuthGuard.tsx src/contexts/SubscriptionContext.tsx`
+Expected: `AuthGuard`'s `hasAccess` reads `isPremium || demoTrialActive`, and the context's `isPremium` includes `entitlement !== null`. If so there is nothing to change here — a trial sets `entitlement`, so the guard admits it, and the wait for `checkingServerAccess` covers the trial's first read too. If `isPremium` no longer includes `entitlement`, the foundation plan's Task 4 has drifted; stop and fix that rather than patching around it here.
 
 - [ ] **Step 2: Write the failing test**
 
@@ -558,10 +464,10 @@ describe('assessment lock', () => {
 });
 ```
 
-- [ ] **Step 3: Run the test to verify it fails**
+- [ ] **Step 3: Run the rule test**
 
 Run: `npx vitest run src/components/AssessmentSelector.lock.test.tsx`
-Expected: PASS once Task 1 is done. This file pins the rule without rendering the component, so a failure in step 6's browser check is unambiguously a wiring mistake rather than a rule mistake.
+Expected: PASS, 3 tests — this is not a red-to-green step. The rule itself landed in Task 1; this file pins it against the real registry, without rendering the component, so that a failure in step 6's browser check is unambiguously a wiring mistake rather than a rule mistake. A failure here means Task 1's `canOpenAssessment` and the registry disagree; fix that before wiring anything.
 
 - [ ] **Step 4: Wire the three points**
 
@@ -659,7 +565,7 @@ Expected: PASS, everything green.
 Run: `npm run dev`
 
 1. Sign in with an account that has no entitlement, start the trial from the paywall.
-2. Expected: the home list shows a **Pro** badge on the 76 locked tiles and none on the 20 free ones.
+2. Expected: the home list shows a **Pro** badge on the 76 locked tiles and none on the 20 free ones. (The section count comes from the registry; re-derive it if assessments were added since this plan was written.)
 3. Click `triage`. Expected: it opens.
 4. Click `HAM-D`. Expected: the paywall, not the assessment.
 5. Navigate directly to `/assessment/hamd`. Expected: the locked screen reading "This assessment is part of Cognito Pro", **not** the assessment. This is Review Focus item 1 and the one most likely to have been missed.
@@ -668,12 +574,11 @@ Run: `npm run dev`
 - [ ] **Step 7: Commit**
 
 ```bash
-git add src/components/AuthGuard.tsx src/components/AssessmentSelector.tsx src/components/AssessmentSelector.lock.test.tsx
+git add src/components/AssessmentSelector.tsx src/components/AssessmentSelector.lock.test.tsx
 git commit -m "feat(trial): lock the assessments a trial does not cover
 
 Enforced at all three points that can reach an assessment, including the
-deep-link render branch, which bypasses the click handler entirely. The
-guard admits a trial, since a trial is access to the section.
+deep-link render branch, which bypasses the click handler entirely.
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ```
@@ -983,20 +888,32 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 ## Operator prerequisites
 
-Both must hold before Task 3's browser check, and before this branch ships.
+All must hold before Task 3's browser check, and before this branch ships. Items 1 and 2 belong to the foundation plan; they are repeated here because this plan's runtime depends on them.
 
-1. **Apply the trial migration.** `supabase/migrations/20261008130000_trial.sql` creates `entitlement_tier()` and `start_trial()`. Claude cannot reach the project; run it in the Supabase SQL editor.
-2. **Enable email one-time codes.** The trial entry in Task 4 depends on it. Confirm under Authentication → Providers → Email that OTP is on and the code template is set.
+1. **Apply the entitlement migrations, in order.** `20261008120000_entitlements.sql` (the table), then `20261008130000_trial.sql` (`entitlement_tier()`, `start_trial()`), then the foundation plan's `20261008140000_current_entitlement.sql`, which re-expresses `entitlement_tier()` over `current_entitlement()`. Claude cannot reach the project; run them in the Supabase SQL editor. Order matters: the third file replaces a function the second one defines.
+2. **Grant the owner's admin row** — the foundation plan's Task 7, step 2.
+3. **Enable email one-time codes.** The trial entry in Task 4 depends on it. Confirm under Authentication → Providers → Email that OTP is on and the code template is set.
 
 Verify the functions exist and are reachable:
 
 ```sql
 SELECT routine_name, security_type
 FROM information_schema.routines
-WHERE routine_schema = 'public' AND routine_name IN ('entitlement_tier', 'start_trial');
+WHERE routine_schema = 'public'
+  AND routine_name IN ('current_entitlement', 'entitlement_tier', 'start_trial', 'has_premium');
 ```
 
-Expected: two rows, `entitlement_tier` as `INVOKER` and `start_trial` as `DEFINER`.
+Expected: four rows, `current_entitlement`, `entitlement_tier`, `has_premium` and `start_trial` as `DEFINER`.
+
+Then confirm the delegation actually took, since a missed third migration leaves the old standalone tier rule in place and everything still *looks* fine:
+
+```sql
+SELECT pg_get_functiondef(p.oid)
+FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+WHERE n.nspname = 'public' AND p.proname = 'entitlement_tier';
+```
+
+Expected: the body reads `FROM public.current_entitlement()`. If it still spells out its own rule, `20261008140000` did not apply — stop and apply it before continuing, or the App Store's admin-comp suppression silently does not cover the trial.
 
 ## End-to-end acceptance
 
@@ -1013,15 +930,23 @@ Run after all four tasks, on the PWA in a browser.
    ```
 5. **The owner.** The developer grant is a row with `source = 'admin'`, so `entitlement_tier()` returns `full` and all 96 open.
 
-## Open interface for the foundation plan
+## The interface this plan takes from the foundation
 
-Raised at this revision, not resolved here.
+Raised when this plan was first written, and **resolved** in the foundation plan's Task 3.
 
-The foundation plan suppresses an admin grant inside the native App Store build, so the owner exercises real IAP rather than seeing their own comp. `entitlement_tier()` collapses `source` into a tier — it returns `'full'` for an admin row and for a Razorpay row alike — so the client can no longer tell them apart, and that suppression cannot be expressed on top of it.
+The problem was real. The foundation suppresses an admin grant inside the native App Store build, so the owner exercises real IAP rather than seeing their own comp. But `entitlement_tier()` as committed collapsed `source` into a tier — `'full'` for an admin row and for a Razorpay row alike — so the client could not tell them apart, and the suppression could not be expressed on top of it. Worse, the tier is the trial path's entry point, so an unsuppressed admin comp there would have opened the whole library in the App Store build.
 
-Two ways out, to be chosen when the foundation plan is revised:
+The foundation's Task 3 resolves it by deriving the tier from the same grant the suppression already reads, rather than asking the database a second, lossier question:
 
-- add a companion RPC exposing the source, or widen `entitlement_tier()` to return it alongside the tier; or
-- fold the suppression server-side, so a request from the wrapper never sees an `admin` row.
+```ts
+export const tierOf = (ent: Entitlement | null): EntitlementTier =>
+  !ent ? 'none' : ent.source === 'trial' || ent.source === 'demo' ? 'trial' : 'full';
 
-Until one is chosen, the native build treats an admin comp as full access. That is the pre-existing behaviour, so this plan does not regress it — but the foundation plan's Task 2 cannot ship as written.
+export async function entitlementTier(): Promise<EntitlementTier> {
+  return tierOf(await serverEntitlement());
+}
+```
+
+and Task 1 makes the SQL `entitlement_tier()` a thin wrapper over `current_entitlement()` for the same reason, so the database has one access rule rather than two. `SubscriptionContext` then carries the grant itself (`entitlement`), not just a tier, and this plan's Task 3 reads `tier` — which the context derives with the same pure `tierOf`.
+
+**What this plan therefore assumes.** `tier` is `'full'` only when the grant survived the native suppression. Inside the App Store build an admin comp yields `'none'`, so this plan's lock treats the owner exactly as it treats anyone else — which is the intent. The `entitlement.source === 'trial'` branch is what makes a trial `'trial'` rather than `'full'`; if that ever collapsed, a trial would silently open all 96 and no test in either plan would catch it except Task 1's share assertion.

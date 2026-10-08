@@ -12,6 +12,7 @@
  * key to. An email string on its own proves nothing and is never used as a key.
  */
 import { supabase } from '@/integrations/supabase/client';
+import { isNativeApp } from '@/lib/appbuild/revenuecat';
 
 export interface AuthResult {
   ok: boolean;
@@ -65,6 +66,17 @@ export interface AuthUser {
   email: string | null;
 }
 
+export type EntitlementPlan = 'developer' | 'monthly' | 'yearly' | 'demo';
+export type EntitlementSource = 'admin' | 'razorpay' | 'trial' | 'demo';
+
+export interface Entitlement {
+  plan: EntitlementPlan;
+  source: EntitlementSource;
+  expiresAt: string | null;
+  /** true when expires_at IS NULL, i.e. the grant never lapses. */
+  permanent: boolean;
+}
+
 /**
  * The signed-in identity, or null.
  *
@@ -88,8 +100,98 @@ const callRpc = supabase.rpc as unknown as (
   fn: string,
 ) => Promise<{ data: unknown; error: { message: string } | null }>;
 
-const asTier = (value: unknown): EntitlementTier =>
-  value === 'trial' || value === 'full' ? value : 'none';
+/** A row as PostgREST returns it: snake_case, and strings for the TEXT columns. */
+interface EntitlementRow {
+  plan: string;
+  source: string;
+  expires_at: string | null;
+  permanent: boolean;
+}
+
+/**
+ * `current_entitlement` returns a set, so the payload is an array of rows —
+ * PostgREST does not unwrap it. Anything that is not an array means no rows.
+ */
+const asEntitlementRows = (data: unknown): EntitlementRow[] =>
+  Array.isArray(data) ? (data as EntitlementRow[]) : [];
+
+/** How long a grant read may take before it counts as failed. */
+const RPC_TIMEOUT_MS = 5000;
+
+/**
+ * A hung request is a failed request. Bound it so the gate can always clear.
+ *
+ * A rejection is caught here rather than only at the call site: `Promise.race`
+ * settles with whichever comes first, including a rejection, so without this a
+ * backend that answers with an error would reject the caller instead of closing
+ * the gate.
+ */
+async function withTimeout<T>(work: Promise<T>, fallback: T): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      work,
+      new Promise<T>((resolve) => {
+        timer = setTimeout(() => resolve(fallback), RPC_TIMEOUT_MS);
+      }),
+    ]);
+  } catch {
+    return fallback;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+/**
+ * The caller's active grant, as the server reports it.
+ *
+ * Fails closed: an RPC error, an unreachable backend, a request that never
+ * settles, or a signed-out user all resolve to null. Nothing about this device,
+ * its cache or its clock can turn that into a grant.
+ */
+export async function currentEntitlement(): Promise<Entitlement | null> {
+  const { data, error } = await withTimeout(callRpc('current_entitlement'), {
+    data: null,
+    error: { message: 'timed out' },
+  });
+  if (error) return null;
+
+  const row = asEntitlementRows(data)[0];
+  if (!row) return null;
+
+  return {
+    plan: row.plan as EntitlementPlan,
+    source: row.source as EntitlementSource,
+    expiresAt: row.expires_at ?? null,
+    permanent: row.permanent === true,
+  };
+}
+
+/**
+ * The caller's grant *as this device may honour it*, or null.
+ *
+ * Same rule as `serverPremium()`, but it keeps the grant's `source` visible.
+ * That matters: the trial is a grant too, and downstream code has to be able to
+ * tell a three-day trial apart from a paid plan.
+ */
+export async function serverEntitlement(): Promise<Entitlement | null> {
+  const ent = await currentEntitlement();
+  if (!ent) return null;
+  if (ent.source === 'admin' && (await isNativeApp())) return null;
+  return ent;
+}
+
+/**
+ * Whether the server grants access *on this device*.
+ *
+ * An admin comp is ignored inside the native wrapper, so the App Store build
+ * never inherits the owner's grant. Suppression keys on `source`, not `plan`,
+ * so any comp an administrator issues later is also suppressed, while a genuine
+ * paid grant is not.
+ */
+export async function serverPremium(): Promise<boolean> {
+  return (await serverEntitlement()) !== null;
+}
 
 /**
  * The access decision, asked of the backend.
@@ -113,10 +215,23 @@ export async function hasPremium(): Promise<boolean> {
  */
 export type EntitlementTier = 'none' | 'trial' | 'full';
 
+/**
+ * The tier a grant represents. Pure, and exported, so the context can derive a
+ * tier from the grant it already holds instead of making a second round trip —
+ * and so there is one derivation rather than two that could drift.
+ */
+export const tierOf = (ent: Entitlement | null): EntitlementTier =>
+  !ent ? 'none' : ent.source === 'trial' || ent.source === 'demo' ? 'trial' : 'full';
+
+/**
+ * The access tier, derived from the same grant `serverPremium()` reads.
+ *
+ * Derived, not asked separately: `entitlement_tier()` collapses `source`, so it
+ * cannot tell an admin comp from a paid plan, and the native suppression above
+ * has to apply to the trial path as well as the paid one.
+ */
 export async function entitlementTier(): Promise<EntitlementTier> {
-  const { data, error } = await callRpc('entitlement_tier');
-  if (error) return 'none';
-  return asTier(data);
+  return tierOf(await serverEntitlement());
 }
 
 /**
@@ -127,9 +242,12 @@ export async function entitlementTier(): Promise<EntitlementTier> {
  * the database's `now() + 3 days`, so the device clock has no say in it.
  */
 export async function startTrial(): Promise<EntitlementTier> {
-  const { data, error } = await callRpc('start_trial');
+  const { error } = await callRpc('start_trial');
   if (error) return 'none';
-  return asTier(data);
+  // Re-derive rather than trusting the returned string: a developer account in
+  // the native build would otherwise be told its trial started while the gate
+  // still refuses it.
+  return entitlementTier();
 }
 
 /** Run `onChange` whenever the session changes; returns an unsubscribe function. */
