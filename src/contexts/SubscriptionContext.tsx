@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   createDemoSubscription,
   setDemoUnlockAll,
@@ -14,6 +14,7 @@ import {
 import type { Subscription } from '@/services/subscriptionService';
 import { toast } from 'sonner';
 import { completeRestoreFromEmailLink, getWebPremium, restoreWebPurchase, restoreWebPurchaseForSession, type WebPremium } from '@/lib/webBilling';
+import { currentAuthUser, onAuthChange, serverEntitlement, tierOf, type Entitlement, type EntitlementTier } from '@/lib/entitlement';
 
 interface PremiumFeatures {
   allAssessments: boolean;
@@ -47,7 +48,17 @@ interface SubscriptionContextType {
   webPremium: WebPremium | null;
   restoreWebAccess: (email: string) => Promise<boolean>;
   /** Where the current premium access comes from. */
-  premiumSource: 'store' | 'web' | 'demo' | 'none';
+  premiumSource: 'store' | 'web' | 'demo' | 'developer' | 'none';
+  /** The caller's grant as this device may honour it, or null. Keeps `source`. */
+  entitlement: Entitlement | null;
+  /** The tier that grant represents, or 'none'. Derived from `entitlement`. */
+  tier: EntitlementTier;
+  /** The server's decision for this device, composed with the native rule. */
+  serverPremium: boolean;
+  /** True from mount until the first server answer, right or wrong. */
+  checkingServerAccess: boolean;
+  /** Re-ask the server. For callers that have just changed the account's state. */
+  refreshEntitlement: () => Promise<void>;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -69,6 +80,11 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(() => getDemoUnlockAll());
   const [demoTrialMsLeft, setDemoTrialMsLeft] = useState<number>(() => getDemoTrialMsLeft());
   const [webPremium, setWebPremium] = useState<WebPremium | null>(() => getWebPremium());
+  const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
+  const [checkingServerAccess, setCheckingServerAccess] = useState(true);
+  // Guards against a slow earlier check overwriting a newer one: a sign-out
+  // followed by a sign-in can leave two in flight, and the older must not win.
+  const seqRef = useRef(0);
   // Tick the trial countdown once a minute so access expires without a reload.
   useEffect(() => {
     const id = setInterval(() => setDemoTrialMsLeft(getDemoTrialMsLeft()), 60000);
@@ -123,11 +139,34 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     };
   }, []);
 
+  const refreshEntitlement = useCallback(async () => {
+    const mine = ++seqRef.current;
+    let grant: Entitlement | null = null;
+    try {
+      const who = await currentAuthUser();
+      // No session, no question: an anonymous caller can hold no grant.
+      if (who) grant = await serverEntitlement();
+    } catch {
+      grant = null;
+    }
+    // A newer check has started; this answer is stale and must be discarded.
+    if (mine !== seqRef.current) return;
+    setEntitlement(grant);
+    setCheckingServerAccess(false);
+  }, []);
+
+  useEffect(() => {
+    void refreshEntitlement();
+    return onAuthChange(() => {
+      void refreshEntitlement();
+    });
+  }, [refreshEntitlement]);
+
   // Restore gating logic
   const isPremium = useMemo(
-    () => isPremiumUser() || !!webPremium,
+    () => isPremiumUser() || !!webPremium || entitlement !== null,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [webPremium, subscription, demoUnlockAll, demoTrialMsLeft],
+    [webPremium, entitlement, subscription, demoUnlockAll, demoTrialMsLeft],
   );
 
   // The demo only counts once the user has explicitly started it.
@@ -137,13 +176,19 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     [demoTrialMsLeft, demoUnlockAll],
   );
 
-  const premiumSource: 'store' | 'web' | 'demo' | 'none' = webPremium
+  const premiumSource: 'store' | 'web' | 'demo' | 'developer' | 'none' = webPremium
     ? 'web'
-    : (demoTrialActive && demoUnlockAll)
-      ? 'demo'
-      : isPremium
-        ? 'store'
-        : 'none';
+    : entitlement?.source === 'admin'
+      ? 'developer'
+      : entitlement?.source === 'razorpay'
+        ? 'web'
+        : entitlement?.source === 'trial' || entitlement?.source === 'demo'
+          ? 'demo'
+          : (demoTrialActive && demoUnlockAll)
+            ? 'demo'
+            : isPremium
+              ? 'store'
+              : 'none';
 
   const features = getPremiumFeatures() as PremiumFeatures;
 
@@ -206,6 +251,11 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     webPremium,
     restoreWebAccess,
     premiumSource,
+    entitlement,
+    tier: tierOf(entitlement),
+    serverPremium: entitlement !== null,
+    checkingServerAccess,
+    refreshEntitlement,
   };
 
   return (
