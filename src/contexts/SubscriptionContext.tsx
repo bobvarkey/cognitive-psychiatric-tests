@@ -74,6 +74,30 @@ const FULL_PREMIUM_FEATURES: PremiumFeatures = {
   bannerAdsDisabled: true,
 };
 
+/**
+ * How long the whole access check may take before the gate opens the safe way.
+ *
+ * Deliberately longer than the RPC's own bound, so the ordinary failure is the
+ * RPC's `null` and this stays a backstop. What it catches is the await that
+ * precedes the RPC — the session read — which has no bound of its own.
+ */
+const GATE_TIMEOUT_MS = 10000;
+
+/** Settles when `work` does, or when `ms` elapses. The gate must always clear. */
+async function withDeadline(work: Promise<unknown>, ms: number): Promise<void> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await Promise.race([
+      work,
+      new Promise<void>((resolve) => {
+        timer = setTimeout(resolve, ms);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -142,17 +166,26 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const refreshEntitlement = useCallback(async () => {
     const mine = ++seqRef.current;
     let grant: Entitlement | null = null;
-    try {
+    const check = (async () => {
       const who = await currentAuthUser();
       // No session, no question: an anonymous caller can hold no grant.
       if (who) grant = await serverEntitlement();
+    })();
+    try {
+      // The whole check is bounded, not just the RPC. The session read is a
+      // network call too, and on a stalled connection it never settles — the
+      // RPC's own bound would never be reached, and the gate would hold a
+      // full-screen spinner for the life of the page.
+      await withDeadline(check, GATE_TIMEOUT_MS);
     } catch {
       grant = null;
+    } finally {
+      // A newer check has started; this answer is stale and must be discarded.
+      if (mine === seqRef.current) {
+        setEntitlement(grant);
+        setCheckingServerAccess(false);
+      }
     }
-    // A newer check has started; this answer is stale and must be discarded.
-    if (mine !== seqRef.current) return;
-    setEntitlement(grant);
-    setCheckingServerAccess(false);
   }, []);
 
   useEffect(() => {

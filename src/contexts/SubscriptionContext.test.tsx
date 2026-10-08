@@ -68,6 +68,7 @@ describe('SubscriptionContext server access', () => {
   });
   afterEach(() => {
     vi.clearAllMocks();
+    vi.useRealTimers();
   });
 
   it('grants premium from the server alone and reports the source', async () => {
@@ -136,6 +137,27 @@ describe('SubscriptionContext server access', () => {
     );
     await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
     expect(ent.serverEntitlement).not.toHaveBeenCalled();
+  });
+
+  it('clears the gate when the session read never settles', async () => {
+    // The session read is a network call too — auth-js refreshes an expiring
+    // token with an unbounded retrying fetch. Bounding only the RPC would leave
+    // this await unbounded, and the app on a full-screen spinner forever.
+    vi.useFakeTimers();
+    ent.currentAuthUser.mockReturnValue(new Promise(() => {}));
+    render(
+      <SubscriptionProvider>
+        <Probe />
+      </SubscriptionProvider>,
+    );
+    expect(screen.getByTestId('checking').textContent).toBe('true');
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10000);
+    });
+
+    expect(screen.getByTestId('checking').textContent).toBe('false');
+    expect(screen.getByTestId('premium').textContent).toBe('false');
   });
 
   it('keeps the newest answer when two checks overlap', async () => {

@@ -41,6 +41,21 @@ describe('isNativeApp', () => {
     expect(await isNativeApp()).toBe(false);
   });
 
+  it('waits for a wrapper that injects after the first check', async () => {
+    // The wrapper injects itself after first paint, so the mount-time check
+    // usually runs before it exists. Answering "browser" there would honour an
+    // admin comp inside the App Store build — the one direction that must never
+    // happen — and React would hold that grant for the session.
+    let present = false;
+    wrapper.waitForWrapper.mockResolvedValue(null);
+    wrapper.isWrapperPresent.mockImplementation(() => present);
+    const { isNativeApp } = await import('./revenuecat');
+    setTimeout(() => {
+      present = true;
+    }, 200);
+    await expect(isNativeApp()).resolves.toBe(true);
+  });
+
   it('is false, not a rejection, when the wrapper probe throws', async () => {
     wrapper.waitForWrapper.mockRejectedValue(new Error('boom'));
     wrapper.isWrapperPresent.mockReturnValue(false);
