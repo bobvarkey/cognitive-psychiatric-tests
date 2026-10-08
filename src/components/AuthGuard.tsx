@@ -34,7 +34,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     }
     return (
       <div className="fixed inset-0 z-[100] bg-background flex items-center justify-center">
-        <PaywallModal isOpen={true} onClose={() => {}} onSelectPlan={() => {}} />
+        <PaywallModal isOpen={true} onSelectPlan={() => {}} />
         <div className="absolute inset-0 -z-10 bg-background" />
       </div>
     );

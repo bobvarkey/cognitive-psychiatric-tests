@@ -23,10 +23,12 @@ import {
   type WebPremium,
 } from '@/lib/webBilling';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { requestEmailCode, verifyEmailCode } from '@/lib/entitlement';
 
 interface PaywallModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  /** Supplied only when the modal may be dismissed. The blocking instance omits it. */
+  onClose?: () => void;
   onSelectPlan: (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => void;
   isLoading?: boolean;
 }
@@ -69,6 +71,12 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   const [restoreEmail, setRestoreEmail] = useState('');
   const [restoreCode, setRestoreCode] = useState('');
   const [restoreError, setRestoreError] = useState<string | null>(null);
+  // Trial entry: the same two steps as a restore, with a different second action.
+  const [trialStep, setTrialStep] = useState<RestoreStep>('closed');
+  const [trialEmail, setTrialEmail] = useState('');
+  const [trialCode, setTrialCode] = useState('');
+  const [trialError, setTrialError] = useState<string | null>(null);
+  const [startingTrial, setStartingTrial] = useState(false);
   const [resendIn, setResendIn] = useState(0);
   const [email, setEmail] = useState(() => {
     try {
@@ -77,7 +85,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       return '';
     }
   });
-  const { refreshSubscription, startTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
+  const { refreshSubscription, startTrial } = useSubscription();
 
   // The AppBuild script can define the wrapper in browsers too; only treat this
   // as the native app once the wrapper's ready promise actually resolves.
@@ -299,18 +307,64 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     }
   };
 
+  const handleStartTrial = () => {
+    setTrialError(null);
+    setTrialStep('email');
+  };
+
+  const handleTrialEmail = async () => {
+    setStartingTrial(true);
+    setTrialError(null);
+    try {
+      const result = await requestEmailCode(trialEmail);
+      if (!result.ok) throw new Error(result.message ?? 'Could not send a code.');
+      setTrialStep('code');
+    } catch (e: unknown) {
+      setTrialError(e instanceof Error ? e.message : 'Could not send a code.');
+    } finally {
+      setStartingTrial(false);
+    }
+  };
+
+  const handleTrialVerify = async () => {
+    setStartingTrial(true);
+    setTrialError(null);
+    try {
+      const verified = await verifyEmailCode(trialEmail, trialCode);
+      if (!verified.ok) throw new Error(verified.message ?? 'That code was not accepted.');
+
+      // The server decides whether a trial may start. `none` means this account
+      // already holds an entitlement row — a spent trial included — so it is a
+      // refusal to report, not a failure to retry.
+      const next = await startTrial();
+      if (next === 'none') {
+        throw new Error('A trial has already been used on this account.');
+      }
+
+      setTrialCode('');
+      setTrialStep('closed');
+      onClose?.();
+    } catch (e: unknown) {
+      setTrialError(e instanceof Error ? e.message : 'Could not start the trial.');
+    } finally {
+      setStartingTrial(false);
+    }
+  };
+
   const working = busy || isLoading;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
       <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-3xl bg-card border border-border shadow-2xl">
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute top-4 right-4 z-10 rounded-full bg-background/70 p-2 text-muted-foreground hover:text-foreground transition"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {onClose && (
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute top-4 right-4 z-10 rounded-full bg-background/70 p-2 text-muted-foreground hover:text-foreground transition"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
 
         <img
           src={heroImage}
@@ -400,18 +454,86 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           </button>
 
           <div className="text-center">
-            <button
-              onClick={() => {
-                void startTrial();
-                toast.success('3-day demo started — everything is unlocked.');
-                onClose();
-              }}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              {demoTrialActive
-                ? `Demo active — ${Math.ceil(demoTrialMsLeft / 86400000)} day(s) left · restart`
-                : 'Or sign in with a free 3-day demo'}
-            </button>
+            {trialStep === 'closed' ? (
+              <button
+                onClick={handleStartTrial}
+                className="mt-2 text-sm font-medium text-primary underline underline-offset-4"
+              >
+                Start 3-day trial
+              </button>
+            ) : (
+              <form
+                className="mt-3 space-y-3 rounded-2xl border border-border bg-muted/40 p-4 text-left"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (startingTrial) return;
+                  if (trialStep === 'email') void handleTrialEmail();
+                  else void handleTrialVerify();
+                }}
+              >
+                <div className="space-y-1.5">
+                  <label htmlFor="trial-email" className="block text-xs font-medium text-foreground">
+                    Your email
+                  </label>
+                  <input
+                    id="trial-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    autoFocus
+                    value={trialEmail}
+                    onChange={(e) => setTrialEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    disabled={startingTrial}
+                    className="w-full min-h-[44px] rounded-2xl border border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
+                  />
+                </div>
+                {trialStep === 'code' && (
+                  <div className="space-y-1.5">
+                    <label htmlFor="trial-code" className="block text-xs font-medium text-foreground">
+                      One-time code
+                    </label>
+                    <input
+                      id="trial-code"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      pattern="[0-9]*"
+                      maxLength={10}
+                      autoFocus
+                      value={trialCode}
+                      onChange={(e) => setTrialCode(e.target.value.replace(/\D/g, ''))}
+                      placeholder="123456"
+                      disabled={startingTrial}
+                      className="w-full min-h-[44px] rounded-2xl border border-border bg-background px-4 text-center text-lg font-semibold tracking-[0.4em] tabular-nums text-foreground placeholder:tracking-normal placeholder:font-normal placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
+                    />
+                  </div>
+                )}
+                {trialError && (
+                  <p role="alert" className="text-xs text-destructive">{trialError}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={startingTrial}
+                  className="w-full min-h-[44px] rounded-full bg-primary text-primary-foreground text-sm font-semibold transition hover:opacity-90 active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
+                >
+                  {startingTrial && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {trialStep === 'email' ? 'Email me a code' : 'Start my trial'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTrialStep('closed');
+                    setTrialCode('');
+                    setTrialError(null);
+                  }}
+                  disabled={startingTrial}
+                  className="mx-auto block text-xs font-medium text-muted-foreground hover:text-foreground disabled:opacity-60"
+                >
+                  Cancel
+                </button>
+              </form>
+            )}
           </div>
 
           {native || restoreStep === 'closed' ? (
