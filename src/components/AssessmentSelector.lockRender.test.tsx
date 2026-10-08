@@ -49,6 +49,9 @@ const LOCKED = 'This assessment is part of Cognito Pro.';
 
 describe('assessment lock, as rendered', () => {
   beforeEach(() => {
+    // openAssessment scrolls to the top, which jsdom does not implement; without
+    // this stub the free-tile click logs a not-implemented error into the run.
+    window.scrollTo = vi.fn();
     window.history.pushState({}, '', '/');
   });
 
