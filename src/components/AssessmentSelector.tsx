@@ -103,13 +103,14 @@ import {
   Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
   ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
-  Cloud, Clock, ShieldAlert, Map, Cigarette,
+  Cloud, Clock, ShieldAlert, Map, Cigarette, Lock,
 } from 'lucide-react';
 import { MiniAppSearch, GlossaryDialog, ModeToggle } from './ThemeExtras';
 import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { canOpenAssessment } from '@/config/trialScope';
 import { isProSource } from '@/services/subscriptionService';
 import { Crown } from 'lucide-react';
 import { useDayCounter } from '@/hooks/useDayCounter';
@@ -364,7 +365,7 @@ export const AssessmentSelector = () => {
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { subscription, setShowPaywall, premiumSource } = useSubscription();
+  const { subscription, setShowPaywall, premiumSource, tier } = useSubscription();
   const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
@@ -423,6 +424,10 @@ export const AssessmentSelector = () => {
 
   // Each questionnaire should default to English; user can toggle per-assessment.
   const openAssessment = (key: AssessmentKey) => {
+    if (!canOpenAssessment(key, tier)) {
+      setShowPaywall(true);
+      return;
+    }
     setLanguage('en');
     setSelectedAssessment(key);
     navigate(`/assessment/${key}`, { replace: false });
@@ -491,6 +496,29 @@ export const AssessmentSelector = () => {
   };
 
   // Render selected assessment
+  const selectedLocked = !!selectedAssessment && !canOpenAssessment(selectedAssessment, tier);
+
+  if (selectedLocked) {
+    // A deep link sets `selectedAssessment` directly, so the click path never
+    // runs. Without this, typing an assessment's URL opens it for anyone.
+    return (
+      <div className="fixed inset-0 z-50 bg-background flex items-center justify-center p-4">
+        <div className="max-w-sm text-center space-y-4">
+          <Lock className="h-8 w-8 mx-auto text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
+            This assessment is part of Cognito Pro.
+          </p>
+          <Button className="min-h-[44px] w-full" onClick={() => setShowPaywall(true)}>
+            See plans
+          </Button>
+          <Button variant="outline" className="min-h-[44px] w-full" onClick={handleBackToMenu}>
+            {t('backToMenu')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (selectedAssessment) {
     const wrapWithBack = (component: React.ReactNode) => (
       <motion.div
@@ -967,6 +995,7 @@ export const AssessmentSelector = () => {
                       const Icon = a.icon;
                       const color = neonColorPalette[index % neonColorPalette.length];
                       const reference = getAssessmentReference(a.key);
+                      const locked = !canOpenAssessment(a.key, tier);
 
                       return (
                         <Tooltip key={a.key}>
@@ -988,6 +1017,12 @@ export const AssessmentSelector = () => {
                                 <p className="text-[10px] sm:text-xs text-muted-foreground leading-snug truncate">
                                   {a.subtitle}
                                 </p>
+                                {locked && (
+                                  <span className="mt-2 inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground">
+                                    <Lock className="h-2.5 w-2.5" />
+                                    Pro
+                                  </span>
+                                )}
                                 {reference && (
                                   <div className="mt-2 flex justify-center">
                                     <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.5 text-[9px] font-semibold text-primary">
@@ -1002,6 +1037,11 @@ export const AssessmentSelector = () => {
                           <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
                             <div className="space-y-2">
                               <p>{a.description}</p>
+                              {locked && (
+                                <p className="text-xs font-medium text-foreground">
+                                  Part of Cognito Pro.
+                                </p>
+                              )}
                               {reference && (
                                 <p className="border-t border-border pt-2 text-muted-foreground">
                                   <span className="font-semibold text-foreground">Citation: </span>
