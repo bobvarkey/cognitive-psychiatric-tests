@@ -55,6 +55,20 @@ const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const EMAIL_KEY = 'psycognito.billingEmail.v1';
 const RESEND_SECONDS = 60;
 
+/**
+ * Percentage saved by paying yearly, or null when that is not a saving.
+ *
+ * Derived from the prices actually charged rather than hardcoded, because the
+ * two catalogues do not agree: in USD the yearly plan is about 30% cheaper than
+ * twelve monthly payments, while in INR it is currently slightly *more*
+ * expensive. Anything under 1% is rounding noise, not a discount to advertise.
+ */
+const yearlySavingPercent = (monthlyAmount: number, yearlyAmount: number): number | null => {
+  if (!(monthlyAmount > 0) || !(yearlyAmount > 0)) return null;
+  const percent = Math.round((1 - yearlyAmount / (monthlyAmount * 12)) * 100);
+  return percent >= 1 ? percent : null;
+};
+
 type RestoreStep = 'closed' | 'email' | 'code';
 
 export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false }: PaywallModalProps) => {
@@ -106,6 +120,12 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     }
   }, [isOpen]);
   const webPrices = WEB_PRICES[webCurrency];
+  // Only the web catalogue carries numeric amounts. Native prices arrive from
+  // the store as formatted strings, so no percentage is shown there rather than
+  // deriving one from a price this code cannot read.
+  const savingPercent = native
+    ? null
+    : yearlySavingPercent(webPrices.monthly.amount, webPrices.yearly.amount);
 
   useEffect(() => {
     if (!isOpen || !native) return;
@@ -345,7 +365,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {plan === 'monthly' ? 'Monthly' : 'Yearly · Save 33%'}
+                  {plan === 'monthly' ? 'Monthly' : `Yearly${savingPercent ? ` · Save ${savingPercent}%` : ''}`}
                 </button>
               ))}
             </div>
