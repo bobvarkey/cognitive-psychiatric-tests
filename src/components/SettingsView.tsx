@@ -62,7 +62,7 @@ export const SettingsView = () => {
         else toast.info('No active subscription found for this account.');
       } else {
         setShowPaywall(true);
-        toast.info('Enter the email you paid with, then tap Restore access.');
+        toast.info("Tap Restore access — we'll email you a one-time code.");
       }
     } catch (e: any) {
       toast.error(e?.message ?? 'Could not restore purchases.');

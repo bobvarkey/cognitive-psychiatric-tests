@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { X, Lock, Bell, Star, Loader2 } from 'lucide-react';
+import { X, Lock, Bell, Star, Loader2, Mail, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/paywall-hero.jpg';
 import { waitForWrapper } from '@/lib/appbuild/wrapper';
@@ -14,10 +14,12 @@ import {
 } from '@/lib/appbuild/revenuecat';
 import {
   startWebCheckout,
-  restoreWebPurchase,
+  requestRestoreCode,
+  verifyRestoreCode,
   getWebCurrency,
   isDeveloperEmail,
   WEB_PRICES,
+  type WebPremium,
 } from '@/lib/webBilling';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 
@@ -51,6 +53,9 @@ const BENEFITS = [
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const EMAIL_KEY = 'psycognito.billingEmail.v1';
+const RESEND_SECONDS = 60;
+
+type RestoreStep = 'closed' | 'email' | 'code';
 
 export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false }: PaywallModalProps) => {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
@@ -58,6 +63,12 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   const [busy, setBusy] = useState(false);
   const [storeError, setStoreError] = useState<string | null>(null);
   const [restoring, setRestoring] = useState(false);
+  // Website restore: email -> one-time code -> verified lookup.
+  const [restoreStep, setRestoreStep] = useState<RestoreStep>('closed');
+  const [restoreEmail, setRestoreEmail] = useState('');
+  const [restoreCode, setRestoreCode] = useState('');
+  const [restoreError, setRestoreError] = useState<string | null>(null);
+  const [resendIn, setResendIn] = useState(0);
   const [email, setEmail] = useState(() => {
     try {
       return localStorage.getItem(EMAIL_KEY) ?? '';
@@ -80,6 +91,20 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     };
   }, []);
   const webCurrency = useMemo(() => getWebCurrency(), []);
+
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const t = window.setTimeout(() => setResendIn((n) => n - 1), 1000);
+    return () => window.clearTimeout(t);
+  }, [resendIn]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setRestoreStep('closed');
+      setRestoreCode('');
+      setRestoreError(null);
+    }
+  }, [isOpen]);
   const webPrices = WEB_PRICES[webCurrency];
 
   useEffect(() => {
@@ -202,27 +227,66 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       return;
     }
 
-    if (!EMAIL_RE.test(email.trim())) {
-      toast.error('Enter the email you paid with to restore access.');
+    // Website: open the one-time-code restore panel.
+    setRestoreEmail((prev) => prev || email.trim());
+    setRestoreCode('');
+    setRestoreError(null);
+    setRestoreStep('email');
+  };
+
+  const finishRestore = (found: WebPremium | null, devEmail?: string) => {
+    if (found) {
+      toast.success(
+        // Dev builds only; this branch and its text are stripped from production.
+        import.meta.env.DEV && devEmail && isDeveloperEmail(devEmail)
+          ? 'Developer access activated (dev build) — everything is unlocked on this device.'
+          : 'Access restored.'
+      );
+      setRestoreStep('closed');
+      setRestoreCode('');
+      void refreshSubscription();
+      onSelectPlan(found.plan, 'pro');
+    } else {
+      setRestoreError(null);
+      setRestoreStep('email');
+      setRestoreCode('');
+      toast.info('No active website purchase was found for this email.');
+    }
+  };
+
+  const sendRestoreCode = async () => {
+    const target = restoreEmail.trim().toLowerCase();
+    if (!EMAIL_RE.test(target)) {
+      setRestoreError('Enter the email you paid with.');
       return;
     }
+    setRestoreError(null);
     setRestoring(true);
     try {
-      const restoredEmail = email.trim().toLowerCase();
-      const found = await restoreWebPurchase(restoredEmail);
-      if (found) {
-        toast.success(
-          // Dev builds only; this branch and its text are stripped from production.
-          import.meta.env.DEV && isDeveloperEmail(restoredEmail)
-            ? 'Developer access activated (dev build) — everything is unlocked on this device.'
-            : 'Access restored.'
-        );
-        onSelectPlan(found.plan, 'pro');
-      } else {
-        toast.info('No active purchase found for that email.');
+      const devAccess = await requestRestoreCode(target);
+      if (devAccess) {
+        finishRestore(devAccess, target);
+        return;
       }
-    } catch (e: any) {
-      toast.error(e?.message ?? 'Could not restore.');
+      setRestoreStep('code');
+      setRestoreCode('');
+      setResendIn(RESEND_SECONDS);
+      toast.success(`We emailed a code to ${target}.`);
+    } catch (e: unknown) {
+      setRestoreError(e instanceof Error ? e.message : 'Could not send the code. Please try again.');
+    } finally {
+      setRestoring(false);
+    }
+  };
+
+  const submitRestoreCode = async () => {
+    setRestoreError(null);
+    setRestoring(true);
+    try {
+      const found = await verifyRestoreCode(restoreEmail, restoreCode);
+      finishRestore(found);
+    } catch (e: unknown) {
+      setRestoreError(e instanceof Error ? e.message : 'Could not verify the code.');
     } finally {
       setRestoring(false);
     }
@@ -343,13 +407,122 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             </button>
           </div>
 
-          <button
-            onClick={handleRestore}
-            disabled={restoring}
-            className="w-full min-h-[44px] rounded-full border border-border text-sm font-semibold text-foreground transition hover:bg-muted active:scale-[0.99] disabled:opacity-60"
-          >
-            {restoring ? 'Restoring…' : native ? 'Restore Purchases' : 'Restore access'}
-          </button>
+          {native || restoreStep === 'closed' ? (
+            <button
+              onClick={handleRestore}
+              disabled={restoring}
+              className="w-full min-h-[44px] rounded-full border border-border text-sm font-semibold text-foreground transition hover:bg-muted active:scale-[0.99] disabled:opacity-60"
+            >
+              {restoring ? 'Restoring…' : native ? 'Restore Purchases' : 'Restore access'}
+            </button>
+          ) : (
+            <form
+              className="space-y-3 rounded-2xl border border-border bg-muted/40 p-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (restoring) return;
+                if (restoreStep === 'email') void sendRestoreCode();
+                else void submitRestoreCode();
+              }}
+            >
+              <div className="flex items-start gap-2">
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Restore website purchase</p>
+                  <p className="text-xs leading-snug text-muted-foreground">
+                    {restoreStep === 'email'
+                      ? "We'll email you a one-time code to confirm it's your address."
+                      : <>Enter the code we sent to <span className="font-medium text-foreground break-words">{restoreEmail.trim().toLowerCase()}</span>. You can also tap the sign-in link in that email on this device.</>}
+                  </p>
+                </div>
+              </div>
+
+              {restoreStep === 'email' ? (
+                <div className="space-y-1.5">
+                  <label htmlFor="restore-email" className="block text-xs font-medium text-foreground">
+                    Email you paid with
+                  </label>
+                  <input
+                    id="restore-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    autoFocus
+                    value={restoreEmail}
+                    onChange={(e) => setRestoreEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    disabled={restoring}
+                    className="w-full min-h-[44px] rounded-2xl border border-border bg-background px-4 text-base text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
+                  />
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  <label htmlFor="restore-code" className="block text-xs font-medium text-foreground">
+                    One-time code
+                  </label>
+                  <input
+                    id="restore-code"
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    pattern="[0-9]*"
+                    maxLength={10}
+                    autoFocus
+                    value={restoreCode}
+                    onChange={(e) => setRestoreCode(e.target.value.replace(/\D/g, ''))}
+                    placeholder="123456"
+                    disabled={restoring}
+                    className="w-full min-h-[44px] rounded-2xl border border-border bg-background px-4 text-center text-lg font-semibold tracking-[0.4em] tabular-nums text-foreground placeholder:tracking-normal placeholder:font-normal placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-60"
+                  />
+                </div>
+              )}
+
+              {restoreError && (
+                <p role="alert" className="text-xs text-destructive">{restoreError}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={restoring || (restoreStep === 'code' && restoreCode.length < 6)}
+                className="w-full min-h-[44px] rounded-full bg-primary text-primary-foreground text-sm font-semibold transition hover:opacity-90 active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {restoring && <Loader2 className="h-4 w-4 animate-spin" />}
+                {restoreStep === 'email'
+                  ? restoring ? 'Sending…' : 'Email me a code'
+                  : restoring ? 'Verifying…' : 'Verify & restore'}
+              </button>
+
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (restoreStep === 'code') {
+                      setRestoreStep('email');
+                      setRestoreCode('');
+                    } else {
+                      setRestoreStep('closed');
+                    }
+                    setRestoreError(null);
+                  }}
+                  disabled={restoring}
+                  className="inline-flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground disabled:opacity-60"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
+                  {restoreStep === 'code' ? 'Use a different email' : 'Cancel'}
+                </button>
+                {restoreStep === 'code' && (
+                  <button
+                    type="button"
+                    onClick={() => void sendRestoreCode()}
+                    disabled={restoring || resendIn > 0}
+                    className="font-medium text-primary hover:underline disabled:text-muted-foreground disabled:no-underline tabular-nums"
+                  >
+                    {resendIn > 0 ? `Resend code in ${resendIn}s` : 'Resend code'}
+                  </button>
+                )}
+              </div>
+            </form>
+          )}
 
           {native && (
             <ul className="space-y-1.5 text-[11px] leading-snug text-muted-foreground list-disc pl-4">

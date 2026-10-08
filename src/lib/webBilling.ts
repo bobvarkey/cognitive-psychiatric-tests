@@ -1,7 +1,10 @@
-// Web billing helpers. Web checkout has been removed, so web restore never
-// finds a purchase in production builds. In local development only
-// (`vite` dev server, import.meta.env.DEV === true) restore can also unlock a
-// device for whitelisted developer emails — see DEVELOPER_EMAILS below.
+// Web billing helpers: Razorpay website checkout plus "Restore access".
+// Restore requires proof of email ownership: the user receives a one-time
+// code (Supabase email OTP), verifies it, and only then is the purchase looked
+// up server-side for the *verified* email (razorpay-status checks the JWT).
+// In local development only (`vite` dev server, import.meta.env.DEV === true)
+// restore can also unlock a device for whitelisted developer emails without a
+// code — see DEVELOPER_EMAILS below.
 
 export const WEB_PRICES = {
   INR: {
@@ -150,16 +153,127 @@ export async function restoreWebPurchase(email: string): Promise<WebPremium | nu
     saveWebPremium(devAccess);
     return devAccess;
   }
+  // The typed email is never trusted: only a verified Supabase session counts.
+  return restoreWebPurchaseForSession();
+}
+
+const RESTORE_PENDING_KEY = 'psycognito.restorePending.v1';
+const RESTORE_PENDING_TTL_MS = 60 * 60 * 1000;
+
+const markRestorePending = (email: string) => {
+  try {
+    localStorage.setItem(RESTORE_PENDING_KEY, JSON.stringify({ email, at: Date.now() }));
+  } catch {
+    /* ignore */
+  }
+};
+
+const clearRestorePending = () => {
+  try {
+    localStorage.removeItem(RESTORE_PENDING_KEY);
+  } catch {
+    /* ignore */
+  }
+};
+
+const isRestorePending = (): boolean => {
+  try {
+    const raw = localStorage.getItem(RESTORE_PENDING_KEY);
+    if (!raw) return false;
+    const { at } = JSON.parse(raw) as { at?: number };
+    return typeof at === 'number' && Date.now() - at < RESTORE_PENDING_TTL_MS;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Look up a website purchase for the currently signed-in user. The edge
+ * function derives the email from the verified JWT and ignores any body.
+ * Without a session nothing is requested and nothing is stored.
+ */
+export async function restoreWebPurchaseForSession(): Promise<WebPremium | null> {
   try {
     const { supabase } = await import('@/integrations/supabase/client');
-    const { data } = await supabase.functions.invoke('razorpay-status', { body: { email: normalized } });
-    if (data?.active && data.currentPeriodEnd) {
-      const value: WebPremium = { email: normalized, plan: data.plan, currentPeriodEnd: data.currentPeriodEnd };
-      saveWebPremium(value);
-      return value;
-    }
+    const { data: sessionData } = await supabase.auth.getSession();
+    const session = sessionData?.session;
+    if (!session?.access_token) return null;
+
+    const { data, error } = await supabase.functions.invoke('razorpay-status', {
+      body: {},
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    });
+    if (error || !data?.active || !data.currentPeriodEnd) return null;
+
+    const value: WebPremium = {
+      email: String(data.email ?? session.user?.email ?? '').toLowerCase(),
+      plan: data.plan === 'monthly' ? 'monthly' : 'yearly',
+      currentPeriodEnd: data.currentPeriodEnd,
+    };
+    saveWebPremium(value);
+    return value;
   } catch {
-    /* treat as not found */
+    return null;
   }
+}
+
+/**
+ * Restore step 1: email a one-time code. Returns a WebPremium only for the
+ * DEV-only developer unlock (no code needed); otherwise resolves to null once
+ * the code is sent and throws a user-facing Error if sending fails.
+ */
+export async function requestRestoreCode(email: string): Promise<WebPremium | null> {
+  const normalized = email.trim().toLowerCase();
+  if (import.meta.env.DEV && isDeveloperEmail(normalized)) {
+    return restoreWebPurchase(normalized);
+  }
+  const { supabase } = await import('@/integrations/supabase/client');
+  const { error } = await supabase.auth.signInWithOtp({
+    email: normalized,
+    options: {
+      // Website buyers paid without an account, so allow first-time sign-in.
+      shouldCreateUser: true,
+      // If the email template only has a magic link, it lands back here and
+      // completeRestoreFromEmailLink() finishes the restore.
+      emailRedirectTo: typeof window !== 'undefined' ? window.location.origin + window.location.pathname : undefined,
+    },
+  });
+  if (error) {
+    throw new Error(error.message || 'Could not send the code. Please try again.');
+  }
+  markRestorePending(normalized);
   return null;
+}
+
+/** Restore step 2: verify the emailed code, then look up the purchase. */
+export async function verifyRestoreCode(email: string, code: string): Promise<WebPremium | null> {
+  const normalized = email.trim().toLowerCase();
+  const token = code.replace(/\s+/g, '');
+  if (!/^\d{6,10}$/.test(token)) {
+    throw new Error('Enter the code from the email (digits only).');
+  }
+  const { supabase } = await import('@/integrations/supabase/client');
+  const { data, error } = await supabase.auth.verifyOtp({ email: normalized, token, type: 'email' });
+  if (error || !data?.session) {
+    throw new Error('That code is invalid or has expired. Request a new one.');
+  }
+  clearRestorePending();
+  return restoreWebPurchaseForSession();
+}
+
+/**
+ * Finish a restore started on this device when the user tapped the email's
+ * sign-in link instead of typing the code. No-op unless a restore is pending.
+ */
+export async function completeRestoreFromEmailLink(): Promise<WebPremium | null> {
+  if (!isRestorePending()) return null;
+  const result = await restoreWebPurchaseForSession();
+  try {
+    const { supabase } = await import('@/integrations/supabase/client');
+    const { data } = await supabase.auth.getSession();
+    if (data?.session) clearRestorePending();
+  } catch {
+    /* ignore */
+  }
+  return result;
 }

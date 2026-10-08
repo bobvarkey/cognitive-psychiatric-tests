@@ -12,7 +12,8 @@ import {
   getSubscription,
 } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
-import { getWebPremium, restoreWebPurchase, type WebPremium } from '@/lib/webBilling';
+import { toast } from 'sonner';
+import { completeRestoreFromEmailLink, getWebPremium, restoreWebPurchase, type WebPremium } from '@/lib/webBilling';
 
 interface PremiumFeatures {
   allAssessments: boolean;
@@ -78,6 +79,24 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const sync = () => setWebPremium(getWebPremium());
     window.addEventListener('psycognito:web-premium', sync);
     return () => window.removeEventListener('psycognito:web-premium', sync);
+  }, []);
+
+  // If a website restore is pending and the user came back via the email's
+  // sign-in link (instead of typing the code), finish the restore here.
+  useEffect(() => {
+    let active = true;
+    completeRestoreFromEmailLink()
+      .then((found) => {
+        if (!active || !found) return;
+        setWebPremium(getWebPremium());
+        toast.success('Access restored.');
+      })
+      .catch(() => {
+        /* ignore */
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Restore gating logic

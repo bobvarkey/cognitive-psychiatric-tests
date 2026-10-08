@@ -3,6 +3,27 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const STORE_KEY = 'psycognito.webPremium.v1';
 const DEV_EMAIL = 'dev-tester@example.com';
 
+// Mocked Supabase client: no session unless a test provides one.
+const sb = vi.hoisted(() => ({
+  getSession: vi.fn(),
+  signInWithOtp: vi.fn(),
+  verifyOtp: vi.fn(),
+  invoke: vi.fn(),
+}));
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    auth: { getSession: sb.getSession, signInWithOtp: sb.signInWithOtp, verifyOtp: sb.verifyOtp },
+    functions: { invoke: sb.invoke },
+  },
+}));
+
+const noSession = () => sb.getSession.mockResolvedValue({ data: { session: null }, error: null });
+const withSession = (email = 'payer@example.com') =>
+  sb.getSession.mockResolvedValue({
+    data: { session: { access_token: 'user-jwt', user: { email } } },
+    error: null,
+  });
+
 // DEVELOPER_EMAILS is computed at module load, so stub env first and then
 // import a fresh copy of the module.
 async function loadBilling(env: { dev: boolean; emails?: string }) {
@@ -14,7 +35,11 @@ async function loadBilling(env: { dev: boolean; emails?: string }) {
 }
 
 describe('webBilling developer unlock', () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    vi.clearAllMocks();
+    noSession();
+  });
   afterEach(() => {
     vi.unstubAllEnvs();
     localStorage.clear();
@@ -61,3 +86,136 @@ describe('webBilling developer unlock', () => {
     expect(billing.getWebPremium()).toEqual(paid);
   });
 });
+
+describe('webBilling restore requires a verified email session', () => {
+  const future = new Date(Date.now() + 30 * 86400_000).toISOString();
+
+  beforeEach(() => {
+    localStorage.clear();
+    vi.clearAllMocks();
+    noSession();
+  });
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    localStorage.clear();
+  });
+
+  it('typed email without a verified session: no lookup, no premium, nothing stored', async () => {
+    const billing = await loadBilling({ dev: false });
+    expect(await billing.restoreWebPurchase('payer@example.com')).toBeNull();
+    expect(sb.invoke).not.toHaveBeenCalled();
+    expect(localStorage.getItem(STORE_KEY)).toBeNull();
+    expect(billing.getWebPremium()).toBeNull();
+  });
+
+  it('server rejecting the session (401) stores nothing', async () => {
+    withSession();
+    sb.invoke.mockResolvedValue({ data: null, error: new Error('401') });
+    const billing = await loadBilling({ dev: false });
+    expect(await billing.restoreWebPurchaseForSession()).toBeNull();
+    expect(localStorage.getItem(STORE_KEY)).toBeNull();
+  });
+
+  it('happy path: verified session sends the user JWT, never an email, and stores the server result', async () => {
+    withSession('payer@example.com');
+    sb.invoke.mockResolvedValue({
+      data: { active: true, email: 'payer@example.com', plan: 'monthly', currentPeriodEnd: future },
+      error: null,
+    });
+    const billing = await loadBilling({ dev: false });
+    const found = await billing.restoreWebPurchase('someone-else@example.com');
+    expect(found).toEqual({ email: 'payer@example.com', plan: 'monthly', currentPeriodEnd: future });
+    const [fn, opts] = sb.invoke.mock.calls[0];
+    expect(fn).toBe('razorpay-status');
+    expect(opts.headers.Authorization).toBe('Bearer user-jwt');
+    expect(JSON.stringify(opts.body ?? {})).not.toMatch(/@/);
+    expect(billing.getWebPremium()).toEqual(found);
+  });
+
+  it('inactive subscription returns null and stores nothing', async () => {
+    withSession();
+    sb.invoke.mockResolvedValue({ data: { active: false, plan: null, currentPeriodEnd: null }, error: null });
+    const billing = await loadBilling({ dev: false });
+    expect(await billing.restoreWebPurchaseForSession()).toBeNull();
+    expect(localStorage.getItem(STORE_KEY)).toBeNull();
+  });
+
+  it('requestRestoreCode emails a one-time code and unlocks nothing yet', async () => {
+    sb.signInWithOtp.mockResolvedValue({ data: {}, error: null });
+    const billing = await loadBilling({ dev: false });
+    expect(await billing.requestRestoreCode(' Payer@Example.com ')).toBeNull();
+    expect(sb.signInWithOtp).toHaveBeenCalledWith(
+      expect.objectContaining({ email: 'payer@example.com', options: expect.objectContaining({ shouldCreateUser: true }) }),
+    );
+    expect(sb.invoke).not.toHaveBeenCalled();
+    expect(localStorage.getItem(STORE_KEY)).toBeNull();
+  });
+
+  it('requestRestoreCode surfaces send errors', async () => {
+    sb.signInWithOtp.mockResolvedValue({ data: {}, error: { message: 'Rate limit exceeded' } });
+    const billing = await loadBilling({ dev: false });
+    await expect(billing.requestRestoreCode('payer@example.com')).rejects.toThrow('Rate limit exceeded');
+  });
+
+  it('verifyRestoreCode: bad code format never calls Supabase', async () => {
+    const billing = await loadBilling({ dev: false });
+    await expect(billing.verifyRestoreCode('payer@example.com', '12ab')).rejects.toThrow();
+    expect(sb.verifyOtp).not.toHaveBeenCalled();
+    expect(localStorage.getItem(STORE_KEY)).toBeNull();
+  });
+
+  it('verifyRestoreCode: wrong/expired code stores nothing', async () => {
+    sb.verifyOtp.mockResolvedValue({ data: { session: null }, error: { message: 'Token has expired or is invalid' } });
+    const billing = await loadBilling({ dev: false });
+    await expect(billing.verifyRestoreCode('payer@example.com', '123456')).rejects.toThrow(/invalid or has expired/);
+    expect(sb.invoke).not.toHaveBeenCalled();
+    expect(localStorage.getItem(STORE_KEY)).toBeNull();
+  });
+
+  it('verifyRestoreCode: valid code then verified lookup restores access', async () => {
+    sb.verifyOtp.mockResolvedValue({ data: { session: { access_token: 'user-jwt' } }, error: null });
+    withSession('payer@example.com');
+    sb.invoke.mockResolvedValue({
+      data: { active: true, email: 'payer@example.com', plan: 'yearly', currentPeriodEnd: future },
+      error: null,
+    });
+    const billing = await loadBilling({ dev: false });
+    const found = await billing.verifyRestoreCode('payer@example.com', '123456');
+    expect(sb.verifyOtp).toHaveBeenCalledWith({ email: 'payer@example.com', token: '123456', type: 'email' });
+    expect(found).toMatchObject({ email: 'payer@example.com', plan: 'yearly' });
+    expect(billing.getWebPremium()).toMatchObject({ email: 'payer@example.com' });
+  });
+
+  it('dev build: developer email unlocks at step 1 without sending a code', async () => {
+    const billing = await loadBilling({ dev: true, emails: DEV_EMAIL });
+    const found = await billing.requestRestoreCode(DEV_EMAIL);
+    expect(found).toMatchObject({ email: DEV_EMAIL, source: 'dev' });
+    expect(sb.signInWithOtp).not.toHaveBeenCalled();
+    expect(sb.invoke).not.toHaveBeenCalled();
+  });
+
+  it('production build: developer email at step 1 just sends a code', async () => {
+    sb.signInWithOtp.mockResolvedValue({ data: {}, error: null });
+    const billing = await loadBilling({ dev: false, emails: DEV_EMAIL });
+    expect(await billing.requestRestoreCode(DEV_EMAIL)).toBeNull();
+    expect(sb.signInWithOtp).toHaveBeenCalled();
+    expect(localStorage.getItem(STORE_KEY)).toBeNull();
+  });
+
+  it('email-link completion only runs when a restore is pending', async () => {
+    withSession('payer@example.com');
+    sb.invoke.mockResolvedValue({
+      data: { active: true, email: 'payer@example.com', plan: 'yearly', currentPeriodEnd: future },
+      error: null,
+    });
+    const billing = await loadBilling({ dev: false });
+    expect(await billing.completeRestoreFromEmailLink()).toBeNull();
+    expect(sb.invoke).not.toHaveBeenCalled();
+
+    sb.signInWithOtp.mockResolvedValue({ data: {}, error: null });
+    await billing.requestRestoreCode('payer@example.com');
+    expect(await billing.completeRestoreFromEmailLink()).toMatchObject({ email: 'payer@example.com' });
+    expect(localStorage.getItem('psycognito.restorePending.v1')).toBeNull();
+  });
+});
+
