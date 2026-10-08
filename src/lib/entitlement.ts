@@ -59,9 +59,23 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
-export async function currentUserEmail(): Promise<string | null> {
+export interface AuthUser {
+  /** The auth.users id. This — not the email — is what an entitlement keys to. */
+  id: string;
+  email: string | null;
+}
+
+/**
+ * The signed-in identity, or null.
+ *
+ * The id is returned deliberately: when access has not been granted, the id is
+ * the one thing an administrator needs in order to grant it, and it can only be
+ * read from a real session.
+ */
+export async function currentAuthUser(): Promise<AuthUser | null> {
   const { data } = await supabase.auth.getSession();
-  return data.session?.user.email ?? null;
+  const user = data.session?.user;
+  return user ? { id: user.id, email: user.email ?? null } : null;
 }
 
 /**
