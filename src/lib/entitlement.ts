@@ -79,14 +79,17 @@ export async function currentAuthUser(): Promise<AuthUser | null> {
 }
 
 /**
- * `has_premium` is not in the generated `Database` types until the entitlements
- * migration is applied and the types are regenerated with
+ * None of these functions are in the generated `Database` types until the
+ * migrations are applied and the types are regenerated with
  * `supabase gen types typescript`. The cast is confined to this one call so the
  * rest of the module stays typed; delete it once the types catch up.
  */
-const callHasPremium = supabase.rpc as unknown as (
-  fn: 'has_premium',
-) => Promise<{ data: boolean | null; error: { message: string } | null }>;
+const callRpc = supabase.rpc as unknown as (
+  fn: string,
+) => Promise<{ data: unknown; error: { message: string } | null }>;
+
+const asTier = (value: unknown): EntitlementTier =>
+  value === 'trial' || value === 'full' ? value : 'none';
 
 /**
  * The access decision, asked of the backend.
@@ -96,9 +99,37 @@ const callHasPremium = supabase.rpc as unknown as (
  * that into a yes.
  */
 export async function hasPremium(): Promise<boolean> {
-  const { data, error } = await callHasPremium('has_premium');
+  const { data, error } = await callRpc('has_premium');
   if (error) return false;
   return data === true;
+}
+
+/**
+ * The access tier the backend reports.
+ *
+ * `full` is a paid or developer entitlement — everything. `trial` is the one
+ * 3-day trial, which unlocks only what `src/config/trialScope.ts` lists.
+ * `none` is the paywall. Same fail-closed rule as above.
+ */
+export type EntitlementTier = 'none' | 'trial' | 'full';
+
+export async function entitlementTier(): Promise<EntitlementTier> {
+  const { data, error } = await callRpc('entitlement_tier');
+  if (error) return 'none';
+  return asTier(data);
+}
+
+/**
+ * Start this account's one 3-day trial.
+ *
+ * The backend owns the decision: if the account already holds any entitlement
+ * row, nothing is written and the tier it already has comes back. The expiry is
+ * the database's `now() + 3 days`, so the device clock has no say in it.
+ */
+export async function startTrial(): Promise<EntitlementTier> {
+  const { data, error } = await callRpc('start_trial');
+  if (error) return 'none';
+  return asTier(data);
 }
 
 /** Run `onChange` whenever the session changes; returns an unsubscribe function. */
