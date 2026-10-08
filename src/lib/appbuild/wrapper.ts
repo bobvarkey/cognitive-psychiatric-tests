@@ -69,3 +69,16 @@ export function getPlugin(name: string): any | null {
 export function getPurchasesPlugin(): any | null {
   return getPlugin('Purchases');
 }
+
+/**
+ * True when the native wrapper object exists at all, whether or not its `ready`
+ * promise has settled.
+ *
+ * Distinct from the result of `waitForWrapper()`: that resolves `null` after a
+ * one-second timeout, so a slow wrapper is indistinguishable from a browser.
+ * For deciding whether we are inside the App Store build, presence is the
+ * question, and treating a slow wrapper as a browser would fail open.
+ */
+export function isWrapperPresent(): boolean {
+  return typeof window !== 'undefined' && !!window.AppbuildWrapper;
+}

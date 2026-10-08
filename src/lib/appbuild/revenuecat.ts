@@ -1,4 +1,4 @@
-import { getPurchasesPlugin, waitForWrapper } from './wrapper';
+import { getPurchasesPlugin, isWrapperPresent, waitForWrapper } from './wrapper';
 import { REVENUECAT_ANDROID_KEY, REVENUECAT_IOS_KEY } from './revenuecatKeys';
 
 export interface RcPackage {
@@ -79,4 +79,22 @@ export async function getEntitlement(id = 'premium'): Promise<any | null> {
 /** True when running inside the native wrapper with the Purchases plugin available. */
 export function isNativePurchasesAvailable(): boolean {
   return getPurchasesPlugin() !== null;
+}
+
+/**
+ * True only inside the native wrapper.
+ *
+ * Async because the wrapper injects itself after first paint; `waitForWrapper`
+ * waits up to a second for it. A wrapper that is present but slow, or present
+ * without a Purchases plugin, still counts as native — this answers "are we in
+ * the App Store build", not "is IAP configured". Getting that wrong in the
+ * permissive direction would unlock an admin comp inside the shipped app.
+ */
+export async function isNativeApp(): Promise<boolean> {
+  try {
+    await waitForWrapper();
+  } catch {
+    /* fall through to the presence check */
+  }
+  return isWrapperPresent();
 }
