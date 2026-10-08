@@ -1,32 +1,64 @@
 import { describe, it, expect } from 'vitest';
-import { TRIAL_CATEGORIES, isVisibleInTrial } from '../config/trialScope';
+import { TRIAL_KEYS, canOpenAssessment, isVisibleInTrial } from '../config/trialScope';
+import { assessments } from '../components/AssessmentSelector';
+
+/** The Triage & Core Flows section, which is the top of the registry. */
+const SECTION_KEYS = assessments.slice(0, 20).map((a) => a.key);
 
 describe('trial scope', () => {
-  it('opens three of the eleven category tabs', () => {
-    expect(TRIAL_CATEGORIES).toHaveLength(3);
+  it('is the twenty-entry Triage & Core Flows section', () => {
+    expect(TRIAL_KEYS).toHaveLength(20);
   });
 
-  it('never lists the all tab, which would expose the whole library', () => {
-    expect(TRIAL_CATEGORIES).not.toContain('all');
+  it('matches the top of the registry exactly, in order', () => {
+    // The invariant that catches drift: renaming a key, deleting an assessment,
+    // or inserting one into the section all fail here rather than silently
+    // changing what a trial unlocks.
+    expect([...TRIAL_KEYS]).toEqual(SECTION_KEYS);
   });
 
-  it('shows an assessment that belongs to a trial category', () => {
-    expect(isVisibleInTrial(['cognitive'])).toBe(true);
-    expect(isVisibleInTrial(['all', 'cognitive'])).toBe(true);
-    expect(isVisibleInTrial(['sleep'])).toBe(true);
+  it('lists no key twice', () => {
+    expect(new Set(TRIAL_KEYS).size).toBe(TRIAL_KEYS.length);
   });
 
-  it('hides an assessment outside the trial categories', () => {
-    expect(isVisibleInTrial(['epilepsy'])).toBe(false);
-    expect(isVisibleInTrial(['movement', 'adverse'])).toBe(false);
-    expect(isVisibleInTrial(['personality'])).toBe(false);
+  it('names only keys that exist in the registry', () => {
+    const known = new Set(assessments.map((a) => a.key));
+    for (const key of TRIAL_KEYS) expect(known.has(key)).toBe(true);
   });
 
-  it('hides the all-only triage flow, which belongs to no trial category', () => {
-    expect(isVisibleInTrial(['all'])).toBe(false);
+  it('includes triage, which the category rule had excluded', () => {
+    expect(isVisibleInTrial('triage')).toBe(true);
+    expect(canOpenAssessment('triage', 'trial')).toBe(true);
   });
 
-  it('shows nothing for an assessment with no categories at all', () => {
-    expect(isVisibleInTrial([])).toBe(false);
+  it('is a minority of the catalogue, near a quarter', () => {
+    // 20 of 96. A band rather than a fixed ratio, so adding assessments does not
+    // break it, while a change that made the trial most of the product still would.
+    const share = TRIAL_KEYS.length / assessments.length;
+    expect(share).toBeGreaterThan(0.15);
+    expect(share).toBeLessThan(0.3);
+  });
+
+  it('hides the assessments immediately below the section', () => {
+    expect(isVisibleInTrial('delusions')).toBe(false);
+    expect(isVisibleInTrial('bprs')).toBe(false);
+  });
+});
+
+describe('canOpenAssessment', () => {
+  it('opens everything for a full tier', () => {
+    expect(canOpenAssessment('hamd', 'full')).toBe(true);
+    expect(canOpenAssessment('triage', 'full')).toBe(true);
+  });
+
+  it('opens only the section for a trial', () => {
+    expect(canOpenAssessment('triage', 'trial')).toBe(true);
+    expect(canOpenAssessment('hamd', 'trial')).toBe(false);
+    expect(canOpenAssessment('delusions', 'trial')).toBe(false);
+  });
+
+  it('opens nothing for no tier', () => {
+    expect(canOpenAssessment('triage', 'none')).toBe(false);
+    expect(canOpenAssessment('hamd', 'none')).toBe(false);
   });
 });
