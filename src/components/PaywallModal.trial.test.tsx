@@ -75,6 +75,40 @@ describe('PaywallModal trial entry', () => {
     expect(sub.startTrial).not.toHaveBeenCalled();
   });
 
+  it('keeps the form usable when the code cannot be sent', async () => {
+    ent.requestEmailCode.mockResolvedValue({ ok: false, message: 'That address was rejected.' });
+    render(<PaywallModal isOpen onClose={vi.fn()} onSelectPlan={vi.fn()} />);
+
+    fireEvent.click(screen.getByText('Start 3-day trial'));
+    fireEvent.change(screen.getByLabelText('Your email'), { target: { value: 'someone@example.com' } });
+    fireEvent.click(screen.getByText('Email me a code'));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/rejected/i);
+    // Still on the first step with the submit button live, so the address can be
+    // corrected and retried; a failure that advanced or wedged the form would
+    // strand the user with no way to get a code.
+    expect(screen.queryByLabelText('One-time code')).toBeNull();
+    expect(screen.getByText('Email me a code')).not.toBeDisabled();
+  });
+
+  it('leaves the code step retryable after a rejected code', async () => {
+    ent.requestEmailCode.mockResolvedValue({ ok: true });
+    ent.verifyEmailCode.mockResolvedValue({ ok: false, message: 'That code was not accepted.' });
+    render(<PaywallModal isOpen onClose={vi.fn()} onSelectPlan={vi.fn()} />);
+
+    fireEvent.click(screen.getByText('Start 3-day trial'));
+    fireEvent.change(screen.getByLabelText('Your email'), { target: { value: 'someone@example.com' } });
+    fireEvent.click(screen.getByText('Email me a code'));
+    fireEvent.change(await screen.findByLabelText('One-time code'), { target: { value: '000000' } });
+    fireEvent.click(screen.getByText('Start my trial'));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/not accepted/i);
+    // The field stays and the button comes back, so a mistyped code costs one
+    // retry rather than a restart.
+    expect(screen.getByLabelText('One-time code')).toBeTruthy();
+    expect(screen.getByText('Start my trial')).not.toBeDisabled();
+  });
+
   it('reports an already-used trial rather than appearing to succeed', async () => {
     ent.requestEmailCode.mockResolvedValue({ ok: true });
     ent.verifyEmailCode.mockResolvedValue({ ok: true });
