@@ -41,6 +41,7 @@ const setSub = (over: Record<string, unknown>) => {
     premiumSource: 'demo',
     setShowPaywall: vi.fn(),
     tier: 'trial',
+    demoTrialActive: false,
     ...over,
   };
 };
@@ -102,5 +103,41 @@ describe('assessment lock, as rendered', () => {
     fireEvent.click(screen.getByRole('button', { name: /^CCSA/ }));
     expect(setShowPaywall).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('ccsa')).toBeTruthy();
+  });
+
+  it('leaves anyone the guard admitted able to open an assessment', () => {
+    // Every source here satisfies AuthGuard's `hasAccess`, so the lock must not
+    // refuse what the guard let through. `tier` is 'none' for all of them: a paid
+    // web buyer, a store purchase and the device-local demo each carry no
+    // `entitlements` row, so keying the lock on `tier` alone locked out exactly
+    // the people who had paid. triage is a trial-scoped key, so it is refused by
+    // tier regardless of scope — which is what makes this discriminating.
+    const admitted = [
+      { premiumSource: 'web', demoTrialActive: false },
+      { premiumSource: 'store', demoTrialActive: false },
+      { premiumSource: 'developer', demoTrialActive: false },
+      { premiumSource: 'demo', demoTrialActive: true },
+    ];
+
+    for (const access of admitted) {
+      window.history.pushState({}, '', '/assessment/triage');
+      setSub({ tier: 'none', ...access });
+      const { unmount } = render(<AssessmentSelector />);
+
+      expect(screen.getByTestId('triage')).toBeTruthy();
+      expect(screen.queryByText(LOCKED)).toBeNull();
+      unmount();
+    }
+  });
+
+  it('still refuses a visitor with no access at all', () => {
+    // The control for the test above: with nothing granted, the same key is
+    // locked, so that test is not passing because the lock never engages.
+    window.history.pushState({}, '', '/assessment/triage');
+    setSub({ tier: 'none', premiumSource: 'none', demoTrialActive: false });
+    render(<AssessmentSelector />);
+
+    expect(screen.getByText(LOCKED)).toBeTruthy();
+    expect(screen.queryByTestId('triage')).toBeNull();
   });
 });

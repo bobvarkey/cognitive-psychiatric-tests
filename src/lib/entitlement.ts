@@ -28,10 +28,16 @@ export async function requestEmailCode(email: string): Promise<AuthResult> {
     return { ok: false, message: 'Enter a valid email address.' };
   }
 
-  const { error } = await supabase.auth.signInWithOtp({
-    email: normalized,
-    options: { shouldCreateUser: true },
-  });
+  // Bounded like the grant reads: these two gate a form whose submit button is
+  // disabled while they are outstanding, so an unanswered request would leave
+  // the trial unreachable without a reload.
+  const { error } = await withTimeout<{ error: { message: string } | null }>(
+    supabase.auth.signInWithOtp({
+      email: normalized,
+      options: { shouldCreateUser: true },
+    }),
+    { error: { message: 'The code request timed out. Please try again.' } },
+  );
 
   return error ? { ok: false, message: error.message } : { ok: true };
 }
@@ -47,11 +53,14 @@ export async function verifyEmailCode(email: string, code: string): Promise<Auth
     return { ok: false, message: 'Enter the code from your email.' };
   }
 
-  const { error } = await supabase.auth.verifyOtp({
-    email: normalized,
-    token,
-    type: 'email',
-  });
+  const { error } = await withTimeout<{ error: { message: string } | null }>(
+    supabase.auth.verifyOtp({
+      email: normalized,
+      token,
+      type: 'email',
+    }),
+    { error: { message: 'The code check timed out. Please try again.' } },
+  );
 
   return error ? { ok: false, message: error.message } : { ok: true };
 }
@@ -242,8 +251,17 @@ export async function entitlementTier(): Promise<EntitlementTier> {
  * the database's `now() + 3 days`, so the device clock has no say in it.
  */
 export async function startTrial(): Promise<EntitlementTier> {
-  const { error } = await callRpc('start_trial');
-  if (error) return 'none';
+  // Bounded like the reads above: an outstanding call must not outlive the
+  // paywall's patience, or the spinner stays up with no way back.
+  const { error } = await withTimeout(callRpc('start_trial'), {
+    data: null,
+    error: { message: 'The trial service could not be reached. Please try again.' },
+  });
+  // A failed call is not a refusal. Returning 'none' here would tell the user
+  // their trial was already used when the function is missing, the session is
+  // stale or the request never landed — which is the operator's state while the
+  // migrations are unapplied. Only an answer that arrived may mean 'none'.
+  if (error) throw new Error(error.message);
   // Re-derive rather than trusting the returned string: a developer account in
   // the native build would otherwise be told its trial started while the gate
   // still refuses it.

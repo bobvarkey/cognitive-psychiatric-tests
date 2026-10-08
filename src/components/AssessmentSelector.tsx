@@ -365,7 +365,7 @@ export const AssessmentSelector = () => {
   const location = useLocation();
   const { t, language, setLanguage } = useLanguage();
   const { clearPatientInfo } = usePatientInfo();
-  const { subscription, setShowPaywall, premiumSource, tier } = useSubscription();
+  const { subscription, setShowPaywall, premiumSource, tier, demoTrialActive } = useSubscription();
   const dayCount = useDayCounter();
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentKey | null>(null);
   const [activeCategory, setActiveCategory] = useState<Category>('all');
@@ -422,9 +422,21 @@ export const AssessmentSelector = () => {
     }
   }, [selectedAssessment]);
 
+  // Spec §10: access is `isProSource(premiumSource)` or a trial that is still
+  // running. Every route the app already honours passes through untouched, and
+  // only the trial is scoped.
+  //
+  // `tier` alone is not enough to decide this. It is derived from the
+  // `entitlements` table, which is empty for a paid web buyer, a store purchase
+  // and the device-local demo — so all three read `tier: 'none'`. Keying the
+  // lock on it would refuse exactly the people who had already paid, while
+  // `AuthGuard` waved them in.
+  const hasUnscopedAccess = isProSource(premiumSource) || demoTrialActive;
+  const canOpen = (key: AssessmentKey) => hasUnscopedAccess || canOpenAssessment(key, tier);
+
   // Each questionnaire should default to English; user can toggle per-assessment.
   const openAssessment = (key: AssessmentKey) => {
-    if (!canOpenAssessment(key, tier)) {
+    if (!canOpen(key)) {
       setShowPaywall(true);
       return;
     }
@@ -496,7 +508,7 @@ export const AssessmentSelector = () => {
   };
 
   // Render selected assessment
-  const selectedLocked = !!selectedAssessment && !canOpenAssessment(selectedAssessment, tier);
+  const selectedLocked = !!selectedAssessment && !canOpen(selectedAssessment);
 
   if (selectedLocked) {
     // A deep link sets `selectedAssessment` directly, so the click path never
@@ -995,7 +1007,7 @@ export const AssessmentSelector = () => {
                       const Icon = a.icon;
                       const color = neonColorPalette[index % neonColorPalette.length];
                       const reference = getAssessmentReference(a.key);
-                      const locked = !canOpenAssessment(a.key, tier);
+                      const locked = !canOpen(a.key);
 
                       return (
                         <Tooltip key={a.key}>

@@ -201,8 +201,32 @@ describe('startTrial', () => {
     expect(sb.rpc).toHaveBeenCalledWith('current_entitlement');
   });
 
-  it('is none when the trial cannot be started', async () => {
+  it('reports a failed call as an error, not as a spent trial', async () => {
+    // An RPC error is not a refusal. Collapsing it to 'none' tells the user their
+    // trial was already used when the function is missing or the request never
+    // landed — the operator's state while the migrations are unapplied.
     sb.rpc.mockResolvedValue({ data: null, error: { message: 'not authenticated' } });
+    await expect(startTrial()).rejects.toThrow('not authenticated');
+  });
+
+  it('is none when the account is left with no active grant', async () => {
+    // A call that succeeded and left no active row is the genuine refusal: the
+    // trial was spent and has since expired. This 'none' means something
+    // different from the one above, which is the whole point.
+    sb.rpc.mockImplementation((fn: string) =>
+      Promise.resolve(fn === 'start_trial' ? { data: null, error: null } : { data: [], error: null }),
+    );
     expect(await startTrial()).toBe('none');
+  });
+
+  it('gives up on a call that hangs, rather than leaving the caller waiting', async () => {
+    // Unbounded, this is what wedges the paywall: the spinner stays up and the
+    // Cancel button is disabled while the request is outstanding.
+    vi.useFakeTimers();
+    sb.rpc.mockReturnValue(new Promise(() => {}));
+    const pending = startTrial();
+    const assertion = expect(pending).rejects.toThrow(/could not be reached/i);
+    await vi.advanceTimersByTimeAsync(5000);
+    await assertion;
   });
 });

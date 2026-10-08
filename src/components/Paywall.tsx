@@ -136,7 +136,10 @@ export const Paywall = ({ entitlementId = 'premium', onPurchased }: PaywallProps
             variant="secondary"
             className="w-full gap-2"
             onClick={() => {
-              void startTrial();
+              // startTrial rejects when the server cannot be reached, so this
+              // needs a handler; the claim below is optimistic either way and is
+              // tracked separately.
+              void startTrial().catch(() => {});
               refresh();
               setMessage('Premium unlocked for 3-day demo trial.');
               onPurchased?.();
