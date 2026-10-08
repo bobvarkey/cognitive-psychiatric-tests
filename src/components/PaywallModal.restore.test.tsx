@@ -15,7 +15,6 @@ vi.mock('@/lib/appbuild/wrapper', () => ({ waitForWrapper: () => Promise.resolve
 vi.mock('@/contexts/SubscriptionContext', () => ({
   useSubscription: () => ({
     refreshSubscription: vi.fn(),
-    restartDemoTrial: vi.fn(),
     demoTrialActive: false,
     demoTrialMsLeft: 0,
   }),

@@ -4,7 +4,6 @@ import {
   setDemoUnlockAll,
   getDemoUnlockAll,
   getDemoTrialMsLeft,
-  resetDemoTrial,
   DEMO_TRIAL_DAYS,
   isPremiumUser,
   isDemoTrialActive,
@@ -14,7 +13,7 @@ import {
 import type { Subscription } from '@/services/subscriptionService';
 import { toast } from 'sonner';
 import { completeRestoreFromEmailLink, getWebPremium, restoreWebPurchase, restoreWebPurchaseForSession, type WebPremium } from '@/lib/webBilling';
-import { currentAuthUser, onAuthChange, serverEntitlement, tierOf, type Entitlement, type EntitlementTier } from '@/lib/entitlement';
+import { currentAuthUser, onAuthChange, serverEntitlement, startTrial as requestTrial, tierOf, type Entitlement, type EntitlementTier } from '@/lib/entitlement';
 
 interface PremiumFeatures {
   allAssessments: boolean;
@@ -43,7 +42,8 @@ interface SubscriptionContextType {
   /** Milliseconds remaining in the demo trial. */
   demoTrialMsLeft: number;
   demoTrialDays: number;
-  restartDemoTrial: () => void;
+  /** Ask the server to start the 3-day trial. Returns the tier afterwards. */
+  startTrial: () => Promise<EntitlementTier>;
   /** Website (Razorpay) subscription active on this device, if any. */
   webPremium: WebPremium | null;
   restoreWebAccess: (email: string) => Promise<boolean>;
@@ -237,12 +237,16 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setDemoTrialMsLeft(getDemoTrialMsLeft());
   };
 
-  const restartDemoTrial = () => {
-    resetDemoTrial();
-    setDemoUnlockAll(true);
-    setDemoUnlockAllState(true);
-    setDemoTrialMsLeft(getDemoTrialMsLeft());
-    setShowPaywall(false);
+  // The server owns this decision. If the account already holds any entitlement
+  // row — a spent trial, a paid plan, an admin grant — nothing is written and the
+  // grant it already has comes back. Re-reading rather than assuming a trial
+  // started keeps one source of truth, and covers the native build, where the
+  // server's answer and the device's may differ.
+  const startTrial = async (): Promise<EntitlementTier> => {
+    const next = await requestTrial();
+    await refreshEntitlement();
+    if (next !== 'none') setShowPaywall(false);
+    return next;
   };
 
   const restoreWebAccess = async (email: string) => {
@@ -280,7 +284,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     demoTrialActive,
     demoTrialMsLeft,
     demoTrialDays: DEMO_TRIAL_DAYS,
-    restartDemoTrial,
+    startTrial,
     webPremium,
     restoreWebAccess,
     premiumSource,

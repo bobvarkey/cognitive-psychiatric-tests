@@ -77,7 +77,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       return '';
     }
   });
-  const { refreshSubscription, restartDemoTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
+  const { refreshSubscription, startTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
 
   // The AppBuild script can define the wrapper in browsers too; only treat this
   // as the native app once the wrapper's ready promise actually resolves.
@@ -402,7 +402,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           <div className="text-center">
             <button
               onClick={() => {
-                restartDemoTrial();
+                void startTrial();
                 toast.success('3-day demo started — everything is unlocked.');
                 onClose();
               }}

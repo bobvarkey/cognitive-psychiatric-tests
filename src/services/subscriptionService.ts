@@ -96,15 +96,6 @@ export const getDemoTrialMsLeft = (): number =>
 
 export const isDemoTrialActive = (): boolean => getDemoTrialMsLeft() > 0;
 
-/** Restart the 3-day demo trial (testing helper). */
-export const resetDemoTrial = (): void => {
-  try {
-    localStorage.setItem(DEMO_START_KEY, String(Date.now()));
-  } catch {
-    /* ignore */
-  }
-};
-
 // Check if user has premium access
 export const isPremiumUser = (): boolean => {
   if (getDemoUnlockAll() && isDemoTrialActive()) return true;

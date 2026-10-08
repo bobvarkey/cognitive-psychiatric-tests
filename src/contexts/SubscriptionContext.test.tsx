@@ -22,7 +22,6 @@ vi.mock('@/services/subscriptionService', () => ({
   setDemoUnlockAll: vi.fn(),
   getDemoUnlockAll: () => false,
   getDemoTrialMsLeft: () => 0,
-  resetDemoTrial: vi.fn(),
   DEMO_TRIAL_DAYS: 3,
   isPremiumUser: () => false,
   isDemoTrialActive: () => false,

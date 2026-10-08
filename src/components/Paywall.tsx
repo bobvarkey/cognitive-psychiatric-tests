@@ -25,7 +25,7 @@ export const Paywall = ({ entitlementId = 'premium', onPurchased }: PaywallProps
   const [restoring, setRestoring] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const { isPremium, refresh } = usePremiumEntitlement(entitlementId);
-  const { restartDemoTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
+  const { startTrial, demoTrialActive, demoTrialMsLeft } = useSubscription();
 
   useEffect(() => {
     let active = true;
@@ -136,7 +136,7 @@ export const Paywall = ({ entitlementId = 'premium', onPurchased }: PaywallProps
             variant="secondary"
             className="w-full gap-2"
             onClick={() => {
-              restartDemoTrial();
+              void startTrial();
               refresh();
               setMessage('Premium unlocked for 3-day demo trial.');
               onPurchased?.();

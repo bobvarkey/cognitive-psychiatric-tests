@@ -34,7 +34,7 @@ export const SettingsView = () => {
   const isMl = language === 'ml';
   const { results, clear } = useResultsHistory();
   const { clearPatientInfo } = usePatientInfo();
-  const { demoUnlockAll, toggleDemoUnlockAll, restartDemoTrial, demoTrialActive, demoTrialMsLeft, demoTrialDays, setShowPaywall, refreshSubscription, premiumSource } = useSubscription();
+  const { demoUnlockAll, toggleDemoUnlockAll, demoTrialActive, demoTrialMsLeft, demoTrialDays, setShowPaywall, refreshSubscription, premiumSource } = useSubscription();
   const [restoring, setRestoring] = useState(false);
   const { mode, toggleMode, theme, setTheme, fontSize, setFontSize, offlineMode, setOfflineMode } = useThemeStore();
 
