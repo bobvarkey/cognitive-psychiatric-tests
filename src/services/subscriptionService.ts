@@ -254,3 +254,14 @@ export const getPremiumFeatures = () => {
     bannerAdsDisabled: isPremium,
   };
 };
+
+/**
+ * Whether a `premiumSource` value means a real, paid-for or granted Pro tier,
+ * as opposed to a trial or no access at all.
+ *
+ * One predicate because two components render a Pro badge from it; keeping the
+ * list in a single place is what stops them disagreeing. `developer` is a
+ * server-side grant an administrator issued, which is not a trial.
+ */
+export const isProSource = (source: string | null | undefined): boolean =>
+  source === 'store' || source === 'web' || source === 'developer';

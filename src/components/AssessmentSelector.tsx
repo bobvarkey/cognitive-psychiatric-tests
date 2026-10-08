@@ -110,6 +110,7 @@ import { OfflineFallback } from './OfflineFallback';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useSubscription } from '@/contexts/SubscriptionContext';
+import { isProSource } from '@/services/subscriptionService';
 import { Crown } from 'lucide-react';
 import { useDayCounter } from '@/hooks/useDayCounter';
 import { AdBanner } from './AdBanner';
@@ -789,7 +790,7 @@ export const AssessmentSelector = () => {
                   className={`${section === 'assessments' ? '' : 'ml-auto '}inline-flex min-h-[44px] items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-bold text-primary-foreground shadow-sm transition hover:opacity-90 active:scale-95`}
                 >
                   <Crown className="h-3.5 w-3.5" />
-                  {premiumSource === 'store' || premiumSource === 'web' ? 'Pro' : 'Upgrade'}
+                  {isProSource(premiumSource) ? 'Pro' : 'Upgrade'}
                 </button>
               </div>
 

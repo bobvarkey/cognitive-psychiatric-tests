@@ -23,6 +23,7 @@ import { Crown } from 'lucide-react';
 import { toast } from 'sonner';
 import { configure, restorePurchases, getEntitlement, isNativePurchasesAvailable } from '@/lib/appbuild/revenuecat';
 import { deleteLocalAccount } from '@/services/accountService';
+import { isProSource } from '@/services/subscriptionService';
 import { useNavigate } from 'react-router-dom';
 import { AccountAccessCard } from '@/components/AccountAccessCard';
 
@@ -80,7 +81,7 @@ export const SettingsView = () => {
           <p className="text-sm text-muted-foreground">
             Current plan:{' '}
             <span className="font-semibold text-foreground">
-              {premiumSource === 'store' || premiumSource === 'web' ? 'Cognito Pro' : 'Free Tier'}
+              {isProSource(premiumSource) ? 'Cognito Pro' : 'Free Tier'}
             </span>
             {premiumSource === 'demo' && ' (3-day demo active)'}
           </p>
