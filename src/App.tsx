@@ -9,7 +9,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import CategoryBrowser from "./pages/CategoryBrowser";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import AccountDeleted from "./pages/AccountDeleted";
+import { AccountDeleted } from "./pages/AccountDeleted";
 import { NavigationButtons } from "@/components/NavigationButtons";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { OfflineProvider } from "@/contexts/OfflineContext";

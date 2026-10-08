@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { configure, restorePurchases, getEntitlement, isNativePurchasesAvailable } from '@/lib/appbuild/revenuecat';
 import { deleteLocalAccount } from '@/services/accountService';
 import { useNavigate } from 'react-router-dom';
+import { AccountAccessCard } from '@/components/AccountAccessCard';
 
 
 export const SettingsView = () => {
@@ -94,6 +95,8 @@ export const SettingsView = () => {
           </Button>
         </CardContent>
       </Card>
+
+      <AccountAccessCard />
 
       <Card>
         <CardHeader>
