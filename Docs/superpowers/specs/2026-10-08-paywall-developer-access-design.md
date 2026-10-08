@@ -1,14 +1,26 @@
 # Home-page paywall and developer access
 
 **Date:** 2026-10-08
-**Status:** Design approved; awaiting written-spec review
-**Branch:** `feat/server-side-entitlement` (unpushed, 2 commits ahead of its base)
+**Status:** Design approved and revised; awaiting written-spec review
+**Revised:** 2026-10-08 — the trial scope and the paywall's behaviour were re-specified
+after the first version was written. See **Trial scope and anchoring** below; the
+earlier *Non-goals* that forbade changing the demo trial no longer apply.
+**Branch:** `main` (the `feat/server-side-entitlement` foundation was merged as `56a91e8`)
 
 ## Problem
 
 The app needs a working paywall on the home page, and the owner needs to reach
 every part of the product with their own account without paying themselves and
 without that access appearing in the App Store build.
+
+Beyond that, the paywall has to *do something* for everyone else. A visitor
+should be able to try a bounded slice of the product for three days and then
+meet a paywall that asks them to subscribe. Today there is no such funnel: the
+demo trial is a `localStorage` flag, restartable from a button inside the
+paywall itself, and `getDemoTrialStart()` (`subscriptionService.ts:78`) mints a
+fresh three days whenever its key is missing — so clearing storage, opening a
+private window, or using a second device starts the trial over, indefinitely.
+The gate is nominal.
 
 Three things are already true in this repo, and they shape everything below.
 
@@ -48,6 +60,16 @@ implementation.
 | 2 | Scope | **Additive.** One more way to hold Pro; nothing existing is removed or changed |
 | 3 | Native | Suppress **only** admin comps inside the App Store build; paid paths are untouched |
 | 4 | Server API | Extend the RPC to report the grant's `plan`/`source` rather than adding a second function |
+| 5 | Trial membership | The trial unlocks the **Triage & Core Flows** section: 20 of 96 assessments (21%) |
+| 6 | Trial mechanism | Membership is an explicit `trial: true` flag on each of those 20 registry entries, **not** a positional slice — inserting a test at the top must never silently reshuffle what is free |
+| 7 | Trial anchoring | The 3-day trial is recorded in `entitlements` as `plan: 'demo'`, `source: 'trial'`, so clearing storage, a private window or a second device cannot restart it |
+| 8 | Trial entry | Starting the trial **requires signing in with an email one-time code**. A grant keyed to a user id presupposes a user |
+
+**Consequence of 7 and 8, stated plainly:** an anonymous visitor who will not
+sign in can reach nothing but the paywall. The three-day trial is not available
+without an account, because a server-anchored grant needs an identity to anchor
+to. This is a deliberate narrowing of the funnel, and it is the only reason the
+trial can be a real gate rather than a speed bump.
 
 ## Non-goals
 
@@ -55,16 +77,34 @@ Explicitly out of scope. Do not do these as part of this work.
 
 - No backfill of existing `web_subscriptions` buyers into `entitlements`.
 - No change to the client-side `localStorage` premium path (`webBilling.ts`).
-- No change to the demo trial, its length, or its restartability.
-- No change to how the paywall looks, where it appears, or when it is shown.
 - No change to the RevenueCat / store purchase path.
 - No change to `razorpay-create-order`, `razorpay-verify`, or `razorpay-status`.
-- No removal of `has_premium()`'s callers or its SQL grant.
+- No removal of `has_premium()` or its SQL grant.
+- No change to the 3-day trial's *length*.
+
+**Amended at the revision.** Two of the original non-goals are withdrawn,
+because the trial work requires exactly what they forbade:
+
+- ~~"No change to the demo trial, its length, or its restartability."~~ The
+  restarts are the thing being fixed. The length stays three days; the
+  client-side restart path goes.
+- ~~"No change to how the paywall looks, where it appears, or when it is
+  shown."~~ The paywall gains a trial-entry state and a per-assessment locked
+  state, and stops rendering a close button that does nothing.
+
+What is *not* withdrawn from the original intent: the paywall remains a
+full-screen modal, it still gates the app for anyone without access, and the
+existing Razorpay and RevenueCat purchase paths are untouched.
 
 ## Prerequisite (step 0): reconcile the branch with `origin/main`
 
-The branch forked from `534beb2`; `origin/main` is now `6fa0bb7`, **16 commits
-further on**. Those 16 commits are exactly the billing subsystem this work sits
+**Complete.** The foundation was merged into `main` as `56a91e8`, so
+`origin/main` is an ancestor of the working branch and this step is behind us.
+The original reasoning is kept below only so the ordering constraint is
+recorded.
+
+The branch forked from `534beb2`; `origin/main` was then `6fa0bb7`, **16 commits
+further on**. Those 16 commits were exactly the billing subsystem this work sits
 next to:
 
 ```
@@ -136,12 +176,11 @@ $$;
 `has_premium()` keeps its original `REVOKE`/`GRANT` statements verbatim, and its
 signature and meaning are unchanged.
 
-**Note, so this is a decision rather than an oversight:** after this change
-nothing calls `has_premium()` — the client moves to `current_entitlement()`. It is
-kept deliberately. It is the source-agnostic predicate ("does the caller hold
-*any* grant"), it is documented as such, and decision 2 forbids removing an
-existing interface. If you would rather not carry an uncalled function, say so
-and step 1 drops it instead; that is the only knock-on effect.
+**Note:** `has_premium()` keeps a caller. `AccountAccessCard.tsx:41` uses it for
+the access badge, so it is *not* an uncalled function and there is no
+carry-an-uncalled-function question to answer. It stays as the source-agnostic
+predicate ("does the caller hold *any* grant"), now implemented as a thin
+wrapper so the access rule lives in exactly one place.
 
 **Why a table-returning function:** the client needs `source` to apply the
 native suppression rule. Returning it from the same call that answers "do they
@@ -165,6 +204,13 @@ export interface Entitlement {
 
 /** The caller's active grant as the server reports it, or null. Fails closed. */
 export async function currentEntitlement(): Promise<Entitlement | null>;
+
+/**
+ * The grant as this device may honour it, or null — `serverPremium()`'s rule,
+ * but keeping `source` visible. The trial is a grant too, and downstream code
+ * has to be able to tell a three-day trial from a paid plan.
+ */
+export async function serverEntitlement(): Promise<Entitlement | null>;
 
 /**
  * Whether the server grants access *on this device*. An admin comp is ignored
@@ -246,20 +292,31 @@ Add to the context value:
 
 - `serverPremium: boolean` — the composed decision from step 2.
 - `checkingServerAccess: boolean` — true from mount until the first answer.
-- `premiumSource` gains `'developer'`, reported when `serverPremium` is what
-  granted access.
+- `premiumSource` gains `'developer'`, reported only when the grant's `source` is
+  `admin`.
 
 Fold the new source in **additively**:
 
 ```
-isPremium = isPremiumUser() || !!webPremium || serverPremium
+isPremium = isPremiumUser() || !!webPremium || <the server holds a grant>
 ```
 
-Re-check on mount and on every `onAuthChange`, and reset `serverPremium` to
-`false` on sign-out so a signed-out device cannot keep server-derived access.
+Re-check on mount and on every `onAuthChange`, and clear the server grant on
+sign-out so a signed-out device cannot keep server-derived access.
 
-`premiumSource` precedence: `web` → `developer` → `demo` → `store` → `none`.
-(`developer` outranks `demo` so the owner sees why they have access.)
+**The context must keep the grant's `source`, not just a boolean.** Added at the
+revision. A trial is a grant, so `serverPremium` is true for a 3-day trial as
+well as for a paid plan — a boolean cannot tell them apart, and the trial work
+needs exactly that distinction, because a trial unlocks a subset of the
+assessments while a paid plan unlocks all of them. Deriving `premiumSource` from
+a bare boolean would map a trial to `'developer'` and hand a trial user the whole
+product.
+
+`premiumSource` precedence: `web` → `developer` → `demo` → `store` → `none`, read
+from the grant's `source`:
+`admin` → `developer`; `razorpay` → `web`; `trial` and `demo` → `demo` (it *is*
+the demo trial). `developer` outranks `demo` so the owner sees why they have
+access.
 
 ### 5. `AuthGuard` — no paywall flash
 
@@ -322,10 +379,133 @@ Claude cannot reach the Supabase project; these are manual.
 - sign-out clears `serverPremium`;
 - `checkingServerAccess` is true on first render and false after resolution.
 
+For the trial (added at the revision):
+
+`supabase/functions/trial-start/index.ts` — tested by its contract, since edge
+functions have no runner here; the logic is exercised through the client module
+that calls it.
+
+- refuses a request with no JWT, or with a token `auth.getUser` rejects;
+- **is idempotent**: a second call for a user who already has a trial row returns
+  the same `expires_at` and performs no insert;
+- a user holding a paid grant is returned that grant and is never given a trial
+  row;
+- the inserted row is `plan: 'demo'`, `source: 'trial'`, expiring 3 days out.
+
+`src/lib/trialScope.test.ts` (new) — the membership rule, extracted so it can be
+tested without rendering a 1200-line component:
+
+- the 20 flagged keys are exactly the Triage & Core Flows section;
+- no entry outside that section carries `trial: true`;
+- an assessment with no `trial` flag is locked.
+
+`src/components/AssessmentSelector` — lock enforcement, via the extracted
+predicate rather than by rendering the whole selector:
+
+- a locked key is refused when there is no access;
+- a locked key is allowed when `isProSource` is true;
+- a locked key is allowed while the trial is running;
+- a flagged key is allowed with no access at all, because it is the trial's whole
+  content.
+
 Regression: the existing suite must stay green **without edits** —
 `src/lib/webBilling.test.ts` and `src/components/PaywallModal.restore.test.tsx`
 in particular. If either needs changing, the change is not additive and the
 implementation has drifted from decision 2.
+
+## Trial scope and anchoring
+
+Added at the revision. Two changes to the trial, so that it becomes a real gate
+and so that it does not give the whole product away.
+
+### 8. Membership — which assessments the trial unlocks
+
+The trial unlocks the **Triage & Core Flows** section of the registry: the 20
+entries from `triage` through `consciousness`, at the top of
+`AssessmentSelector.tsx`'s `assessments` array. That is 21% of 96, which is the
+"25%" asked for, rounded to a section boundary so the free set is a rule rather
+than an arbitrary cut.
+
+The mechanism is an explicit flag, not a position. `AssessmentInfo` gains one
+optional member:
+
+```ts
+interface AssessmentInfo {
+  key: AssessmentKey;
+  name: string;
+  subtitle: string;
+  icon: React.ElementType;
+  gradient: string;
+  category: Category[];
+  description: string;
+  /** Open to a 3-day trial without a paid plan. Absent means locked. */
+  trial?: boolean;
+}
+```
+
+and each of the 20 free entries gets `trial: true` written on it.
+
+**Why a flag and not `assessments.slice(0, 20)`:** position is not a property
+anyone maintains. Inserting one new assessment at the top of the array would
+silently evict `consciousness` from the free set and hand a different test to
+every trial user, with no diff that says so. A flag survives reordering, and
+`git diff` shows exactly which tests are free.
+
+**Adding a test later:** a new entry is locked unless someone writes
+`trial: true` on it. That is the safe default — the failure mode is a test that
+is too locked, which is visible, rather than one that is silently free.
+
+### 9. Anchoring — a trial that cannot be restarted
+
+The trial row goes in the same `entitlements` table, as `plan: 'demo'`,
+`source: 'trial'`, `expires_at = now() + interval '3 days'`. The existing CHECK
+constraints already permit exactly this pair, so no schema change is needed.
+
+The browser still cannot write the table — that is the property the whole design
+rests on — so a new edge function does it under the service role:
+
+**`supabase/functions/trial-start/index.ts`** (new), following the JWT-validation
+shape of `razorpay-status/index.ts` and the service-role write shape of
+`razorpay-verify/index.ts`:
+
+- valid user JWT required; the caller's id comes from `auth.getUser(token)`;
+- **idempotent**: if the caller already has any row in `entitlements` — a paid
+  one, an admin one, or an expired trial — it returns that row and writes
+  nothing. A trial can be started once, ever, per account;
+- otherwise inserts the 3-day trial row and returns it.
+
+Because the row is keyed to `auth.users.id` and the function refuses to write a
+second one, clearing storage, a private window, a second device and a reinstall
+all fail to restart it. The three days are on the database clock.
+
+**Removed:** `resetDemoTrial()` and the paywall's demo-restart button
+(`PaywallModal.tsx:418`). Leaving a control that silently no-ops is worse than
+removing it.
+
+**Retained:** `DEMO_TRIAL_DAYS = 3` and the trial's length. Only the restart
+path goes.
+
+**Consequence, restated because it is the price of this:** starting a trial now
+requires a signed-in account, so a visitor who declines to sign in reaches only
+the paywall. Decision 8 records this as intended.
+
+### 10. Locked assessments
+
+Three enforcement points, all in `AssessmentSelector.tsx`, because that one
+component owns both the list and the selected-assessment render.
+
+| # | Point | Behaviour for a locked assessment |
+|---|---|---|
+| 1 | `openAssessment(key)` (~line 425) | Opens the paywall instead of navigating. Covers every tile click and the psychosis Previous/Next chain. |
+| 2 | the `if (selectedAssessment)` branch (line 493) | A deep link to `/assessment/<locked-key>` bypasses `openAssessment` — line 407 sets the state directly. This branch renders the paywall instead of the assessment. |
+| 3 | `renderTile` (line 965) | A lock affordance on the tile itself, so the set is legible before anyone clicks. |
+
+Point 2 is the one that is easy to miss: `/assessment/hamd` typed into the
+address bar reaches the render, not the click handler.
+
+Access is `isProSource(premiumSource)` **or** a trial that is still running.
+Both are already in the context after steps 1–6; this adds no new source of
+truth.
 
 ## Security properties
 
@@ -334,12 +514,22 @@ Stated so they can be checked rather than assumed.
 - No email address is used as an access key anywhere in this design. Identity is
   `auth.users.id`, reached only through a verified Supabase session.
 - No browser can write `entitlements`: RLS is enabled with a read-own-row policy
-  and no write policy, so every client write is rejected. The service role is the
-  only writer, and this design adds no writer.
+  and no write policy, so every client write is rejected. **Amended at the
+  revision:** this design now adds exactly one writer, the `trial-start` edge
+  function, running under the service role. It writes at most one row, for the
+  caller's own id, only when the caller has no row at all, and never with a paid
+  `source`. The browser-write prohibition is unchanged.
 - The developer's account id never enters the client bundle. It lives in one
   admin `INSERT` run by hand.
 - Suppression is decided from a server-reported field, not from client state, so
   a user cannot talk their way into the App Store build by editing storage.
+- **The trial cannot be restarted by the user**, because the only thing that
+  starts one is a service-role insert keyed to a verified auth user id, and that
+  insert is skipped whenever any row already exists for that id. Storage,
+  incognito, a second device and a reinstall are all inert.
+- **A locked assessment stays locked against a deep link.** Enforcement is in the
+  `if (selectedAssessment)` render branch, not only in the click handler, so
+  typing a URL reaches the same gate.
 - The client still decides *whether to honour* the server's answer, which is
   inherent to a client-side gate. It is not a new weakness: the existing
   `localStorage` path is more permissive and is untouched by this work.
@@ -365,10 +555,10 @@ re-proposed without new information.
 
 ## Assumptions to confirm at review
 
-1. **The paywall's presentation is unchanged.** `AuthGuard` already gates every
-   route. If a *different* presentation was wanted — an inline card on the home
-   page rather than the full-screen modal — that is additional UI work and is not
-   specified here.
+1. ~~The paywall's presentation is unchanged.~~ **Withdrawn at the revision.**
+   The presentation does change: the paywall gains a trial-entry state, its dead
+   close button goes, and locked tiles gain a lock affordance. It remains a
+   full-screen modal that gates the app.
 2. **The operator can apply the migration and run the `INSERT`.** If the
    `entitlements` table already exists in the deployed project under a different
    definition, step 1 must be re-checked before applying.
@@ -376,3 +566,16 @@ re-proposed without new information.
    signing in with the owner's email through the one-time-code flow. If the grant
    silently never matches, re-read the `id` column in Supabase → Authentication →
    Users and use that row's id.
+4. **The operator can deploy a new edge function.** `trial-start` is new and must
+   be deployed with `supabase functions deploy trial-start`, and
+   `SUPABASE_SERVICE_ROLE_KEY` must be available to it. If it cannot be deployed,
+   the trial cannot be anchored server-side and decision 7 is not achievable —
+   the fallback is decision 7 abandoned in favour of the client-side trial, which
+   is nominal. Confirm before starting that work.
+5. **The 20 free assessments are the right 20.** The Triage & Core Flows section
+   is taken whole because it is the section at the top of the registry. If the
+   intent was a smaller or different set, the flag list is one edit per entry.
+6. **Existing trial users are not migrated.** A device with a live
+   `localStorage` trial at deploy time keeps it until it expires; the server only
+   takes over what it is asked to start. No backfill is proposed, consistent with
+   the standing non-goal.

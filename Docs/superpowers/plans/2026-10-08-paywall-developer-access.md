@@ -308,7 +308,7 @@ Co-Authored-By: Claude Code <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: `isNativeApp()` from Task 2.
-- Produces: `EntitlementPlan`, `EntitlementSource`, `Entitlement`; `currentEntitlement(): Promise<Entitlement | null>`; `serverPremium(): Promise<boolean>`.
+- Produces: `EntitlementPlan`, `EntitlementSource`, `Entitlement`; `currentEntitlement(): Promise<Entitlement | null>`; `serverEntitlement(): Promise<Entitlement | null>`; `serverPremium(): Promise<boolean>`.
 
 **Existing exports unchanged:** `requestEmailCode`, `verifyEmailCode`, `signOut`, `currentAuthUser`, `hasPremium`, `onAuthChange`, `AuthResult`, `AuthUser`.
 
@@ -327,7 +327,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 const native = vi.hoisted(() => ({ isNativeApp: vi.fn() }));
 vi.mock('@/lib/appbuild/revenuecat', () => ({ isNativeApp: native.isNativeApp }));
 
-import { currentEntitlement, serverPremium } from './entitlement';
+import { currentEntitlement, serverEntitlement, serverPremium } from './entitlement';
 
 const row = (over: Partial<Record<string, unknown>> = {}) => ({
   plan: 'developer',
@@ -416,6 +416,31 @@ describe('serverPremium', () => {
     sb.rpc.mockResolvedValue({ data: [], error: null });
     expect(await serverPremium()).toBe(false);
     expect(native.isNativeApp).not.toHaveBeenCalled();
+  });
+});
+
+describe('serverEntitlement', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('keeps the source visible, so a trial can be told from a paid plan', async () => {
+    native.isNativeApp.mockResolvedValue(false);
+    sb.rpc.mockResolvedValue({
+      data: [row({ plan: 'demo', source: 'trial', permanent: false, expires_at: '2026-10-11T00:00:00Z' })],
+      error: null,
+    });
+    const ent = await serverEntitlement();
+    expect(ent?.source).toBe('trial');
+    expect(ent?.plan).toBe('demo');
+    expect(ent?.permanent).toBe(false);
+  });
+
+  it('is null, not merely falsy, when an admin grant is suppressed on native', async () => {
+    native.isNativeApp.mockResolvedValue(true);
+    sb.rpc.mockResolvedValue({ data: [row()], error: null });
+    expect(await serverEntitlement()).toBeNull();
   });
 });
 ```
@@ -512,6 +537,20 @@ export async function currentEntitlement(): Promise<Entitlement | null> {
 }
 
 /**
+ * The caller's grant *as this device may honour it*, or null.
+ *
+ * Same rule as `serverPremium()`, but it keeps the grant's `source` visible.
+ * That matters: the trial is a grant too, and downstream code has to be able to
+ * tell a three-day trial apart from a paid plan.
+ */
+export async function serverEntitlement(): Promise<Entitlement | null> {
+  const ent = await currentEntitlement();
+  if (!ent) return null;
+  if (ent.source === 'admin' && (await isNativeApp())) return null;
+  return ent;
+}
+
+/**
  * Whether the server grants access *on this device*.
  *
  * An admin comp is ignored inside the native wrapper, so the App Store build
@@ -520,17 +559,14 @@ export async function currentEntitlement(): Promise<Entitlement | null> {
  * paid grant is not.
  */
 export async function serverPremium(): Promise<boolean> {
-  const ent = await currentEntitlement();
-  if (!ent) return false;
-  if (ent.source === 'admin' && (await isNativeApp())) return false;
-  return true;
+  return (await serverEntitlement()) !== null;
 }
 ```
 
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `npx vitest run src/lib/entitlement.test.ts`
-Expected: PASS, 10 tests.
+Expected: PASS, 12 tests.
 
 - [ ] **Step 5: Commit**
 
@@ -540,8 +576,9 @@ git commit -m "feat(entitlement): read the caller's grant and compose the device
 
 currentEntitlement() is bounded by a 5s timeout, because a request that
 never settles is a failed request and an unbounded one would leave the
-gate permanently blank. serverPremium() suppresses an admin-sourced
-grant inside the native wrapper and nothing else.
+gate permanently blank. serverEntitlement() applies the native
+suppression rule and keeps the source visible, so a three-day trial can
+be told apart from a paid plan; serverPremium() is that, narrowed.
 
 Co-Authored-By: Claude Code <noreply@anthropic.com>"
 ```
@@ -570,14 +607,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const ent = vi.hoisted(() => ({
   currentAuthUser: vi.fn(),
-  serverPremium: vi.fn(),
+  serverEntitlement: vi.fn(),
   onAuthChange: vi.fn(),
 }));
 vi.mock('@/lib/entitlement', () => ({
   currentAuthUser: ent.currentAuthUser,
-  serverPremium: ent.serverPremium,
+  serverEntitlement: ent.serverEntitlement,
   onAuthChange: ent.onAuthChange,
 }));
+
+const GRANT = { plan: 'developer', source: 'admin', expiresAt: null, permanent: true } as const;
 
 vi.mock('@/services/subscriptionService', () => ({
   createDemoSubscription: vi.fn(),
@@ -626,7 +665,7 @@ describe('SubscriptionContext server access', () => {
       return () => {};
     });
     ent.currentAuthUser.mockResolvedValue({ id: 'u1', email: 'owner@example.com' });
-    ent.serverPremium.mockResolvedValue(true);
+    ent.serverEntitlement.mockResolvedValue(GRANT);
   });
   afterEach(() => {
     vi.clearAllMocks();
@@ -642,8 +681,26 @@ describe('SubscriptionContext server access', () => {
     expect(screen.getByTestId('source').textContent).toBe('developer');
   });
 
+  it('reports a trial grant as the demo source, never as developer', async () => {
+    // The whole point: a trial is a grant, but it must not read as a paid plan —
+    // the trial unlocks a subset of the assessments, a paid plan all of them.
+    ent.serverEntitlement.mockResolvedValue({
+      plan: 'demo',
+      source: 'trial',
+      expiresAt: '2026-10-11T00:00:00Z',
+      permanent: false,
+    });
+    render(
+      <SubscriptionProvider>
+        <Probe />
+      </SubscriptionProvider>,
+    );
+    await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
+    expect(screen.getByTestId('source').textContent).toBe('demo');
+  });
+
   it('reports checking on first render and stops once the answer lands', async () => {
-    ent.serverPremium.mockResolvedValue(false);
+    ent.serverEntitlement.mockResolvedValue(null);
     render(
       <SubscriptionProvider>
         <Probe />
@@ -662,7 +719,7 @@ describe('SubscriptionContext server access', () => {
     await waitFor(() => expect(screen.getByTestId('premium').textContent).toBe('true'));
 
     ent.currentAuthUser.mockResolvedValue(null);
-    ent.serverPremium.mockResolvedValue(false);
+    ent.serverEntitlement.mockResolvedValue(null);
     await act(async () => {
       listeners.forEach((cb) => cb());
     });
@@ -679,14 +736,14 @@ describe('SubscriptionContext server access', () => {
       </SubscriptionProvider>,
     );
     await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
-    expect(ent.serverPremium).not.toHaveBeenCalled();
+    expect(ent.serverEntitlement).not.toHaveBeenCalled();
   });
 
   it('keeps the newest answer when two checks overlap', async () => {
-    let releaseSlow: (v: boolean) => void = () => {};
-    ent.serverPremium
-      .mockImplementationOnce(() => new Promise<boolean>((r) => { releaseSlow = r; }))
-      .mockResolvedValueOnce(false);
+    let releaseSlow: (v: unknown) => void = () => {};
+    ent.serverEntitlement
+      .mockImplementationOnce(() => new Promise((r) => { releaseSlow = r; }))
+      .mockResolvedValueOnce(null);
 
     render(
       <SubscriptionProvider>
@@ -702,7 +759,7 @@ describe('SubscriptionContext server access', () => {
     await waitFor(() => expect(screen.getByTestId('checking').textContent).toBe('false'));
 
     await act(async () => {
-      releaseSlow(true);
+      releaseSlow(GRANT);
     });
 
     expect(screen.getByTestId('server').textContent).toBe('false');
@@ -717,10 +774,10 @@ Expected: FAIL — `checkingServerAccess` and `serverPremium` are `undefined`, s
 
 - [ ] **Step 3: Implement**
 
-In `src/contexts/SubscriptionContext.tsx`, extend the import from `@/lib/webBilling`'s sibling — add a new import line:
+In `src/contexts/SubscriptionContext.tsx`, add an import line:
 
 ```ts
-import { currentAuthUser, onAuthChange, serverPremium as fetchServerPremium } from '@/lib/entitlement';
+import { currentAuthUser, onAuthChange, serverEntitlement, type Entitlement } from '@/lib/entitlement';
 ```
 
 Extend `SubscriptionContextType` (inside the interface, after `premiumSource`):
@@ -736,10 +793,12 @@ Extend `SubscriptionContextType` (inside the interface, after `premiumSource`):
 
 Replace the existing `premiumSource` property declaration in the interface (it is currently typed `'store' | 'web' | 'demo' | 'none'` on one line) with the widened one above — do not leave two declarations.
 
-Add the state, beside the existing `webPremium` state:
+Add the state, beside the existing `webPremium` state. The whole grant is kept,
+not a boolean, because its `source` is what distinguishes a three-day trial from
+a paid plan:
 
 ```ts
-  const [serverGranted, setServerGranted] = useState(false);
+  const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
   const [checkingServerAccess, setCheckingServerAccess] = useState(true);
 ```
 
@@ -756,16 +815,16 @@ Add the effect, after the existing session-restore effect (the one ending at wha
 
     const check = async () => {
       const mine = ++seq;
-      let granted = false;
+      let grant: Entitlement | null = null;
       try {
         const who = await currentAuthUser();
         // No session, no question: an anonymous caller can hold no grant.
-        if (who) granted = await fetchServerPremium();
+        if (who) grant = await serverEntitlement();
       } catch {
-        granted = false;
+        grant = null;
       }
       if (cancelled || mine !== seq) return;
-      setServerGranted(granted);
+      setEntitlement(grant);
       setCheckingServerAccess(false);
     };
 
@@ -785,37 +844,44 @@ Change the premium computation:
 
 ```ts
   const isPremium = useMemo(
-    () => isPremiumUser() || !!webPremium || serverGranted,
+    () => isPremiumUser() || !!webPremium || entitlement !== null,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [webPremium, serverGranted, subscription, demoUnlockAll, demoTrialMsLeft],
+    [webPremium, entitlement, subscription, demoUnlockAll, demoTrialMsLeft],
   );
 ```
 
-Change the source precedence. `developer` outranks `demo` so the owner sees why they have access:
+Change the source precedence. It reads the grant's `source`, so a three-day
+trial is not mistaken for a paid plan — a distinction the follow-on trial plan
+depends on, since a trial must unlock only its subset while a paid plan unlocks
+everything. `developer` outranks `demo` so the owner sees why they have access:
 
 ```ts
   const premiumSource: 'store' | 'web' | 'demo' | 'developer' | 'none' = webPremium
     ? 'web'
-    : serverGranted
+    : entitlement?.source === 'admin'
       ? 'developer'
-      : (demoTrialActive && demoUnlockAll)
-        ? 'demo'
-        : isPremium
-          ? 'store'
-          : 'none';
+      : entitlement?.source === 'razorpay'
+        ? 'web'
+        : entitlement?.source === 'trial' || entitlement?.source === 'demo'
+          ? 'demo'
+          : (demoTrialActive && demoUnlockAll)
+            ? 'demo'
+            : isPremium
+              ? 'store'
+              : 'none';
 ```
 
 Add both fields to the `value` object literal, after `premiumSource`:
 
 ```ts
-    serverPremium: serverGranted,
+    serverPremium: entitlement !== null,
     checkingServerAccess,
 ```
 
 - [ ] **Step 4: Run the test to verify it passes**
 
 Run: `npx vitest run src/contexts/SubscriptionContext.test.tsx`
-Expected: PASS, 5 tests.
+Expected: PASS, 6 tests.
 
 - [ ] **Step 5: Confirm the additive constraint still holds**
 
@@ -1113,7 +1179,7 @@ Leave `SettingsView.tsx:85` (`premiumSource === 'demo' && ' (3-day demo active)'
 - [ ] **Step 6: Verify the whole suite is green**
 
 Run: `npx vitest run`
-Expected: PASS. 58 pre-existing tests plus the 25 added here (4 + 10 + 5 + 4 + 2), all green, with no edits to `webBilling.test.ts` or `PaywallModal.restore.test.tsx`.
+Expected: PASS. 58 pre-existing tests plus the 28 added here (4 + 12 + 6 + 4 + 2), all green, with no edits to `webBilling.test.ts` or `PaywallModal.restore.test.tsx`.
 
 - [ ] **Step 7: Typecheck**
 
