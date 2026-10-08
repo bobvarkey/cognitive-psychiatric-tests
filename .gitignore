@@ -23,3 +23,13 @@ dist-ssr
 *.sln
 *.sw?
 .gstack/
+
+# Environment files. Note: .env is currently TRACKED, and this rule does not
+# apply to tracked files — it only stops it being re-added once it is untracked.
+# Nothing here is a secret in the usual case: Vite inlines `VITE_*` into the
+# client bundle, so those values are public by design. A key that is NOT
+# prefixed `VITE_` must never live in this file.
+.env
+.env.local
+.env.*.local
+!.env.example

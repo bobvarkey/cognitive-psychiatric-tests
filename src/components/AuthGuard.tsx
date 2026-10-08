@@ -2,6 +2,7 @@ import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { PaywallModal } from '@/components/PaywallModal';
+import { AccessDiagnostic } from '@/components/AccessDiagnostic';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -35,6 +36,9 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
     return (
       <div className="fixed inset-0 z-[100] bg-background flex items-center justify-center">
         <PaywallModal isOpen={true} onSelectPlan={() => {}} />
+        {/* The id an administrator has to grant is only readable here: the screen
+            that normally reports it is behind this gate. */}
+        <AccessDiagnostic />
         <div className="absolute inset-0 -z-10 bg-background" />
       </div>
     );
