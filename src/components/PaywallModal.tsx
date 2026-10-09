@@ -210,9 +210,21 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     }
     setBusy(true);
     try {
-      await startWebCheckout(activePlan, email.trim().toLowerCase(), webCurrency);
-      toast.success('Payment successful. Everything is unlocked.');
+      const purchased = await startWebCheckout(activePlan, email.trim().toLowerCase(), webCurrency);
       onSelectPlan(activePlan, 'pro');
+      if (purchased.orderId) {
+        // Hand the buyer to their receipt. It is a full-document navigation
+        // rather than useNavigate because AuthGuard renders this modal outside
+        // the router (it wraps BrowserRouter, not the other way round), and
+        // because the receipt has to survive this modal's own unmount when the
+        // gate lifts.
+        window.location.assign(
+          `/checkout/success?order=${encodeURIComponent(purchased.orderId)}`,
+        );
+        return;
+      }
+      // A purchase restored rather than made here has no order to point at.
+      toast.success('Payment successful. Everything is unlocked.');
     } catch (e: any) {
       if (!e?.userCancelled) toast.error(e?.message ?? 'Payment failed.');
     } finally {

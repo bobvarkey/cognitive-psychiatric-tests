@@ -80,6 +80,17 @@ export interface WebPremium {
   currentPeriodEnd: string;
   /** Set on entitlements created by the dev-only developer unlock. */
   source?: 'dev';
+  /**
+   * Receipt fields, written only by a checkout completed in this browser.
+   * A restored purchase carries none of them: nothing was charged here, and the
+   * order id belongs to whichever device actually paid.
+   */
+  orderId?: string;
+  /** Charged in minor units (paise/cents), the way Razorpay reports it. */
+  amount?: number;
+  currency?: string;
+  /** The plan name the server billed under, e.g. "PsyCognito Premium — Yearly". */
+  label?: string;
 }
 
 export const getWebPremium = (): WebPremium | null => {
@@ -143,7 +154,19 @@ export async function startWebCheckout(
           body: { orderId: resp.razorpay_order_id, paymentId: resp.razorpay_payment_id, signature: resp.razorpay_signature },
         });
         if (vErr || !v?.success) return reject(new Error(v?.error ?? 'Payment could not be verified.'));
-        const value: WebPremium = { email, plan: v.plan, currentPeriodEnd: v.currentPeriodEnd };
+        const value: WebPremium = {
+          email,
+          plan: v.plan,
+          currentPeriodEnd: v.currentPeriodEnd,
+          // The order id is the only thing that can tie the receipt page back to
+          // this purchase, so it is taken from the gateway's own callback — the
+          // same value whose signature razorpay-verify just checked — rather
+          // than from the create-order response we sent in.
+          orderId: resp.razorpay_order_id,
+          amount: typeof data.amount === 'number' ? data.amount : undefined,
+          currency: typeof data.currency === 'string' ? data.currency : undefined,
+          label: typeof data.label === 'string' ? data.label : undefined,
+        };
         saveWebPremium(value);
         resolve(value);
       },
