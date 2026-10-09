@@ -10,6 +10,8 @@ import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { ADHD_INATTENTION_SYMPTOMS, ADHD_HYPERACTIVITY_SYMPTOMS } from '@/data/adhdScale';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import type { ReportData } from '@/utils/reportGenerator';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 
 interface AdhdResultsProps {
   results: AdhdResultsType;
@@ -21,6 +23,31 @@ export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
   const { t, language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const buildCopyReport = (): ReportData => {
+    const positive = results.symptomResponses.filter(r => r.present).map(r => {
+      const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
+      return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
+    });
+    const negative = results.symptomResponses.filter(r => !r.present).map(r => {
+      const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
+      return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
+    });
+    return {
+      assessmentName: 'DSM-5-TR ADHD Diagnostic Criteria Assessment',
+      date: new Date().toLocaleDateString(),
+      totalScore: `Inattention: ${results.inattentionCount}/9, Hyperactivity: ${results.hyperactivityCount}/9`,
+      severity: interpretation.title,
+      interpretation: interpretation.description,
+      sections: [
+        { title: 'Positive Findings (Endorsed Symptoms)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
+        { title: 'Negative Findings (Not Endorsed)', items: negative, type: 'negative' },
+        { title: 'Criteria B-E Status', items: results.criterionResponses.map(cr => `Criterion ${cr.criterionId}: ${cr.met ? 'Met' : 'Not Met'}`), type: 'info' },
+      ],
+      disclaimer: 'This is a screening tool only, not a diagnostic instrument.',
+      patientInfo: getPatientInfoForReport(),
+    };
+  };
   
   const threshold = results.age17Plus ? DOMAIN_THRESHOLDS.adult : DOMAIN_THRESHOLDS.childAdolescent;
   const meetsInattention = results.inattentionCount >= threshold;
@@ -288,33 +315,13 @@ export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
                 <FileDown className="h-4 w-4" />
                 Export PDF
               </Button>
+              <RegisterResult data={buildCopyReport} />
               <Button
                 variant="outline"
                 size="sm"
                 onClick={async () => {
                   try {
-                    const positive = results.symptomResponses.filter(r => r.present).map(r => {
-                      const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
-                      return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
-                    });
-                    const negative = results.symptomResponses.filter(r => !r.present).map(r => {
-                      const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
-                      return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
-                    });
-                    const text = formatResultsForCopy({
-                      assessmentName: 'DSM-5-TR ADHD Diagnostic Criteria Assessment',
-                      date: new Date().toLocaleDateString(),
-                      totalScore: `Inattention: ${results.inattentionCount}/9, Hyperactivity: ${results.hyperactivityCount}/9`,
-                      severity: interpretation.title,
-                      interpretation: interpretation.description,
-                      sections: [
-                        { title: 'Positive Findings (Endorsed Symptoms)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
-                        { title: 'Negative Findings (Not Endorsed)', items: negative, type: 'negative' },
-                        { title: 'Criteria B-E Status', items: results.criterionResponses.map(cr => `Criterion ${cr.criterionId}: ${cr.met ? 'Met' : 'Not Met'}`), type: 'info' },
-                      ],
-                      disclaimer: 'This is a screening tool only, not a diagnostic instrument.',
-                      patientInfo: getPatientInfoForReport(),
-                    });
+                  const text = formatResultsForCopy(buildCopyReport());;
                     await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
@@ -328,30 +335,7 @@ export const AdhdResults = ({ results, onReset, onBack }: AdhdResultsProps) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  const positive = results.symptomResponses.filter(r => r.present).map(r => {
-                    const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
-                    return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
-                  });
-                  const negative = results.symptomResponses.filter(r => !r.present).map(r => {
-                    const sym = [...ADHD_INATTENTION_SYMPTOMS, ...ADHD_HYPERACTIVITY_SYMPTOMS].find(s => s.id === r.symptomId);
-                    return sym ? `[${sym.domain}] ${language === 'ml' ? sym.labelMl : sym.label}` : r.symptomId;
-                  });
-                  downloadTextReport({
-                    assessmentName: 'DSM-5-TR ADHD Diagnostic Criteria Assessment',
-                    date: new Date().toLocaleDateString(),
-                    totalScore: `Inattention: ${results.inattentionCount}/9, Hyperactivity: ${results.hyperactivityCount}/9`,
-                    severity: interpretation.title,
-                    interpretation: interpretation.description,
-                    sections: [
-                      { title: 'Positive Findings (Endorsed Symptoms)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
-                      { title: 'Negative Findings (Not Endorsed)', items: negative, type: 'negative' },
-                      { title: 'Criteria B-E Status', items: results.criterionResponses.map(cr => `Criterion ${cr.criterionId}: ${cr.met ? 'Met' : 'Not Met'}`), type: 'info' },
-                    ],
-                    disclaimer: 'This is a screening tool only, not a diagnostic instrument.',
-                    patientInfo: getPatientInfoForReport(),
-                  });
-                }}
+                onClick={() => downloadTextReport(buildCopyReport())}
                 className="flex items-center gap-1.5"
               >
                 <Download className="h-4 w-4" />

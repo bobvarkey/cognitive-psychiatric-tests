@@ -56,9 +56,12 @@ export const CataplexyAssessment = ({ onBack }: CataplexyAssessmentProps) => {
     setBodyParts(prev => ({ ...prev, [partId]: !prev[partId] }));
   };
 
+  // Body parts (item 7) is a "select all that apply" checkbox list kept in bodyParts,
+  // never in characteristicResponses, so it must not gate completion.
+  const ratedCharacteristicItems = characteristicItems.filter(item => item.id !== 'body_parts');
   const isComplete =
     triggerItems.length === Object.keys(triggerResponses).length &&
-    characteristicItems.length === Object.keys(characteristicResponses).length;
+    ratedCharacteristicItems.every(item => characteristicResponses[item.id] !== undefined);
 
   const positiveTriggerCount = Object.values(triggerResponses).filter(score => score === 2).length;
 

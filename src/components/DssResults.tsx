@@ -8,6 +8,8 @@ import { DSS_DOMAIN_LABEL } from '@/data/dssScale';
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import type { ReportData } from '@/utils/reportGenerator';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface Props {
@@ -41,6 +43,37 @@ const fmt = (n: number) => n.toFixed(2);
 export const DssResults = ({ results, onReset, onBack }: Props) => {
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const buildCopyReport = (): ReportData => {
+    const elevated = results.subscales
+      .filter((s) => s.elevated)
+      .map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
+    const normal = results.subscales
+      .filter((s) => !s.elevated)
+      .map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
+    return {
+      assessmentName: 'Dissociative Symptoms Scale (DSS)',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${fmt(results.totalMean)}/4 (mean)`,
+      severity: SEVERITY_LABEL[results.severity],
+      interpretation: results.interpretation,
+      sections: [
+        {
+          title: 'Elevated subscales (mean ≥ 1.0)',
+          items: elevated,
+          type: 'positive',
+        },
+        {
+          title: 'Subscales within normal range',
+          items: normal,
+          type: 'negative',
+        },
+      ],
+      disclaimer:
+        'Screening tool only. A subscale or total mean ≥ 1.0 is the developers\' suggested clinical threshold; diagnosis requires structured clinical evaluation.',
+      patientInfo: getPatientInfoForReport(),
+    };
+  };
 
   return (
     <div className="space-y-6">
@@ -179,39 +212,13 @@ export const DssResults = ({ results, onReset, onBack }: Props) => {
           <FileDown className="h-4 w-4 mr-2" />
           Export PDF
         </Button>
+        <RegisterResult data={buildCopyReport} />
         <Button
           variant="outline"
           size="sm"
           onClick={async () => {
             try {
-              const elevated = results.subscales
-                .filter((s) => s.elevated)
-                .map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
-              const normal = results.subscales
-                .filter((s) => !s.elevated)
-                .map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
-              const text = formatResultsForCopy({
-                assessmentName: 'Dissociative Symptoms Scale (DSS)',
-                date: new Date().toLocaleDateString(),
-                totalScore: `${fmt(results.totalMean)}/4 (mean)`,
-                severity: SEVERITY_LABEL[results.severity],
-                interpretation: results.interpretation,
-                sections: [
-                  {
-                    title: 'Elevated subscales (mean ≥ 1.0)',
-                    items: elevated,
-                    type: 'positive',
-                  },
-                  {
-                    title: 'Subscales within normal range',
-                    items: normal,
-                    type: 'negative',
-                  },
-                ],
-                disclaimer:
-                  'Screening tool only. A subscale or total mean ≥ 1.0 is the developers\' suggested clinical threshold; diagnosis requires structured clinical evaluation.',
-                patientInfo: getPatientInfoForReport(),
-              });
+            const text = formatResultsForCopy(buildCopyReport());;
               await copyResultsToClipboard(text);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
@@ -225,23 +232,7 @@ export const DssResults = ({ results, onReset, onBack }: Props) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => {
-            const elevated = results.subscales.filter((s) => s.elevated).map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
-            const normal = results.subscales.filter((s) => !s.elevated).map((s) => `${DSS_DOMAIN_LABEL[s.domain]}: ${fmt(s.mean)}`);
-            downloadTextReport({
-              assessmentName: 'Dissociative Symptoms Scale (DSS)',
-              date: new Date().toLocaleDateString(),
-              totalScore: `${fmt(results.totalMean)}/4 (mean)`,
-              severity: SEVERITY_LABEL[results.severity],
-              interpretation: results.interpretation,
-              sections: [
-                { title: 'Elevated subscales (mean ≥ 1.0)', items: elevated, type: 'positive' },
-                { title: 'Subscales within normal range', items: normal, type: 'negative' },
-              ],
-              disclaimer: "Screening tool only. A subscale or total mean ≥ 1.0 is the developers' suggested clinical threshold; diagnosis requires structured clinical evaluation.",
-              patientInfo: getPatientInfoForReport(),
-            });
-          }}
+          onClick={() => downloadTextReport(buildCopyReport())}
           className="flex items-center gap-1.5"
         >
           <Download className="h-4 w-4" />

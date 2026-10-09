@@ -7,6 +7,7 @@ import { toast } from '@/hooks/use-toast';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { PatientInfoForm } from './PatientInfoForm';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 
 interface CasesToolAssessmentProps {
@@ -31,6 +32,25 @@ export const CasesToolAssessment = ({ onBack }: CasesToolAssessmentProps) => {
   const totalItems = CASES_SCREENING_ITEMS.length;
 
   const isAppropriate = totalYes >= 4; // Typically, ≥4 positive items suggests appropriateness for surgical evaluation
+
+  useRegisterResult(
+    totalAnswered > 0
+      ? {
+          assessmentName: 'CASES Tool (epilepsy surgery referral)',
+          date: '',
+          sections: [{
+            title: 'Criteria',
+            type: 'info',
+            items: CASES_SCREENING_ITEMS
+              .filter((item) => typeof responses[item.id] === 'boolean')
+              .map((item) => `${item.name}: ${responses[item.id] ? 'Yes' : 'No'}`),
+          }],
+          totalLabel: 'Criteria met',
+          totalScore: `${totalYes}/${totalItems}`,
+          interpretation: isAppropriate ? 'Appropriate for surgical referral' : 'Marginal or not appropriate',
+        }
+      : null,
+  );
 
   const buildClinicalReport = () => {
     const lines = [];

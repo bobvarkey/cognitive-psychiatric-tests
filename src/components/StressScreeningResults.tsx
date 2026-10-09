@@ -9,6 +9,8 @@ import { CATEGORY_LABELS } from '@/data/stressScreeningScale';
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import type { ReportData } from '@/utils/reportGenerator';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface StressScreeningResultsProps {
@@ -21,6 +23,27 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
   const { language, t } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const buildCopyReport = (): ReportData => {
+    const positiveFindings: string[] = [];
+    Object.entries(result.redFlagsByCategory).forEach(([cat, flags]) => {
+      const label = CATEGORY_LABELS[cat];
+      flags.forEach(f => positiveFindings.push(`[${language === 'ml' ? label.ml : label.en}] ${f}`));
+    });
+    return {
+      assessmentName: 'Stress vs Mental Disorder Screening',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${result.totalRedFlags} Red Flags`,
+      severity: result.likelihood === 'low' ? 'Low Likelihood' : result.likelihood === 'moderate' ? 'Moderate Likelihood' : 'High Likelihood',
+      interpretation: language === 'ml' ? result.interpretationMl : result.interpretation,
+      sections: [
+        { title: 'Positive Findings (Red Flags Identified)', items: positiveFindings, type: 'positive' },
+        { title: 'Recommendations', items: language === 'ml' ? result.recommendationsMl : result.recommendations, type: 'info' },
+      ],
+      disclaimer: 'This is a screening tool, not a diagnostic instrument.',
+      patientInfo: getPatientInfoForReport(),
+    };
+  };
 
   const getLikelihoodIcon = () => {
     switch (result.likelihood) {
@@ -166,29 +189,13 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {t('retakeAssessment')}
               </Button>
+              <RegisterResult data={buildCopyReport} />
               <Button
                 variant="outline"
                 size="sm"
                 onClick={async () => {
                   try {
-                    const positiveFindings: string[] = [];
-                    Object.entries(result.redFlagsByCategory).forEach(([cat, flags]) => {
-                      const label = CATEGORY_LABELS[cat];
-                      flags.forEach(f => positiveFindings.push(`[${language === 'ml' ? label.ml : label.en}] ${f}`));
-                    });
-                    const text = formatResultsForCopy({
-                      assessmentName: 'Stress vs Mental Disorder Screening',
-                      date: new Date().toLocaleDateString(),
-                      totalScore: `${result.totalRedFlags} Red Flags`,
-                      severity: result.likelihood === 'low' ? 'Low Likelihood' : result.likelihood === 'moderate' ? 'Moderate Likelihood' : 'High Likelihood',
-                      interpretation: language === 'ml' ? result.interpretationMl : result.interpretation,
-                      sections: [
-                        { title: 'Positive Findings (Red Flags Identified)', items: positiveFindings, type: 'positive' },
-                        { title: 'Recommendations', items: language === 'ml' ? result.recommendationsMl : result.recommendations, type: 'info' },
-                      ],
-                      disclaimer: 'This is a screening tool, not a diagnostic instrument.',
-                      patientInfo: getPatientInfoForReport(),
-                    });
+                  const text = formatResultsForCopy(buildCopyReport());;
                     await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
@@ -202,26 +209,7 @@ export const StressScreeningResults = ({ result, onReset, onBack }: StressScreen
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  const positiveFindings: string[] = [];
-                  Object.entries(result.redFlagsByCategory).forEach(([cat, flags]) => {
-                    const label = CATEGORY_LABELS[cat];
-                    flags.forEach(f => positiveFindings.push(`[${language === 'ml' ? label.ml : label.en}] ${f}`));
-                  });
-                  downloadTextReport({
-                    assessmentName: 'Stress vs Mental Disorder Screening',
-                    date: new Date().toLocaleDateString(),
-                    totalScore: `${result.totalRedFlags} Red Flags`,
-                    severity: result.likelihood === 'low' ? 'Low Likelihood' : result.likelihood === 'moderate' ? 'Moderate Likelihood' : 'High Likelihood',
-                    interpretation: language === 'ml' ? result.interpretationMl : result.interpretation,
-                    sections: [
-                      { title: 'Positive Findings (Red Flags Identified)', items: positiveFindings, type: 'positive' },
-                      { title: 'Recommendations', items: language === 'ml' ? result.recommendationsMl : result.recommendations, type: 'info' },
-                    ],
-                    disclaimer: 'This is a screening tool, not a diagnostic instrument.',
-                    patientInfo: getPatientInfoForReport(),
-                  });
-                }}
+                onClick={() => downloadTextReport(buildCopyReport())}
                 className="flex items-center gap-1.5"
               >
                 <Download className="h-4 w-4" />

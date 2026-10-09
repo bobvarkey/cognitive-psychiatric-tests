@@ -11,6 +11,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import { AssessmentReference } from '@/components/AssessmentReference';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface HunterAssessmentProps {
   onBack: () => void;
@@ -191,6 +192,27 @@ export const HunterAssessment: React.FC<HunterAssessmentProps> = ({ onBack }) =>
     lines.push(`Verdict: ${meetsHunter ? 'Hunter Criteria MET — Serotonin Syndrome likely' : 'Hunter Criteria NOT met'}`);
     return lines.join('\n');
   }, [exposure, criteria, implicatedDrugs, meetsHunter]);
+
+  useRegisterResult(
+    exposure !== null || positiveCount > 0 || implicatedDrugs.size > 0
+      ? {
+          assessmentName: 'Hunter Serotonin Toxicity Criteria',
+          date: '',
+          sections: [{
+            title: 'Criteria',
+            type: 'info',
+            items: [
+              ...(exposure !== null ? [`Recent serotonergic exposure: ${exposure ? 'Yes' : 'No'}`] : []),
+              ...clinicalCriteria.filter((c) => criteria[c.key]).map((c) => `${c.label}: Present`),
+              ...(implicatedDrugs.size ? [`Implicated agents: ${Array.from(implicatedDrugs).sort().join(', ')}`] : []),
+            ],
+          }],
+          totalLabel: 'Criteria present',
+          totalScore: `${positiveCount}/${clinicalCriteria.length}`,
+          interpretation: meetsHunter ? 'Hunter criteria met (serotonin toxicity likely)' : 'Hunter criteria not met',
+        }
+      : null,
+  );
 
   const [copiedExport, setCopiedExport] = useState(false);
   const copyExport = async () => {

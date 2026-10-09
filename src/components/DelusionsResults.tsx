@@ -11,6 +11,8 @@ import { delusionsScale } from '@/data/delusionsScale';
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import type { ReportData } from '@/utils/reportGenerator';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface DelusionsResultsProps {
@@ -21,6 +23,37 @@ interface DelusionsResultsProps {
 export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) => {
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const buildCopyReport = (): ReportData => {
+    const positiveFindings: string[] = [];
+    const negativeFindings: string[] = [];
+    const notAssessed: string[] = [];
+    const getSevLabel = (s?: number) => s === 1 ? 'Mild' : s === 2 ? 'Moderate' : s === 3 ? 'Severe' : '';
+    delusionsScale.forEach(item => {
+      const response = results.responses.find(r => r.itemId === item.id);
+      if (!response) {
+        notAssessed.push(`${item.type} (${item.section} — ${item.category})`);
+      } else if (response.present) {
+        positiveFindings.push(`${item.type} — ${getSevLabel(response.severity)} (${item.section}, ${item.category})`);
+      } else {
+        negativeFindings.push(`${item.type} (${item.section} — ${item.category})`);
+      }
+    });
+    return {
+      assessmentName: 'Delusional Syndromes & Hallucinations Assessment',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${results.totalPresent} symptoms present`,
+      severity: getSeverityLevel(),
+      interpretation: getClinicalInterpretation(),
+      sections: [
+        { title: 'Positive Findings (Symptoms Present)', items: positiveFindings, type: 'positive' },
+        { title: 'Negative Findings (Symptoms Absent)', items: negativeFindings, type: 'negative' },
+        { title: 'Items Not Assessed / Not Entered', items: notAssessed, type: 'not-assessed' },
+      ],
+      disclaimer: 'This assessment is a screening tool only. Comprehensive psychiatric evaluation is essential for accurate diagnosis and treatment planning.',
+      patientInfo: getPatientInfoForReport(),
+    };
+  };
   const getSeverityLevel = () => {
     if (results.totalPresent === 0) return 'None';
     if (results.totalPresent <= 2) return 'Minimal';
@@ -316,39 +349,13 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
           <FileDown className="mr-2 h-4 w-4" />
           Export PDF
         </Button>
+        <RegisterResult data={buildCopyReport} />
         <Button
           variant="outline"
           size="sm"
           onClick={async () => {
             try {
-              const positiveFindings: string[] = [];
-              const negativeFindings: string[] = [];
-              const notAssessed: string[] = [];
-              const getSevLabel = (s?: number) => s === 1 ? 'Mild' : s === 2 ? 'Moderate' : s === 3 ? 'Severe' : '';
-              delusionsScale.forEach(item => {
-                const response = results.responses.find(r => r.itemId === item.id);
-                if (!response) {
-                  notAssessed.push(`${item.type} (${item.section} — ${item.category})`);
-                } else if (response.present) {
-                  positiveFindings.push(`${item.type} — ${getSevLabel(response.severity)} (${item.section}, ${item.category})`);
-                } else {
-                  negativeFindings.push(`${item.type} (${item.section} — ${item.category})`);
-                }
-              });
-              const text = formatResultsForCopy({
-                assessmentName: 'Delusional Syndromes & Hallucinations Assessment',
-                date: new Date().toLocaleDateString(),
-                totalScore: `${results.totalPresent} symptoms present`,
-                severity: getSeverityLevel(),
-                interpretation: getClinicalInterpretation(),
-                sections: [
-                  { title: 'Positive Findings (Symptoms Present)', items: positiveFindings, type: 'positive' },
-                  { title: 'Negative Findings (Symptoms Absent)', items: negativeFindings, type: 'negative' },
-                  { title: 'Items Not Assessed / Not Entered', items: notAssessed, type: 'not-assessed' },
-                ],
-                disclaimer: 'This assessment is a screening tool only. Comprehensive psychiatric evaluation is essential for accurate diagnosis and treatment planning.',
-                patientInfo: getPatientInfoForReport(),
-              });
+            const text = formatResultsForCopy(buildCopyReport());;
               await copyResultsToClipboard(text);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
@@ -362,36 +369,7 @@ export const DelusionsResults = ({ results, onReset }: DelusionsResultsProps) =>
         <Button
           variant="outline"
           size="sm"
-          onClick={() => {
-            const positiveFindings: string[] = [];
-            const negativeFindings: string[] = [];
-            const notAssessed: string[] = [];
-            const getSevLabel = (s?: number) => s === 1 ? 'Mild' : s === 2 ? 'Moderate' : s === 3 ? 'Severe' : '';
-            delusionsScale.forEach(item => {
-              const response = results.responses.find(r => r.itemId === item.id);
-              if (!response) {
-                notAssessed.push(`${item.type} (${item.section} — ${item.category})`);
-              } else if (response.present) {
-                positiveFindings.push(`${item.type} — ${getSevLabel(response.severity)} (${item.section}, ${item.category})`);
-              } else {
-                negativeFindings.push(`${item.type} (${item.section} — ${item.category})`);
-              }
-            });
-            downloadTextReport({
-              assessmentName: 'Delusional Syndromes & Hallucinations Assessment',
-              date: new Date().toLocaleDateString(),
-              totalScore: `${results.totalPresent} symptoms present`,
-              severity: getSeverityLevel(),
-              interpretation: getClinicalInterpretation(),
-              sections: [
-                { title: 'Positive Findings (Symptoms Present)', items: positiveFindings, type: 'positive' },
-                { title: 'Negative Findings (Symptoms Absent)', items: negativeFindings, type: 'negative' },
-                { title: 'Items Not Assessed / Not Entered', items: notAssessed, type: 'not-assessed' },
-              ],
-              disclaimer: 'This assessment is a screening tool only. Comprehensive psychiatric evaluation is essential for accurate diagnosis and treatment planning.',
-              patientInfo: getPatientInfoForReport(),
-            });
-          }}
+          onClick={() => downloadTextReport(buildCopyReport())}
           className="flex items-center gap-1.5"
         >
           <Download className="h-4 w-4" />

@@ -8,6 +8,7 @@ import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Ch
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface HamaResultsProps {
@@ -132,6 +133,7 @@ export const HamaResults = ({ result, onReset, onBack }: HamaResultsProps) => {
                 <FileDown className="mr-2 h-4 w-4" />
                 Export PDF
               </Button>
+              <RegisterResult data={buildReport} />
               <Button
                 variant="outline"
                 size="sm"

@@ -25,6 +25,7 @@ import {
   type BaselineDomain,
 } from '@/data/lobarFunctions';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface LobarFunctionsAssessmentProps {
   onBack: () => void;
@@ -184,6 +185,34 @@ export default function LobarFunctionsAssessment({ onBack }: LobarFunctionsAsses
 
     return patterns;
   }, [lobeStats, results]);
+
+  const lobarTested = [
+    ...LOBAR_BASELINE.flatMap((domain) => domain.tests),
+    ...LOBAR_LOBES.flatMap((lobe) => lobe.domains.flatMap((domain) => domain.tests)),
+  ].filter((test) => {
+    const st = results[test.id]?.status;
+    return !!st && st !== 'not_tested';
+  });
+  const lobarAbnormal = lobarTested.filter((test) => results[test.id]?.status === 'abnormal').length;
+  useRegisterResult(
+    lobarTested.length > 0
+      ? {
+          assessmentName: LOBAR_REPORT_TEMPLATE.title,
+          date: '',
+          sections: [{
+            title: 'Tests',
+            type: 'info',
+            items: lobarTested.map((test) => {
+              const r = results[test.id];
+              return `${test.name}: ${r?.status === 'abnormal' ? `Abnormal${r.observation ? ` (${r.observation})` : ''}` : 'Normal'}`;
+            }),
+          }],
+          totalLabel: 'Abnormal tests',
+          totalScore: `${lobarAbnormal}/${lobarTested.length} tested`,
+          interpretation: summaryPatterns.length > 0 ? summaryPatterns.join(' ') : 'No dominant localizing pattern',
+        }
+      : null,
+  );
 
   const generatedReport = useMemo(() => {
     const lines: string[] = [];

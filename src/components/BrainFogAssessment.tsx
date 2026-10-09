@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Brain, AlertTriangle, RotateCcw, Copy, Check } from 'lucide-react';
 import { AssessmentReference } from '@/components/AssessmentReference';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface Props { onBack?: () => void }
 
@@ -240,6 +241,41 @@ export const BrainFogAssessment = ({ onBack }: Props) => {
       setTimeout(() => setCopied(false), 2000);
     } catch { /* ignore */ }
   };
+
+  const brainFogSteps: Array<[string, Set<string>]> = [
+    ['Confirmatory features present', confirm],
+    ['Mimics considered', mimics],
+    ['Red flags', redFlags],
+    ['Onset', onset],
+    ['Temporal pattern', temporal],
+    ['Neurological features', neuro],
+    ['Psychiatric features', psych],
+    ['Sleep', sleep],
+    ['Systemic features', systemic],
+    ['Contributing medications or substances', meds],
+    ['Suspected cause categories', causes],
+    ['First-line labs ordered', labs],
+    ['Additional labs ordered', addLabs],
+    ['Management plan', mgmt],
+  ];
+  const brainFogAnswered = brainFogSteps.some(([, s]) => s.size > 0) || notes.trim().length > 0;
+  useRegisterResult(
+    brainFogAnswered
+      ? {
+          assessmentName: 'Brain Fog Clinical Algorithm',
+          date: '',
+          sections: [{
+            title: 'Findings',
+            type: 'info',
+            items: [
+              ...brainFogSteps.filter(([, s]) => s.size > 0).map(([title, s]) => `${title}: ${Array.from(s).join(', ')}`),
+              ...(notes.trim() ? [`Clinical notes: ${notes.trim().replace(/\s*\n\s*/g, '; ')}`] : []),
+            ],
+          }],
+          interpretation: redFlags.size > 0 ? 'Red flags present: emergency evaluation indicated' : undefined,
+        }
+      : null,
+  );
 
   const exportText = useMemo(() => {
     const lines: string[] = [];

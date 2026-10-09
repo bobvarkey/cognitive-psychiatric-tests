@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface CopyTextButtonProps {
   text: string;
   label?: string;
   copiedLabel?: string;
   className?: string;
+  /** Set false when the page registers its own (cleaner) result for the page-bottom summary. */
+  registerSummary?: boolean;
 }
 
 export function CopyTextButton({
@@ -15,8 +18,10 @@ export function CopyTextButton({
   label = 'Copy',
   copiedLabel = 'Copied',
   className,
+  registerSummary = true,
 }: CopyTextButtonProps) {
   const [copied, setCopied] = useState(false);
+  useRegisterResult(registerSummary ? text : null);
 
   const handleCopy = async () => {
     try {

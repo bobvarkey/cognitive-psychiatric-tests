@@ -4,14 +4,18 @@ import { Copy, FileText, Check, Download } from 'lucide-react';
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import type { ReportData } from '@/utils/reportGenerator';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface ExportButtonsProps {
   data: ReportData;
   className?: string;
+  /** Set false on reference pages so their export does not create a page-bottom result summary. */
+  registerSummary?: boolean;
 }
 
-export function ExportButtons({ data, className = '' }: ExportButtonsProps) {
+export function ExportButtons({ data, className = '', registerSummary = true }: ExportButtonsProps) {
   const [copied, setCopied] = useState(false);
+  useRegisterResult(registerSummary ? data : null);
 
   const handleCopy = async () => {
     try {

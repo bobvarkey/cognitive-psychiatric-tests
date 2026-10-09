@@ -359,6 +359,7 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
                         <Checkbox
                           checked={selectedSyndromes.has(syndrome.id)}
                           onCheckedChange={() => toggleSyndrome(syndrome.id)}
+                          onClick={(e) => e.stopPropagation()}
                           className="mt-0.5"
                         />
                         <div className="flex-1 min-w-0">
@@ -417,6 +418,7 @@ export const CognitiveSyndromesAssessment = ({ onBack: _onBack, initialSearchQue
                 <Checkbox
                   checked={selectedTests.has(test.id)}
                   onCheckedChange={() => toggleTest(test.id)}
+                  onClick={(e) => e.stopPropagation()}
                   className="mt-0.5"
                 />
                 <div className="flex-1 min-w-0">

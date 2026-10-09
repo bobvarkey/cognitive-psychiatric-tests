@@ -8,6 +8,7 @@ import { AlertCircle, CheckCircle2, Copy, Check, FileDown, Download } from 'luci
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 
 interface Pcl5ResultsProps {
   results: Pcl5Result;
@@ -85,6 +86,7 @@ export const Pcl5Results = ({ results, onReset, responses }: Pcl5ResultsProps) =
           {language === 'en' ? 'PCL-5 Results' : 'PCL-5 ഫലങ്ങൾ'}
         </h1>
         <div className="flex gap-2 flex-wrap">
+          <RegisterResult data={buildReport} />
           <Button
             variant="outline"
             size="sm"

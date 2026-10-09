@@ -5,6 +5,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, RotateCcw, Copy, Check } from 'lucide-react';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 type Domain =
   | 'preoccupation' | 'tolerance' | 'withdrawal' | 'persistence' | 'displacement'
@@ -64,6 +65,29 @@ export const SmdsSfAssessment = ({ onBack }: Props) => {
     : positiveCount <= 4 ? 'mild'
     : positiveCount <= 6 ? 'moderate'
     : 'severe';
+
+  useRegisterResult(
+    answered > 0
+      ? {
+          assessmentName: 'Social Media Disorder Scale, Short Form (SMDS-SF)',
+          date: '',
+          sections: [{
+            title: 'Responses',
+            type: 'info',
+            items: ITEMS.filter((it) => responses[it.id]).map(
+              (it) => `${domainLabel[it.domain]}: ${responses[it.id] === 'yes' ? 'Yes' : 'No'}`,
+            ),
+          }],
+          totalLabel: 'Positive criteria',
+          totalScore: `${positiveCount}/9 (cutoff ${CUTOFF_POSITIVE} or more)`,
+          interpretation: complete
+            ? probable
+              ? 'Probable disordered social media use'
+              : 'Below cutoff for disordered social media use'
+            : undefined,
+        }
+      : null,
+  );
 
   const reset = () => setResponses({});
 

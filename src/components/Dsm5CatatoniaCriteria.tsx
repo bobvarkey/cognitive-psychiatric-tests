@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 import {
   Card, CardContent, CardHeader, CardTitle, CardDescription,
 } from '@/components/ui/card';
@@ -26,6 +27,23 @@ export const Dsm5CatatoniaCriteria = () => {
 
   const count = useMemo(() => Object.values(checked).filter(Boolean).length, [checked]);
   const meets = count >= DSM5_CATATONIA_THRESHOLD;
+
+  useRegisterResult(
+    count > 0
+      ? {
+          assessmentName: 'DSM-5-TR Catatonia Diagnostic Criteria',
+          date: '',
+          sections: [{
+            title: 'Features',
+            type: 'info',
+            items: DSM5_CATATONIA_FEATURES.filter((f) => checked[f.id]).map((f) => `${f.feature}: Present`),
+          }],
+          totalLabel: 'Features present',
+          totalScore: `${count}/${DSM5_CATATONIA_FEATURES.length} (${DSM5_CATATONIA_THRESHOLD} or more required)`,
+          interpretation: meets ? 'Meets DSM-5-TR criteria for catatonia' : 'Does not meet DSM-5-TR criteria for catatonia',
+        }
+      : null,
+  );
 
   return (
     <div className="space-y-4">

@@ -1,3 +1,4 @@
+import { downloadResultsText, resultFileName } from '@/lib/copyResults';
 export interface ReportSection {
   title: string;
   items: string[];
@@ -8,6 +9,8 @@ export interface ReportData {
   assessmentName: string;
   date: string;
   totalScore?: string;
+  /** Label for the total line in copied/downloaded text; defaults to "Total score". */
+  totalLabel?: string;
   interpretation?: string;
   severity?: string;
   sections: ReportSection[];
@@ -52,21 +55,12 @@ export function generateTextReport(data: ReportData): string {
   return lines.join('\n').trimEnd();
 }
 
+/**
+ * Downloads the results-only plain text (identical to "Copy results") as
+ * `<scale-slug>-result.txt`. `filename` may override the base name.
+ */
 export function downloadTextReport(data: ReportData, filename?: string) {
-  const text = generateTextReport(data);
-  const safeName = (filename ?? data.assessmentName ?? 'clinical-report')
-    .replace(/[^a-z0-9-_]+/gi, '_')
-    .replace(/^_+|_+$/g, '');
-  const stamp = new Date().toISOString().slice(0, 10);
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${safeName}_${stamp}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  downloadResultsText(data, filename ? resultFileName(filename) : undefined);
 }
 
 export function generatePdfReport(data: ReportData) {

@@ -123,6 +123,8 @@ function normaliseLine(raw: string): string | null {
     const value = line.slice(colon + 1).trim();
     if (DROP_LABELS.includes(label.toLowerCase())) return null;
     if (value && EMPTY_VALUES.test(value.replace(/\s*\(.*\)\s*$/, '').trim())) return null;
+    // "Age: not recorded years" → padding, drop it.
+    if (/^(not (recorded|specified|rated|assessed|answered|tested)|unanswered)\b/i.test(value)) return null;
     if (!value && hadUrl) return null;
   } else if (/^(none|n\/?a|\(none\)|not assessed)$/i.test(line)) {
     return null;
@@ -164,7 +166,8 @@ export function sanitizeCopyText(text: string): string {
   return out.join('\n');
 }
 
-const SKIP_SECTION = /recommend|guidance|next step|reference|disclaimer|^notes?$|clinical note|information|education|about|not assessed|unanswered/i;
+const SKIP_SECTION =
+  /recommend|guidance|guide\b|next step|reference|disclaimer|^notes?$|clinical note|information|education|about|not assessed|unanswered|cut-?offs?\b|suggestion|monitoring schedule|management|prevention|strateg|characteristic|^(clinical |score )?interpretation( guide)?$/i;
 
 function normaliseItem(item: string, section: ReportSection): string {
   let s = item.trim();
@@ -175,6 +178,13 @@ function normaliseItem(item: string, section: ReportSection): string {
   if (!s.includes(':')) {
     const m = s.match(/^(.*?)\s*\(([^()]+)\)$/);
     if (m && /\d/.test(m[2])) s = `${m[1]}: ${m[2]}`;
+  }
+  // "Score: 3/14" inside a "STEADI Score" section → "STEADI Score: 3/14" (keeps lines unambiguous).
+  const generic = s.match(/^(score|level|total|result|count|grade|stage|class)\s*:\s*(.+)$/i);
+  if (generic && section.title && !/^(scores?|results?|items?|criteria|findings|responses)$/i.test(section.title.trim())) {
+    const title = section.title.trim();
+    const label = generic[1].toLowerCase();
+    s = new RegExp(`\\b${label}$`, 'i').test(title) ? `${title}: ${generic[2]}` : `${title} ${label}: ${generic[2]}`;
   }
   if (!s.includes(':')) {
     if (section.type === 'positive') s = `${s}: Present`;
@@ -190,21 +200,143 @@ export function formatResultsForCopy(data: ReportData): string {
   for (const [key, value] of Object.entries(data.patientInfo ?? {})) {
     if (value && String(value).trim()) lines.push(`${key}: ${String(value).trim()}`);
   }
+  // Labels used in more than one section ("Eye" in GCS and FOUR) get the section name.
+  const labelSections = new Map<string, Set<string>>();
   for (const section of data.sections ?? []) {
     if (section.type === 'not-assessed' || SKIP_SECTION.test(section.title)) continue;
     for (const item of section.items ?? []) {
-      if (item && item.trim()) lines.push(normaliseItem(item, section));
+      const label = normaliseItem(item ?? '', section).split(':')[0].trim().toLowerCase();
+      if (!label) continue;
+      if (!labelSections.has(label)) labelSections.set(label, new Set());
+      labelSections.get(label)!.add(section.title);
     }
   }
-  if (data.totalScore) lines.push(`Total score: ${data.totalScore}`);
+  const disambiguate = (line: string, section: ReportSection) => {
+    const i = line.indexOf(':');
+    if (i <= 0 || !section.title?.trim()) return line;
+    const label = line.slice(0, i).trim();
+    if ((labelSections.get(label.toLowerCase())?.size ?? 0) < 2) return line;
+    if (label.toLowerCase().startsWith(section.title.trim().toLowerCase())) return line;
+    return `${section.title.trim()} ${label.charAt(0).toLowerCase()}${label.slice(1)}${line.slice(i)}`;
+  };
+  for (const section of data.sections ?? []) {
+    if (section.type === 'not-assessed' || SKIP_SECTION.test(section.title)) continue;
+    // Bare answer lines (no "label: value") become one "<Section title>: a, b" line so
+    // every line reads as item: value. A "Header:" item keeps its own list (merged later).
+    const bare: string[] = [];
+    let underHeader = false;
+    for (const item of section.items ?? []) {
+      if (!item || !item.trim()) continue;
+      const line = disambiguate(normaliseItem(item, section), section);
+      if (/:\s*$/.test(line)) {
+        underHeader = true;
+        lines.push(line);
+      } else if (line.includes(':') ) {
+        underHeader = false;
+        lines.push(line);
+      } else if (underHeader) {
+        lines.push(line);
+      } else {
+        bare.push(line.replace(/[.;,]+$/, ''));
+      }
+    }
+    if (bare.length && section.title?.trim()) lines.push(`${section.title.trim()}: ${bare.join(', ')}`);
+  }
+  if (data.totalScore) lines.push(`${data.totalLabel?.trim() || 'Total score'}: ${data.totalScore}`);
   const category = (data.severity || data.interpretation || '').trim();
   if (category) lines.push(`Interpretation: ${category}`);
   return sanitizeCopyText(lines.join('\n'));
 }
 
-/** Writes sanitized results text to the clipboard. Rejects if the clipboard is unavailable. */
+/** Writes sanitized results text to the clipboard. Rejects if no copy method works. */
 export async function copyResultsToClipboard(text: string): Promise<string> {
   const clean = sanitizeCopyText(text);
-  await navigator.clipboard.writeText(clean);
-  return clean;
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('Clipboard API unavailable');
+    await navigator.clipboard.writeText(clean);
+    return clean;
+  } catch (err) {
+    // Fallback for older mobile browsers / non-secure contexts.
+    if (legacyCopy(clean)) return clean;
+    throw err;
+  }
+}
+
+function legacyCopy(text: string): boolean {
+  if (typeof document === 'undefined' || typeof document.execCommand !== 'function') return false;
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.top = '0';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  try {
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    return document.execCommand('copy');
+  } catch {
+    return false;
+  } finally {
+    ta.remove();
+  }
+}
+
+/** The exact text used for both "Copy results" and "Download .txt". */
+export function buildResultText(input: ReportData | string): string {
+  if (typeof input !== 'string') return formatResultsForCopy(input);
+  // Free-text reports: keep the name line and "label: value" lines only; section
+  // headings and prose are not results. (Header lists were already merged.)
+  const [name, ...rest] = sanitizeCopyText(input).split('\n');
+  return [name, ...rest.filter((l) => l.includes(':'))].filter(Boolean).join('\n');
+}
+
+/** True when the text holds a result beyond the scale-name line. */
+export function hasResultContent(text: string): boolean {
+  return (text ?? '').split('\n').filter((l) => l.trim()).length >= 2;
+}
+
+/** "Hamilton Depression Rating Scale (HAM-D)" → "hamilton-depression-rating-scale-ham-d-result.txt" */
+export function resultFileName(scaleName: string): string {
+  const slug = (scaleName ?? '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+    .replace(/-+$/g, '');
+  return `${slug || 'assessment'}-result.txt`;
+}
+
+/**
+ * Downloads results as a .txt file whose content is identical to the clipboard text.
+ * Uses a Blob + <a download> (supported by iOS Safari 13+ and Android Chrome); if that
+ * throws, falls back to opening the plain text in a new tab so it can be saved/shared.
+ * Returns the exact text written.
+ */
+export function downloadResultsText(input: ReportData | string, filename?: string): string {
+  const text = buildResultText(input);
+  const name = filename ?? resultFileName(text.split('\n')[0] ?? '');
+  try {
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    // Safari can cancel the download if the URL is revoked synchronously.
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  } catch {
+    try {
+      window.open(`data:text/plain;charset=utf-8,${encodeURIComponent(text)}`, '_blank', 'noopener');
+    } catch {
+      /* nothing else we can do */
+    }
+  }
+  return text;
 }
