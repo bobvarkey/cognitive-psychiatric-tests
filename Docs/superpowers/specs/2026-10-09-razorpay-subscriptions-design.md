@@ -1,7 +1,10 @@
 # Razorpay Subscriptions, the account page, and the premium gate
 
 **Date:** 2026-10-09
-**Status:** Design approved in conversation; awaiting written-spec review
+**Status:** Approved 2026-10-09. Amended the same day to resolve a contradiction
+between §7 and §10 over the dev-only developer unlock; as first written, §10's
+Testing gate ("the five developer-email-stripping tests must pass unmodified")
+was unsatisfiable, because four of the five call storage that §10 also removed.
 **Branch:** `main`
 
 **Supersedes, for this work only.** The Non-goals of
@@ -65,7 +68,7 @@ Chosen explicitly; not open for reinterpretation during implementation.
 | 5 | Pricing surface | The existing `PaywallModal` only. **No new `/pricing` route** |
 | 6 | Account surface | A **new public `/account` route**, reachable signed out |
 | 7 | Account gating | `/account` is open to anyone with access; only the **manage-billing controls** require an active paid subscription |
-| 8 | Access source | `entitlements` only. `localStorage` stops being an access source |
+| 8 | Access source | `entitlements` only, plus the dev-only developer unlock in dev builds. `localStorage` stops being an access source **for billing** |
 | 9 | Grant authority | The webhook writes grants. Checkout verify grants nothing |
 | 10 | Developer grant | Unchanged: an admin `INSERT` on the exact auth user id. Never written by billing, never overwritten by it |
 | 11 | Trial | Unchanged and independent: the existing `start_trial()` RPC, one per account, database clock |
@@ -306,13 +309,24 @@ not a rule.
 
 ### 7. Client — `SubscriptionContext`
 
-`isPremium` loses the `localStorage` term:
+`isPremium` loses the `localStorage` term **for billing**, and keeps one
+explicit, separate term for the dev-only developer unlock:
 
 ```
-isPremium = isPremiumUser() || <the server holds a grant>
+isPremium = isPremiumUser()
+          || <the server holds a grant>
+          || (import.meta.env.DEV && isDevUnlocked())
 ```
 
-`webPremium` is removed as an access source. `premiumSource` keeps its existing
+What is removed as an access source is the browser-written `WebPremium` record —
+the one `saveWebPremium` wrote from the client when an order was paid. The dev
+term is a different thing and stays, because it cannot exist in a production
+build: `import.meta.env.DEV` is the literal `false` there, so the minifier drops
+the term, the email list and the call together. Five tests in
+`webBilling.test.ts` exist to prove exactly that, which is why they must keep
+passing unmodified.
+
+`premiumSource` keeps its existing
 precedence (`web` → `developer` → `demo` → `store` → `none`) and its existing
 mapping from the grant's `source` (`razorpay` → `web`). `checkingServerAccess`
 already exists and is what keeps the banner from flashing while entitlement is
@@ -374,14 +388,22 @@ grant and every running trial — the same class of bug as `e33ee13`.
 
 ### 10. Client — `webBilling.ts` shrinks
 
-Removed: `startWebCheckout` (the order path) and `getWebPremium` / `saveWebPremium`
-(the browser-written entitlement) with `STORE_KEY`.
+Removed: `startWebCheckout` (the order path), and the **billing** use of
+`getWebPremium` / `saveWebPremium` / `STORE_KEY`. After this work no payment path
+reads or writes them, and a paid account is recorded only in `entitlements`.
 
 Retained, unchanged: `getWebCurrency`, `yearlySavingPercent`, `parseDeveloperEmails`,
-`DEVELOPER_EMAILS`, `isDeveloperEmail` — the dev-only developer unlock behind
-`import.meta.env.DEV`, which five tests pin as stripped from production builds.
-**It must stay stripped and dev-only**; it is the only acceptable form of an
-email-based unlock, and only because it cannot exist in a production bundle.
+`DEVELOPER_EMAILS`, `isDeveloperEmail` — and, because they are that unlock's own
+store, `getWebPremium` / `saveWebPremium` / `STORE_KEY` as well. The dev-only
+developer unlock behind `import.meta.env.DEV` keeps working, which five tests pin
+as stripped from production builds. **It must stay stripped and dev-only**; it is
+the only acceptable form of an email-based unlock, and only because it cannot
+exist in a production bundle.
+
+That retention narrows `restoreWebPurchase`. It is the function `isDeveloperEmail`
+used to feed; once `restoreWebPurchaseForSession` is deleted it has no other
+caller, so it resolves the dev unlock or returns `null` — it must not reach for a
+session this work removes.
 
 Retained, re-pointed: the restore-by-verified-email flow
 (`requestRestoreCode` / `verifyRestoreCode`). It still proves email ownership
