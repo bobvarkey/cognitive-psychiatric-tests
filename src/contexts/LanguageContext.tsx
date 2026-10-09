@@ -193,7 +193,30 @@ const translations = {
     totalScore: 'Total Score',
     scoringGuide: 'Scoring Guide',
     note: 'Note',
-    retakeAssessment: 'Retake Assessment'
+    retakeAssessment: 'Retake Assessment',
+
+    // Shared action and status labels (keys were used without entries, so the raw key rendered)
+    calculate: 'Calculate',
+    calculateResults: 'Calculate Results',
+    viewResults: 'View Results',
+    answer: 'Answer',
+    moreQuestions: 'more questions',
+    answerAll: 'Please answer all items to calculate the score.',
+    reset: 'Reset',
+    print: 'Print',
+    printResults: 'Print Results',
+    newAssessment: 'New Assessment',
+    takeNewAssessment: 'Take New Assessment',
+    assessmentResults: 'Assessment Results',
+    interpretation: 'Interpretation',
+    scoreInterpretationGuide: 'Score Interpretation Guide',
+    clinicalNotes: 'Clinical Notes',
+    assessmentDate: 'Assessment Date',
+    allItemsCompleted: 'All items completed',
+    readyToCalculate: 'Ready to calculate results',
+    pleaseComplete: 'Please complete',
+    moreItems: 'more items',
+    hareSubtitle: 'Professional psychopathy assessment tool'
   },
   ml: {
     // Assessment titles and labels
@@ -330,7 +353,31 @@ const translations = {
     totalScore: 'മൊത്തം സ്കോർ',
     scoringGuide: 'സ്കോറിംഗ് ഗൈഡ്',
     note: 'കുറിപ്പ്',
-    retakeAssessment: 'വീണ്ടും അസെസ്മെന്റ് ചെയ്യുക'
+    retakeAssessment: 'വീണ്ടും അസെസ്മെന്റ് ചെയ്യുക',
+
+    // Shared action and status labels
+    backToMenu: 'മെനുവിലേക്ക് മടങ്ങുക',
+    calculate: 'കണക്കാക്കുക',
+    calculateResults: 'ഫലങ്ങൾ കണക്കാക്കുക',
+    viewResults: 'ഫലങ്ങൾ കാണുക',
+    answer: 'ഇനിയും',
+    moreQuestions: 'ചോദ്യങ്ങൾക്ക് ഉത്തരം നൽകുക',
+    answerAll: 'സ്കോർ കണക്കാക്കാൻ എല്ലാ ഇനങ്ങൾക്കും ഉത്തരം നൽകുക.',
+    reset: 'റീസെറ്റ്',
+    print: 'പ്രിന്റ്',
+    printResults: 'ഫലങ്ങൾ പ്രിന്റ് ചെയ്യുക',
+    newAssessment: 'പുതിയ അസെസ്മെന്റ്',
+    takeNewAssessment: 'പുതിയ അസെസ്മെന്റ് ചെയ്യുക',
+    assessmentResults: 'അസെസ്മെന്റ് ഫലങ്ങൾ',
+    interpretation: 'വ്യാഖ്യാനം',
+    scoreInterpretationGuide: 'സ്കോർ വ്യാഖ്യാന ഗൈഡ്',
+    clinicalNotes: 'ക്ലിനിക്കൽ കുറിപ്പുകൾ',
+    assessmentDate: 'അസെസ്മെന്റ് തീയതി',
+    allItemsCompleted: 'എല്ലാ ഇനങ്ങളും പൂർത്തിയായി',
+    readyToCalculate: 'ഫലങ്ങൾ കണക്കാക്കാൻ തയ്യാറാണ്',
+    pleaseComplete: 'ഇനിയും',
+    moreItems: 'ഇനങ്ങൾ പൂർത്തിയാക്കുക',
+    hareSubtitle: 'പ്രൊഫഷണൽ സൈക്കോപ്പതി അസെസ്മെന്റ് ഉപകരണം'
   }
 };
 
