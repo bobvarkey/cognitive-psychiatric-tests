@@ -271,7 +271,7 @@ export const IlaeSeizureClassificationAssessment = ({ onBack: _onBack }: IlaeSei
         </TabsContent>
       </Tabs>
 
-      <ExportButtons className="justify-start" data={reportData} />
+      <ExportButtons className="justify-start" data={reportData} registerSummary={false} />
     </div>
   );
 };

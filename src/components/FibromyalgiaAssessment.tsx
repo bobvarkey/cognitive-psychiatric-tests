@@ -12,6 +12,7 @@ import { AssessmentReference } from '@/components/AssessmentReference';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { toast } from '@/hooks/use-toast';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 
 interface Props {
@@ -88,6 +89,36 @@ export const FibromyalgiaAssessment = ({ onBack }: Props) => {
   const conditionA = wpiScore >= 7 && ssTotal >= 5;
   const conditionB = wpiScore >= 3 && wpiScore <= 6 && ssTotal >= 9;
   const meetsAcr = (conditionA || conditionB) && threeMonths && !otherExplains;
+
+  const anyFibroInput =
+    wpiScore > 0 || Object.values(sss).some((v) => v !== undefined) || somaticCount > 0 || threeMonths || otherExplains;
+  useRegisterResult(
+    anyFibroInput
+      ? {
+          assessmentName: 'Fibromyalgia (ACR 2010 criteria)',
+          date: '',
+          sections: [{
+            title: 'Scores',
+            type: 'info',
+            items: [
+              `Widespread Pain Index (WPI): ${wpiScore}/19`,
+              ...(wpiScore > 0 ? [`WPI areas: ${Object.entries(wpi).filter(([, v]) => v).map(([k]) => k).join(', ')}`] : []),
+              ...SSS_ITEMS.filter((i) => sss[i.id] !== undefined).map(
+                (i) => `${i.label}: ${sss[i.id]} (${SEVERITY_OPTIONS.find((o) => o.value === sss[i.id])?.label ?? ''})`,
+              ),
+              `Symptom Severity 2A: ${sss2aScore}/9`,
+              `Somatic symptoms: ${somaticCount} (2B score ${sss2bScore}/3, ${somaticLabel(somaticCount)})`,
+              `Symptom Severity total (2A + 2B): ${ssTotal}/12`,
+              `Symptoms present at a similar level for 3 months or more: ${threeMonths ? 'Yes' : 'No'}`,
+              `Another disorder explains the pain: ${otherExplains ? 'Yes' : 'No'}`,
+            ],
+          }],
+          totalLabel: 'Total score',
+          totalScore: `${wpiScore + ssTotal}/31 (WPI + SS)`,
+          interpretation: meetsAcr ? 'Meets ACR 2010 criteria' : 'Does not meet ACR 2010 criteria',
+        }
+      : null,
+  );
 
   const buildClinicalReport = () => {
     const lines = [];

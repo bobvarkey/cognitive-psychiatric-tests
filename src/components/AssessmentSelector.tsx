@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { ResultSummaryProvider } from '@/components/results/ResultSummaryContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -557,7 +558,9 @@ export const AssessmentSelector = () => {
         </div>
         <div className="flex flex-col items-center w-full">
           <div className="max-w-4xl mx-auto w-full px-4">
-            {component}
+            <ResultSummaryProvider key={selectedAssessment}>
+              {component}
+            </ResultSummaryProvider>
           </div>
         </div>
       </motion.div>

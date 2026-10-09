@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ArrowLeft, Printer } from 'lucide-react';
 import { ProgressIndicator } from './ProgressIndicator';
 import { CopyTextButton } from './CopyTextButton';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 
 
 interface Props { onBack: () => void }
@@ -263,6 +264,77 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
       otherPerinatal, postnatal, dev, family, tests, reading, readingImpression,
       writing, writingImpression, calc, calcImpression, diagnosis]);
 
+  // Page-bottom result summary: one "label: value" line per filled field (no headings or placeholders).
+  const summary = useMemo(() => {
+    const out: string[] = ['OPD Psychological Evaluation'];
+    const cap = (v: string) => (v ? v.charAt(0).toUpperCase() + v.slice(1) : v);
+    const add = (label: string, value: string | false | undefined | null) => {
+      const v = (value || '').toString().trim();
+      if (v) out.push(`${label}: ${v}`);
+    };
+    const on = (rec: Record<string, boolean>) => Object.entries(rec).filter(([, v]) => v).map(([k]) => k);
+    add('Name', ident.name);
+    add('Date and time', ident.dateTime);
+    add('DOB', ident.dob);
+    add('Age/Sex', ident.ageSex);
+    add('Address and phone', ident.address);
+    add('Class', ident.klass);
+    add('School', ident.school);
+    add('Handedness', ident.handedness);
+    add('Informant', ident.informant);
+    add('Presenting complaints', [...on(complaints), complaintsOther.trim()].filter(Boolean).join(', '));
+    add('Appearance', obs.appearance);
+    add('Consciousness', obs.consciousness);
+    add('Rapport', obs.rapport);
+    add('Attention', obs.attention);
+    add('Concentration', obs.concentration);
+    add('Behavioral/emotional', obs.behavioral);
+    add('Maternal complication', prenatal.maternal && `${prenatal.maternal}${prenatal.maternalDetail ? ` (${prenatal.maternalDetail})` : ''}`);
+    add('Mother age at birth', perinatal.motherAge && `${perinatal.motherAge} yrs`);
+    add('Delivery', perinatal.delivery);
+    add('Birth type', perinatal.birthType);
+    add('Births', perinatal.childBirth);
+    add('Birth weight', perinatal.birthWeight && `${perinatal.birthWeight} kg`);
+    add('Birth cry', perinatal.birthCry);
+    add('Medical problems', Object.entries(medical).filter(([, v]) => v === 'yes').map(([k]) => k).join(', '));
+    add('Medical details', medicalDetail);
+    add('Other perinatal', otherPerinatal);
+    add('Head injury', postnatal.headInjury);
+    add('Seizure', postnatal.seizure && `${postnatal.seizure}${postnatal.seizureType && !/^no$/i.test(postnatal.seizure) ? ` (${postnatal.seizureType})` : ''}`);
+    add('Seizure number', postnatal.seizureNumber);
+    add('Seizure frequency', postnatal.seizureFrequency);
+    add('Postnatal notes', postnatal.notes);
+    add('Motor', dev.motor);
+    add('Speech', dev.speech);
+    add('Receptive language', dev.receptive);
+    add('Expressive language', dev.expressive);
+    add('Socialization', dev.social);
+    add('Self-help', dev.selfHelp);
+    add('Family history', on(family).join(', '));
+    add('MISIC', tests.misic);
+    add('BKT', tests.bkt);
+    add('VSMS', tests.vsms);
+    add('ISAA/INCLEN', tests.isaa);
+    add('NIMHANS SLD', tests.nimhans);
+    add('PQ', tests.pq);
+    add('VQ', tests.vq);
+    add('IQ', tests.iq);
+    const grid = (title: string, state: Record<string, { primary: YN; english: YN }>) =>
+      Object.entries(state).forEach(([k, v]) =>
+        add(`${title} ${k}`, [v.primary && `L1 ${cap(v.primary)}`, v.english && `English ${cap(v.english)}`].filter(Boolean).join(', ')),
+      );
+    grid('Reading', reading);
+    add('Reading impression', readingImpression);
+    grid('Writing', writing);
+    add('Writing impression', writingImpression);
+    add('Calculation difficulties', on(calc).join(', '));
+    add('Calculation impression', calcImpression);
+    add('Diagnosis', on(diagnosis).join(', '));
+    return out.join('\n');
+  }, [ident, complaints, complaintsOther, obs, prenatal, perinatal, medical, medicalDetail,
+      otherPerinatal, postnatal, dev, family, tests, reading, readingImpression,
+      writing, writingImpression, calc, calcImpression, diagnosis]);
+
   const impressionOpts = ['Age Appropriate', 'Age inappropriate', 'Other observation'];
 
   return (
@@ -285,7 +357,8 @@ export const OpdPsychEvalAssessment = ({ onBack }: Props) => {
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4 print:hidden">
         <Button variant="ghost" onClick={onBack}><ArrowLeft className="h-4 w-4 mr-2" />Back</Button>
         <div className="flex flex-wrap gap-2 ml-auto">
-          <CopyTextButton text={report} label="Copy all" />
+          <CopyTextButton text={report} label="Copy all" registerSummary={false} />
+          <RegisterResult data={summary} />
           <Button variant="outline" size="sm" onClick={() => window.print()}>
             <Printer className="h-4 w-4 mr-1" />Print / PDF
           </Button>

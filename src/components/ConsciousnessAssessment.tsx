@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Activity, RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ExportButtons } from './ExportButtons';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 import type { ReportData } from '@/utils/reportGenerator';
 
 interface ConsciousnessAssessmentProps {
@@ -324,7 +325,7 @@ export const ConsciousnessAssessment = ({ onBack: _onBack }: ConsciousnessAssess
         },
         {
           title: 'Richmond Agitation-Sedation Scale',
-          items: [`${fmtRass(rassItem)}`, rassInterpretation(rass, isMl)],
+          items: [`RASS: ${fmtRass(rassItem)}`],
           type: rass !== 0 ? 'info' : 'negative',
         },
         {
@@ -342,6 +343,7 @@ export const ConsciousnessAssessment = ({ onBack: _onBack }: ConsciousnessAssess
       disclaimer: 'Bedside consciousness tools are for clinical monitoring; interpret in the full clinical context and escalate as needed.',
     };
   }, [gcsE, gcsV, gcsM, gcsTotal, gcsSev, fourE, fourM, fourB, fourR, fourTotal, rass, rassItem, absScores, absTotal, absSubtotals, absResult, isMl]);
+  useRegisterResult(reportData);
 
   const resetGcs = () => { setGcsE(4); setGcsV(5); setGcsM(6); };
   const resetFour = () => { setFourE(4); setFourM(4); setFourB(4); setFourR(4); };

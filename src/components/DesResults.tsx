@@ -7,6 +7,8 @@ import { DesResult } from '@/types/des';
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import type { ReportData } from '@/utils/reportGenerator';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface Props {
@@ -40,6 +42,30 @@ const fmt = (n: number) => n.toFixed(1);
 export const DesResults = ({ results, onReset, onBack }: Props) => {
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const buildCopyReport = (): ReportData => {
+    return {
+      assessmentName: 'Dissociative Experiences Scale (DES-II)',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${fmt(results.totalMean)}/100 (mean)`,
+      severity: SEVERITY_LABEL[results.severity],
+      interpretation: results.interpretation,
+      sections: [
+        {
+          title: 'Subscales',
+          items: [
+            `Total DES mean: ${fmt(results.totalMean)}/100`,
+            `DES-T (taxon) mean: ${fmt(results.taxonMean)}/100`,
+            `Items completed: ${results.itemsScored}/28`,
+          ],
+          type: 'positive',
+        },
+      ],
+      disclaimer:
+        'Screening tool only. A mean score ≥30 suggests possible dissociative disorder; confirm with structured interview (e.g. SCID-D).',
+      patientInfo: getPatientInfoForReport(),
+    };
+  };
 
   return (
     <div className="space-y-6">
@@ -163,32 +189,13 @@ export const DesResults = ({ results, onReset, onBack }: Props) => {
           <FileDown className="h-4 w-4 mr-2" />
           Export PDF
         </Button>
+        <RegisterResult data={buildCopyReport} />
         <Button
           variant="outline"
           size="sm"
           onClick={async () => {
             try {
-              const text = formatResultsForCopy({
-                assessmentName: 'Dissociative Experiences Scale (DES-II)',
-                date: new Date().toLocaleDateString(),
-                totalScore: `${fmt(results.totalMean)}/100 (mean)`,
-                severity: SEVERITY_LABEL[results.severity],
-                interpretation: results.interpretation,
-                sections: [
-                  {
-                    title: 'Subscales',
-                    items: [
-                      `Total DES mean: ${fmt(results.totalMean)}/100`,
-                      `DES-T (taxon) mean: ${fmt(results.taxonMean)}/100`,
-                      `Items completed: ${results.itemsScored}/28`,
-                    ],
-                    type: 'positive',
-                  },
-                ],
-                disclaimer:
-                  'Screening tool only. A mean score ≥30 suggests possible dissociative disorder; confirm with structured interview (e.g. SCID-D).',
-                patientInfo: getPatientInfoForReport(),
-              });
+            const text = formatResultsForCopy(buildCopyReport());;
               await copyResultsToClipboard(text);
               setCopied(true);
               setTimeout(() => setCopied(false), 2000);
@@ -202,26 +209,7 @@ export const DesResults = ({ results, onReset, onBack }: Props) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => {
-            downloadTextReport({
-              assessmentName: 'Dissociative Experiences Scale (DES-II)',
-              date: new Date().toLocaleDateString(),
-              totalScore: `${fmt(results.totalMean)}/100 (mean)`,
-              severity: SEVERITY_LABEL[results.severity],
-              interpretation: results.interpretation,
-              sections: [{
-                title: 'Subscales',
-                items: [
-                  `Total DES mean: ${fmt(results.totalMean)}/100`,
-                  `DES-T (taxon) mean: ${fmt(results.taxonMean)}/100`,
-                  `Items completed: ${results.itemsScored}/28`,
-                ],
-                type: 'positive',
-              }],
-              disclaimer: 'Screening tool only. A mean score ≥30 suggests possible dissociative disorder; confirm with structured interview (e.g. SCID-D).',
-              patientInfo: getPatientInfoForReport(),
-            });
-          }}
+          onClick={() => downloadTextReport(buildCopyReport())}
           className="flex items-center gap-1.5"
         >
           <Download className="h-4 w-4" />

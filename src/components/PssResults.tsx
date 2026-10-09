@@ -9,6 +9,8 @@ import { AlertCircle, CheckCircle, AlertTriangle, ArrowLeft, RotateCcw, Copy, Ch
 import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import type { ReportData } from '@/utils/reportGenerator';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface PssResultsProps {
@@ -21,6 +23,39 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
   const { t } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const buildCopyReport = (): ReportData => {
+    const positiveFindings: string[] = [];
+    const negativeFindings: string[] = [];
+    result.responses.forEach(r => {
+      const item = PSS_ITEMS.find(i => i.id === r.itemId);
+      if (!item) return;
+      const effectiveScore = item.isReversed ? (4 - r.score) : r.score;
+      const label = item.question;
+      if (effectiveScore >= 2) {
+        positiveFindings.push(`${label} (Score: ${r.score}/4, effective: ${effectiveScore})`);
+      } else {
+        negativeFindings.push(`${label} (Score: ${r.score}/4)`);
+      }
+    });
+    const allItemIds = PSS_ITEMS.map(i => i.id);
+    const answeredIds = result.responses.map(r => r.itemId);
+    const notAssessed = PSS_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
+    return {
+      assessmentName: 'Perceived Stress Scale (PSS-10)',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${result.totalScore}/40`,
+      severity: result.severity === 'low' ? 'Low Stress' : result.severity === 'moderate' ? 'Moderate Stress' : 'High Stress',
+      interpretation: result.interpretation,
+      sections: [
+        { title: 'Positive Findings (Elevated Stress Items)', items: positiveFindings, type: 'positive' },
+        { title: 'Negative Findings (Low Stress Items)', items: negativeFindings, type: 'negative' },
+        { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
+      ],
+      disclaimer: 'The PSS is a self-report measure of perceived stress. It is not a diagnostic instrument. Clinical judgment is essential for interpretation.',
+      patientInfo: getPatientInfoForReport(),
+    };
+  };
 
   const getSeverityIcon = () => {
     switch (result.severity) {
@@ -138,41 +173,13 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
                 <FileDown className="mr-2 h-4 w-4" />
                 Export PDF
               </Button>
+              <RegisterResult data={buildCopyReport} />
               <Button
                 variant="outline"
                 size="sm"
                 onClick={async () => {
                   try {
-                    const positiveFindings: string[] = [];
-                    const negativeFindings: string[] = [];
-                    result.responses.forEach(r => {
-                      const item = PSS_ITEMS.find(i => i.id === r.itemId);
-                      if (!item) return;
-                      const effectiveScore = item.isReversed ? (4 - r.score) : r.score;
-                      const label = item.question;
-                      if (effectiveScore >= 2) {
-                        positiveFindings.push(`${label} (Score: ${r.score}/4, effective: ${effectiveScore})`);
-                      } else {
-                        negativeFindings.push(`${label} (Score: ${r.score}/4)`);
-                      }
-                    });
-                    const allItemIds = PSS_ITEMS.map(i => i.id);
-                    const answeredIds = result.responses.map(r => r.itemId);
-                    const notAssessed = PSS_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
-                    const text = formatResultsForCopy({
-                      assessmentName: 'Perceived Stress Scale (PSS-10)',
-                      date: new Date().toLocaleDateString(),
-                      totalScore: `${result.totalScore}/40`,
-                      severity: result.severity === 'low' ? 'Low Stress' : result.severity === 'moderate' ? 'Moderate Stress' : 'High Stress',
-                      interpretation: result.interpretation,
-                      sections: [
-                        { title: 'Positive Findings (Elevated Stress Items)', items: positiveFindings, type: 'positive' },
-                        { title: 'Negative Findings (Low Stress Items)', items: negativeFindings, type: 'negative' },
-                        { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
-                      ],
-                      disclaimer: 'The PSS is a self-report measure of perceived stress. It is not a diagnostic instrument. Clinical judgment is essential for interpretation.',
-                      patientInfo: getPatientInfoForReport(),
-                    });
+                  const text = formatResultsForCopy(buildCopyReport());;
                     await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
@@ -186,33 +193,7 @@ export const PssResults = ({ result, onReset, onBack }: PssResultsProps) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  const positiveFindings: string[] = [];
-                  const negativeFindings: string[] = [];
-                  result.responses.forEach(r => {
-                    const item = PSS_ITEMS.find(i => i.id === r.itemId);
-                    if (!item) return;
-                    const effectiveScore = item.isReversed ? (4 - r.score) : r.score;
-                    if (effectiveScore >= 2) positiveFindings.push(`${item.question} (Score: ${r.score}/4, effective: ${effectiveScore})`);
-                    else negativeFindings.push(`${item.question} (Score: ${r.score}/4)`);
-                  });
-                  const answeredIds = result.responses.map(r => r.itemId);
-                  const notAssessed = PSS_ITEMS.filter(i => !answeredIds.includes(i.id)).map(i => i.question);
-                  downloadTextReport({
-                    assessmentName: 'Perceived Stress Scale (PSS-10)',
-                    date: new Date().toLocaleDateString(),
-                    totalScore: `${result.totalScore}/40`,
-                    severity: result.severity === 'low' ? 'Low Stress' : result.severity === 'moderate' ? 'Moderate Stress' : 'High Stress',
-                    interpretation: result.interpretation,
-                    sections: [
-                      { title: 'Positive Findings (Elevated Stress Items)', items: positiveFindings, type: 'positive' },
-                      { title: 'Negative Findings (Low Stress Items)', items: negativeFindings, type: 'negative' },
-                      { title: 'Items Not Assessed', items: notAssessed, type: 'not-assessed' },
-                    ],
-                    disclaimer: 'The PSS is a self-report measure of perceived stress. It is not a diagnostic instrument. Clinical judgment is essential for interpretation.',
-                    patientInfo: getPatientInfoForReport(),
-                  });
-                }}
+                onClick={() => downloadTextReport(buildCopyReport())}
                 className="flex items-center gap-1.5"
               >
                 <Download className="h-4 w-4" />

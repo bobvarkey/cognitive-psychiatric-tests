@@ -9,6 +9,8 @@ import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { Brain, RotateCcw, Printer, AlertTriangle, ArrowLeft, Copy, Check, FileDown, Download } from 'lucide-react';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import type { ReportData } from '@/utils/reportGenerator';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 
 interface MmpiResultsProps {
   results: MmpiResultsType;
@@ -20,6 +22,27 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
   const { language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const buildCopyReport = (): ReportData => {
+    const positive = trueItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+    const negative = falseItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+    const notAssessed = notAnswered.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
+    return {
+      assessmentName: 'MMPI Ultra-Short OPD Screener',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${results.trueCount}/10 True`,
+      severity: language === 'ml' ? risk.labelMl : risk.label,
+      interpretation: language === 'ml' ? risk.actionMl : risk.action,
+      sections: [
+        { title: 'Positive Findings (Endorsed as True)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
+        { title: 'Negative Findings (Endorsed as False)', items: negative.length > 0 ? negative : ['None'], type: 'negative' },
+        ...(notAssessed.length > 0 ? [{ title: 'Not Assessed (Unanswered)', items: notAssessed, type: 'not-assessed' as const }] : []),
+        ...(somatizationFlag ? [{ title: 'Targeted Flag: Somatization Pattern', items: [`Hs + D + Hy somatization cluster: ${somatizationCount}/3 scales endorsed`], type: 'info' as const }] : []),
+      ],
+      disclaimer: 'Clinician use only; not diagnostic. Tally per scale for targeted flags (e.g., Hs+D+Hy = somatization).',
+      patientInfo: getPatientInfoForReport(),
+    };
+  };
   const risk = getRiskLevel(results.trueCount);
 
   const trueItems = results.responses.filter(r => r.answer === true).map(r => {
@@ -217,29 +240,13 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
                 <FileDown className="h-4 w-4" />
                 Export PDF
               </Button>
+              <RegisterResult data={buildCopyReport} />
               <Button
                 variant="outline"
                 size="sm"
                 onClick={async () => {
                   try {
-                    const positive = trueItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
-                    const negative = falseItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
-                    const notAssessed = notAnswered.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
-                    const text = formatResultsForCopy({
-                      assessmentName: 'MMPI Ultra-Short OPD Screener',
-                      date: new Date().toLocaleDateString(),
-                      totalScore: `${results.trueCount}/10 True`,
-                      severity: language === 'ml' ? risk.labelMl : risk.label,
-                      interpretation: language === 'ml' ? risk.actionMl : risk.action,
-                      sections: [
-                        { title: 'Positive Findings (Endorsed as True)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
-                        { title: 'Negative Findings (Endorsed as False)', items: negative.length > 0 ? negative : ['None'], type: 'negative' },
-                        ...(notAssessed.length > 0 ? [{ title: 'Not Assessed (Unanswered)', items: notAssessed, type: 'not-assessed' as const }] : []),
-                        ...(somatizationFlag ? [{ title: 'Targeted Flag: Somatization Pattern', items: [`Hs + D + Hy somatization cluster: ${somatizationCount}/3 scales endorsed`], type: 'info' as const }] : []),
-                      ],
-                      disclaimer: 'Clinician use only; not diagnostic. Tally per scale for targeted flags (e.g., Hs+D+Hy = somatization).',
-                      patientInfo: getPatientInfoForReport(),
-                    });
+                  const text = formatResultsForCopy(buildCopyReport());;
                     await copyResultsToClipboard(text);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
@@ -253,26 +260,7 @@ export const MmpiResults = ({ results, onReset, onBack }: MmpiResultsProps) => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  const positive = trueItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
-                  const negative = falseItems.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
-                  const notAssessedX = notAnswered.map(i => `[${i.scaleAbbr}—${i.scale}] ${language === 'ml' ? i.statementMl : i.statement}`);
-                  downloadTextReport({
-                    assessmentName: 'MMPI Ultra-Short OPD Screener',
-                    date: new Date().toLocaleDateString(),
-                    totalScore: `${results.trueCount}/10 True`,
-                    severity: language === 'ml' ? risk.labelMl : risk.label,
-                    interpretation: language === 'ml' ? risk.actionMl : risk.action,
-                    sections: [
-                      { title: 'Positive Findings (Endorsed as True)', items: positive.length > 0 ? positive : ['None endorsed'], type: 'positive' },
-                      { title: 'Negative Findings (Endorsed as False)', items: negative.length > 0 ? negative : ['None'], type: 'negative' },
-                      ...(notAssessedX.length > 0 ? [{ title: 'Not Assessed (Unanswered)', items: notAssessedX, type: 'not-assessed' as const }] : []),
-                      ...(somatizationFlag ? [{ title: 'Targeted Flag: Somatization Pattern', items: [`Hs + D + Hy somatization cluster: ${somatizationCount}/3 scales endorsed`], type: 'info' as const }] : []),
-                    ],
-                    disclaimer: 'Clinician use only; not diagnostic. Tally per scale for targeted flags (e.g., Hs+D+Hy = somatization).',
-                    patientInfo: getPatientInfoForReport(),
-                  });
-                }}
+                onClick={() => downloadTextReport(buildCopyReport())}
                 className="flex items-center gap-1.5"
               >
                 <Download className="h-4 w-4" />

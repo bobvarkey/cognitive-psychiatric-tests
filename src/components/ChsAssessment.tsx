@@ -10,6 +10,7 @@ import { LanguageToggle } from '@/components/LanguageToggle';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { AssessmentReference } from '@/components/AssessmentReference';
 import { CHS_DATA } from '@/data/chsData';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface ChsAssessmentProps {
   onBack: () => void;
@@ -41,6 +42,24 @@ export const ChsAssessment: React.FC<ChsAssessmentProps> = ({ onBack }) => {
   const allChecked =
     CHS_DATA.romeIvDiagnosticCriteria.criteria.length > 0 &&
     checkedCriteria.size === CHS_DATA.romeIvDiagnosticCriteria.criteria.length;
+
+  const chsCriteria = CHS_DATA.romeIvDiagnosticCriteria.criteria;
+  useRegisterResult(
+    checkedCriteria.size > 0
+      ? {
+          assessmentName: 'Cannabinoid Hyperemesis Syndrome (Rome IV criteria)',
+          date: '',
+          sections: [{
+            title: 'Criteria',
+            type: 'info',
+            items: chsCriteria.map((c, i) => `Criterion ${i + 1} (${c.replace(/[.:]+$/, '')}): ${checkedCriteria.has(i) ? 'Met' : 'Not met'}`),
+          }],
+          totalLabel: 'Criteria met',
+          totalScore: `${checkedCriteria.size}/${chsCriteria.length}`,
+          interpretation: allChecked ? 'All Rome IV criteria met' : 'Rome IV criteria not fully met',
+        }
+      : null,
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 p-4 md:p-8">
@@ -162,6 +181,7 @@ export const ChsAssessment: React.FC<ChsAssessmentProps> = ({ onBack }) => {
                     <Checkbox
                       checked={checkedCriteria.has(i)}
                       onCheckedChange={() => toggleCriterion(i)}
+                      onClick={(e) => e.stopPropagation()}
                       className="mt-0.5"
                     />
                     <div className="flex-1 min-w-0">

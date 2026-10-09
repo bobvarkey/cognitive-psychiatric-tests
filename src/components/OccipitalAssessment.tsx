@@ -13,6 +13,7 @@ import {
   type TestModule,
 } from '@/data/occipitalVisualTests';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface OccipitalAssessmentProps {
   onBack: () => void;
@@ -67,6 +68,31 @@ export default function OccipitalAssessment({ onBack }: OccipitalAssessmentProps
         return r?.status === 'abnormal' || r?.status === 'incorrect' || r?.status === 'unable';
       }).map((m) => ({ id: m.id, title: m.title, observation: responses[m.id]?.observation || '' })),
     [responses]
+  );
+
+  const occipitalTested = OCCIPITAL_MODULES.filter((m) => {
+    const st = responses[m.id]?.status;
+    return !!st && st !== 'not_tested';
+  });
+  useRegisterResult(
+    occipitalTested.length > 0
+      ? {
+          assessmentName: OCCIPITAL_META.title,
+          date: '',
+          sections: [{
+            title: 'Modules',
+            type: 'info',
+            items: occipitalTested.map((m) => {
+              const r = responses[m.id];
+              const normal = r?.status === 'normal' || r?.status === 'correct';
+              return `${m.title}: ${normal ? 'Normal' : `Abnormal${r?.observation ? ` (${r.observation})` : ''}`}`;
+            }),
+          }],
+          totalLabel: 'Abnormal modules',
+          totalScore: `${abnormalList.length}/${occipitalTested.length} tested`,
+          interpretation: abnormalList.length > 0 ? `Abnormal on ${abnormalList.length} module(s)` : 'No abnormality on tested modules',
+        }
+      : null,
   );
 
   const generatedReport = useMemo(() => {

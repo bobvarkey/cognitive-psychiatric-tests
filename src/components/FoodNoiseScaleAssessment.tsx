@@ -19,6 +19,7 @@ import {
   type FnqItemId,
 } from '@/data/foodNoiseScale';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface FoodNoiseScaleAssessmentProps {
   onBack: () => void;
@@ -93,6 +94,40 @@ export default function FoodNoiseScaleAssessment({ onBack }: FoodNoiseScaleAsses
     }
     return `FNQ-5 decreased from ${baselineScore}/20 at baseline to ${followupScore}/20 at follow-up, an absolute reduction of ${comparison.absoluteReduction} points and a ${comparison.percentageReduction}% reduction from baseline. This represents ${comparison.responseCategory?.label ?? ''} using descriptive longitudinal response categories.`;
   }, [mode, baselineComplete, followupComplete, comparison, currentScore, currentBand, baselineScore, followupScore]);
+
+  useRegisterResult(
+    currentComplete
+      ? {
+          assessmentName: 'Food Noise Questionnaire (FNQ-5)',
+          date: '',
+          sections: [{
+            title: 'Responses',
+            type: 'info',
+            items: [
+              ...(mode === 'followup' && baselineComplete ? [`Baseline score: ${baselineScore}/20`] : []),
+              ...FOOD_NOISE_SCALE.questionnaire.items
+                .filter((item) => activeResponses[item.id as FnqItemId] !== null)
+                .map((item) => {
+                  const v = activeResponses[item.id as FnqItemId];
+                  const opt = FOOD_NOISE_SCALE.questionnaire.responseOptions.find((o) => o.value === v);
+                  return `${item.order}. ${item.text}: ${v}${opt ? ` (${opt.label})` : ''}`;
+                }),
+              ...(comparison && mode === 'followup' && comparison.percentageReduction !== null
+                ? [`Change from baseline: ${comparison.percentageReduction}% reduction`]
+                : []),
+            ],
+          }],
+          totalLabel: mode === 'followup' ? 'Follow-up score' : 'Total score',
+          totalScore: `${currentScore}/20`,
+          interpretation:
+            mode === 'followup' && comparison?.responseCategory?.label
+              ? comparison.responseCategory.label
+              : currentBand?.label
+                ? `${currentBand.label} food-noise burden`
+                : undefined,
+        }
+      : null,
+  );
 
   const copySummary = async () => {
     try {

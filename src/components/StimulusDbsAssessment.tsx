@@ -7,6 +7,7 @@ import { PatientInfoForm } from './PatientInfoForm';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { useToast } from '@/hooks/use-toast';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface StimulusDbsAssessmentProps {
   onBack?: () => void;
@@ -29,6 +30,22 @@ export const StimulusDbsAssessment = ({ onBack }: StimulusDbsAssessmentProps) =>
   };
 
   const level = getAppropriatenessLevel();
+
+  useRegisterResult({
+    assessmentName: 'Stimulus DBS Appropriateness (Parkinson disease)',
+    date: '',
+    sections: [{
+      title: 'Factors',
+      type: 'info',
+      items: [
+        ...DBS_CANDIDACY_CRITERIA.favorable.filter((_, i) => selectedFavorable[i]).map((f) => `Favourable factor: ${f}`),
+        ...DBS_CANDIDACY_CRITERIA.unfavorable.filter((_, i) => selectedUnfavorable[i]).map((f) => `Unfavourable factor: ${f}`),
+      ],
+    }],
+    totalLabel: 'Appropriateness score',
+    totalScore: `${appropriateness}/9`,
+    interpretation: level.level,
+  });
 
   return (
     <div className="w-full max-w-4xl mx-auto p-4 space-y-4">

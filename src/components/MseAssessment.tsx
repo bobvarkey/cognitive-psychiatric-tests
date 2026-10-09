@@ -14,6 +14,7 @@ import { mseExplanations } from '@/data/mseExplanations';
 import { mseImages } from '@/data/mseImages';
 import { StroopGrid } from '@/components/StroopGrid';
 import { ExportButtons } from './ExportButtons';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 import type { ReportData } from '@/utils/reportGenerator';
 
 interface MseAssessmentProps {
@@ -458,16 +459,21 @@ export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
     na: Object.values(status).filter(s => s === 'na').length,
   };
 
-  const buildReportData = () => {
+  const buildReportData = (textSummary = false) => {
     const fmt = (s: Status) =>
       allItems
         .filter(it => status[it.id] === s)
-        .map(it => `${it.section} › ${it.subsection} › ${it.label}${it.detail ? ` — ${it.detail}` : ''}`);
+        .map(it =>
+          textSummary
+            ? `${it.section} › ${it.subsection} › ${it.label}: ${s === 'abnormal' ? 'Abnormal' : 'Normal'}`
+            : `${it.section} › ${it.subsection} › ${it.label}${it.detail ? ` — ${it.detail}` : ''}`,
+        );
 
     const reportSections: { title: string; items: string[]; type?: 'positive' | 'negative' | 'info' }[] = [
       { title: 'Abnormal Findings', items: fmt('abnormal'), type: 'positive' },
       { title: 'Normal Findings', items: fmt('normal'), type: 'negative' },
-      { title: 'Not Assessed', items: fmt('na'), type: 'info' },
+      // Items marked N/A were not examined; the plain-text summary lists only examined items.
+      ...(textSummary ? [] : [{ title: 'Not Assessed', items: fmt('na'), type: 'info' as const }]),
     ];
 
     if (notes.trim()) {
@@ -481,7 +487,10 @@ export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
     return {
       assessmentName: 'Mental Status Examination (MSE)',
       date: new Date().toLocaleString(),
-      totalScore: `${counts.abnormal} abnormal · ${counts.normal} normal · ${counts.na} N/A`,
+      totalLabel: textSummary ? 'Findings' : undefined,
+      totalScore: textSummary
+        ? `${counts.abnormal} abnormal, ${counts.normal} normal`
+        : `${counts.abnormal} abnormal · ${counts.normal} normal · ${counts.na} N/A`,
       patientInfo: pi,
       sections: reportSections,
     };
@@ -490,7 +499,7 @@ export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
   const [exportData, setExportData] = useState<ReportData | null>(null);
 
   const handleExportFull = () => {
-    setExportData(buildReportData());
+    setExportData(buildReportData(true));
   };
 
   const handleExportPdf = () => {
@@ -690,7 +699,8 @@ export const MseAssessment = ({ onBack: _onBack }: MseAssessmentProps) => {
         </Button>
       </div>
 
-      {exportData && <ExportButtons className="justify-start" data={exportData} />}
+      {exportData && <ExportButtons className="justify-start" data={exportData} registerSummary={false} />}
+      <RegisterResult data={counts.normal + counts.abnormal > 0 ? () => buildReportData(true) : null} />
     </div>
   );
 };

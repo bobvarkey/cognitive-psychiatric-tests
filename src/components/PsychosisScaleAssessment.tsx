@@ -35,6 +35,7 @@ import {
 } from 'docx';
 import { saveAs } from 'file-saver';
 import { copyResultsToClipboard } from '@/lib/copyResults';
+import { useRegisterResult } from '@/components/results/useRegisterResult';
 
 interface Props {
   scale: PsychosisScale;
@@ -453,6 +454,38 @@ export const PsychosisScaleAssessment = ({ scale, onBack, onNext, onPrevious, ag
   };
 
   // ────────── Results view ──────────
+  const summaryBand = findBand(scale.severityBands?.total, totals.total);
+  useRegisterResult(
+    showResults
+      ? {
+          assessmentName: scale.fullName,
+          date: '',
+          sections: [{
+            title: 'Scores',
+            type: 'info',
+            items: [
+              ...(scale.subscales ?? []).map((sub) => {
+                const v = totals.bySubscale[sub.id] ?? 0;
+                const band = findBand(scale.severityBands?.[sub.id], v);
+                return `${sub.label}: ${v}${band ? ` (${band.label})` : ''}`;
+              }),
+              ...scale.items
+                .filter((it) => responses[it.id] != null)
+                .map((it) => {
+                  const v = responses[it.id];
+                  const anchor = (it.anchors ?? scale.anchors).find((a) => a.value === v);
+                  // Anchor labels often repeat the value ("1 — Questionable"); keep the words only.
+                  const words = anchor?.label?.replace(/^\s*-?\d+(?:\.\d+)?\s*[—–-]\s*/, '').trim();
+                  return `${it.label}: ${v}${words ? ` (${words})` : ''}`;
+                }),
+            ],
+          }],
+          totalScore: String(totals.total),
+          interpretation: summaryBand?.label,
+        }
+      : null,
+  );
+
   if (showResults) {
     const totalBand = findBand(scale.severityBands?.total, totals.total);
     return (

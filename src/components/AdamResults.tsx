@@ -9,6 +9,8 @@ import { generatePdfReport, downloadTextReport } from '@/utils/reportGenerator';
 import { usePatientInfo } from '@/contexts/PatientInfoContext';
 import { DomainRadarChart } from './DomainRadarChart';
 import { formatResultsForCopy, copyResultsToClipboard } from '@/lib/copyResults';
+import type { ReportData } from '@/utils/reportGenerator';
+import { RegisterResult } from '@/components/results/ResultSummaryContext';
 import { ResultsActionBar } from '@/components/ResultsActionBar';
 
 interface AdamResultsProps {
@@ -21,6 +23,34 @@ export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps
   const { language } = useLanguage();
   const { getPatientInfoForReport } = usePatientInfo();
   const [copied, setCopied] = useState(false);
+
+  const buildCopyReport = (): ReportData => {
+    const positiveFindings: string[] = [];
+    const negativeFindings: string[] = [];
+    results.responses.forEach(r => {
+      const item = adamItems.find(i => i.id === r.itemId);
+      if (!item) return;
+      const label = language === 'en' ? item.text : item.textMl;
+      if (r.score >= 2) {
+        positiveFindings.push(`${label} (Score: ${r.score}/3)`);
+      } else {
+        negativeFindings.push(`${label} (Score: ${r.score}/3)`);
+      }
+    });
+    return {
+      assessmentName: 'Apathy, Depression and Anhedonia Measure (ADAM)',
+      date: new Date().toLocaleDateString(),
+      totalScore: `${results.totalScore}/30`,
+      severity: getSeverityLabel(results.severity),
+      interpretation: results.interpretation,
+      sections: [
+        { title: 'Elevated Items', items: positiveFindings, type: 'positive' },
+        { title: 'Low/Normal Items', items: negativeFindings, type: 'negative' },
+      ],
+      disclaimer: 'The ADAM is a screening instrument derived from machine learning. It does not substitute for a comprehensive clinical evaluation. Zhao et al. (2026) JNNP.',
+      patientInfo: getPatientInfoForReport(),
+    };
+  };
 
   const getSeverityColor = (severity: AdamResult['severity']) => {
     switch (severity) {
@@ -193,36 +223,13 @@ export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps
               <FileDown className="mr-2 h-4 w-4" />
               Export PDF
             </Button>
+            <RegisterResult data={buildCopyReport} />
             <Button
               variant="outline"
               size="sm"
               onClick={async () => {
                 try {
-                  const positiveFindings: string[] = [];
-                  const negativeFindings: string[] = [];
-                  results.responses.forEach(r => {
-                    const item = adamItems.find(i => i.id === r.itemId);
-                    if (!item) return;
-                    const label = language === 'en' ? item.text : item.textMl;
-                    if (r.score >= 2) {
-                      positiveFindings.push(`${label} (Score: ${r.score}/3)`);
-                    } else {
-                      negativeFindings.push(`${label} (Score: ${r.score}/3)`);
-                    }
-                  });
-                  const text = formatResultsForCopy({
-                    assessmentName: 'Apathy, Depression and Anhedonia Measure (ADAM)',
-                    date: new Date().toLocaleDateString(),
-                    totalScore: `${results.totalScore}/30`,
-                    severity: getSeverityLabel(results.severity),
-                    interpretation: results.interpretation,
-                    sections: [
-                      { title: 'Elevated Items', items: positiveFindings, type: 'positive' },
-                      { title: 'Low/Normal Items', items: negativeFindings, type: 'negative' },
-                    ],
-                    disclaimer: 'The ADAM is a screening instrument derived from machine learning. It does not substitute for a comprehensive clinical evaluation. Zhao et al. (2026) JNNP.',
-                    patientInfo: getPatientInfoForReport(),
-                  });
+                const text = formatResultsForCopy(buildCopyReport());;
                   await copyResultsToClipboard(text);
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
@@ -236,30 +243,7 @@ export const AdamResults = ({ results, demographics, onReset }: AdamResultsProps
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                const positiveFindings: string[] = [];
-                const negativeFindings: string[] = [];
-                results.responses.forEach(r => {
-                  const item = adamItems.find(i => i.id === r.itemId);
-                  if (!item) return;
-                  const label = language === 'en' ? item.text : item.textMl;
-                  if (r.score >= 2) positiveFindings.push(`${label} (Score: ${r.score}/3)`);
-                  else negativeFindings.push(`${label} (Score: ${r.score}/3)`);
-                });
-                downloadTextReport({
-                  assessmentName: 'Apathy, Depression and Anhedonia Measure (ADAM)',
-                  date: new Date().toLocaleDateString(),
-                  totalScore: `${results.totalScore}/30`,
-                  severity: getSeverityLabel(results.severity),
-                  interpretation: results.interpretation,
-                  sections: [
-                    { title: 'Elevated Items', items: positiveFindings, type: 'positive' },
-                    { title: 'Low/Normal Items', items: negativeFindings, type: 'negative' },
-                  ],
-                  disclaimer: 'The ADAM is a screening instrument derived from machine learning. It does not substitute for a comprehensive clinical evaluation. Zhao et al. (2026) JNNP.',
-                  patientInfo: getPatientInfoForReport(),
-                });
-              }}
+              onClick={() => downloadTextReport(buildCopyReport())}
               className="flex items-center gap-1.5"
             >
               <Download className="h-4 w-4" />
