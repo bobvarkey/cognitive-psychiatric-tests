@@ -71,6 +71,7 @@ Chosen explicitly; not open for reinterpretation during implementation.
 | 11 | Trial | Unchanged and independent: the existing `start_trial()` RPC, one per account, database clock |
 | 12 | Keys | Test keys. Switching to live is a separate, explicit instruction |
 | 13 | Implementation shape | Two plans: (A) server billing path, (B) client surface, retirement and backfill. (A) is the part that touches money and must be provable alone |
+| 14 | Post-checkout receipt | A public `/checkout/success` page that reads the server, never `localStorage`. Supersedes the in-progress order-backed version |
 
 ## Non-goals
 
@@ -368,7 +369,8 @@ grant and every running trial — the same class of bug as `e33ee13`.
   *"hide it as soon as verified access is active, including after checkout,
   without a manual refresh"* true, while `checkingServerAccess` prevents a flash.
   If the webhook has not landed within the bound, the message becomes "still
-  activating — check back shortly" rather than a false success.
+  activating — check back shortly" rather than a false success. A buyer
+  redirected to the dedicated receipt in §14 sees the same state there.
 
 ### 10. Client — `webBilling.ts` shrinks
 
@@ -464,6 +466,35 @@ holds no `admin` row, it upserts an `entitlements` grant (`source = 'razorpay'`,
 `expires_at = current_period_end`). This is the only route by which a
 pre-existing buyer who never created an account recovers, and it is idempotent:
 the same lookup on the same verified email produces the same row.
+
+### 14. Client — `/checkout/success`, the receipt
+
+A buyer who has just paid lands on `/checkout/success`, reachable without access
+— it joins `/terms`, `/privacy` and `/account` in `PUBLIC_PATHS` — because it is
+reached in the window between the checkout callback and the webhook landing, when
+the buyer legitimately holds no entitlement yet and the gate would otherwise
+bounce them to a paywall they had just paid to satisfy.
+
+**It reads from the server, never from browser storage.** This is the one
+substantive change from the version already in progress, which reads
+`WebPremium.orderId` out of `localStorage` — a field that ceases to exist when
+§10 removes `WebPremium`:
+
+- plan, amount and currency come from the caller's own `subscriptions` row
+  (RLS: read-own) and the effective grant from `current_entitlement()`, not from
+  `WebPremium`;
+- while no entitlement is present yet, it shows the activating state and re-reads
+  every 2 s for up to 30 s, exactly as §9 does — **a receipt is not a claim of
+  access**, and it grants nothing;
+- if the webhook has not landed within the bound it says so and points at
+  `/account`, rather than rendering a paid receipt for a payment it cannot
+  confirm;
+- the retired path's order id is not a field it can show; a `subscriptions`-backed
+  receipt shows the Razorpay subscription id instead.
+
+The receipt is a *view* over the same two server tables the rest of the app
+reads. It must not become a second source of truth for whether the user is paid;
+`entitlements` remains the only one.
 
 ## Security properties
 
@@ -577,6 +608,17 @@ client module that calls them and by contract for the SQL they emit.
 - a `halted` subscription shows the recovery state and does not read as paid;
 - the auth user id and the grant statement render for a signed-in account and
   **never** for a signed-out visitor.
+
+`src/pages/CheckoutSuccess.test.tsx` (exists in progress; rewritten to these):
+
+- a buyer with no entitlement yet sees the activating state and no paid receipt;
+- the receipt's plan, amount and currency come from the server row — asserted by
+  making `localStorage` hold a contradictory `WebPremium` and requiring the page
+  to ignore it, which is the regression that matters here;
+- once the entitlement arrives, the receipt renders without a manual refresh;
+- if the webhook never lands within the 30 s bound, the page says so and links to
+  `/account`, and does not render as paid;
+- a visitor with no session sees the sign-in prompt, not a receipt.
 
 `src/lib/entitlement.test.ts` (existing, extended):
 
