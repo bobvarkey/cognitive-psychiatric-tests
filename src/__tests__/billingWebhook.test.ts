@@ -39,7 +39,57 @@ describe('billing-webhook edge function', () => {
     const parsed = src.indexOf('JSON.parse(');
     expect(hmac).toBeGreaterThan(text);
     expect(hmac).toBeLessThan(parsed);
-    expect(src).toMatch(/constantTimeEqual\(/);
+    // The comparison alone proves only that a signature was computed. The
+    // rejection is what makes that computation verification: without it an edit
+    // could compute `expected` and discard it, leaving every other assertion in
+    // this file green. The negation, the rejection, and their position before
+    // the parse are all pinned.
+    const compare = src.search(/if\s*\(\s*!\s*constantTimeEqual\(/);
+    expect(compare).toBeGreaterThan(hmac);
+    expect(compare).toBeLessThan(parsed);
+    const reject = src.search(/return json\(\{ error: 'Invalid signature\.' \}, 400\)/);
+    expect(reject).toBeGreaterThan(compare);
+    expect(reject).toBeLessThan(parsed);
+    // The other two rejection paths are the same kind of gate: a missing or
+    // malformed signature cannot reach the secret check, and a missing secret
+    // is a configuration error (500), not a signature failure (400).
+    expect(src).toMatch(/return json\(\{ error: 'Missing or malformed signature\.' \}, 400\)/);
+    expect(src).toMatch(/return json\(\{ error: 'Payments are not configured\.' \}, 500\)/);
+  });
+
+  it('writes an absolute, self-sourced grant for the subscription owner', () => {
+    const src = readFunction();
+    // The owner comes from the subscription row the server wrote at checkout,
+    // never from the webhook body.
+    expect(src).toMatch(/user_id:\s*sub\.user_id/);
+    expect(src).not.toMatch(/user_id:\s*payload/);
+    // 'razorpay', never 'admin': an admin-sourced row is exactly the grant the
+    // billing path must not be able to create, and Task 7's trigger protects
+    // such a row from removal.
+    expect(src).toMatch(/source:\s*'razorpay'/);
+    expect(src).not.toMatch(/source:\s*'admin'/);
+    // An absolute assignment of the period end, so a redelivery cannot
+    // compound access.
+    expect(src).toMatch(/expires_at:\s*periodEnd/);
+  });
+
+  it('records the event id after it processes the event', () => {
+    const src = readFunction();
+    const grant = src.indexOf(".from('entitlements')");
+    const record = src.indexOf(".from('webhook_events')");
+    expect(grant).toBeGreaterThan(-1);
+    expect(record).toBeGreaterThan(-1);
+    // Recording first would swallow a retry: the retry would see a duplicate
+    // and return 200 while the grant was never written.
+    expect(record).toBeGreaterThan(grant);
+  });
+
+  it('answers a routine event with 200, not 5xx', () => {
+    const src = readFunction();
+    // Razorpay disables a webhook that answers non-2xx for a day. An unknown
+    // event type or subscription is routine, so the success path's status must
+    // stay the default 200.
+    expect(src).toMatch(/return json\(\{ received: true \}\)/);
   });
 
   it('verifies the signature before the first database call', () => {
