@@ -28,13 +28,23 @@ vi.mock('@/lib/appbuild/wrapper', () => ({
 }));
 
 const checkout = vi.hoisted(() => ({ startSubscriptionCheckout: vi.fn() }));
-const subscription = vi.hoisted(() => ({ pendingActivation: false, isPremium: false }));
+const subscription = vi.hoisted(() => ({
+  pendingActivation: false,
+  isPremium: false,
+  entitlement: null as null | {
+    plan: string;
+    source: string;
+    expiresAt: string | null;
+    permanent: boolean;
+  },
+}));
 
 vi.mock('@/contexts/SubscriptionContext', () => ({
   useSubscription: () => ({
     startSubscriptionCheckout: checkout.startSubscriptionCheckout,
     pendingActivation: subscription.pendingActivation,
     isPremium: subscription.isPremium,
+    entitlement: subscription.entitlement,
     startTrial: vi.fn(),
     refreshSubscription: vi.fn(),
   }),
@@ -64,6 +74,7 @@ describe('PaywallModal web checkout', () => {
     localStorage.clear();
     subscription.pendingActivation = false;
     subscription.isPremium = false;
+    subscription.entitlement = null;
     // Pin the buyer's locale rather than inheriting whatever the runner has, so
     // the currency under test is the one this file reasons about.
     Object.defineProperty(window.navigator, 'language', { value: 'en-US', configurable: true });
@@ -133,8 +144,14 @@ describe('PaywallModal web checkout', () => {
   it('confirms and closes when the checkout lands with access granted', async () => {
     checkout.startSubscriptionCheckout.mockImplementation(async () => {
       // The context polls, is granted, then clears its flag: the outcome is
-      // granted, not pending.
+      // granted, not pending. The grant is a server row, not a bare access bit.
       subscription.pendingActivation = true;
+      subscription.entitlement = {
+        plan: 'yearly',
+        source: 'razorpay',
+        expiresAt: '2030-01-01T00:00:00.000Z',
+        permanent: false,
+      };
       subscription.isPremium = true;
       subscription.pendingActivation = false;
     });
@@ -147,10 +164,38 @@ describe('PaywallModal web checkout', () => {
     expect(toast.info).not.toHaveBeenCalled();
   });
 
+  it('does not claim an active subscription for a trial buyer whose grant has not landed', async () => {
+    // A demo-trial buyer is isPremium from the trial alone. Claiming "your
+    // subscription is active" here would state something the server has not said.
+    subscription.isPremium = true;
+    subscription.entitlement = null;
+    checkout.startSubscriptionCheckout.mockImplementation(async () => {
+      subscription.pendingActivation = true;
+    });
+    const onClose = vi.fn();
+    const view = () => <PaywallModal isOpen onClose={onClose} onSelectPlan={vi.fn()} />;
+    const { rerender } = render(view());
+    await typeEmail('payer@example.com');
+    await clickContinue();
+    expect(screen.getByText(/activating/i)).toBeTruthy();
+
+    // The poll ends without a grant, so the context clears its flag. A trial
+    // buyer is premium either way; only the server's own answer may be claimed.
+    subscription.pendingActivation = false;
+    rerender(view());
+    await waitFor(() =>
+      expect(toast.info).toHaveBeenCalledWith(expect.stringMatching(/activating/i)),
+    );
+    expect(toast.success).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   it('does not dismiss itself for a buyer who has not checked out', () => {
     // A paid user opening the paywall from Settings is premium from the first
-    // render; only a checkout this modal started may close it.
+    // render; only a checkout this modal started may close it. A trial buyer
+    // with no server grant is exactly that case: premium, but not subscribed.
     subscription.isPremium = true;
+    subscription.entitlement = null;
     const onClose = vi.fn();
     renderPaywall(onClose);
     expect(screen.getByText('Continue')).toBeTruthy();

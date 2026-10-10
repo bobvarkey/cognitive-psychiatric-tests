@@ -102,7 +102,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   // True while a web checkout this modal started is still in flight, so the
   // post-checkout message can tell "we just checked out" from "we opened".
   const submittedRef = useRef(false);
-  const { refreshSubscription, startTrial, startSubscriptionCheckout, pendingActivation, isPremium } =
+  const { refreshSubscription, startTrial, startSubscriptionCheckout, pendingActivation, entitlement } =
     useSubscription();
 
   // Fail closed: if the native wrapper is present at all, start in native mode so
@@ -151,23 +151,27 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     if (isOpen) submittedRef.current = false;
   }, [isOpen]);
 
-  // Drives the post-checkout outcome from the context's live flag rather than
+  // Drives the post-checkout outcome from the context's live state rather than
   // from a stale closure inside the click handler. The flag returns to false on
-  // both outcomes, so the branch is decided by whether access actually landed.
+  // both outcomes, so the branch is decided by what the server actually granted:
+  // only a `razorpay` entitlement row is a subscription this checkout purchased.
+  // General access (`isPremium`) is not that signal — a demo-trial buyer holds it
+  // before paying, and "your subscription is active" must not be said to someone
+  // the server has not told us about. Erring the other way is the safe direction.
   useEffect(() => {
     if (!isOpen || pendingActivation) return;
     if (!submittedRef.current) return;
     submittedRef.current = false;
-    if (isPremium) {
-      // The server granted access: confirm it, and let the on-demand instance
-      // dismiss itself. The blocking instance passes no onClose (it is unmounted
-      // by AuthGuard once the gate lifts), so this is a no-op there.
+    if (entitlement?.source === 'razorpay') {
+      // The server granted the subscription: confirm it, and let the on-demand
+      // instance dismiss itself. The blocking instance passes no onClose (it is
+      // unmounted by AuthGuard once the gate lifts), so this is a no-op there.
       toast.success('Your subscription is active.');
       onClose?.();
       return;
     }
     toast.info('Still activating — this can take a moment. Check your account shortly.');
-  }, [pendingActivation, isOpen, isPremium]);
+  }, [pendingActivation, isOpen, entitlement]);
 
   useEffect(() => {
     if (resendIn <= 0) return;
