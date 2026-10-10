@@ -45,7 +45,11 @@ Deno.serve(async (req) => {
       .eq('currency', parsed.currency)
       .maybeSingle();
 
-    if (planError || !plan) return json({ error: 'That plan is not available.' }, 404);
+    if (planError) {
+      console.error('billing_plans lookup failed', planError);
+      return json({ error: 'Could not start checkout.' }, 500);
+    }
+    if (!plan) return json({ error: 'That plan is not available.' }, 404);
 
     const response = await fetch('https://api.razorpay.com/v1/subscriptions', {
       method: 'POST',

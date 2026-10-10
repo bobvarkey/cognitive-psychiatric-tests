@@ -45,12 +45,30 @@ describe('billing-create-subscription edge function', () => {
     ]) {
       expect(src).not.toContain(forbidden);
     }
+    // A second read of the body would be a new place for a browser-supplied
+    // value to enter; the parser is the only intended reader.
+    expect([...src.matchAll(/req\.json\(/g)]).toHaveLength(1);
+    // The amount returned is the catalogue row's, not anything from the caller.
+    expect(src).toMatch(/return json\(\{[\s\S]{0,200}?amount:\s*plan\.amount/);
   });
 
   it('takes the user id from the verified JWT', () => {
     const src = readFunction();
     expect(src).toMatch(/auth\.getUser\(/);
     expect(src).toMatch(/user_id:\s*user\.id/);
+  });
+
+  it('distinguishes a catalogue error from a plan that is simply absent', () => {
+    const src = readFunction();
+    // A schema drift, a missing grant, or a typo'd column must not surface as
+    // the client-facing 404 "not available", which is indistinguishable from a
+    // legitimately absent row and leaves no server-side trace.
+    expect(src).toMatch(/if \(planError\)/);
+    const err500 = src.search(/if \(planError\)[\s\S]{0,200}?500/);
+    expect(err500).toBeGreaterThan(-1);
+    expect(src).toMatch(/if \(!plan\)/);
+    const notFound = src.search(/if \(!plan\)[\s\S]{0,120}?404/);
+    expect(notFound).toBeGreaterThan(-1);
   });
 
   it('runs the missing-secret guard first', () => {
