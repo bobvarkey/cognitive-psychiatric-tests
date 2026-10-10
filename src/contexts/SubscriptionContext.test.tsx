@@ -320,6 +320,45 @@ describe('SubscriptionContext server access', () => {
     expect(billing.startSubscription).toHaveBeenCalledWith('yearly', getWebCurrency());
   });
 
+  it('keeps the grant the poll found when the re-read fails closed', async () => {
+    // The webhook can land while the post-checkout poll is still running, so the
+    // poll returns the grant. `refreshEntitlement` fails closed to null on a
+    // stalled or rejected read, so an unconditional re-read after the poll would
+    // overwrite the grant the buyer just earned and drop them back on the
+    // paywall, told to "check your account shortly".
+    billing.startSubscription.mockResolvedValue({
+      subscriptionId: 'sub_1',
+      keyId: 'rzp_test_key',
+      amount: 299900,
+      currency: 'INR',
+      label: 'PsyCognito Premium — Yearly',
+    });
+    billing.openCheckout.mockResolvedValue({
+      paymentId: 'pay_1',
+      subscriptionId: 'sub_1',
+      signature: 'sig',
+    });
+    billing.verifyCheckout.mockResolvedValue(undefined);
+    billing.waitForEntitlement.mockResolvedValue({
+      plan: 'yearly', source: 'razorpay', expiresAt: null, permanent: false,
+    });
+
+    const { result } = renderContext({ entitlement: null });
+    await waitFor(() => expect(result.current.checkingServerAccess).toBe(false));
+    expect(result.current.isPremium).toBe(false);
+
+    // The read behind `refreshEntitlement` now fails closed...
+    ent.serverEntitlement.mockRejectedValue(new Error('stalled'));
+
+    await act(async () => {
+      await result.current.startSubscriptionCheckout('yearly', 'buyer@example.com');
+    });
+
+    // ...and the grant the poll found must survive it.
+    expect(result.current.isPremium).toBe(true);
+    expect(result.current.premiumSource).toBe('web');
+  });
+
   it('picks up a dev unlock written after mount, without a reload', async () => {
     // The dev-only developer unlock is written on the device by the restore flow
     // (and announced by a browser event the context no longer listens for). If

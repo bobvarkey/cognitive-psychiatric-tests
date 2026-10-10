@@ -44,6 +44,11 @@ const formatDate = (iso: string): string | null => {
   return date.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
+/** The webhook may land after the redirect; re-read at this spacing. */
+export const SUCCESS_POLL_INTERVAL_MS = 2000;
+/** Stop waiting here and say so, per the spec's bound. */
+export const SUCCESS_POLL_BOUND_MS = 30000;
+
 const Shell = ({ children }: { children: ReactNode }) => (
   <main className="min-h-screen bg-background px-4 py-8 pt-[max(2rem,env(safe-area-inset-top))]">
     <div className="mx-auto max-w-md">{children}</div>
@@ -92,10 +97,23 @@ export const CheckoutSuccess = () => {
   const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
   const [loading, setLoading] = useState(true);
   const [asked, setAsked] = useState(false);
+  const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
     let active = true;
-    const read = async () => {
+    let poll: ReturnType<typeof setInterval> | undefined;
+    /** When this receipt mounted. The bound is measured from here, not a read. */
+    const startedAt = Date.now();
+
+    const stopPolling = () => {
+      if (poll !== undefined) {
+        clearInterval(poll);
+        poll = undefined;
+      }
+    };
+
+    /** Read the receipt's row and the caller's grant. True when a grant landed. */
+    const read = async (): Promise<boolean> => {
       const { supabase } = await import('@/integrations/supabase/client');
       const { data } = await supabase
         // @ts-expect-error — subscriptions is missing from the generated types until
@@ -106,28 +124,57 @@ export const CheckoutSuccess = () => {
         .limit(1)
         .maybeSingle();
       const grant = await currentEntitlement().catch(() => null);
-      if (!active) return;
+      if (!active) return false;
       setRecord((data as SubscriptionRow | null) ?? null);
       setEntitlement(grant);
       setAsked(true);
       setLoading(false);
+      return grant !== null;
     };
-    void read().catch(() => {
-      // A rejected read — the query chain, or the dynamic import itself — must
-      // still leave the checking state. Otherwise a paying user is stranded on
-      // "Checking your payment…" forever.
-      if (active) {
-        setAsked(true);
-        setLoading(false);
+
+    // The webhook may land after the redirect, so the receipt re-reads on its
+    // own — not only on `focus`. A buyer who never blurs this tab would
+    // otherwise wait on "Activating" with no bound ever reached and no way on.
+    const tick = async () => {
+      if (!active) return;
+      if (Date.now() - startedAt >= SUCCESS_POLL_BOUND_MS) {
+        stopPolling();
+        setTimedOut(true);
+        return;
       }
-    });
-    // The webhook may land a moment after the redirect. Re-read on focus so a
-    // buyer who switches apps and comes back sees the truth, not a stale
-    // "activating".
-    const onFocus = () => void read();
+      try {
+        if (await read()) stopPolling();
+      } catch {
+        // A failed poll is "not yet known", not "no": keep waiting for the bound.
+      }
+    };
+
+    poll = setInterval(() => {
+      void tick();
+    }, SUCCESS_POLL_INTERVAL_MS);
+
+    void read()
+      .then((granted) => {
+        if (granted) stopPolling();
+      })
+      .catch(() => {
+        // A rejected read — the query chain, or the dynamic import itself — must
+        // still leave the checking state, and must not leave a poll running.
+        // Otherwise a paying user is stranded on "Checking your payment…" forever.
+        stopPolling();
+        if (active) {
+          setAsked(true);
+          setLoading(false);
+        }
+      });
+
+    // A bonus path, not the mechanism: a buyer who switches apps and comes back
+    // sees the truth immediately instead of waiting for the next interval.
+    const onFocus = () => void read().catch(() => {});
     window.addEventListener('focus', onFocus);
     return () => {
       active = false;
+      stopPolling();
       window.removeEventListener('focus', onFocus);
     };
   }, []);
@@ -158,7 +205,12 @@ export const CheckoutSuccess = () => {
         <p className="mt-2 text-sm text-muted-foreground">
           {hasAccess
             ? 'Everything is unlocked on this account.'
-            : 'Activating — this usually takes a few seconds. You can close this page.'}
+            : timedOut
+              // Never "your payment failed": a webhook that has not landed is not
+              // a failed payment, and saying so to a buyer who paid is worse than
+              // saying it is still on its way.
+              ? 'Activation has not reached us yet. This can take longer than usual — check your account for the latest status.'
+              : 'Activating — this usually takes a few seconds. You can close this page.'}
         </p>
       </div>
 
@@ -177,6 +229,14 @@ export const CheckoutSuccess = () => {
       >
         {hasAccess ? 'Start using Pro' : 'Continue to the app'}
       </Link>
+      {!hasAccess && (
+        <Link
+          to="/account"
+          className="mt-4 block text-center text-sm text-primary underline underline-offset-4"
+        >
+          Check your account
+        </Link>
+      )}
     </Shell>
   );
 };

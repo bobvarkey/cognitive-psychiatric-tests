@@ -264,12 +264,18 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const result = await openCheckout(handle, email.trim().toLowerCase());
     await verifyCheckout(result);
     setPendingActivation(true);
+    let polled: Entitlement | null = null;
     try {
-      const grant = await waitForEntitlement();
-      if (grant) setEntitlement(grant);
+      polled = await waitForEntitlement();
     } finally {
+      // Only ask again when the poll found nothing. A grant the poll did find is
+      // already the server's answer, and `refreshEntitlement` fails closed to
+      // `null` on a stalled read, so re-reading here would overwrite the grant
+      // the buyer just earned and the modal would fall back to "still
+      // activating" for someone the server has already let in.
+      if (polled) setEntitlement(polled);
+      else await refreshEntitlement();
       setPendingActivation(false);
-      await refreshEntitlement();
     }
   };
 

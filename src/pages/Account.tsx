@@ -34,6 +34,21 @@ const formatDate = (iso: string): string | null => {
   return date.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
+/**
+ * The caller's newest `subscriptions` row, under RLS.
+ *
+ * Read for one purpose: the Cancel control is offered only to a caller holding
+ * an *active paid* subscription (spec §8 item 3). An `entitlements` row alone
+ * cannot say that — the webhook deliberately leaves it, and its `expires_at`,
+ * in place after a cancellation or a failed charge, because access correctly
+ * runs to the period end.
+ */
+interface SubscriptionRow {
+  plan: 'monthly' | 'yearly';
+  status: 'created' | 'active' | 'cancelled' | 'halted' | 'completed';
+  current_period_end: string | null;
+}
+
 const Shell = ({ children }: { children: ReactNode }) => (
   <main className="min-h-screen bg-background px-4 py-8 pt-[max(2rem,env(safe-area-inset-top))]">
     <div className="mx-auto max-w-md space-y-6">{children}</div>
@@ -63,6 +78,8 @@ export const Account = () => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [subscription, setSubscription] = useState<SubscriptionRow | null>(null);
+  const [subError, setSubError] = useState<{ message: string } | null>(null);
 
   const refresh = useCallback(async () => {
     setChecking(true);
@@ -70,6 +87,26 @@ export const Account = () => {
       const who = await currentAuthUser();
       setUser(who);
       setEntitlement(who ? await serverEntitlement() : null);
+      if (!who) {
+        // No session, no rows to read, and no stale one to show.
+        setSubscription(null);
+        setSubError(null);
+        return;
+      }
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { data, error: readError } = await supabase
+        // @ts-expect-error — subscriptions is missing from the generated types until
+        // supabase/migrations/20261009120100_subscriptions.sql is reflected in types.ts.
+        .from('subscriptions')
+        .select('plan, status, current_period_end')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      // Capture the error rather than swallowing it: a failed read is not
+      // evidence that no subscription exists, and the render has to know the
+      // difference.
+      setSubError(readError ?? null);
+      setSubscription((data as SubscriptionRow | null) ?? null);
     } finally {
       setChecking(false);
     }
@@ -219,7 +256,16 @@ export const Account = () => {
 
   const renewal = entitlement?.expiresAt ? formatDate(entitlement.expiresAt) : null;
   const amount = catalogue ? formatAmount(catalogue.amount, catalogue.currency) : null;
-  const paid = entitlement?.source === 'razorpay';
+
+  // The gate the review moved. `paid` (source === 'razorpay') is no longer the
+  // question: it stays true after a cancellation and while a mandate is halted,
+  // so it offered Cancel to callers who have no active subscription — a tap that
+  // reached `billing-cancel`, found no active row, and 400'd.
+  const activation = subscription?.status ?? null;
+  const periodEnd = subscription?.current_period_end ? new Date(subscription.current_period_end) : null;
+  const stillActive = activation === 'active' && (periodEnd === null || periodEnd.getTime() > Date.now());
+  const halted = activation === 'halted';
+  const cancelled = activation === 'cancelled';
 
   return (
     <Shell>
@@ -231,9 +277,22 @@ export const Account = () => {
           <Row label="Plan" value={entitlement?.plan ?? 'Free'} />
           <Row label="Source" value={entitlement?.source ?? 'none'} />
           {renewal && <Row label="Renews on" value={renewal} />}
-          {paid && amount && <Row label="Amount" value={amount} />}
+          {entitlement?.source === 'razorpay' && amount && <Row label="Amount" value={amount} />}
         </dl>
-        {paid && (
+        {halted && (
+          <p role="alert" className="text-sm text-destructive">
+            Your last payment did not go through. Update your payment method with Razorpay, or try
+            again — access resumes once a payment succeeds.
+          </p>
+        )}
+        {cancelled && (
+          <p className="text-sm text-muted-foreground">
+            {renewal
+              ? `Your subscription is cancelled. Access runs until ${renewal}.`
+              : 'Your subscription is cancelled. Access runs to the end of the period you paid for.'}
+          </p>
+        )}
+        {(stillActive || subError !== null) && (
           <Button
             variant="outline"
             className="min-h-[44px]"
