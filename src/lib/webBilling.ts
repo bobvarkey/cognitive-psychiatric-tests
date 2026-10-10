@@ -8,7 +8,7 @@
 
 export const WEB_PRICES = {
   INR: {
-    monthly: { amount: 24900, display: '₹249' },
+    monthly: { amount: 29900, display: '₹299' },
     yearly: { amount: 299900, display: '₹2,999' },
   },
   USD: {
@@ -22,10 +22,10 @@ export type WebCurrency = keyof typeof WEB_PRICES;
 /**
  * Percentage saved by paying yearly, or null when that is not a saving.
  *
- * Derived from the amounts actually charged rather than hardcoded, because the
- * two catalogues do not agree: in USD the yearly plan is about 30% cheaper than
- * twelve monthly payments, while in INR it is currently slightly *more*
- * expensive. Anything under 1% is rounding noise, not a discount to advertise.
+ * Derived from the amounts actually charged rather than hardcoded. In both
+ * catalogues the yearly plan is cheaper than twelve monthly payments — about
+ * 30% in USD and about 16% in INR. Anything under 1% is rounding noise, not a
+ * discount to advertise.
  */
 export const yearlySavingPercent = (monthlyAmount: number, yearlyAmount: number): number | null => {
   if (!(monthlyAmount > 0) || !(yearlyAmount > 0)) return null;
