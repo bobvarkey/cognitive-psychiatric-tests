@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { getWebCurrency, yearlySavingPercent, WEB_PRICES } from '@/lib/webBilling';
 
 export const AdBanner = () => {
-  const { features, setShowPaywall, isPremium, demoTrialActive } = useSubscription();
+  const { features, setShowPaywall, isPremium, demoTrialActive, checkingServerAccess } = useSubscription();
   const [isDismissed, setIsDismissed] = useState(false);
 
   const currency = getWebCurrency();
@@ -16,7 +16,10 @@ export const AdBanner = () => {
   // is nothing to claim.
   const savingPercent = yearlySavingPercent(prices.monthly.amount, prices.yearly.amount);
 
-  if (isPremium || demoTrialActive || isDismissed) return null;
+  // `checkingServerAccess` is not decoration: before the server has answered, a
+  // paying customer looks exactly like a free one, and showing them an upgrade
+  // banner they have already acted on is the flash the spec forbids.
+  if (checkingServerAccess || isPremium || demoTrialActive || isDismissed) return null;
 
   return (
     <div className="relative overflow-hidden rounded-2xl px-6 py-4 mb-4 bg-black border border-magenta-500/60">
