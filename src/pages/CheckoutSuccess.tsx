@@ -97,13 +97,10 @@ export const CheckoutSuccess = () => {
     let active = true;
     const read = async () => {
       const { supabase } = await import('@/integrations/supabase/client');
-      // `subscriptions` is created by 20261009120100_subscriptions.sql, but the
-      // generated Database type in src/integrations/supabase/types.ts predates
-      // that migration, so the table name is not yet in the relation union.
-      // `as never` takes the builder's untyped overload; the row shape is pinned
-      // by SubscriptionRow above. Regenerate types.ts and this cast can go.
       const { data } = await supabase
-        .from('subscriptions' as never)
+        // @ts-expect-error — subscriptions is missing from the generated types until
+        // supabase/migrations/20261009120100_subscriptions.sql is reflected in types.ts.
+        .from('subscriptions')
         .select('plan, currency, amount, status, current_period_end')
         .order('created_at', { ascending: false })
         .limit(1)
@@ -115,7 +112,15 @@ export const CheckoutSuccess = () => {
       setAsked(true);
       setLoading(false);
     };
-    void read();
+    void read().catch(() => {
+      // A rejected read — the query chain, or the dynamic import itself — must
+      // still leave the checking state. Otherwise a paying user is stranded on
+      // "Checking your payment…" forever.
+      if (active) {
+        setAsked(true);
+        setLoading(false);
+      }
+    });
     // The webhook may land a moment after the redirect. Re-read on focus so a
     // buyer who switches apps and comes back sees the truth, not a stale
     // "activating".
