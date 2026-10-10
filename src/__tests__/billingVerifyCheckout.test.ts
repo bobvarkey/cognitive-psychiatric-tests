@@ -47,6 +47,16 @@ describe('billing-verify-checkout edge function', () => {
     expect(hmac).toBeGreaterThan(-1);
     expect(firstFrom).toBeGreaterThan(-1);
     expect(hmac).toBeLessThan(firstFrom);
+    // The hmac call alone proves only that a signature was computed. The
+    // rejection is what makes that computation verification: without it an edit
+    // could compute `expected` and discard it, leaving every other assertion in
+    // this file green. Both the comparison and its position are pinned.
+    const compare = src.search(/constantTimeEqual\(/);
+    expect(compare).toBeGreaterThan(-1);
+    expect(compare).toBeLessThan(firstFrom);
+    // A write is only safe if it is the intended one, to the intended column.
+    expect(src).toMatch(/\.from\(\s*['"]subscriptions['"]\s*\)/);
+    expect(src).toMatch(/checkout_verified_at/);
   });
 
   it('scopes the write to the caller, not only to the subscription id', () => {
