@@ -13,7 +13,7 @@ vi.mock('@/lib/entitlement', async (importOriginal) => ({
   currentEntitlement,
 }));
 
-import { fallbackBillingPlans, waitForEntitlement } from './billing';
+import { fallbackBillingPlans, startSubscription, waitForEntitlement } from './billing';
 
 describe('fallbackBillingPlans', () => {
   it('agrees with the migration that seeds the server catalogue', () => {
@@ -61,6 +61,35 @@ describe('fallbackBillingPlans', () => {
         expect(plans.some((p) => p.code === code && p.currency === currency)).toBe(true);
       }
     }
+  });
+});
+
+describe('startSubscription', () => {
+  beforeEach(() => {
+    functionsInvoke.mockReset();
+  });
+
+  it('sends only the plan and the currency to the server', async () => {
+    // The Global Constraint, pinned by assertion rather than by inspection: the
+    // browser may name a plan and a currency, and nothing else. No email, no
+    // user id, no price — the server reads the amount from its own catalogue and
+    // the payer from the caller's JWT.
+    functionsInvoke.mockResolvedValue({
+      data: {
+        subscriptionId: 'sub_1',
+        keyId: 'rzp_test_key',
+        amount: 299900,
+        currency: 'INR',
+        label: 'PsyCognito Premium — Yearly',
+      },
+      error: null,
+    });
+
+    await startSubscription('yearly', 'INR');
+
+    expect(functionsInvoke).toHaveBeenCalledWith('billing-create-subscription', {
+      body: { plan: 'yearly', currency: 'INR' },
+    });
   });
 });
 

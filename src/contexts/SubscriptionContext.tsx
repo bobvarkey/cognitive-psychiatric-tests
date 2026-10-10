@@ -12,7 +12,14 @@ import {
 } from '@/services/subscriptionService';
 import type { Subscription } from '@/services/subscriptionService';
 import { toast } from 'sonner';
-import { completeRestoreFromEmailLink, getWebPremium, restoreWebPurchase, restoreWebPurchaseForSession, type WebPremium } from '@/lib/webBilling';
+import { completeRestoreFromEmailLink, getWebCurrency, isDevUnlocked, restoreWebPurchase } from '@/lib/webBilling';
+import {
+  cancelSubscription as requestCancelSubscription,
+  startSubscription,
+  openCheckout,
+  verifyCheckout,
+  waitForEntitlement,
+} from '@/lib/billing';
 import { currentAuthUser, onAuthChange, serverEntitlement, startTrial as requestTrial, tierOf, type Entitlement, type EntitlementTier } from '@/lib/entitlement';
 
 interface PremiumFeatures {
@@ -44,9 +51,15 @@ interface SubscriptionContextType {
   demoTrialDays: number;
   /** Ask the server to start the 3-day trial. Returns the tier afterwards. */
   startTrial: () => Promise<EntitlementTier>;
-  /** Website (Razorpay) subscription active on this device, if any. */
-  webPremium: WebPremium | null;
+  /** True while this browser holds the DEV-only developer unlock. */
+  devUnlocked: boolean;
+  /** True from a verified checkout until the server grants or the deadline passes. */
+  pendingActivation: boolean;
   restoreWebAccess: (email: string) => Promise<boolean>;
+  /** Start a Razorpay subscription checkout and wait for the server to grant it. */
+  startSubscriptionCheckout: (plan: 'monthly' | 'yearly', email: string) => Promise<void>;
+  /** Ask the server to cancel the subscription at the end of the paid cycle. */
+  cancelSubscription: () => Promise<void>;
   /** Where the current premium access comes from. */
   premiumSource: 'store' | 'web' | 'demo' | 'developer' | 'none';
   /** The caller's grant as this device may honour it, or null. Keeps `source`. */
@@ -103,7 +116,10 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [showPaywall, setShowPaywall] = useState(false);
   const [demoUnlockAll, setDemoUnlockAllState] = useState<boolean>(() => getDemoUnlockAll());
   const [demoTrialMsLeft, setDemoTrialMsLeft] = useState<number>(() => getDemoTrialMsLeft());
-  const [webPremium, setWebPremium] = useState<WebPremium | null>(() => getWebPremium());
+  // The dev-only developer unlock is the one browser-side term that survives.
+  // It is guarded by `import.meta.env.DEV`, so a production build drops it.
+  const [devUnlocked, setDevUnlocked] = useState<boolean>(() => isDevUnlocked());
+  const [pendingActivation, setPendingActivation] = useState(false);
   const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
   const [checkingServerAccess, setCheckingServerAccess] = useState(true);
   // Guards against a slow earlier check overwriting a newer one: a sign-out
@@ -115,12 +131,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     return () => clearInterval(id);
   }, []);
 
-  useEffect(() => {
-    const sync = () => setWebPremium(getWebPremium());
-    window.addEventListener('psycognito:web-premium', sync);
-    return () => window.removeEventListener('psycognito:web-premium', sync);
-  }, []);
-
   // If a website restore is pending and the user came back via the email's
   // sign-in link (instead of typing the code), finish the restore here.
   useEffect(() => {
@@ -128,7 +138,11 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     completeRestoreFromEmailLink()
       .then((found) => {
         if (!active || !found) return;
-        setWebPremium(getWebPremium());
+        // The grant does not exist until the restore call inside
+        // `completeRestoreFromEmailLink` resolves — which is *after* the
+        // auth-state change the effect below already refreshes on. Refresh here
+        // too, or the buyer stays locked until a manual reload.
+        void refreshEntitlement();
         toast.success('Access restored.');
       })
       .catch(() => {
@@ -137,30 +151,9 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     return () => {
       active = false;
     };
-  }, []);
-
-  // Signed-in users (incl. whitelisted developer accounts, which hold a
-  // permanent server-side record) get their access checked automatically.
-  useEffect(() => {
-    let cancelled = false;
-    let sub: { unsubscribe: () => void } | undefined;
-    const check = () =>
-      restoreWebPurchaseForSession().then(() => {
-        if (!cancelled) setWebPremium(getWebPremium());
-      });
-    import('@/integrations/supabase/client').then(({ supabase }) => {
-      if (cancelled) return;
-      const { data } = supabase.auth.onAuthStateChange((event, session) => {
-        if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
-          setTimeout(() => void check(), 0);
-        }
-      });
-      sub = data.subscription;
-    });
-    return () => {
-      cancelled = true;
-      sub?.unsubscribe();
-    };
+    // `refreshEntitlement` is a stable useCallback; depending on it would re-run
+    // this effect and re-toast on every refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const refreshEntitlement = useCallback(async () => {
@@ -195,11 +188,13 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
   }, [refreshEntitlement]);
 
-  // Restore gating logic
+  // Three terms, in the order they can be decided. The middle one is the server,
+  // and it is the only one that can be true for a paying customer. The last is
+  // the dev unlock, which cannot exist in a production bundle.
   const isPremium = useMemo(
-    () => isPremiumUser() || !!webPremium || entitlement !== null,
+    () => isPremiumUser() || entitlement !== null || (import.meta.env.DEV && devUnlocked),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [webPremium, entitlement, subscription, demoUnlockAll, demoTrialMsLeft],
+    [devUnlocked, entitlement, subscription, demoUnlockAll, demoTrialMsLeft],
   );
 
   // The demo only counts once the user has explicitly started it.
@@ -209,8 +204,8 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     [demoTrialMsLeft, demoUnlockAll],
   );
 
-  const premiumSource: 'store' | 'web' | 'demo' | 'developer' | 'none' = webPremium
-    ? 'web'
+  const premiumSource: 'store' | 'web' | 'demo' | 'developer' | 'none' = devUnlocked && import.meta.env.DEV
+    ? 'developer'
     : entitlement?.source === 'admin'
       ? 'developer'
       : entitlement?.source === 'razorpay'
@@ -226,7 +221,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const features = getPremiumFeatures() as PremiumFeatures;
 
   const refreshSubscription = () => {
-    setWebPremium(getWebPremium());
     setSubscription(getSubscription());
     setDemoTrialMsLeft(getDemoTrialMsLeft());
   };
@@ -250,9 +244,35 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const restoreWebAccess = async (email: string) => {
-    const found = await restoreWebPurchase(email);
-    setWebPremium(getWebPremium());
-    return !!found;
+    const dev = await restoreWebPurchase(email);
+    // A dev unlock is a device-local grant; a real one is a server row that
+    // `refreshEntitlement` will find.
+    if (dev) setDevUnlocked(true);
+    await refreshEntitlement();
+    return !!dev;
+  };
+
+  // After a verified checkout the modal shows "activating". This is the loop
+  // that ends it, and it is why access appears without a manual refresh.
+  const startSubscriptionCheckout = async (plan: 'monthly' | 'yearly', email: string) => {
+    const handle = await startSubscription(plan, getWebCurrency());
+    const result = await openCheckout(handle, email.trim().toLowerCase());
+    await verifyCheckout(result);
+    setPendingActivation(true);
+    try {
+      const grant = await waitForEntitlement();
+      if (grant) setEntitlement(grant);
+    } finally {
+      setPendingActivation(false);
+      await refreshEntitlement();
+    }
+  };
+
+  const cancelSubscription = async () => {
+    await requestCancelSubscription();
+    // The webhook records the cancellation and access runs to the period end,
+    // so re-reading is the whole of the browser's job here.
+    await refreshEntitlement();
   };
 
   const initiatePurchase = async (plan: 'monthly' | 'yearly', tier: 'lite' | 'pro') => {
@@ -285,8 +305,11 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     demoTrialMsLeft,
     demoTrialDays: DEMO_TRIAL_DAYS,
     startTrial,
-    webPremium,
+    devUnlocked,
+    pendingActivation,
     restoreWebAccess,
+    startSubscriptionCheckout,
+    cancelSubscription,
     premiumSource,
     entitlement,
     tier: tierOf(entitlement),
