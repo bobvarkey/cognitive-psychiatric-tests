@@ -1,11 +1,21 @@
 import type { ReactNode } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 
-import { getWebPremium, type WebPremium } from '@/lib/webBilling';
+import { currentEntitlement, type Entitlement } from '@/lib/entitlement';
 
-/** Plan names for a purchase the server billed without sending a label back. */
-const PLAN_NAMES: Record<WebPremium['plan'], string> = {
+/** The shape of the caller's newest `subscriptions` row, under RLS. */
+interface SubscriptionRow {
+  plan: 'monthly' | 'yearly';
+  currency: string;
+  amount: number;
+  status: 'created' | 'active' | 'cancelled' | 'halted' | 'completed';
+  current_period_end: string | null;
+}
+
+/** Plan names for a subscription the server billed without sending a label back. */
+const PLAN_NAMES: Record<SubscriptionRow['plan'], string> = {
   monthly: 'Premium — Monthly',
   yearly: 'Premium — Yearly',
 };
@@ -48,17 +58,16 @@ const Row = ({ label, value }: { label: string; value: string }) => (
 );
 
 /**
- * Shown when the URL names an order this browser has no record of, or names
- * none at all. Deliberately neutral: inventing a receipt for a purchase we
- * cannot see would be worse than admitting we cannot.
+ * Shown when the signed-in account has no subscription row to show. Deliberately
+ * neutral: inventing a receipt for a purchase we cannot see would be worse than
+ * admitting we cannot.
  */
 const MissingOrder = () => (
   <Shell>
     <h1 className="text-xl font-bold text-foreground">We could not find that order</h1>
     <p className="mt-3 text-sm text-muted-foreground">
-      This page shows a payment made in this browser. If you have just paid, the link may be
-      incomplete — open the app to continue, or restore your purchase using the email you paid
-      with.
+      This page shows the subscription on the account you are signed in as. If you have just paid,
+      the webhook may still be landing — open the app, or sign in with the email you paid with.
     </p>
     <Link
       to="/"
@@ -70,22 +79,67 @@ const MissingOrder = () => (
 );
 
 /**
- * The receipt for a website purchase. The order id in the query string is the
- * page's identity: it has to match the purchase stored by this browser, or the
- * page falls back rather than echo somebody else's order.
+ * The receipt for a subscription.
+ *
+ * It reads the server, scoped by RLS to the signed-in caller, rather than a
+ * record this browser wrote. The old version matched a query-string order id
+ * against `localStorage`, so a buyer who paid on one device and opened the link
+ * on another was told their order could not be found — a lie about a payment
+ * that had gone through.
  */
 export const CheckoutSuccess = () => {
-  const [params] = useSearchParams();
-  const order = params.get('order');
-  const record = getWebPremium();
+  const [record, setRecord] = useState<SubscriptionRow | null>(null);
+  const [entitlement, setEntitlement] = useState<Entitlement | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [asked, setAsked] = useState(false);
 
-  if (!record || !order || record.orderId !== order) return <MissingOrder />;
+  useEffect(() => {
+    let active = true;
+    const read = async () => {
+      const { supabase } = await import('@/integrations/supabase/client');
+      // `subscriptions` is created by 20261009120100_subscriptions.sql, but the
+      // generated Database type in src/integrations/supabase/types.ts predates
+      // that migration, so the table name is not yet in the relation union.
+      // `as never` takes the builder's untyped overload; the row shape is pinned
+      // by SubscriptionRow above. Regenerate types.ts and this cast can go.
+      const { data } = await supabase
+        .from('subscriptions' as never)
+        .select('plan, currency, amount, status, current_period_end')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const grant = await currentEntitlement().catch(() => null);
+      if (!active) return;
+      setRecord((data as SubscriptionRow | null) ?? null);
+      setEntitlement(grant);
+      setAsked(true);
+      setLoading(false);
+    };
+    void read();
+    // The webhook may land a moment after the redirect. Re-read on focus so a
+    // buyer who switches apps and comes back sees the truth, not a stale
+    // "activating".
+    const onFocus = () => void read();
+    window.addEventListener('focus', onFocus);
+    return () => {
+      active = false;
+      window.removeEventListener('focus', onFocus);
+    };
+  }, []);
 
-  const endsOn = formatDate(record.currentPeriodEnd);
-  const paid =
-    typeof record.amount === 'number' && record.currency
-      ? formatAmount(record.amount, record.currency)
-      : null;
+  if (loading) {
+    return (
+      <Shell>
+        <p className="text-center text-sm text-muted-foreground">Checking your payment…</p>
+      </Shell>
+    );
+  }
+
+  if (asked && !record) return <MissingOrder />;
+
+  const hasAccess = entitlement !== null;
+  const endsOn = record?.current_period_end ? formatDate(record.current_period_end) : null;
+  const paid = record ? formatAmount(record.amount, record.currency) : null;
 
   return (
     <Shell>
@@ -93,33 +147,31 @@ export const CheckoutSuccess = () => {
         <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
           <Check className="h-7 w-7" aria-hidden="true" />
         </span>
-        <h1 className="mt-4 text-2xl font-bold text-foreground">Payment successful</h1>
+        <h1 className="mt-4 text-2xl font-bold text-foreground">
+          {hasAccess ? 'Subscription active' : 'Payment received'}
+        </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Everything is unlocked on this account.
+          {hasAccess
+            ? 'Everything is unlocked on this account.'
+            : 'Activating — this usually takes a few seconds. You can close this page.'}
         </p>
       </div>
 
       <dl className="mt-8 divide-y divide-border rounded-2xl border border-border bg-card">
-        <Row label="Plan" value={record.label ?? PLAN_NAMES[record.plan] ?? 'Premium'} />
-        {/* No amount means the purchase was restored, not made here — better to
-            leave the line out than to guess what was charged. */}
+        <Row label="Plan" value={record ? PLAN_NAMES[record.plan] : 'Premium'} />
         {paid && <Row label="Paid" value={paid} />}
-        <Row label="Status" value="Active now" />
-        {/* "Access until", never "Renews": these are one-time orders, and the
-            period end is a date we stop trusting, not a date we rebill on. */}
-        {endsOn && <Row label="Access until" value={endsOn} />}
+        <Row label="Status" value={hasAccess ? 'Active now' : 'Activating'} />
+        {/* "Renews on", because this is a subscription: the period end is a date
+            we do rebill on, unlike the one-time orders this replaced. */}
+        {endsOn && <Row label={hasAccess ? 'Renews on' : 'Access until'} value={endsOn} />}
       </dl>
 
       <Link
         to="/"
         className="mt-6 block rounded-full bg-primary py-4 text-center text-base font-bold text-primary-foreground"
       >
-        Start using Pro
+        {hasAccess ? 'Start using Pro' : 'Continue to the app'}
       </Link>
-      <p className="mt-3 text-center text-xs text-muted-foreground">
-        Signed in as {record.email}. You can restore this purchase on another device with the same
-        email.
-      </p>
     </Shell>
   );
 };
