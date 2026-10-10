@@ -108,35 +108,33 @@ describe('webBilling restore requires a verified email session', () => {
     expect(billing.getWebPremium()).toBeNull();
   });
 
-  it('server rejecting the session (401) stores nothing', async () => {
-    withSession();
-    sb.invoke.mockResolvedValue({ data: null, error: new Error('401') });
-    const billing = await loadBilling({ dev: false });
-    expect(await billing.restoreWebPurchaseForSession()).toBeNull();
-    expect(localStorage.getItem(STORE_KEY)).toBeNull();
-  });
-
-  it('happy path: verified session sends the user JWT, never an email, and stores the server result', async () => {
+  it('verified lookup asks billing-restore, and stores nothing in the browser', async () => {
+    // The restore flow used to write a localStorage flag from the server's
+    // answer. The server writes the grant now; this browser writes nothing, so
+    // that a stolen laptop cannot carry access away with it.
+    sb.verifyOtp.mockResolvedValue({ data: { session: { access_token: 'user-jwt' } }, error: null });
     withSession('payer@example.com');
     sb.invoke.mockResolvedValue({
-      data: { active: true, email: 'payer@example.com', plan: 'monthly', currentPeriodEnd: future },
+      data: { restored: true, plan: 'monthly', expiresAt: future },
       error: null,
     });
     const billing = await loadBilling({ dev: false });
-    const found = await billing.restoreWebPurchase('someone-else@example.com');
-    expect(found).toEqual({ email: 'payer@example.com', plan: 'monthly', currentPeriodEnd: future });
-    const [fn, opts] = sb.invoke.mock.calls[0];
-    expect(fn).toBe('razorpay-status');
-    expect(opts.headers.Authorization).toBe('Bearer user-jwt');
-    expect(JSON.stringify(opts.body ?? {})).not.toMatch(/@/);
-    expect(billing.getWebPremium()).toEqual(found);
+
+    const found = await billing.verifyRestoreCode('payer@example.com', '123456');
+
+    expect(sb.invoke.mock.calls.at(-1)?.[0]).toBe('billing-restore');
+    expect(sb.invoke.mock.calls.some(([fn]: unknown[]) => fn === 'razorpay-status')).toBe(false);
+    expect(localStorage.getItem(STORE_KEY)).toBeNull();
+    expect(found).toMatchObject({ plan: 'monthly' });
   });
 
-  it('inactive subscription returns null and stores nothing', async () => {
-    withSession();
-    sb.invoke.mockResolvedValue({ data: { active: false, plan: null, currentPeriodEnd: null }, error: null });
+  it('a restore the server does not recognise writes nothing at all', async () => {
+    sb.verifyOtp.mockResolvedValue({ data: { session: { access_token: 'user-jwt' } }, error: null });
+    withSession('payer@example.com');
+    sb.invoke.mockResolvedValue({ data: { restored: false }, error: null });
     const billing = await loadBilling({ dev: false });
-    expect(await billing.restoreWebPurchaseForSession()).toBeNull();
+
+    await expect(billing.verifyRestoreCode('payer@example.com', '123456')).resolves.toBeNull();
     expect(localStorage.getItem(STORE_KEY)).toBeNull();
   });
 
@@ -176,14 +174,13 @@ describe('webBilling restore requires a verified email session', () => {
     sb.verifyOtp.mockResolvedValue({ data: { session: { access_token: 'user-jwt' } }, error: null });
     withSession('payer@example.com');
     sb.invoke.mockResolvedValue({
-      data: { active: true, email: 'payer@example.com', plan: 'yearly', currentPeriodEnd: future },
+      data: { restored: true, plan: 'yearly', expiresAt: future },
       error: null,
     });
     const billing = await loadBilling({ dev: false });
     const found = await billing.verifyRestoreCode('payer@example.com', '123456');
     expect(sb.verifyOtp).toHaveBeenCalledWith({ email: 'payer@example.com', token: '123456', type: 'email' });
     expect(found).toMatchObject({ email: 'payer@example.com', plan: 'yearly' });
-    expect(billing.getWebPremium()).toMatchObject({ email: 'payer@example.com' });
   });
 
   it('dev build: developer email unlocks at step 1 without sending a code', async () => {
@@ -205,7 +202,7 @@ describe('webBilling restore requires a verified email session', () => {
   it('email-link completion only runs when a restore is pending', async () => {
     withSession('payer@example.com');
     sb.invoke.mockResolvedValue({
-      data: { active: true, email: 'payer@example.com', plan: 'yearly', currentPeriodEnd: future },
+      data: { restored: true, plan: 'yearly', expiresAt: future },
       error: null,
     });
     const billing = await loadBilling({ dev: false });

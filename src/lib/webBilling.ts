@@ -1,7 +1,7 @@
-// Web billing helpers: Razorpay website checkout plus "Restore access".
+// Web billing helpers: the price display plus "Restore access".
 // Restore requires proof of email ownership: the user receives a one-time
-// code (Supabase email OTP), verifies it, and only then is the purchase looked
-// up server-side for the *verified* email (razorpay-status checks the JWT).
+// code (Supabase email OTP), verifies it, and only then does the server look
+// the purchase up for the *verified* email (billing-restore checks the JWT).
 // In local development only (`vite` dev server, import.meta.env.DEV === true)
 // restore can also unlock a device for whitelisted developer emails without a
 // code — see DEVELOPER_EMAILS below.
@@ -117,67 +117,16 @@ const saveWebPremium = (value: WebPremium) => {
   }
 };
 
-const loadRazorpay = (): Promise<any> =>
-  new Promise((resolve, reject) => {
-    const w = window as any;
-    if (w.Razorpay) return resolve(w.Razorpay);
-    const s = document.createElement('script');
-    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    s.onload = () => (w.Razorpay ? resolve(w.Razorpay) : reject(new Error('Checkout failed to load.')));
-    s.onerror = () => reject(new Error('Checkout could not be loaded. Check your connection.'));
-    document.body.appendChild(s);
-  });
-
-/** Website checkout via Razorpay (browser only; native app uses the store). */
-export async function startWebCheckout(
-  plan: 'monthly' | 'yearly',
-  email: string,
-  currency: WebCurrency = getWebCurrency(),
-): Promise<WebPremium> {
-  const { supabase } = await import('@/integrations/supabase/client');
-  const { data, error } = await supabase.functions.invoke('razorpay-create-order', {
-    body: { plan, email, currency },
-  });
-  if (error || !data?.orderId) throw new Error(data?.error ?? 'Could not start checkout.');
-  const Razorpay = await loadRazorpay();
-  return new Promise<WebPremium>((resolve, reject) => {
-    const rzp = new Razorpay({
-      key: data.keyId,
-      order_id: data.orderId,
-      amount: data.amount,
-      currency: data.currency,
-      name: 'PsyCognito',
-      description: data.label,
-      prefill: { email },
-      handler: async (resp: any) => {
-        const { data: v, error: vErr } = await supabase.functions.invoke('razorpay-verify', {
-          body: { orderId: resp.razorpay_order_id, paymentId: resp.razorpay_payment_id, signature: resp.razorpay_signature },
-        });
-        if (vErr || !v?.success) return reject(new Error(v?.error ?? 'Payment could not be verified.'));
-        const value: WebPremium = {
-          email,
-          plan: v.plan,
-          currentPeriodEnd: v.currentPeriodEnd,
-          // The order id is the only thing that can tie the receipt page back to
-          // this purchase, so it is taken from the gateway's own callback — the
-          // same value whose signature razorpay-verify just checked — rather
-          // than from the create-order response we sent in.
-          orderId: resp.razorpay_order_id,
-          amount: typeof data.amount === 'number' ? data.amount : undefined,
-          currency: typeof data.currency === 'string' ? data.currency : undefined,
-          label: typeof data.label === 'string' ? data.label : undefined,
-        };
-        saveWebPremium(value);
-        resolve(value);
-      },
-      modal: { ondismiss: () => reject({ userCancelled: true }) },
-    });
-    rzp.on?.('payment.failed', (r: any) => reject(new Error(r?.error?.description ?? 'Payment failed.')));
-    rzp.open();
-  });
-}
-
-/** Restore a website purchase by email (dev builds also honour developer emails). */
+/**
+ * Resolve the DEV-only developer unlock for `email`, or return null.
+ *
+ * This used to fall through to a session lookup that read the paid
+ * `web_subscriptions` table. That is `billing-restore`'s job now, and the
+ * context reads the result through `current_entitlement()`, so there is nothing
+ * left for this to restore. Narrowing it here is what keeps the six pinned
+ * tests honest: they drive the dev unlock through the same door the context
+ * uses.
+ */
 export async function restoreWebPurchase(email: string): Promise<WebPremium | null> {
   const normalized = email.trim().toLowerCase();
   if (import.meta.env.DEV && isDeveloperEmail(normalized)) {
@@ -190,9 +139,23 @@ export async function restoreWebPurchase(email: string): Promise<WebPremium | nu
     saveWebPremium(devAccess);
     return devAccess;
   }
-  // The typed email is never trusted: only a verified Supabase session counts.
-  return restoreWebPurchaseForSession();
+  return null;
 }
+
+/**
+ * True when this browser holds a live DEV-only developer unlock.
+ *
+ * The context uses this as an access term. It is safe there only because it is
+ * guarded by `import.meta.env.DEV`, which is the literal `false` in a
+ * production build — the minifier drops this branch, the `DEVELOPER_EMAILS`
+ * read and the email strings together, which is what six tests in
+ * `webBilling.test.ts` exist to prove.
+ */
+export const isDevUnlocked = (): boolean => {
+  if (!import.meta.env.DEV) return false;
+  const record = getWebPremium();
+  return record?.source === 'dev';
+};
 
 const RESTORE_PENDING_KEY = 'psycognito.restorePending.v1';
 const RESTORE_PENDING_TTL_MS = 60 * 60 * 1000;
@@ -225,30 +188,30 @@ const isRestorePending = (): boolean => {
 };
 
 /**
- * Look up a website purchase for the currently signed-in user. The edge
- * function derives the email from the verified JWT and ignores any body.
- * Without a session nothing is requested and nothing is stored.
+ * Ask the server to turn the caller's verified email into a grant.
+ *
+ * Returns the plan and expiry the server wrote, or null when it found no
+ * purchase. The email comes from the verified Supabase session — nothing here
+ * sends one, and nothing here trusts one the user typed.
  */
-export async function restoreWebPurchaseForSession(): Promise<WebPremium | null> {
+async function restoreViaServer(): Promise<WebPremium | null> {
   try {
     const { supabase } = await import('@/integrations/supabase/client');
     const { data: sessionData } = await supabase.auth.getSession();
     const session = sessionData?.session;
     if (!session?.access_token) return null;
 
-    const { data, error } = await supabase.functions.invoke('razorpay-status', {
+    const { data, error } = await supabase.functions.invoke('billing-restore', {
       body: {},
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
-    if (error || !data?.active || !data.currentPeriodEnd) return null;
+    if (error || !data?.restored) return null;
 
-    const value: WebPremium = {
-      email: String(data.email ?? session.user?.email ?? '').toLowerCase(),
+    return {
+      email: String(session.user?.email ?? '').toLowerCase(),
       plan: data.plan === 'monthly' ? 'monthly' : 'yearly',
-      currentPeriodEnd: data.currentPeriodEnd,
+      currentPeriodEnd: String(data.expiresAt ?? ''),
     };
-    saveWebPremium(value);
-    return value;
   } catch {
     return null;
   }
@@ -295,7 +258,7 @@ export async function verifyRestoreCode(email: string, code: string): Promise<We
     throw new Error('That code is invalid or has expired. Request a new one.');
   }
   clearRestorePending();
-  return restoreWebPurchaseForSession();
+  return restoreViaServer();
 }
 
 /**
@@ -304,7 +267,7 @@ export async function verifyRestoreCode(email: string, code: string): Promise<We
  */
 export async function completeRestoreFromEmailLink(): Promise<WebPremium | null> {
   if (!isRestorePending()) return null;
-  const result = await restoreWebPurchaseForSession();
+  const result = await restoreViaServer();
   try {
     const { supabase } = await import('@/integrations/supabase/client');
     const { data } = await supabase.auth.getSession();
