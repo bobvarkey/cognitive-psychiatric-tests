@@ -1,1 +1,7 @@
 project_id = "lusgyknbmprhmxbkkdbo"
+# The webhook is called by Razorpay, not by a user, and authenticates by HMAC
+# signature over the raw body. It accepts no user JWT, so JWT verification must
+# be off — with it on, every delivery would be rejected before the signature
+# check and no grant would ever be written.
+[functions.billing-webhook]
+verify_jwt = false
