@@ -20,6 +20,7 @@ import { NotificationsProvider } from "@/contexts/NotificationsContext";
 import { AuthGuard } from "@/components/AuthGuard";
 import LegalPage from "./pages/Legal";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
+import Account from "./pages/Account";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -77,6 +78,7 @@ const App = () => (
                     <Route path="/terms" element={<LegalPage kind="terms" />} />
                     <Route path="/privacy" element={<LegalPage kind="privacy" />} />
                     <Route path="/checkout/success" element={<CheckoutSuccess />} />
+                    <Route path="/account" element={<Account />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                   <LanguageToggle />

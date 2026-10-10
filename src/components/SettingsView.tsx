@@ -94,6 +94,13 @@ export const SettingsView = () => {
           <Button variant="outline" className="min-h-[44px] flex-1" onClick={handleRestore} disabled={restoring}>
             {restoring ? 'Restoring…' : 'Restore Purchases'}
           </Button>
+          <Button
+            variant="outline"
+            className="min-h-[44px] flex-1"
+            onClick={() => navigate('/account')}
+          >
+            Account &amp; billing
+          </Button>
         </CardContent>
       </Card>
 

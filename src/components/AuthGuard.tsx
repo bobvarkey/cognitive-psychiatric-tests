@@ -8,9 +8,10 @@ interface AuthGuardProps {
   children: React.ReactNode;
 }
 
-// Reachable without access: the legal pages, and the receipt that a just-paid
-// buyer is redirected to before their entitlement has been read back.
-const PUBLIC_PATHS = ['/terms', '/privacy', '/checkout/success'];
+// Reachable without access: the legal pages, and the account page, where the
+// auth user id that an admin grant is keyed to is readable — the screen that
+// otherwise reports it sits behind this same gate.
+const PUBLIC_PATHS = ['/terms', '/privacy', '/account', '/checkout/success'];
 
 export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   const { isPremium, demoTrialActive, showPaywall, setShowPaywall, checkingServerAccess } =
