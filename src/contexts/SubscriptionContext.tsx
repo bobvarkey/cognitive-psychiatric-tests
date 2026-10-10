@@ -223,6 +223,11 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const refreshSubscription = () => {
     setSubscription(getSubscription());
     setDemoTrialMsLeft(getDemoTrialMsLeft());
+    // The dev unlock is written on the device after mount, so it must be
+    // re-read here or a mid-session restore unlocks nothing until a reload.
+    // Production drops this read entirely: `isDevUnlocked` is behind
+    // `import.meta.env.DEV` and returns false there.
+    setDevUnlocked(isDevUnlocked());
   };
 
   const toggleDemoUnlockAll = (enabled: boolean) => {

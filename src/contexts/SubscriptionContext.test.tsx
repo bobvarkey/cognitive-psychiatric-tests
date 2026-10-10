@@ -49,6 +49,10 @@ vi.mock('@/services/subscriptionService', () => ({
   getSubscription: () => null,
 }));
 
+const wb = vi.hoisted(() => ({
+  isDevUnlocked: vi.fn(() => false),
+}));
+
 // `importOriginal` rather than a hand-written factory: the real `getWebPremium`
 // reads `localStorage`, and a stub would make the record test prove nothing
 // about its own name. Only the dev unlock and the restore call are stubbed.
@@ -56,7 +60,7 @@ vi.mock('@/lib/webBilling', async (orig) => ({
   ...(await orig<typeof import('@/lib/webBilling')>()),
   completeRestoreFromEmailLink: () => Promise.resolve(null),
   restoreWebPurchase: vi.fn(),
-  isDevUnlocked: () => false,
+  isDevUnlocked: wb.isDevUnlocked,
 }));
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), info: vi.fn(), error: vi.fn() } }));
@@ -105,6 +109,9 @@ describe('SubscriptionContext server access', () => {
     });
     ent.currentAuthUser.mockResolvedValue({ id: 'u1', email: 'owner@example.com' });
     ent.serverEntitlement.mockResolvedValue(GRANT);
+    // `clearAllMocks` clears calls, not implementations, so the dev unlock is
+    // re-armed here: no test may start dev-unlocked by accident.
+    wb.isDevUnlocked.mockReturnValue(false);
   });
   afterEach(() => {
     vi.clearAllMocks();
@@ -311,5 +318,27 @@ describe('SubscriptionContext server access', () => {
     });
 
     expect(billing.startSubscription).toHaveBeenCalledWith('yearly', getWebCurrency());
+  });
+
+  it('picks up a dev unlock written after mount, without a reload', async () => {
+    // The dev-only developer unlock is written on the device by the restore flow
+    // (and announced by a browser event the context no longer listens for). If
+    // the context only reads it at mount, a developer who restores in this
+    // session is toasted "unlocked" while the app stays locked until a reload —
+    // a false success. `refreshSubscription` is the seam that keeps it live.
+    const { result } = renderContext({ entitlement: null });
+    await waitFor(() => expect(result.current.checkingServerAccess).toBe(false));
+    expect(result.current.devUnlocked).toBe(false);
+    expect(result.current.isPremium).toBe(false);
+
+    // The write lands after the provider has already mounted.
+    wb.isDevUnlocked.mockReturnValue(true);
+    await act(async () => {
+      result.current.refreshSubscription();
+    });
+
+    expect(result.current.devUnlocked).toBe(true);
+    expect(result.current.isPremium).toBe(true);
+    expect(result.current.premiumSource).toBe('developer');
   });
 });
