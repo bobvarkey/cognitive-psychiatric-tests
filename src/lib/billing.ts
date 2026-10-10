@@ -47,11 +47,37 @@ export function fallbackBillingPlans(): BillingPlan[] {
   );
 }
 
+/** A row as PostgREST returns it: snake_case, and strings for the TEXT columns. */
+interface BillingPlanRow {
+  code: string;
+  currency: string;
+  amount: number;
+  interval_unit: string;
+  label: string;
+}
+
 /** The server catalogue. Falls back to the display list if the read fails. */
 export async function fetchBillingPlans(): Promise<BillingPlan[]> {
   try {
     const { supabase } = await import('@/integrations/supabase/client');
-    const { data, error } = await supabase
+    /**
+     * `billing_plans` is not in the generated `Database` types until the
+     * migrations are applied and the types are regenerated with
+     * `supabase gen types typescript`. The cast is confined to this one read so
+     * the rest of the module stays typed; delete it once the types catch up.
+     *
+     * The cast is to the client, not to `supabase.from`, so the call below stays
+     * a method call and `this` is still bound at runtime.
+     */
+    const client = supabase as unknown as {
+      from: (table: string) => {
+        select: (columns: string) => Promise<{
+          data: BillingPlanRow[] | null;
+          error: { message: string } | null;
+        }>;
+      };
+    };
+    const { data, error } = await client
       .from('billing_plans')
       .select('code, currency, amount, interval_unit, label');
     if (error || !data?.length) return fallbackBillingPlans();
