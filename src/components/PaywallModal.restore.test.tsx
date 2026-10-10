@@ -11,12 +11,31 @@ vi.mock('@/lib/webBilling', async (orig) => ({
   requestRestoreCode: billing.requestRestoreCode,
   verifyRestoreCode: billing.verifyRestoreCode,
 }));
-vi.mock('@/lib/appbuild/wrapper', () => ({ waitForWrapper: () => Promise.resolve(null) }));
+// The server catalogue, mocked so no unit test constructs a real Supabase
+// client; the fixture carries every plan in both currencies.
+const plans = vi.hoisted(() => [
+  { code: 'monthly' as const, currency: 'INR' as const, amount: 29900, intervalUnit: 'month' as const, label: 'PsyCognito Premium — Monthly' },
+  { code: 'yearly' as const, currency: 'INR' as const, amount: 299900, intervalUnit: 'year' as const, label: 'PsyCognito Premium — Yearly' },
+  { code: 'monthly' as const, currency: 'USD' as const, amount: 299, intervalUnit: 'month' as const, label: 'PsyCognito Premium — Monthly' },
+  { code: 'yearly' as const, currency: 'USD' as const, amount: 2499, intervalUnit: 'year' as const, label: 'PsyCognito Premium — Yearly' },
+]);
+vi.mock('@/lib/billing', () => ({
+  fallbackBillingPlans: () => plans,
+  fetchBillingPlans: vi.fn().mockResolvedValue(plans),
+}));
+
+vi.mock('@/lib/appbuild/wrapper', () => ({
+  waitForWrapper: () => Promise.resolve(null),
+  isWrapperPresent: () => false,
+  getPurchasesPlugin: () => null,
+}));
 vi.mock('@/contexts/SubscriptionContext', () => ({
   useSubscription: () => ({
     refreshSubscription: vi.fn(),
-    demoTrialActive: false,
-    demoTrialMsLeft: 0,
+    startTrial: vi.fn(),
+    startSubscriptionCheckout: vi.fn(),
+    pendingActivation: false,
+    isPremium: false,
   }),
 }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), info: vi.fn(), error: vi.fn() } }));

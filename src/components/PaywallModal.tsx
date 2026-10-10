@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { X, Lock, Bell, Star, Loader2, Mail, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/paywall-hero.jpg';
@@ -13,7 +13,6 @@ import {
   type RcPackage,
 } from '@/lib/appbuild/revenuecat';
 import {
-  startWebCheckout,
   requestRestoreCode,
   verifyRestoreCode,
   getWebCurrency,
@@ -22,6 +21,7 @@ import {
   WEB_PRICES,
   type WebPremium,
 } from '@/lib/webBilling';
+import { fallbackBillingPlans, fetchBillingPlans, type BillingPlan } from '@/lib/billing';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { requestEmailCode, verifyEmailCode } from '@/lib/entitlement';
 
@@ -60,6 +60,20 @@ const RESEND_SECONDS = 60;
 
 type RestoreStep = 'closed' | 'email' | 'code';
 
+/** The amount the server will charge, in minor units, formatted for display. */
+const formatPlanAmount = (plan: BillingPlan | undefined): string => {
+  if (!plan) return '—';
+  try {
+    return new Intl.NumberFormat(plan.currency === 'INR' ? 'en-IN' : 'en-US', {
+      style: 'currency',
+      currency: plan.currency,
+      minimumFractionDigits: 0,
+    }).format(plan.amount / 100);
+  } catch {
+    return `${plan.amount / 100} ${plan.currency}`;
+  }
+};
+
 export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false }: PaywallModalProps) => {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [packages, setPackages] = useState<RcPackage[]>([]);
@@ -85,7 +99,11 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       return '';
     }
   });
-  const { refreshSubscription, startTrial } = useSubscription();
+  // True while a web checkout this modal started is still in flight, so the
+  // post-checkout message can tell "we just checked out" from "we opened".
+  const submittedRef = useRef(false);
+  const { refreshSubscription, startTrial, startSubscriptionCheckout, pendingActivation, isPremium } =
+    useSubscription();
 
   // Fail closed: if the native wrapper is present at all, start in native mode so
   // Razorpay/web checkout can never flash inside the App Store / Play Store app.
@@ -103,6 +121,33 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     };
   }, []);
   const webCurrency = useMemo(() => getWebCurrency(), []);
+
+  // The catalogue starts from the fallback so an amount is on screen before the
+  // server read lands (spec §9), then upgrades to the server's own numbers.
+  const [plans, setPlans] = useState<BillingPlan[]>(() => fallbackBillingPlans());
+  useEffect(() => {
+    let active = true;
+    fetchBillingPlans().then((next) => {
+      if (active && next.length) setPlans(next);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+  const catalogue = plans.find((p) => p.code === selectedPlan && p.currency === webCurrency);
+
+  // Drives the post-checkout message from the context's live flag rather than
+  // from a stale closure inside the click handler. The flag returns to false on
+  // both outcomes, so the message is gated on the buyer not already holding
+  // access — a granted buyer must never be told it is still activating.
+  useEffect(() => {
+    if (!isOpen || pendingActivation) return;
+    if (!submittedRef.current) return;
+    submittedRef.current = false;
+    if (!isPremium) {
+      toast.info('Still activating — this can take a moment. Check your account shortly.');
+    }
+  }, [pendingActivation, isOpen, isPremium]);
 
   useEffect(() => {
     if (resendIn <= 0) return;
@@ -171,6 +216,13 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     : ['monthly', 'yearly'];
   const activePlan = planOptions.includes(selectedPlan) ? selectedPlan : (planOptions[0] ?? 'yearly');
 
+  // Native prices are the store's own localized strings — the only amount a
+  // buyer authorizing through Apple/Google should see. The server catalogue is
+  // keyed by web currency and is used only on the web path.
+  const priceText = native
+    ? (activePlan === 'monthly' ? monthlyPrice : yearlyPrice)
+    : formatPlanAmount(catalogue);
+
   const rememberEmail = (value: string) => {
     setEmail(value);
     try {
@@ -212,23 +264,16 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
       return;
     }
     setBusy(true);
+    // Mark the checkout in flight before the await so the effect above can tell
+    // it apart from the modal simply being open.
+    submittedRef.current = true;
     try {
-      const purchased = await startWebCheckout(activePlan, email.trim().toLowerCase(), webCurrency);
-      onSelectPlan(activePlan, 'pro');
-      if (purchased.orderId) {
-        // Hand the buyer to their receipt. It is a full-document navigation
-        // rather than useNavigate because AuthGuard renders this modal outside
-        // the router (it wraps BrowserRouter, not the other way round), and
-        // because the receipt has to survive this modal's own unmount when the
-        // gate lifts.
-        window.location.assign(
-          `/checkout/success?order=${encodeURIComponent(purchased.orderId)}`,
-        );
-        return;
-      }
-      // A purchase restored rather than made here has no order to point at.
-      toast.success('Payment successful. Everything is unlocked.');
+      await startSubscriptionCheckout(activePlan, email.trim().toLowerCase());
+      // The context has already polled. Whatever it found, the modal does not
+      // claim more than the server granted.
     } catch (e: any) {
+      // A cancelled or failed checkout is not "still activating".
+      submittedRef.current = false;
       if (!e?.userCancelled) toast.error(e?.message ?? 'Payment failed.');
     } finally {
       setBusy(false);
@@ -427,9 +472,14 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             </div>
             <p className="text-center text-sm text-muted-foreground tabular-nums">
               {activePlan === 'monthly'
-                ? `Monthly plan · ${monthlyPrice} per month · auto-renews every month`
-                : `Yearly plan · ${yearlyPrice} per year · auto-renews every year`}
+                ? `Monthly plan · ${priceText} per month`
+                : `Yearly plan · ${priceText} per year`}
             </p>
+            {!native && (
+              <p className="text-center text-xs text-muted-foreground">
+                Renews automatically unless you cancel. Your card is charged today.
+              </p>
+            )}
           </div>
 
           {!native && (
@@ -456,6 +506,13 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           {native && !storeError && !(activePlan === 'yearly' ? yearlyPkg : monthlyPkg) && (
             <p role="alert" className="text-sm text-muted-foreground text-center">
               This plan is unavailable right now. Try Restore Purchases or check back shortly.
+            </p>
+          )}
+
+          {pendingActivation && (
+            <p role="status" className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Payment received — activating…
             </p>
           )}
 
