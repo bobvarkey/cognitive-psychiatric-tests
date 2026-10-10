@@ -33,8 +33,10 @@ Deno.serve(async (req) => {
     // Normalised and matched exactly. `ilike` would read this value as a
     // pattern: `_` and `%` are legal in an email local part, so a caller could
     // register an address that wildcard-matches a stranger's paid address and
-    // restore their purchase. `web_subscriptions.email` is written lowercase
-    // and indexed on `lower(email)`, so exact matching loses nothing.
+    // restore their purchase. Lowercasing loses no matches, because the one
+    // writer of this column lowercases before insert (razorpay-create-order).
+    // It does forgo the `lower(email)` index, which an equality test cannot
+    // use — a cost worth a lookup that cannot be widened by its own input.
     const email = user.email.trim().toLowerCase();
 
     const { data: purchase, error: lookupError } = await supabase

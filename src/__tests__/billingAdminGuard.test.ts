@@ -87,8 +87,9 @@ describe('billing-restore edge function', () => {
     // caller's own id.
     expect(src).toMatch(/\.eq\(\s*['"]status['"]\s*,\s*'paid'\)/);
     // Without this the row's age is never checked and an expired purchase
-    // still restores access.
-    expect(src).toMatch(/\.gt\(\s*['"]current_period_end['"]/);
+    // still restores access. The argument is pinned too: the column name alone
+    // would stay green if the bound were a constant in the past.
+    expect(src).toMatch(/\.gt\(\s*['"]current_period_end['"]\s*,\s*new Date\(\)/);
     expect(src).toMatch(/user\.email_confirmed_at/);
     expect(src).toMatch(/onConflict:\s*['"]user_id['"]/);
     // Authenticated responses carry payment data and must never be cached.
