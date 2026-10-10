@@ -14,30 +14,41 @@
 
 -- 1. Grants.
 INSERT INTO public.entitlements (user_id, plan, source, expires_at, note)
-SELECT
-  u.id,
-  ws.plan,                  -- already 'monthly' | 'yearly', per its own CHECK
-  'razorpay',
-  ws.current_period_end,
-  'backfilled from web_subscriptions'
-FROM public.web_subscriptions ws
-JOIN auth.users u ON lower(u.email) = lower(ws.email)
-WHERE ws.status = 'paid'
-  -- A NULL period end cannot be shown as a renewal date and cannot be relied on
-  -- as access, so those buyers are left for a human rather than granted a
-  -- placeholder. Check the count of them after running this.
-  AND ws.current_period_end IS NOT NULL
-  AND ws.current_period_end > now()
+SELECT *
+FROM (
+  -- One row per buyer. `web_subscriptions.email` is not unique, so two paid rows
+  -- can map to the same user id; without this the upsert below would address the
+  -- same `user_id` twice and Postgres would abort the whole statement with
+  -- SQLSTATE 21000, granting nobody. The latest period end wins.
+  SELECT DISTINCT ON (u.id)
+    u.id,
+    ws.plan,                  -- already 'monthly' | 'yearly', per its own CHECK
+    'razorpay',
+    ws.current_period_end,
+    'backfilled from web_subscriptions'
+  FROM public.web_subscriptions ws
+  JOIN auth.users u ON lower(u.email) = lower(ws.email)
+  WHERE ws.status = 'paid'
+    -- A NULL period end cannot be shown as a renewal date and cannot be relied on
+    -- as access, so those buyers are left for a human rather than granted a
+    -- placeholder. Check the count of them after running this.
+    AND ws.current_period_end IS NOT NULL
+    AND ws.current_period_end > now()
+  ORDER BY u.id, ws.current_period_end DESC
+) AS latest_grant
 ON CONFLICT (user_id) DO UPDATE
   SET plan = EXCLUDED.plan,
       source = EXCLUDED.source,
       expires_at = EXCLUDED.expires_at,
       note = EXCLUDED.note,
       updated_at = now()
-  -- Never overwrite an admin grant. The trigger from
-  -- 20261009120200 enforces this too; stating it here keeps the intent
-  -- readable in the statement that would otherwise be the exception.
-  WHERE public.entitlements.source <> 'admin';
+  -- Never overwrite an admin grant (the BEFORE UPDATE trigger from
+  -- 20261009120200 enforces this too), and never move a buyer's expiry
+  -- backwards: a legacy row with an older period end must not shorten a later
+  -- razorpay/trial/demo grant. A permanent (NULL) non-admin grant is left alone.
+  WHERE public.entitlements.source <> 'admin'
+    AND public.entitlements.expires_at IS NOT NULL
+    AND public.entitlements.expires_at < EXCLUDED.expires_at;
 
 -- 2. Subscription rows, so the account page has something to render. These
 --    carry no Razorpay id of their own -- the old path used orders, not
