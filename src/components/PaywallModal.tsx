@@ -128,7 +128,15 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   useEffect(() => {
     let active = true;
     fetchBillingPlans().then((next) => {
-      if (active && next.length) setPlans(next);
+      if (!active || !next.length) return;
+      // Merge, never replace. A partially seeded billing_plans table must not
+      // blank out the currency the buyer is charged in: the server wins for the
+      // keys it returns, and the checked-in fallback fills the keys it omits.
+      setPlans((prev) => {
+        const merged = new Map(prev.map((p) => [`${p.code}:${p.currency}`, p]));
+        for (const p of next) merged.set(`${p.code}:${p.currency}`, p);
+        return Array.from(merged.values());
+      });
     });
     return () => {
       active = false;
@@ -136,17 +144,29 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   }, []);
   const catalogue = plans.find((p) => p.code === selectedPlan && p.currency === webCurrency);
 
-  // Drives the post-checkout message from the context's live flag rather than
+  // A checkout dismissed while it was still in flight is not "still activating".
+  // Clearing the flag on the way back in — declared before the effect below, so
+  // it runs first — means reopening cannot report a checkout that is over.
+  useEffect(() => {
+    if (isOpen) submittedRef.current = false;
+  }, [isOpen]);
+
+  // Drives the post-checkout outcome from the context's live flag rather than
   // from a stale closure inside the click handler. The flag returns to false on
-  // both outcomes, so the message is gated on the buyer not already holding
-  // access — a granted buyer must never be told it is still activating.
+  // both outcomes, so the branch is decided by whether access actually landed.
   useEffect(() => {
     if (!isOpen || pendingActivation) return;
     if (!submittedRef.current) return;
     submittedRef.current = false;
-    if (!isPremium) {
-      toast.info('Still activating — this can take a moment. Check your account shortly.');
+    if (isPremium) {
+      // The server granted access: confirm it, and let the on-demand instance
+      // dismiss itself. The blocking instance passes no onClose (it is unmounted
+      // by AuthGuard once the gate lifts), so this is a no-op there.
+      toast.success('Your subscription is active.');
+      onClose?.();
+      return;
     }
+    toast.info('Still activating — this can take a moment. Check your account shortly.');
   }, [pendingActivation, isOpen, isPremium]);
 
   useEffect(() => {

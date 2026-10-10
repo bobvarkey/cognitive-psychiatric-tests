@@ -12,9 +12,11 @@ const plans = vi.hoisted(() => [
   { code: 'yearly' as const, currency: 'USD' as const, amount: 2499, intervalUnit: 'year' as const, label: 'PsyCognito Premium — Yearly' },
 ]);
 
+const catalogue = vi.hoisted(() => ({ fetchBillingPlans: vi.fn() }));
+
 vi.mock('@/lib/billing', () => ({
   fallbackBillingPlans: () => plans,
-  fetchBillingPlans: vi.fn().mockResolvedValue(plans),
+  fetchBillingPlans: catalogue.fetchBillingPlans,
 }));
 
 // Resolving to null and reporting no wrapper means "not the native build", so
@@ -26,13 +28,13 @@ vi.mock('@/lib/appbuild/wrapper', () => ({
 }));
 
 const checkout = vi.hoisted(() => ({ startSubscriptionCheckout: vi.fn() }));
-const subscription = vi.hoisted(() => ({ pendingActivation: false }));
+const subscription = vi.hoisted(() => ({ pendingActivation: false, isPremium: false }));
 
 vi.mock('@/contexts/SubscriptionContext', () => ({
   useSubscription: () => ({
     startSubscriptionCheckout: checkout.startSubscriptionCheckout,
     pendingActivation: subscription.pendingActivation,
-    isPremium: false,
+    isPremium: subscription.isPremium,
     startTrial: vi.fn(),
     refreshSubscription: vi.fn(),
   }),
@@ -43,8 +45,8 @@ vi.mock('sonner', () => ({ toast }));
 
 import { PaywallModal } from './PaywallModal';
 
-const renderPaywall = () =>
-  render(<PaywallModal isOpen onClose={vi.fn()} onSelectPlan={vi.fn()} />);
+const renderPaywall = (onClose: () => void = vi.fn()) =>
+  render(<PaywallModal isOpen onClose={onClose} onSelectPlan={vi.fn()} />);
 
 const typeEmail = async (value: string) => {
   fireEvent.change(screen.getByLabelText('Email for your receipt'), { target: { value } });
@@ -61,6 +63,11 @@ describe('PaywallModal web checkout', () => {
     vi.clearAllMocks();
     localStorage.clear();
     subscription.pendingActivation = false;
+    subscription.isPremium = false;
+    // Pin the buyer's locale rather than inheriting whatever the runner has, so
+    // the currency under test is the one this file reasons about.
+    Object.defineProperty(window.navigator, 'language', { value: 'en-US', configurable: true });
+    catalogue.fetchBillingPlans.mockResolvedValue(plans);
   });
 
   it('asks the context to start the subscription once the email is valid', async () => {
@@ -84,11 +91,21 @@ describe('PaywallModal web checkout', () => {
     checkout.startSubscriptionCheckout.mockImplementation(async () => {
       subscription.pendingActivation = true;
     });
-    renderPaywall();
+    const onClose = vi.fn();
+    const { rerender } = render(<PaywallModal isOpen onClose={onClose} onSelectPlan={vi.fn()} />);
     await typeEmail('payer@example.com');
     await clickContinue();
     expect(screen.getByText(/activating/i)).toBeTruthy();
-    expect(screen.queryByText(/everything is unlocked/i)).toBeNull();
+
+    // The poll ends without a grant, so the context clears its flag. The claim
+    // "access was granted" would travel on a toast, not through this DOM (sonner
+    // is mocked), so that is where the pin has to sit.
+    subscription.pendingActivation = false;
+    rerender(<PaywallModal isOpen onClose={onClose} onSelectPlan={vi.fn()} />);
+    await waitFor(() =>
+      expect(toast.info).toHaveBeenCalledWith(expect.stringMatching(/activating/i)),
+    );
+    expect(toast.success).not.toHaveBeenCalled();
   });
 
   it('stays quiet when the buyer dismisses the modal', async () => {
@@ -97,5 +114,75 @@ describe('PaywallModal web checkout', () => {
     await typeEmail('payer@example.com');
     await clickContinue();
     expect(screen.queryByRole('alert')).toBeNull();
+    expect(toast.info).not.toHaveBeenCalled();
+    expect(toast.error).not.toHaveBeenCalled();
+  });
+
+  it('keeps the fallback amount when the server catalogue omits the buyer currency', async () => {
+    // A partially seeded billing_plans table: the read succeeds but answers with
+    // only USD, while this buyer is charged in INR. Replacing the catalogue
+    // would blank the price to an em dash beside a live Continue button, which
+    // is a charge the buyer authorized without ever being shown it (spec §9).
+    Object.defineProperty(window.navigator, 'language', { value: 'en-IN', configurable: true });
+    catalogue.fetchBillingPlans.mockResolvedValue(plans.filter((p) => p.currency === 'USD'));
+    renderPaywall();
+    await waitFor(() => expect(screen.getByText(/₹2,999 per year/)).toBeTruthy());
+    expect(screen.queryByText(/Yearly plan · — per year/)).toBeNull();
+  });
+
+  it('confirms and closes when the checkout lands with access granted', async () => {
+    checkout.startSubscriptionCheckout.mockImplementation(async () => {
+      // The context polls, is granted, then clears its flag: the outcome is
+      // granted, not pending.
+      subscription.pendingActivation = true;
+      subscription.isPremium = true;
+      subscription.pendingActivation = false;
+    });
+    const onClose = vi.fn();
+    renderPaywall(onClose);
+    await typeEmail('payer@example.com');
+    await clickContinue();
+    expect(onClose).toHaveBeenCalled();
+    expect(toast.success).toHaveBeenCalledWith('Your subscription is active.');
+    expect(toast.info).not.toHaveBeenCalled();
+  });
+
+  it('does not dismiss itself for a buyer who has not checked out', () => {
+    // A paid user opening the paywall from Settings is premium from the first
+    // render; only a checkout this modal started may close it.
+    subscription.isPremium = true;
+    const onClose = vi.fn();
+    renderPaywall(onClose);
+    expect(screen.getByText('Continue')).toBeTruthy();
+    expect(onClose).not.toHaveBeenCalled();
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it('does not report activating for a checkout dismissed before it resolved', async () => {
+    let land: () => void = () => {};
+    checkout.startSubscriptionCheckout.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          land = resolve;
+        }),
+    );
+    const onClose = vi.fn();
+    const view = (open: boolean) => (
+      <PaywallModal isOpen={open} onClose={onClose} onSelectPlan={vi.fn()} />
+    );
+    const { rerender } = render(view(true));
+    await typeEmail('payer@example.com');
+    fireEvent.click(screen.getByText('Continue'));
+
+    // Dismiss while the checkout is still in flight, then let it land with no
+    // grant; the modal stays mounted with isOpen false.
+    rerender(view(false));
+    land();
+    await waitFor(() => expect(checkout.startSubscriptionCheckout).toHaveBeenCalled());
+
+    // Reopening must not announce a checkout that is no longer happening.
+    rerender(view(true));
+    await waitFor(() => expect(screen.getByText('Continue')).toBeTruthy());
+    expect(toast.info).not.toHaveBeenCalled();
   });
 });
