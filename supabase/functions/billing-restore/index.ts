@@ -4,7 +4,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   });
 
 Deno.serve(async (req) => {
@@ -30,10 +30,17 @@ Deno.serve(async (req) => {
       return json({ error: 'Confirm your email address first.' }, 403);
     }
 
+    // Normalised and matched exactly. `ilike` would read this value as a
+    // pattern: `_` and `%` are legal in an email local part, so a caller could
+    // register an address that wildcard-matches a stranger's paid address and
+    // restore their purchase. `web_subscriptions.email` is written lowercase
+    // and indexed on `lower(email)`, so exact matching loses nothing.
+    const email = user.email.trim().toLowerCase();
+
     const { data: purchase, error: lookupError } = await supabase
       .from('web_subscriptions')
       .select('plan, current_period_end')
-      .ilike('email', user.email)
+      .eq('email', email)
       .eq('status', 'paid')
       .gt('current_period_end', new Date().toISOString())
       .order('current_period_end', { ascending: false })

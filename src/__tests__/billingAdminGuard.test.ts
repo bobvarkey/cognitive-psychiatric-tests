@@ -40,6 +40,10 @@ describe('entitlement admin guard migration', () => {
     // Returning NEW instead of OLD would make the trigger a no-op and let every
     // webhook clobber the owner's developer grant.
     expect(sql).toMatch(/existing_source\s*=\s*'admin'[\s\S]{0,200}?RETURN\s+OLD/i);
+    // The lookup is scoped to the row being written. De-scoping it would freeze
+    // every entitlements UPDATE as soon as one admin row exists, so no paying
+    // user could ever be granted access.
+    expect(sql).toMatch(/WHERE\s+e\.user_id\s*=\s*NEW\.user_id/i);
     // Raising would surface as a 500 from the webhook, which must not 5xx on a
     // routine event — the row simply does not move.
     expect(sql).not.toMatch(/RAISE\s+EXCEPTION/i);
@@ -61,6 +65,8 @@ describe('billing-cancel edge function', () => {
     // The subscription is the caller's own: without this filter any signed-in
     // user could cancel a stranger's subscription.
     expect(src).toMatch(/\.eq\(\s*['"]user_id['"]\s*,\s*user\.id\s*\)/);
+    // Authenticated responses carry payment data and must never be cached.
+    expect(src).toMatch(/['"]Cache-Control['"]\s*:\s*['"]no-store['"]/);
   });
 });
 
@@ -70,11 +76,22 @@ describe('billing-restore edge function', () => {
     // Any body field is ignored, so this cannot be used to claim someone else's
     // purchase or to probe whether an address has ever paid.
     expect(src).not.toMatch(/req\.json\(/);
-    expect(src).toMatch(/ilike\(\s*['"]email['"]\s*,\s*user\.email\s*\)/);
+    // Exact matching on a normalised address. `ilike` would interpret the
+    // caller's own email as a pattern, and `_` and `%` are legal in a local
+    // part — so `a_c@example.com` would match a stored `abc@example.com` and
+    // restore that stranger's purchase.
+    expect(src).toMatch(/user\.email\.trim\(\)\.toLowerCase\(\)/);
+    expect(src).toMatch(/\.eq\(\s*['"]email['"]\s*,\s*email\s*\)/);
+    expect(src).not.toMatch(/ilike\(/i);
     // The grant comes only from a paid, unexpired row, and only for the
     // caller's own id.
-    expect(src).toMatch(/\.eq\(\s*['"]status['"]\s*,\s*'paid'\s*\)/);
+    expect(src).toMatch(/\.eq\(\s*['"]status['"]\s*,\s*'paid'\)/);
+    // Without this the row's age is never checked and an expired purchase
+    // still restores access.
+    expect(src).toMatch(/\.gt\(\s*['"]current_period_end['"]/);
     expect(src).toMatch(/user\.email_confirmed_at/);
     expect(src).toMatch(/onConflict:\s*['"]user_id['"]/);
+    // Authenticated responses carry payment data and must never be cached.
+    expect(src).toMatch(/['"]Cache-Control['"]\s*:\s*['"]no-store['"]/);
   });
 });
