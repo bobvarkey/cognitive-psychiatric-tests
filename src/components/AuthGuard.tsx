@@ -24,6 +24,11 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   const hasAccess = isPremium || demoTrialActive;
   const waiting = checkingServerAccess && !hasAccess;
 
+  // Without access, deep links are sent back to the home page, where the paywall lives.
+  if (!hasAccess && !isPublic && !waiting && typeof window !== 'undefined' && window.location.pathname !== '/') {
+    window.history.replaceState(null, '', '/');
+  }
+
   if (!hasAccess && !isPublic) {
     if (waiting) {
       // Neutral, and never the paywall: for the duration of the RPC we do not

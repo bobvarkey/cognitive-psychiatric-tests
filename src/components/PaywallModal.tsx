@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { X, Lock, Bell, Star, Loader2, Mail, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/paywall-hero.jpg';
-import { waitForWrapper } from '@/lib/appbuild/wrapper';
+import { waitForWrapper, isWrapperPresent, getPurchasesPlugin } from '@/lib/appbuild/wrapper';
 import {
   configure,
   getOfferings,
@@ -87,13 +87,16 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   });
   const { refreshSubscription, startTrial } = useSubscription();
 
-  // The AppBuild script can define the wrapper in browsers too; only treat this
-  // as the native app once the wrapper's ready promise actually resolves.
-  const [native, setNative] = useState(false);
+  // Fail closed: if the native wrapper is present at all, start in native mode so
+  // Razorpay/web checkout can never flash inside the App Store / Play Store app.
+  // Only fall back to web once the wrapper proves to be absent (plain browser).
+  const [native, setNative] = useState<boolean>(() => isWrapperPresent());
   useEffect(() => {
     let active = true;
     waitForWrapper().then((r) => {
-      if (active) setNative(!!r && isNativePurchasesAvailable());
+      if (!active) return;
+      const isNative = !!r || isNativePurchasesAvailable() || !!getPurchasesPlugin();
+      setNative(isNative);
     });
     return () => {
       active = false;
