@@ -28,13 +28,15 @@ describe('billing_plans migration', () => {
 
   it('creates a SELECT policy and no write policy', () => {
     const sql = readMigration();
-    expect(sql).toMatch(/ON\s+public\.billing_plans\s+FOR\s+SELECT/i);
-    // `ALL` matters as much as INSERT/UPDATE/DELETE — a FOR ALL policy permits
-    // inserts. And the anchor must be \s+, not a literal space: this very
-    // migration already breaks `ON public.billing_plans` / `FOR EACH ROW`
-    // across two lines, so a space-anchored regex silently skips that shape.
+    // Both the `\s+` anchor and the optional `public.` qualifier earn their
+    // place: this very migration already breaks `ON public.billing_plans` /
+    // `FOR EACH ROW` across two lines, and an unqualified `ON billing_plans`
+    // resolves through search_path to the same table. A space- or
+    // qualifier-anchored regex silently skips both shapes. `ALL` is in the
+    // alternation because a FOR ALL policy permits inserts.
+    expect(sql).toMatch(/ON\s+(public\.)?billing_plans\s+FOR\s+SELECT/i);
     expect(sql).not.toMatch(
-      /ON\s+public\.billing_plans\s+FOR\s+(INSERT|UPDATE|DELETE|ALL)/i,
+      /ON\s+(public\.)?billing_plans\s+FOR\s+(INSERT|UPDATE|DELETE|ALL)/i,
     );
   });
 
@@ -43,9 +45,17 @@ describe('billing_plans migration', () => {
     expect(sql).toMatch(
       /GRANT\s+SELECT\s+ON\s+public\.billing_plans\s+TO\s+anon,\s*authenticated/i,
     );
-    // TRUNCATE is in the alternation because RLS does not apply to it, so a
-    // TRUNCATE grant would bypass "no client writes" without any write policy.
-    expect(sql).not.toMatch(/GRANT\s+(INSERT|UPDATE|DELETE|ALL|TRUNCATE)/i);
+    // Scan from GRANT to the statement's terminating semicolon rather than the
+    // token immediately after GRANT: a comma list — `GRANT SELECT, INSERT ON
+    // ... TO anon` — grants exactly the same write as `GRANT INSERT ON ... TO
+    // anon` and must be caught, and the adjacent-token form misses it.
+    // TRUNCATE is in the alternation because RLS does not apply to it, so that
+    // grant bypasses "no client writes" without any write policy at all.
+    // `GRANT\s`, not `GRANT\b`: a real statement is always followed by
+    // whitespace and a privilege, whereas a `\b` also matches the prose word
+    // "grant." in this migration's own comment — from which `[^;]*` then runs
+    // on to the seed statement's `INSERT` and false-fails.
+    expect(sql).not.toMatch(/GRANT\s[^;]*\b(INSERT|UPDATE|DELETE|ALL|TRUNCATE)\b/i);
   });
 
   it('seeds the four expected prices in minor units', () => {
