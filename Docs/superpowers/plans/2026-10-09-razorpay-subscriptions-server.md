@@ -1244,6 +1244,14 @@ SELECT plan, source, expires_at FROM public.entitlements WHERE user_id = '$USER_
 
 Expected: `developer | admin | NULL`. If it returns `monthly | razorpay | <a date>`, the guard is not working and the owner's access is at the mercy of every webhook.
 
+Then clean up, because the next step reuses the same `$USER_ID` and needs a clean slate:
+
+```sql
+DELETE FROM public.entitlements WHERE user_id = '$USER_ID';
+```
+
+Without this, the next step's upsert lands on the surviving `source='admin'` row, the trigger discards it, and that step's own `UPDATE` is discarded with it — so it would report `developer | admin` instead of `yearly | razorpay` and look like a broken trigger. It is not; it is a dirty fixture.
+
 - [ ] **Step 3: Verify a non-admin row still updates**
 
 ```sql
