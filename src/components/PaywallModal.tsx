@@ -219,13 +219,29 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     };
   }, [isOpen, native]);
 
-  const pkgFor = useMemo(
-    () => (plan: 'monthly' | 'yearly') =>
-      packages.find((p) => `${p.identifier} ${p.period}`.toLowerCase().includes(plan === 'yearly' ? 'annual' : 'month')) ??
-      packages.find((p) => `${p.identifier} ${p.period}`.toLowerCase().includes(plan.slice(0, 4))) ??
-      null,
-    [packages]
-  );
+  const pkgFor = useMemo(() => {
+    const isYearly = (p: RcPackage) => /annual|year|p1y|12m/i.test(`${p.identifier} ${p.period}`);
+    const isMonthly = (p: RcPackage) => /month|p1m/i.test(`${p.identifier} ${p.period}`);
+    return (plan: 'monthly' | 'yearly') => {
+      const match = packages.find(plan === 'yearly' ? isYearly : isMonthly);
+      if (match) return match;
+      // A single unlabeled package is treated as the yearly plan.
+      if (plan === 'yearly' && packages.length > 0 && !packages.some(isYearly)) {
+        return packages.find((p) => !isMonthly(p)) ?? null;
+      }
+      return null;
+    };
+  }, [packages]);
+
+  const reloadStore = async (): Promise<RcPackage[]> => {
+    setStoreError(null);
+    const ok = await configure();
+    if (!ok) throw new Error('Could not connect to the App Store / Google Play. Please try again.');
+    const pkgs = await getOfferings();
+    setPackages(pkgs);
+    if (pkgs.length === 0) throw new Error('No plans are available right now. Please try again later.');
+    return pkgs;
+  };
 
   if (!isOpen) return null;
 
@@ -258,13 +274,15 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
   const handleContinue = async () => {
     if (native) {
-      const pkg = activePlan === 'yearly' ? yearlyPkg : monthlyPkg;
-      if (!pkg) {
-        toast.error('No store package is available. Try restoring purchases or check AppBuild configuration.');
-        return;
-      }
       setBusy(true);
       try {
+        let pkg = activePlan === 'yearly' ? yearlyPkg : monthlyPkg;
+        if (!pkg) {
+          // Store may still be loading — fetch again before giving up.
+          const pkgs = await reloadStore();
+          pkg = pkgs.find((p) => (activePlan === 'yearly' ? /annual|year|p1y/i : /month|p1m/i).test(`${p.identifier} ${p.period}`)) ?? pkgs[0];
+        }
+        if (!pkg) throw new Error('No plans are available right now. Please try again later.');
         await purchasePackage(pkg);
         const ent = await getEntitlement('premium');
         await refreshSubscription();
@@ -542,7 +560,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
           <button
             onClick={handleContinue}
-            disabled={working || (native && !(activePlan === 'yearly' ? yearlyPkg : monthlyPkg))}
+            disabled={working}
             className="w-full py-4 rounded-full bg-primary text-primary-foreground font-bold text-lg transition hover:opacity-90 active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {working && <Loader2 className="w-5 h-5 animate-spin" />}
