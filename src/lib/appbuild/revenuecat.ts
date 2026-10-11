@@ -1,4 +1,4 @@
-import { getPurchasesPlugin, isWrapperPresent, waitForWrapper } from './wrapper';
+import { getPurchasesPlugin, isWrapperPresent, waitForPurchasesPlugin, waitForWrapper } from './wrapper';
 import { REVENUECAT_ANDROID_KEY, REVENUECAT_IOS_KEY } from './revenuecatKeys';
 
 export interface RcPackage {
@@ -9,33 +9,53 @@ export interface RcPackage {
   raw: any;
 }
 
+export const RC_OFFERING_ID = 'sale 2';
+
 let configured = false;
+
+function detectPlatform(wrapperPlatform: unknown): 'android' | 'ios' {
+  const p = String(wrapperPlatform ?? '').toLowerCase();
+  if (p.includes('android')) return 'android';
+  if (p.includes('ios')) return 'ios';
+  const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+  return /android/i.test(ua) ? 'android' : 'ios';
+}
 
 /** Configure RevenueCat with the platform-specific public key. Returns true when configured. */
 export async function configure(appUserId?: string | null): Promise<boolean> {
-  const purchases = getPurchasesPlugin();
+  const purchases = await waitForPurchasesPlugin();
   if (!purchases) return false;
+  if (configured) return true;
 
   const wrapper = await waitForWrapper();
-  const platform = String(wrapper?.appInfo?.platform ?? '').toLowerCase();
+  const platform = detectPlatform(wrapper?.appInfo?.platform);
   const apiKey = platform === 'android' ? REVENUECAT_ANDROID_KEY : REVENUECAT_IOS_KEY;
   if (!apiKey) return false;
 
-  if (configured) return true;
-  await purchases.configure({ apiKey, appUserID: appUserId ?? undefined });
+  try {
+    await purchases.configure({ apiKey, appUserID: appUserId ?? undefined });
+  } catch (e: any) {
+    // Already configured natively by the wrapper is fine.
+    if (!/already|configured/i.test(String(e?.message ?? ''))) throw e;
+  }
   configured = true;
   return true;
 }
 
-/** Packages of the current offering. Empty array outside the native app. */
+/** Packages of the "sale 2" offering (falls back to current / first offering). */
 export async function getOfferings(): Promise<RcPackage[]> {
-  const purchases = getPurchasesPlugin();
+  const purchases = await waitForPurchasesPlugin();
   if (!purchases) return [];
 
   const result = await purchases.getOfferings();
   const offerings = result?.offerings ?? result;
-  const current = offerings?.current;
-  const packages = current?.availablePackages ?? current?.packages ?? [];
+  const all = offerings?.all ?? {};
+  const offering =
+    all[RC_OFFERING_ID] ??
+    Object.values(all).find((o: any) => o?.identifier === RC_OFFERING_ID) ??
+    offerings?.current ??
+    Object.values(all)[0];
+  const packages = (offering as any)?.availablePackages ?? (offering as any)?.packages ?? [];
 
   return packages.map((p: any) => {
     const product = p.product ?? p.storeProduct ?? {};
@@ -43,11 +63,9 @@ export async function getOfferings(): Promise<RcPackage[]> {
       identifier: p.identifier ?? product.identifier ?? '',
       title: product.title ?? product.localizedTitle ?? p.identifier ?? '',
       priceString: product.priceString ?? product.localizedPriceString ?? '',
-      period:
-        p.packageType ??
-        product.subscriptionPeriod ??
-        product.period ??
-        '',
+      period: [p.packageType, product.subscriptionPeriod, product.period, product.identifier]
+        .filter(Boolean)
+        .join(' '),
       raw: p,
     };
   });
@@ -55,9 +73,19 @@ export async function getOfferings(): Promise<RcPackage[]> {
 
 /** Purchase a package returned by getOfferings(). */
 export async function purchasePackage(pkg: RcPackage): Promise<any> {
-  const purchases = getPurchasesPlugin();
-  if (!purchases) throw new Error('Purchases plugin unavailable');
-  return purchases.purchasePackage({ aPackage: pkg.raw });
+  const purchases = await waitForPurchasesPlugin();
+  if (!purchases) throw new Error('The App Store / Google Play connection is unavailable. Please restart the app.');
+  try {
+    return await purchases.purchasePackage({ aPackage: pkg.raw });
+  } catch (e: any) {
+    if (e?.userCancelled) throw e;
+    const msg = String(e?.message ?? '');
+    // Some bridges take the package directly instead of { aPackage }.
+    if (/apackage|invalid|argument|undefined|missing/i.test(msg)) {
+      return purchases.purchasePackage(pkg.raw);
+    }
+    throw e;
+  }
 }
 
 /** Restore previous purchases. */
