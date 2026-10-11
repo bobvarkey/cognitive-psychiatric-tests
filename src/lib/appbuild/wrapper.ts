@@ -67,7 +67,29 @@ export function getPlugin(name: string): any | null {
 
 /** Returns the wrapper's 'Purchases' (RevenueCat) plugin, or null outside the native app. */
 export function getPurchasesPlugin(): any | null {
-  return getPlugin('Purchases');
+  if (typeof window === 'undefined' || !window.AppbuildWrapper) return null;
+  const w = window as any;
+  return (
+    getPlugin('Purchases') ??
+    getPlugin('RevenueCat') ??
+    getPlugin('revenueCat') ??
+    w.AppbuildWrapper?.purchases ??
+    w.AppbuildWrapper?.revenueCat ??
+    w.Capacitor?.Plugins?.Purchases ??
+    w.Purchases ??
+    null
+  );
+}
+
+/** Polls up to `ms` for the Purchases plugin to register. */
+export async function waitForPurchasesPlugin(ms = 4000): Promise<any | null> {
+  const deadline = Date.now() + ms;
+  let p = getPurchasesPlugin();
+  while (!p && isWrapperPresent() && Date.now() < deadline) {
+    await new Promise((r) => setTimeout(r, 100));
+    p = getPurchasesPlugin();
+  }
+  return p;
 }
 
 /**
