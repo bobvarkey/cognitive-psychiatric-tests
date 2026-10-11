@@ -74,11 +74,31 @@ const formatPlanAmount = (plan: BillingPlan | undefined): string => {
   }
 };
 
+/**
+ * What a failed store call should say on screen.
+ *
+ * A bridge failure reads `Bridge request 'plugin:Purchases.configure' timed out
+ * client-side after 25000ms`, which names our plugin and our timeout rather than
+ * anything the buyer can act on. Anything the store itself said — a declined
+ * card, a rejected key — is passed through unchanged.
+ */
+const BRIDGE_FAILURE_RE = /bridge request|timed out client-side/i;
+const storeFailureMessage = (
+  e: unknown,
+  fallback = 'The store could not be reached. Please try again later.'
+): string => {
+  const message = e instanceof Error ? e.message : '';
+  return message && !BRIDGE_FAILURE_RE.test(message) ? message : fallback;
+};
+
 export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false }: PaywallModalProps) => {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [packages, setPackages] = useState<RcPackage[]>([]);
   const [busy, setBusy] = useState(false);
   const [storeError, setStoreError] = useState<string | null>(null);
+  // True while the native offerings read is still in flight, so the price line
+  // can report the wait instead of an amount.
+  const [loadingStore, setLoadingStore] = useState(false);
   const [restoring, setRestoring] = useState(false);
   // Website restore: email -> one-time code -> verified lookup.
   const [restoreStep, setRestoreStep] = useState<RestoreStep>('closed');
@@ -198,6 +218,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     if (!isOpen || !native) return;
     let active = true;
     (async () => {
+      setLoadingStore(true);
       try {
         setStoreError(null);
         const ok = await configure();
@@ -210,8 +231,10 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           setPackages(pkgs);
           if (pkgs.length === 0) setStoreError('No plans are available right now. Please try again later.');
         }
-      } catch (e: any) {
-        if (active) setStoreError(e?.message ?? 'The store could not be reached. Please try again later.');
+      } catch (e: unknown) {
+        if (active) setStoreError(storeFailureMessage(e));
+      } finally {
+        if (active) setLoadingStore(false);
       }
     })();
     return () => {
@@ -247,8 +270,13 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
   const monthlyPkg = pkgFor('monthly');
   const yearlyPkg = pkgFor('yearly');
-  const monthlyPrice = monthlyPkg?.priceString || webPrices.monthly.display;
-  const yearlyPrice = yearlyPkg?.priceString || webPrices.yearly.display;
+  // Native prices are the store's own localized strings and nothing else. The web
+  // catalogue is Razorpay's, keyed by browser currency: falling back to it inside
+  // the App Store build quotes an amount Apple will never charge — the ₹2,999 web
+  // yearly price, on a phone whose store packages have not loaded at all. Null is
+  // "not known yet", which the price line below renders as a wait, never an amount.
+  const monthlyPrice = native ? monthlyPkg?.priceString || null : webPrices.monthly.display;
+  const yearlyPrice = native ? yearlyPkg?.priceString || null : webPrices.yearly.display;
 
   // In the native app only plans the store actually offers are shown.
   const planOptions: Array<'monthly' | 'yearly'> = native
@@ -294,7 +322,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
         toast.success('Purchase complete. Thank you!');
         onSelectPlan(activePlan, 'pro');
       } catch (e: any) {
-        if (!e?.userCancelled) toast.error(e?.message ?? 'Purchase failed.');
+        if (!e?.userCancelled) toast.error(storeFailureMessage(e, 'Purchase failed.'));
       } finally {
         setBusy(false);
       }
@@ -337,7 +365,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           toast.info('No active purchase found on this account.');
         }
       } catch (e: any) {
-        toast.error(e?.message ?? 'Nothing to restore.');
+        toast.error(storeFailureMessage(e, 'Nothing to restore.'));
       } finally {
         setRestoring(false);
       }
@@ -512,11 +540,20 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
                 </button>
               ))}
             </div>
-            <p className="text-center text-sm text-muted-foreground tabular-nums">
-              {activePlan === 'monthly'
-                ? `Monthly plan · ${priceText} per month`
-                : `Yearly plan · ${priceText} per year`}
-            </p>
+            {(priceText !== null || loadingStore) && (
+              <p className="text-center text-sm text-muted-foreground tabular-nums">
+                {priceText === null ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                    Connecting to store…
+                  </span>
+                ) : activePlan === 'monthly' ? (
+                  `Monthly plan · ${priceText} per month`
+                ) : (
+                  `Yearly plan · ${priceText} per year`
+                )}
+              </p>
+            )}
             {!native && (
               <p className="text-center text-xs text-muted-foreground">
                 Renews automatically unless you cancel. Your card is charged today.
@@ -545,7 +582,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           {storeError && (
             <p role="alert" className="text-sm text-destructive text-center">{storeError}</p>
           )}
-          {native && !storeError && !(activePlan === 'yearly' ? yearlyPkg : monthlyPkg) && (
+          {native && !storeError && !loadingStore && !(activePlan === 'yearly' ? yearlyPkg : monthlyPkg) && (
             <p role="alert" className="text-sm text-muted-foreground text-center">
               This plan is unavailable right now. Try Restore Purchases or check back shortly.
             </p>
