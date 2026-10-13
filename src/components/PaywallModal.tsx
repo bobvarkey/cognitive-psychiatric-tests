@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { X, Lock, Bell, Star, Loader2, Mail, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/paywall-hero.jpg';
-import { waitForWrapper, isWrapperPresent, getPurchasesPlugin } from '@/lib/appbuild/wrapper';
+import { waitForWrapper, isWrapperPresent, isNativeShell, describeHost } from '@/lib/appbuild/wrapper';
 import {
   configure,
   getOfferings,
@@ -128,13 +128,18 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   // Fail closed: if the native wrapper is present at all, start in native mode so
   // Razorpay/web checkout can never flash inside the App Store / Play Store app.
   // Only fall back to web once the wrapper proves to be absent (plain browser).
-  const [native, setNative] = useState<boolean>(() => isWrapperPresent());
+  // The AppBuild SDK script defines the wrapper in every browser, so presence
+  // only means "wait"; the host's own appInfo answer decides.
+  const [native, setNative] = useState<boolean>(() => isNativeShell() || isWrapperPresent());
   useEffect(() => {
     let active = true;
     waitForWrapper().then((r) => {
-      if (!active) return;
-      const isNative = !!r || isNativePurchasesAvailable() || !!getPurchasesPlugin();
-      setNative(isNative);
+      if (active) setNative(!!r && isNativeShell());
+    });
+    // A slow native host that answers after the timeout still switches us back.
+    const ready = typeof window !== 'undefined' ? window.AppbuildWrapper?.ready : undefined;
+    ready?.then?.(() => {
+      if (active && isNativeShell()) setNative(true);
     });
     return () => {
       active = false;
@@ -303,6 +308,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   const handleContinue = async () => {
     if (native) {
       setBusy(true);
+      setStoreError(null);
       try {
         let pkg = activePlan === 'yearly' ? yearlyPkg : monthlyPkg;
         if (!pkg) {
@@ -311,8 +317,11 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
           pkg = pkgs.find((p) => (activePlan === 'yearly' ? /annual|year|p1y/i : /month|p1m/i).test(`${p.identifier} ${p.period}`)) ?? pkgs[0];
         }
         if (!pkg) throw new Error('No plans are available right now. Please try again later.');
-        await purchasePackage(pkg);
-        const ent = await getEntitlement('premium');
+        const result = await purchasePackage(pkg);
+        // The purchase answer carries customerInfo; re-read only if it did not.
+        const fromPurchase =
+          (result?.customerInfo ?? result)?.entitlements?.active?.premium ?? null;
+        const ent = fromPurchase ?? (await getEntitlement('premium').catch(() => null));
         await refreshSubscription();
         if (!ent) {
           setStoreError('Your purchase went through but access is still pending. Tap Restore Purchases in a moment.');
@@ -322,7 +331,11 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
         toast.success('Purchase complete. Thank you!');
         onSelectPlan(activePlan, 'pro');
       } catch (e: any) {
-        if (!e?.userCancelled) toast.error(storeFailureMessage(e, 'Purchase failed.'));
+        if (!e?.userCancelled) {
+          const msg = storeFailureMessage(e, 'The purchase could not be started. Please try again.');
+          setStoreError(msg);
+          toast.error(msg);
+        }
       } finally {
         setBusy(false);
       }
@@ -581,6 +594,9 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
 
           {storeError && (
             <p role="alert" className="text-sm text-destructive text-center">{storeError}</p>
+          )}
+          {native && storeError && (
+            <p className="text-[11px] text-muted-foreground text-center tabular-nums">{describeHost()}</p>
           )}
           {native && !storeError && !loadingStore && !(activePlan === 'yearly' ? yearlyPkg : monthlyPkg) && (
             <p role="alert" className="text-sm text-muted-foreground text-center">

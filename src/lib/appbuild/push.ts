@@ -1,4 +1,8 @@
-import { getPlugin, waitForWrapper } from "./wrapper";
+import { getPushBridge, waitForWrapper, wrapperPlatform } from "./wrapper";
+
+// AppBuild's push API is first-class on `AppbuildWrapper.push`. Registration
+// with APNs/FCM is owned by the native shell — there is no `register()` call;
+// the page asks for permission and reads the registration id.
 
 export interface PushRegistration {
   token: string;
@@ -15,41 +19,34 @@ export interface PushMessage {
 
 let cachedToken: string | null = null;
 
-/** The wrapper's push bridge: either the 'Push' plugin or a legacy `wrapper.push` object. */
-function getPushApi(): any | null {
-  if (typeof window === "undefined") return null;
-  const plugin = getPlugin("Push");
-  if (plugin?.register) return plugin;
-  const legacy = (window as any).AppbuildWrapper?.push;
-  return legacy?.register ? legacy : null;
-}
-
 /** True when running inside the native wrapper with push support. */
 export function isNativePushAvailable(): boolean {
-  return getPushApi() !== null;
+  return getPushBridge() !== null;
 }
 
 /**
- * Request push notification permission and register with the AppBuild wrapper.
- * Returns the device token inside the native app, or null in a browser.
- * Safe to call repeatedly: returns the cached token after the first successful registration.
+ * Ask for notification permission and read this device's push registration id.
+ * Returns null in a browser. Safe to call repeatedly.
  */
 export async function registerPushNotifications(): Promise<PushRegistration | null> {
-  const api = getPushApi();
+  await waitForWrapper();
+  const api = getPushBridge();
   if (!api) return null;
-  if (cachedToken) return { token: cachedToken };
+  if (cachedToken) return { token: cachedToken, platform: wrapperPlatform() };
 
   try {
-    const wrapper = await waitForWrapper();
-    const result = await api.register();
-    const token = result?.token ?? result ?? null;
+    const perm = await api.checkPermissions?.().catch(() => null);
+    const state = perm?.receive ?? perm?.permission ?? perm;
+    if (state !== "granted") await api.requestPermissions?.().catch(() => null);
+    const result = await api.getId();
+    const token = typeof result === "string" ? result : result?.id ?? null;
     if (typeof token === "string" && token) {
       cachedToken = token;
-      return { token, platform: wrapper?.appInfo?.platform as string | undefined };
+      return { token, platform: wrapperPlatform() };
     }
     return null;
   } catch (e) {
-    console.error("Push registration failed:", e);
+    console.warn("Push registration unavailable:", e);
     return null;
   }
 }
@@ -68,25 +65,18 @@ function normalise(payload: any): PushMessage {
 }
 
 /**
- * Subscribe to incoming remote notifications (foreground receipt and taps).
- * Returns an unsubscribe function; a no-op outside the native app.
+ * Subscribe to incoming notifications. Returns an unsubscribe function; a no-op
+ * outside the native app.
  */
 export function onPushMessage(handler: (message: PushMessage) => void): () => void {
-  const api = getPushApi();
-  if (!api?.addListener) return () => {};
-
-  const events = ["pushNotificationReceived", "pushNotificationActionPerformed"];
-  const subs = events
-    .map((event) => {
-      try {
-        return api.addListener(event, (payload: any) => handler(normalise(payload)));
-      } catch {
-        return null;
-      }
-    })
-    .filter(Boolean);
-
-  return () => subs.forEach((s: any) => s?.remove?.());
+  const api = getPushBridge();
+  if (!api?.onReceived) return () => {};
+  try {
+    const off = api.onReceived((payload: any) => handler(normalise(payload)));
+    return typeof off === "function" ? off : () => {};
+  } catch {
+    return () => {};
+  }
 }
 
 /** Clear the cached push token (useful after logout or for testing). */
