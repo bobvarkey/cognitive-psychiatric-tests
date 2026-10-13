@@ -6,6 +6,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 vi.mock('@/lib/appbuild/wrapper', () => ({
   waitForWrapper: () => Promise.resolve({ appInfo: { platform: 'ios' }, capabilities: {} }),
   isWrapperPresent: () => true,
+  isNativeShell: () => true,
+  describeHost: () => 'ios',
   getPurchasesPlugin: () => ({}),
 }));
 

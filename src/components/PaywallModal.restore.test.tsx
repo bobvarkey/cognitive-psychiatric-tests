@@ -27,6 +27,8 @@ vi.mock('@/lib/billing', () => ({
 vi.mock('@/lib/appbuild/wrapper', () => ({
   waitForWrapper: () => Promise.resolve(null),
   isWrapperPresent: () => false,
+  isNativeShell: () => false,
+  describeHost: () => 'web',
   getPurchasesPlugin: () => null,
 }));
 vi.mock('@/contexts/SubscriptionContext', () => ({

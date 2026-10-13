@@ -9,7 +9,6 @@ import {
   purchasePackage,
   restorePurchases,
   getEntitlement,
-  isNativePurchasesAvailable,
   type RcPackage,
 } from '@/lib/appbuild/revenuecat';
 import {
