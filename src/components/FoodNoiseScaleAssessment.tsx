@@ -10,7 +10,6 @@ import { cn } from '@/lib/utils';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
 import {
   FOOD_NOISE_SCALE,
-  FNQ_ITEM_IDS,
   findInterpretationBand,
   calculateTotalScore,
   isComplete,

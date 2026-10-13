@@ -14,7 +14,6 @@ import { TwstrsAssessment } from '@/components/TwstrsAssessment';
 import { MdsUpdrsAssessment } from '@/components/MdsUpdrsAssessment';
 import { CdrAssessment } from '@/components/CdrAssessment';
 import { FastAssessment } from '@/components/FastAssessment';
-import { DementiaConsolidatedResults } from '@/components/DementiaConsolidatedResults';
 import { HareAssessment } from '@/components/HareAssessment';
 import { AdhdAssessment } from '@/components/AdhdAssessment';
 import { TuliaAssessment } from '@/components/TuliaAssessment';
@@ -41,8 +40,6 @@ import { AdamAssessment } from '@/components/AdamAssessment';
 import { HunterAssessment } from '@/components/HunterAssessment';
 import { AdverseEffectsAssessment } from '@/components/AdverseEffectsAssessment';
 import LobarFunctionsAssessment from '@/components/LobarFunctionsAssessment';
-import OccipitalAssessment from '@/components/OccipitalAssessment';
-import FoodNoiseScaleAssessment from '@/components/FoodNoiseScaleAssessment';
 import { ChsAssessment } from '@/components/ChsAssessment';
 import { SomaticDelusionsAssessment } from '@/components/SomaticDelusionsAssessment';
 import { CognitiveSyndromesAssessment } from '@/components/CognitiveSyndromesAssessment';
@@ -101,8 +98,8 @@ import { AdhdScreenerLanding } from '@/components/AdhdScreenerLanding';
 import { cognitiveSyndromes, frontalLobeTests } from '@/data/cognitiveSyndromesData';
 import {
   Brain, Home, AlertTriangle, Focus, Hand, Heart, Frown, Eye, Zap,
-  Shield, Gauge, Activity, Stethoscope, Pause, Scale, Footprints, ClipboardCheck,
-  ThermometerSun, ClipboardList, Search, X, BookOpen, ArrowRight, FlaskConical, Pill,
+  Shield, Gauge, Activity, Stethoscope, Pause, Footprints, ClipboardCheck,
+  ThermometerSun, ClipboardList, Search, BookOpen, ArrowRight, FlaskConical, Pill,
   Sparkles, MessageCircle, Lightbulb, Ear, HelpCircle, TrendingUp, CheckCircle,
   Cloud, Clock, ShieldAlert, Map, Cigarette, Lock,
 } from 'lucide-react';
@@ -116,14 +113,8 @@ import { isProSource } from '@/services/subscriptionService';
 import { Crown } from 'lucide-react';
 import { useDayCounter } from '@/hooks/useDayCounter';
 import { AdBanner } from './AdBanner';
-import { toast } from 'sonner';
-import {
-  configure,
-  restorePurchases,
-  getEntitlement,
-  isNativePurchasesAvailable,
-} from '@/lib/appbuild/revenuecat';
-import { WEB_PRICES, getWebCurrency } from '@/lib/webBilling';
+
+
 
 import { LanguageToggle } from './LanguageToggle';
 import { MobileBottomNav } from './MobileBottomNav';

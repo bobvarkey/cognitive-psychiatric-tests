@@ -7,14 +7,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Brain, ArrowLeft, ArrowRight, RotateCcw, ClipboardList, AlertCircle, HeartPulse, Pill, User, Stethoscope, Briefcase, Activity } from 'lucide-react';
+import { Brain, ArrowLeft, ArrowRight, RotateCcw, ClipboardList, AlertCircle, HeartPulse, Pill, User, Stethoscope, Activity } from 'lucide-react';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
-import { ProgressIndicator } from './ProgressIndicator';
 import { AdhdOutpatientFlow } from '@/types/adhdOutpatient';
-import { toast } from 'sonner';
 import { ExportButtons } from './ExportButtons';
 import type { ReportData } from '@/utils/reportGenerator';
 

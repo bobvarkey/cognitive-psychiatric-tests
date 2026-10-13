@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Brain, RotateCcw, Copy, Check, FileText, Eye, AlertCircle } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Copy, Check, FileText, Eye, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { PatientInfoForm } from '@/components/PatientInfoForm';
@@ -125,7 +125,9 @@ export default function OccipitalAssessment({ onBack }: OccipitalAssessmentProps
       await copyResultsToClipboard(generatedReport);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {}
+    } catch {
+      setCopied(false);
+    }
   };
 
   const activeModule = useMemo(

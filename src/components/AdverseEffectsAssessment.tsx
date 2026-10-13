@@ -16,7 +16,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ADVERSE_EFFECTS, ADVERSE_EFFECTS_PURPOSE } from '@/data/adverseEffectsData';
 import {
   FOOD_NOISE_SCALE,
-  FNQ_ITEM_IDS,
   findInterpretationBand,
   calculateTotalScore,
   isComplete,

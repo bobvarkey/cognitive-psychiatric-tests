@@ -22,7 +22,6 @@ import {
   type LobeDomain,
   type LobeTest,
   type BaselineTest,
-  type BaselineDomain,
 } from '@/data/lobarFunctions';
 import { copyResultsToClipboard } from '@/lib/copyResults';
 import { useRegisterResult } from '@/components/results/useRegisterResult';

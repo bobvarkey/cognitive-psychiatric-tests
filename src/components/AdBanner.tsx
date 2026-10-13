@@ -1,5 +1,5 @@
 import { useSubscription } from '@/contexts/SubscriptionContext';
-import { Zap, X, ArrowRight } from 'lucide-react';
+import { Zap, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { getWebCurrency, yearlySavingPercent, WEB_PRICES } from '@/lib/webBilling';

@@ -13,7 +13,6 @@ import {
   DAPHNE6_METADATA,
 } from '@/data/daphne6Scale';
 import { ExportButtons } from './ExportButtons';
-import { AssessmentReference } from '@/components/AssessmentReference';
 import type { ReportData } from '@/utils/reportGenerator';
 
 interface Daphne6AssessmentProps {
