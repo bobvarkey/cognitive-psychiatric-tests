@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { X, Lock, Bell, Star, Loader2, Mail, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import heroImage from '@/assets/paywall-hero.jpg';
-import { waitForWrapper, isWrapperPresent, isNativeShell, describeHost } from '@/lib/appbuild/wrapper';
+import { waitForWrapper, isWrapperPresent, isNativeShell, describeHost, isIOSDevice, mustUseStoreBilling } from '@/lib/appbuild/wrapper';
 import {
   configure,
   getOfferings,
@@ -129,11 +129,11 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   // Only fall back to web once the wrapper proves to be absent (plain browser).
   // The AppBuild SDK script defines the wrapper in every browser, so presence
   // only means "wait"; the host's own appInfo answer decides.
-  const [native, setNative] = useState<boolean>(() => isNativeShell() || isWrapperPresent());
+  const [native, setNative] = useState<boolean>(() => mustUseStoreBilling() || isWrapperPresent());
   useEffect(() => {
     let active = true;
     waitForWrapper().then((r) => {
-      if (active) setNative(!!r && isNativeShell());
+      if (active) setNative(isIOSDevice() || (!!r && isNativeShell()));
     });
     // A slow native host that answers after the timeout still switches us back.
     const ready = typeof window !== 'undefined' ? window.AppbuildWrapper?.ready : undefined;
