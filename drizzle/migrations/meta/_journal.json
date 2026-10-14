@@ -15,6 +15,13 @@
       "when": 1791944012668,
       "tag": "0001_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791944067972,
+      "tag": "0002_grant_entitlements_data_api_access",
+      "breakpoints": true
     }
   ]
 }
