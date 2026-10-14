@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      entitlements: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          note: string | null
+          plan: string
+          source: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          note?: string | null
+          plan?: string
+          source?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          note?: string | null
+          plan?: string
+          source?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_trials: {
         Row: {
           ends_at: string
@@ -82,6 +112,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_entitlement: {
+        Args: never
+        Returns: {
+          expires_at: string
+          permanent: boolean
+          plan: string
+          source: string
+        }[]
+      }
+      entitlement_tier: { Args: never; Returns: string }
+      has_premium: { Args: never; Returns: boolean }
       start_trial: {
         Args: never
         Returns: {
