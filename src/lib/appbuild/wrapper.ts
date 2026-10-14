@@ -42,7 +42,7 @@ declare global {
 }
 
 /** The host broadcasts appInfo on page load and the SDK re-asks at 250ms. */
-const READY_TIMEOUT_MS = 2000;
+const READY_TIMEOUT_MS = 10000;
 
 let readyPromise: Promise<WrapperReady | null> | null = null;
 let cachedInfo: WrapperReady | null = null;
@@ -183,4 +183,16 @@ export function isWrapperPresent(): boolean {
 export function __resetWrapperForTests(): void {
   readyPromise = null;
   cachedInfo = null;
+}
+
+/** True on iPhone/iPad/iPod: web (Razorpay) checkout must never be shown there. */
+export function isIOSDevice(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  return /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && (navigator.maxTouchPoints ?? 0) > 1);
+}
+
+/** Store-billing context: native shell or any iOS device. */
+export function mustUseStoreBilling(): boolean {
+  return isIOSDevice() || isNativeShell();
 }

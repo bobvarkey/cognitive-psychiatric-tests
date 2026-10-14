@@ -7,6 +7,8 @@ vi.mock('@/lib/appbuild/wrapper', () => ({
   waitForWrapper: () => Promise.resolve({ appInfo: { platform: 'ios' }, capabilities: {} }),
   isWrapperPresent: () => true,
   isNativeShell: () => true,
+  isIOSDevice: () => false,
+  mustUseStoreBilling: () => true,
   describeHost: () => 'ios',
   getPurchasesPlugin: () => ({}),
 }));
