@@ -28,6 +28,8 @@ vi.mock('@/lib/appbuild/wrapper', () => ({
   waitForWrapper: () => Promise.resolve(null),
   isWrapperPresent: () => false,
   isNativeShell: () => false,
+  isIOSDevice: () => false,
+  mustUseStoreBilling: () => false,
   describeHost: () => 'web',
   getPurchasesPlugin: () => null,
 }));

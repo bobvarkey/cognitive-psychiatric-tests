@@ -81,7 +81,7 @@ describe('AuthGuard', () => {
     expect(screen.getByTestId('app')).toBeTruthy();
   });
 
-  it('shows the auth user id when the gate closes on a signed-in account', async () => {
+  it('never shows the developer diagnostic when the gate closes on a signed-in account', async () => {
     // Without this the owner cannot get in at all: access is an admin grant keyed
     // to this id, and the screen that normally reports it (Settings -> Account)
     // is behind this very gate, so the id has nowhere else to come from.
@@ -96,11 +96,9 @@ describe('AuthGuard', () => {
       </AuthGuard>,
     );
 
-    expect(await screen.findByTestId('auth-user-id')).toHaveTextContent(
-      '5ba70276-e265-4afb-84fb-fea80d335e8b',
-    );
-    // And says how to grant it, which is the other half of the requirement.
-    expect(screen.getByText(/INSERT INTO public\.entitlements/)).toBeTruthy();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(screen.queryByTestId('auth-user-id')).toBeNull();
+    expect(screen.queryByText(/Access diagnostic/)).toBeNull();
   });
 
   it('does not put an id on screen for a signed-out visitor', async () => {
