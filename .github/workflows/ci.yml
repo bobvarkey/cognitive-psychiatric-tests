@@ -9,6 +9,13 @@ on:
 permissions:
   contents: read
 
+# .env is no longer tracked. Tests and the CI build only need placeholder
+# values so the Supabase client can be constructed; nothing here is deployed.
+env:
+  VITE_SUPABASE_URL: https://placeholder.supabase.co
+  VITE_SUPABASE_PUBLISHABLE_KEY: ci-placeholder-key
+  VITE_SUPABASE_PROJECT_ID: placeholder
+
 jobs:
   build:
     runs-on: ubuntu-latest
