@@ -6,7 +6,7 @@ export const syncResults = async (results: AssessmentResult[]) => {
 
   // In a real app, we would loop and POST each result to an API.
   // For this demo, we simulate a successful sync.
-  console.log('Syncing results...', unsynced);
+  // Never log result objects: they can contain patient names/IDs and scores.
   
   // We'll let the UI handle marking them as synced in the DB if needed,
   // or just simulate the delay.
