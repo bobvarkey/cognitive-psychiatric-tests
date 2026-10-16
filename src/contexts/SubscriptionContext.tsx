@@ -20,6 +20,7 @@ import {
   verifyCheckout,
   waitForEntitlement,
 } from '@/lib/billing';
+import { ALREADY_SUBSCRIBED_MESSAGE, hasPaidAccess } from '@/lib/billingGuards';
 import { currentAuthUser, onAuthChange, serverEntitlement, startTrial as requestTrial, tierOf, type Entitlement, type EntitlementTier } from '@/lib/entitlement';
 
 interface PremiumFeatures {
@@ -260,6 +261,13 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // After a verified checkout the modal shows "activating". This is the loop
   // that ends it, and it is why access appears without a manual refresh.
   const startSubscriptionCheckout = async (plan: 'monthly' | 'yearly', email: string) => {
+    // Never open a second paid checkout for someone who already has paid or
+    // permanent access: that would create a second Razorpay subscription and a
+    // second charge. A trial may upgrade. billing-create-subscription enforces
+    // the same rule on the server.
+    if (hasPaidAccess(premiumSource)) {
+      throw new Error(ALREADY_SUBSCRIBED_MESSAGE);
+    }
     const handle = await startSubscription(plan, getWebCurrency());
     const result = await openCheckout(handle, email.trim().toLowerCase());
     await verifyCheckout(result);

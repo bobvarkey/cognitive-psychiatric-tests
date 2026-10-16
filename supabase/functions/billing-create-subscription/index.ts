@@ -31,6 +31,40 @@ Deno.serve(withCors(async (req) => {
     const user = userData?.user;
     if (userError || !user) return json({ error: 'Not signed in.' }, 401);
 
+    // One paid subscription per account. Refuse before touching Razorpay when
+    // the caller already holds paid/permanent access or an active subscription,
+    // so a double click, a second tab or a stale paywall cannot create a second
+    // subscription (and a second charge). Trials may upgrade.
+    const nowIso = new Date().toISOString();
+    const { data: paidGrant, error: grantLookupError } = await supabase
+      .from('entitlements')
+      .select('source, expires_at')
+      .eq('user_id', user.id)
+      .in('source', ['razorpay', 'admin'])
+      .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
+      .maybeSingle();
+    if (grantLookupError) {
+      console.error('entitlements lookup failed', grantLookupError);
+      return json({ error: 'Could not start checkout.' }, 500);
+    }
+    const { data: activeSub, error: subLookupError } = await supabase
+      .from('subscriptions')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .limit(1)
+      .maybeSingle();
+    if (subLookupError) {
+      console.error('subscriptions lookup failed', subLookupError);
+      return json({ error: 'Could not start checkout.' }, 500);
+    }
+    if (paidGrant || activeSub) {
+      return json(
+        { error: 'You already have an active subscription. Manage it from your Account page.', code: 'already_subscribed' },
+        409,
+      );
+    }
+
     const parsed = parseCreateSubscriptionRequest(await req.json().catch(() => null));
     if (!parsed.ok) return json({ error: parsed.error }, 400);
 
