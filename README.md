@@ -47,8 +47,8 @@ Cognito is a professional-grade clinical assessment tool designed for mental hea
 ### Installation
 ```bash
 # Clone repository
-git clone https://github.com/bobvarkey/psy-cognito.git
-cd psy-cognito
+git clone https://github.com/bobvarkey/cognitive-psychiatric-tests.git
+cd cognitive-psychiatric-tests
 
 # Install dependencies
 npm install
@@ -346,8 +346,8 @@ Examples:
 
 ## 🌐 Contact & Community
 
-- **Website:** [psycognito.com](https://psycognito.com)
-- **GitHub:** [github.com/bobvarkey/psy-cognito](https://github.com/bobvarkey/psy-cognito)
+- **Website:** [cognitive-psychiatric-tests.lovable.app](https://cognitive-psychiatric-tests.lovable.app) <!-- swap back to psycognito.com if the domain is re-registered -->
+- **GitHub:** [github.com/bobvarkey/psy-cognito](https://github.com/bobvarkey/cognitive-psychiatric-tests)
 - **Support:** support@psycognito.com
 - **Clinical:** clinical@psycognito.com
 
