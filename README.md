@@ -113,7 +113,7 @@ npm run preview
 - **Component Library:** shadcn/ui
 - **State Management:** React Context + hooks
 - **Routing:** React Router v6
-- **Package Manager:** npm/bun
+- **Package Manager:** npm (package-lock.json)
 
 ### Project Structure
 ```
