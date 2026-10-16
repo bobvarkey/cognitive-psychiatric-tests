@@ -1,4 +1,4 @@
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { corsHeaders, withCors } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { parseCreateSubscriptionRequest } from '../../../src/lib/billingWebhookCore.ts';
 
@@ -8,8 +8,7 @@ const json = (data: unknown, status = 200) =>
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+Deno.serve(withCors(async (req) => {
 
   try {
     const keyId = Deno.env.get('RAZORPAY_KEY_ID')?.trim();
@@ -102,4 +101,4 @@ Deno.serve(async (req) => {
     console.error(e);
     return json({ error: 'Could not start checkout.' }, 500);
   }
-});
+}));

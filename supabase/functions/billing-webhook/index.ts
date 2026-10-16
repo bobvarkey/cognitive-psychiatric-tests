@@ -1,4 +1,4 @@
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { corsHeaders, withCors } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   constantTimeEqual,
@@ -13,8 +13,7 @@ const json = (data: unknown, status = 200) =>
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+Deno.serve(withCors(async (req) => {
 
   // 1. The RAW body, before any parsing. Re-serialising it would change the
   //    signed bytes and break every signature.
@@ -137,4 +136,4 @@ Deno.serve(async (req) => {
     console.error('Webhook processing failed', e);
     return json({ error: 'Processing failed.' }, 500);
   }
-});
+}));

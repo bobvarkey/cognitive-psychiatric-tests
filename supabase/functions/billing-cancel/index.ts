@@ -1,4 +1,4 @@
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { corsHeaders, withCors } from '../_shared/cors.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const json = (data: unknown, status = 200) =>
@@ -7,8 +7,7 @@ const json = (data: unknown, status = 200) =>
     headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
   });
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+Deno.serve(withCors(async (req) => {
 
   try {
     const keyId = Deno.env.get('RAZORPAY_KEY_ID')?.trim();
@@ -65,4 +64,4 @@ Deno.serve(async (req) => {
     console.error(e);
     return json({ error: 'Could not cancel the subscription.' }, 500);
   }
-});
+}));
