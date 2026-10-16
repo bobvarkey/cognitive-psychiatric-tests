@@ -4,7 +4,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
 import fs from "fs";
-import type { Plugin } from "vite";
+import { loadEnv, type Plugin } from "vite";
+import { buildCsp } from "./security-headers.config";
 
 // DEV-ONLY: serve and inject the fake AppbuildWrapper (dev-mocks/), which can
 // fake store purchases. `apply: 'serve'` means it never runs for `vite build`,
@@ -27,6 +28,29 @@ function appbuildMockDevOnly(): Plugin {
 }
 
 // https://vitejs.dev/config/
+// BUILD-ONLY: a <meta> Content-Security-Policy fallback for hosts that ignore
+// public/_headers and vercel.json. Not applied to the dev server, whose React
+// refresh preamble is an inline script. The real header (with frame-ancestors)
+// lives in public/_headers and vercel.json; see security-headers.config.ts.
+function cspMetaBuildOnly(supabaseUrl: string | undefined): Plugin {
+  return {
+    name: "csp-meta-build-only",
+    apply: "build",
+    transformIndexHtml() {
+      return [
+        {
+          tag: "meta",
+          attrs: {
+            "http-equiv": "Content-Security-Policy",
+            content: buildCsp({ supabaseOrigin: supabaseUrl, forMeta: true }),
+          },
+          injectTo: "head-prepend",
+        },
+      ];
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -35,6 +59,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     appbuildMockDevOnly(),
+    cspMetaBuildOnly(loadEnv(mode, process.cwd(), "VITE_").VITE_SUPABASE_URL),
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',

@@ -8,17 +8,7 @@
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#4f46e5" />
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(reg => {
-            console.log('SW registered:', reg.scope);
-          }).catch(err => {
-            console.error('SW registration failed:', err);
-          });
-        });
-      }
-    </script>
+    <script src="/sw-register.js" defer></script>
 
     <!-- The DEV-only AppbuildWrapper mock is injected by vite.config.ts (appbuildMockDevOnly)
          in `vite` dev server mode only. It is not in public/, so it never ships in a build. -->
