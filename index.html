@@ -20,10 +20,8 @@
       }
     </script>
 
-    <!-- DEV-ONLY mock of window.AppbuildWrapper (see public/appbuild-wrapper-sdk.mock.js).
-         Injected only in development mode so wrapper.ts / revenuecat.ts / the Paywall /
-         usePremiumEntitlement can be tested in a plain browser. NEVER ships in production. -->
-    <script src="/appbuild-wrapper-sdk.mock.js" defer></script>
+    <!-- The DEV-only AppbuildWrapper mock is injected by vite.config.ts (appbuildMockDevOnly)
+         in `vite` dev server mode only. It is not in public/, so it never ships in a build. -->
 
     <!-- Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

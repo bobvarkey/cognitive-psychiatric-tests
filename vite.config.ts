@@ -3,6 +3,28 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
+import fs from "fs";
+import type { Plugin } from "vite";
+
+// DEV-ONLY: serve and inject the fake AppbuildWrapper (dev-mocks/), which can
+// fake store purchases. `apply: 'serve'` means it never runs for `vite build`,
+// and the file lives outside public/, so production bundles cannot contain it.
+const MOCK_PATH = "/appbuild-wrapper-sdk.mock.js";
+function appbuildMockDevOnly(): Plugin {
+  return {
+    name: "appbuild-mock-dev-only",
+    apply: "serve",
+    configureServer(server) {
+      server.middlewares.use(MOCK_PATH, (_req, res) => {
+        res.setHeader("Content-Type", "application/javascript");
+        res.end(fs.readFileSync(path.resolve(__dirname, "dev-mocks/appbuild-wrapper-sdk.mock.js")));
+      });
+    },
+    transformIndexHtml() {
+      return [{ tag: "script", attrs: { src: MOCK_PATH, defer: true }, injectTo: "head" }];
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -12,6 +34,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
+    appbuildMockDevOnly(),
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
