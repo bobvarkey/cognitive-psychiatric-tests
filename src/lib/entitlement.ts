@@ -13,6 +13,7 @@
  */
 import { supabase } from '@/integrations/supabase/client';
 import { isNativeApp } from '@/lib/appbuild/revenuecat';
+import { clearLocalPatientData } from './db';
 
 export interface AuthResult {
   ok: boolean;
@@ -66,7 +67,16 @@ export async function verifyEmailCode(email: string, code: string): Promise<Auth
 }
 
 export async function signOut(): Promise<void> {
-  await supabase.auth.signOut();
+  try {
+    await supabase.auth.signOut();
+  } finally {
+    // Never leave patient data behind for the next user of this device.
+    try {
+      await clearLocalPatientData();
+    } catch {
+      console.error('Failed to clear local patient data');
+    }
+  }
 }
 
 export interface AuthUser {

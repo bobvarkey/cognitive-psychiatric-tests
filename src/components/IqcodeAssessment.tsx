@@ -18,6 +18,7 @@ interface IqcodeAssessmentProps {
 
 type Score = 1 | 2 | 3 | 4 | 5;
 
+// In-progress draft kept in sessionStorage only (cleared when the tab closes).
 const STORAGE_KEY = 'cognito.iqcode.draft.v1';
 
 interface IqcodeDraft {
@@ -28,7 +29,7 @@ interface IqcodeDraft {
 
 const readDraft = (): IqcodeDraft | null => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === 'object' && parsed.responses) return parsed as IqcodeDraft;
@@ -55,7 +56,7 @@ export const IqcodeAssessment = ({ onBack }: IqcodeAssessmentProps) => {
     const handle = setTimeout(() => {
       try {
         const draft: IqcodeDraft = { responses, yearsAgo, savedAt: Date.now() };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
         setSavedAt(draft.savedAt);
       } catch {
         /* ignore quota */
@@ -65,7 +66,7 @@ export const IqcodeAssessment = ({ onBack }: IqcodeAssessmentProps) => {
   }, [responses, yearsAgo, showResults]);
 
   const clearDraft = () => {
-    try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+    try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
     setSavedAt(null);
     setResumed(false);
   };
