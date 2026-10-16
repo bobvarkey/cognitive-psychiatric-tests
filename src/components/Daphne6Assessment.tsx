@@ -19,6 +19,8 @@ interface Daphne6AssessmentProps {
   onBack?: () => void;
 }
 
+// Drafts live in sessionStorage (cleared when the tab closes) and never include
+// the patient's name; it is kept in memory only.
 const DAPHNE6_STORAGE_KEY = 'cognito.daphne6.draft.v1';
 
 interface Daphne6Draft {
@@ -30,7 +32,7 @@ interface Daphne6Draft {
 
 const readDraft = (): Daphne6Draft | null => {
   try {
-    const raw = localStorage.getItem(DAPHNE6_STORAGE_KEY);
+    const raw = sessionStorage.getItem(DAPHNE6_STORAGE_KEY);
     if (!raw) return null;
     const draft = JSON.parse(raw) as Daphne6Draft;
     if (draft && typeof draft.selected === 'object' && draft.patientInfo) return draft;
@@ -89,10 +91,10 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
   useEffect(() => {
     if (!started || showResults) return;
     try {
-      localStorage.setItem(DAPHNE6_STORAGE_KEY, JSON.stringify({
+      sessionStorage.setItem(DAPHNE6_STORAGE_KEY, JSON.stringify({
         selected,
         currentDomainIndex,
-        patientInfo,
+        patientInfo: { ...patientInfo, name: '' },
         started,
       } satisfies Daphne6Draft));
     } catch {
@@ -102,7 +104,7 @@ export const Daphne6Assessment: React.FC<Daphne6AssessmentProps> = ({ onBack }) 
 
   const clearDraft = () => {
     try {
-      localStorage.removeItem(DAPHNE6_STORAGE_KEY);
+      sessionStorage.removeItem(DAPHNE6_STORAGE_KEY);
     } catch {
       // Ignore unavailable local storage.
     }
