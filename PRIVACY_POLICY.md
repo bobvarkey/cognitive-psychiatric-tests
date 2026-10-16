@@ -1,62 +1,60 @@
 # Privacy Policy - Cognito
 
 **Effective Date:** April 25, 2026  
-**Last Updated:** April 25, 2026
+**Last Updated:** October 16, 2026
 
 ## 1. Introduction
 
 Cognito ("Application", "we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains our practices regarding data collection, use, and protection.
 
-## 2. Information We Do NOT Collect
+## 2. What We Collect and What Stays on Your Device
 
-**Cognito Does Not:**
-- Collect personal identifying information
-- Collect email addresses
-- Collect phone numbers
-- Collect patient names or demographics
-- Collect health information
-- Require user account creation
-- Require login credentials
-- Transmit data to external servers
-- Use analytics or tracking
-- Display advertisements
+**Stays on your device (never sent to our servers):**
+- Assessment responses, scores and interpretations
+- Any patient name or identifier you choose to type into a result
+- Results history (stored in your browser/app storage, IndexedDB)
+
+**Sent to service providers when you use account or billing features:**
+- **Account email address** (and sign-in tokens) — processed by Supabase (authentication and our database) when you sign in, start a trial or restore a purchase
+- **Subscription and payment records** (plan, amount, status, period end, Razorpay order/subscription/payment IDs, and your email) — stored in our Supabase database; card and bank details are entered on, and held by, Razorpay, never by us
+- **App-store purchase status** — handled by Apple/Google (via the AppBuild.diy wrapper and RevenueCat) in the mobile apps
+
+We do not use analytics or advertising trackers, and we do not send assessment or patient data to any third party, including AI/LLM providers.
 
 ## 3. Information Storage
 
-### Local Storage Only
-- All assessment responses are stored only on your device
-- No data is synchronized to cloud services
-- No data is backed up automatically
-- Data remains under your exclusive control
+### On-Device Storage
+- Assessment results are stored only on your device and are not synchronized to cloud services
+- They are not backed up by us: clearing browser/app data or uninstalling deletes them permanently. Export results you need to keep into your own clinical records
+- On-device storage relies on your device/operating-system security; protect shared devices with a screen lock and a separate user profile
 
-### Device-Level Security
-- iOS: Encrypted in Keychain
-- Android: Protected by Android Keystore
-- No PII or health information stored
-- No external network transmission
+### Server-Side Storage
+- Account and billing records (section 2) are stored in Supabase-hosted Postgres with access restricted per user (row-level security)
 
 ## 4. Third-Party Services
 
-Cognito does not integrate with or utilize:
-- Analytics platforms (Google Analytics, Mixpanel, etc.)
-- Crash reporting services (Crashlytics, Sentry, etc.)
-- Social media platforms
-- Payment processors
-- Cloud storage services
-- Third-party APIs for assessment data
+Cognito uses the following processors:
+- **Supabase** — authentication, database and server functions (account email, billing records)
+- **Razorpay** — web payment processing (payment details, email)
+- **Apple App Store / Google Play, AppBuild.diy and RevenueCat** — in-app purchases in the mobile apps; the AppBuild.diy script is also loaded by the web app
+- **Google Fonts** — web fonts (your browser requests font files from Google, which receives your IP address)
+- **Hosting/CDN (Lovable, Cloudflare)** — serving the web app
+
+Cognito does not use analytics platforms, crash-reporting services or social media integrations, and sends no assessment data to any third-party API.
 
 ## 5. Data You Control
 
 As the sole user of this application:
 - You retain complete ownership of any data entered
-- You can delete all data by uninstalling the application
-- No backup of your data exists on our servers
+- You can delete on-device data at any time (Settings, or by clearing app/browser data)
+- No backup of your assessment data exists on our servers
 - We cannot access your device storage
+- To delete your account email and billing records held on our servers, contact us (section 15); in-app "delete account" currently clears on-device data only
 
 ## 6. Professional Use
 
 This application is designed for mental health professionals only. Clinicians are responsible for:
-- Securing patient information per HIPAA requirements
+- Securing patient information under the laws that apply to them (e.g. India's Digital Personal Data Protection Act, 2023)
 - Maintaining separate patient records
 - Using the app within their professional protocols
 - Deleting assessment data appropriately
@@ -71,16 +69,15 @@ This application:
 
 **Clinicians are responsible for:**
 - Recording assessment results in secure patient records
-- Following institutional HIPAA compliance
+- Following institutional and legal data-protection requirements
 - Maintaining data handling according to their organization
 
 ## 8. Security Measures
 
 ### Application Level
-- No internet connectivity required
-- No external service dependencies
-- Locally processed assessments only
-- Input validation on all fields
+- Assessments are scored locally and work offline
+- Internet is used only for sign-in, billing, fonts and app updates
+- All network traffic uses HTTPS (TLS)
 
 ### Device Level
 - Encryption at rest (device operating system)
@@ -97,14 +94,8 @@ The application requests minimal permissions:
 
 ## 10. Compliance
 
-### Standards Adherence
-- ✅ HIPAA Compatible (application level)
-- ✅ GDPR Compliant (no personal data collected)
-- ✅ CCPA Compliant (no personal data collected)
-- ✅ PIPEDA Compliant (Canadian privacy standards)
-
-### Note on HIPAA
-The application itself does not require HIPAA Business Associate Agreements because it does not transmit or store Protected Health Information (PHI). However, clinicians using this tool must maintain their own HIPAA compliance when handling patient data.
+### Standards
+Cognito does not claim HIPAA, GDPR, CCPA or other certification. Assessment data is processed on-device and is not transmitted to us; account email and billing records are processed as described above. Clinicians remain responsible for compliance with the data-protection laws that apply to their practice (in India, the Digital Personal Data Protection Act, 2023).
 
 ## 11. Children & Minors
 
@@ -113,7 +104,7 @@ This application is designed for professional healthcare use only and should not
 ## 12. Data Retention
 
 - **Assessment Data:** Retained on device until deleted by user
-- **App Logs:** Stored locally, deleted when app is closed
+- **Account and billing records:** Retained on our servers while your account exists and as required for tax/accounting; deleted on request
 - **Cache:** Automatically cleared periodically
 - **Backups:** User is responsible for personal device backups
 

@@ -86,7 +86,7 @@ export default function Landing() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
                 { icon: Zap, title: 'Instant Scoring', desc: 'Auto-calculated scores with severity banding and clinical interpretation.', color: 'text-yellow-400' },
-                { icon: Shield, title: 'HIPAA Compliant', desc: 'No PHI stored — all data stays on-device. No login required.', color: 'text-cyan-400' },
+                { icon: Shield, title: 'Data Stays On-Device', desc: 'Assessment results are stored only on your device, never on our servers.', color: 'text-cyan-400' },
                 { icon: BookOpen, title: '65 Validated Scales', desc: 'From MoCA to PANSS — every major neuropsychiatric and neurological assessment included.', color: 'text-fuchsia-400' },
                 { icon: Languages, title: 'Multilingual', desc: 'Malayalam and English support; more languages planned.', color: 'text-green-400' },
               ].map(({ icon: Icon, title, desc, color }) => (
