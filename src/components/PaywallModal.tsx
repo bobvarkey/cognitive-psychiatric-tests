@@ -23,6 +23,7 @@ import {
 import { fallbackBillingPlans, fetchBillingPlans, type BillingPlan } from '@/lib/billing';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import { requestEmailCode, verifyEmailCode } from '@/lib/entitlement';
+import { Button } from '@/components/ui/button';
 
 interface PaywallModalProps {
   isOpen: boolean;
@@ -150,6 +151,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
   // server read lands (spec §9), then upgrades to the server's own numbers.
   const [plans, setPlans] = useState<BillingPlan[]>(() => fallbackBillingPlans());
   useEffect(() => {
+    if (!isOpen || native) return;
     let active = true;
     fetchBillingPlans().then((next) => {
       if (!active || !next.length) return;
@@ -165,7 +167,7 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     return () => {
       active = false;
     };
-  }, []);
+  }, [isOpen, native]);
   const catalogue = plans.find((p) => p.code === selectedPlan && p.currency === webCurrency);
 
   // A checkout dismissed while it was still in flight is not "still activating".
@@ -499,13 +501,15 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
       <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto rounded-3xl bg-card border border-border shadow-2xl">
         {onClose && (
-          <button
+          <Button
             onClick={onClose}
             aria-label="Close"
-            className="absolute top-4 right-4 z-10 rounded-full bg-background/70 p-2 text-muted-foreground hover:text-foreground transition"
+            variant="ghost"
+            size="icon"
+            className="absolute top-4 right-4 z-10 min-h-11 min-w-11 bg-background/70 text-muted-foreground hover:text-foreground active:opacity-80"
           >
             <X className="w-5 h-5" />
-          </button>
+          </Button>
         )}
 
         <img
