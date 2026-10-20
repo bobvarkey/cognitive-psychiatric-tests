@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 // The App Store build: the wrapper is present, so the modal starts in native mode
 // and the Razorpay path is never the one under test.
@@ -38,9 +38,10 @@ const plans = vi.hoisted(() => [
   { code: 'monthly' as const, currency: 'INR' as const, amount: 29900, intervalUnit: 'month' as const, label: 'PsyCognito Premium — Monthly' },
   { code: 'yearly' as const, currency: 'INR' as const, amount: 299900, intervalUnit: 'year' as const, label: 'PsyCognito Premium — Yearly' },
 ]);
+const webCatalogue = vi.hoisted(() => ({ fetch: vi.fn() }));
 vi.mock('@/lib/billing', () => ({
   fallbackBillingPlans: () => plans,
-  fetchBillingPlans: vi.fn().mockResolvedValue(plans),
+  fetchBillingPlans: webCatalogue.fetch,
 }));
 
 vi.mock('@/contexts/SubscriptionContext', () => ({
@@ -79,6 +80,7 @@ describe('PaywallModal native store pricing', () => {
     inrBuyer();
     rc.configure.mockResolvedValue(true);
     rc.isNativePurchasesAvailable.mockReturnValue(true);
+    webCatalogue.fetch.mockResolvedValue(plans);
   });
 
   it('shows the wait rather than a price while the offerings are still arriving', async () => {
@@ -136,5 +138,32 @@ describe('PaywallModal native store pricing', () => {
 
     const alert = await screen.findByRole('alert');
     expect(alert.textContent).toBe('Invalid API key.');
+  });
+
+  it('never fetches the web catalogue or offers an email receipt in store mode', async () => {
+    rc.getOfferings.mockResolvedValue([yearlyPkg]);
+    renderPaywall();
+    await waitFor(() => expect(rc.getOfferings).toHaveBeenCalled());
+    expect(webCatalogue.fetch).not.toHaveBeenCalled();
+    expect(screen.queryByLabelText('Email for your receipt')).toBeNull();
+  });
+
+  it('allows dismissal while native purchases are initializing', async () => {
+    rc.configure.mockReturnValue(new Promise(() => {}));
+    const onClose = vi.fn();
+    render(<PaywallModal isOpen onClose={onClose} onSelectPlan={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(onClose).toHaveBeenCalledOnce();
+    expect(webCatalogue.fetch).not.toHaveBeenCalled();
+  });
+
+  it('allows dismissal when native purchases are unavailable', async () => {
+    rc.configure.mockResolvedValue(false);
+    const onClose = vi.fn();
+    render(<PaywallModal isOpen onClose={onClose} onSelectPlan={vi.fn()} />);
+    await waitFor(() => expect(rc.configure).toHaveBeenCalled());
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(onClose).toHaveBeenCalledOnce();
+    expect(webCatalogue.fetch).not.toHaveBeenCalled();
   });
 });

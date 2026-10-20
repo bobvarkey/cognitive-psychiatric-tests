@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const sub = vi.hoisted(() => ({ value: {} as Record<string, unknown> }));
@@ -12,8 +12,8 @@ vi.mock('@/components/PaywallModal', () => ({
   // (`PaywallModal.tsx:150`). A mock that rendered unconditionally would paint a
   // paywall frame over every granted owner — the on-demand modal is mounted
   // alongside `children` — and the "straight through" case could never pass.
-  PaywallModal: ({ isOpen }: { isOpen?: boolean }) =>
-    isOpen ? <div data-testid="paywall">paywall</div> : null,
+  PaywallModal: ({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) =>
+    isOpen ? <div data-testid="paywall"><button onClick={onClose}>Close</button></div> : null,
 }));
 
 import { AuthGuard } from './AuthGuard';
@@ -36,7 +36,7 @@ describe('AuthGuard', () => {
     auth.currentAuthUser.mockResolvedValue(null);
   });
 
-  it('shows neither the app nor the paywall while the server is still deciding', () => {
+  it('allows browsing while the server is still deciding without granting premium', () => {
     setSub({ checkingServerAccess: true });
     render(
       <AuthGuard>
@@ -44,19 +44,21 @@ describe('AuthGuard', () => {
       </AuthGuard>,
     );
     expect(screen.queryByTestId('paywall')).toBeNull();
-    expect(screen.queryByTestId('app')).toBeNull();
-    expect(screen.getByRole('status')).toBeTruthy();
+    expect(screen.getByTestId('app')).toBeTruthy();
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(sub.value.isPremium).toBe(false);
   });
 
-  it('shows the paywall once the answer is no', () => {
+  it('allows browsing without premium and does not automatically open the paywall', () => {
     setSub({ checkingServerAccess: false });
     render(
       <AuthGuard>
         <div data-testid="app">app</div>
       </AuthGuard>,
     );
-    expect(screen.getByTestId('paywall')).toBeTruthy();
-    expect(screen.queryByTestId('app')).toBeNull();
+    expect(screen.queryByTestId('paywall')).toBeNull();
+    expect(screen.getByTestId('app')).toBeTruthy();
+    expect(sub.value.isPremium).toBe(false);
   });
 
   it('lets a server-granted owner straight through, without a paywall frame', () => {
@@ -112,7 +114,28 @@ describe('AuthGuard', () => {
       </AuthGuard>,
     );
 
-    expect(screen.getByTestId('paywall')).toBeTruthy();
+    expect(screen.queryByTestId('paywall')).toBeNull();
     expect(screen.queryByTestId('auth-user-id')).toBeNull();
+  });
+
+  it('preserves assessment deep links without access', () => {
+    window.history.pushState({}, '', '/assessment/moca');
+    setSub({});
+    render(<AuthGuard><div data-testid="app">app</div></AuthGuard>);
+    expect(window.location.pathname).toBe('/assessment/moca');
+    expect(screen.getByTestId('app')).toBeTruthy();
+  });
+
+  it('opens the paywall only on demand and allows dismissal', () => {
+    const setShowPaywall = vi.fn();
+    setSub({ showPaywall: true, setShowPaywall });
+    const view = render(<AuthGuard><div data-testid="app">app</div></AuthGuard>);
+    expect(screen.getByTestId('paywall')).toBeTruthy();
+    expect(screen.getByTestId('app')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(setShowPaywall).toHaveBeenCalledWith(false);
+    setSub({ showPaywall: false, setShowPaywall });
+    view.rerender(<AuthGuard><div data-testid="app">app</div></AuthGuard>);
+    expect(screen.queryByTestId('paywall')).toBeNull();
   });
 });
