@@ -51,7 +51,24 @@ function cspMetaBuildOnly(supabaseUrl: string | undefined): Plugin {
   };
 }
 
-export default defineConfig(({ mode }) => ({
+// Public (publishable) backend values used when .env is absent at build time.
+// .gitignore excludes .env, so the published build may not see it; without
+// these the bundle crashes on start with "supabaseUrl is required".
+const PUBLIC_BACKEND_FALLBACK = {
+  VITE_SUPABASE_URL: "https://lusgyknbmprhmxbkkdbo.supabase.co",
+  VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_M2_O-BFDCsSZKOrq6IUcxA_ZuckaDp2",
+  VITE_SUPABASE_PROJECT_ID: "lusgyknbmprhmxbkkdbo",
+};
+
+export default defineConfig(({ mode }) => {
+  const env = { ...process.env, ...loadEnv(mode, process.cwd(), "VITE_") };
+  const backend = Object.fromEntries(
+    Object.entries(PUBLIC_BACKEND_FALLBACK).map(([k, v]) => [k, env[k] || v]),
+  ) as typeof PUBLIC_BACKEND_FALLBACK;
+  return {
+  define: Object.fromEntries(
+    Object.entries(backend).map(([k, v]) => [`import.meta.env.${k}`, JSON.stringify(v)]),
+  ),
   server: {
     host: "::",
     port: 8080,
@@ -59,7 +76,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     appbuildMockDevOnly(),
-    cspMetaBuildOnly(loadEnv(mode, process.cwd(), "VITE_").VITE_SUPABASE_URL),
+    cspMetaBuildOnly(backend.VITE_SUPABASE_URL),
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: 'autoUpdate',
