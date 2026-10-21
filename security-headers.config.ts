@@ -20,7 +20,7 @@ export function buildCsp(opts: { supabaseOrigin?: string; forMeta?: boolean } = 
   const supabaseWs = supabase.replace(/^https:/, 'wss:');
   const directives: Record<string, string[]> = {
     'default-src': ["'self'"],
-    'script-src': ["'self'", 'https://checkout.razorpay.com', 'https://appbuild.diy'],
+    'script-src': ["'self'", "'sha256-rMtRCeJ4Yk5jpztC+/jaFtDclFbMT/8S0iypUz9686Q='", 'https://checkout.razorpay.com', 'https://appbuild.diy'],
     'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
     'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
     'img-src': ["'self'", 'data:', 'blob:', 'https:'],
