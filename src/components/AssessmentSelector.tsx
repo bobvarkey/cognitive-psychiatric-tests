@@ -550,7 +550,9 @@ export const AssessmentSelector = () => {
         <div className="flex flex-col items-center w-full">
           <div className="max-w-4xl mx-auto w-full px-4">
             <ResultSummaryProvider key={selectedAssessment}>
-              {component}
+              <Suspense fallback={<div role="status" aria-live="polite" className="py-16 text-center text-muted-foreground">Loading…</div>}>
+                {component}
+              </Suspense>
             </ResultSummaryProvider>
           </div>
         </div>
