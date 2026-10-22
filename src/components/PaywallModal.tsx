@@ -595,12 +595,19 @@ export const PaywallModal = ({ isOpen, onClose, onSelectPlan, isLoading = false 
             </div>
           )}
 
-          {storeError && (
-            <p role="alert" className="text-sm text-destructive text-center">{storeError}</p>
-          )}
-          {native && storeError && (
-            <p className="text-[11px] text-muted-foreground text-center tabular-nums">{describeHost()}</p>
-          )}
+          {/* Store errors belong to the native path only. A browser briefly starts in
+              native mode while the AppBuild SDK answers; its stale error must not
+              appear on the website checkout. */}
+          {native && storeError && !isNativeShell() && isIOSDevice() ? (
+            <p role="alert" className="text-sm text-muted-foreground text-center">
+              On iPhone and iPad, subscribe inside the Cognito app from the App Store. Already subscribed? Tap Restore Purchases in the app.
+            </p>
+          ) : native && storeError ? (
+            <>
+              <p role="alert" className="text-sm text-destructive text-center">{storeError}</p>
+              <p className="text-[11px] text-muted-foreground text-center tabular-nums">{describeHost()}</p>
+            </>
+          ) : null}
           {native && !storeError && !loadingStore && !(activePlan === 'yearly' ? yearlyPkg : monthlyPkg) && (
             <p role="alert" className="text-sm text-muted-foreground text-center">
               This plan is unavailable right now. Try Restore Purchases or check back shortly.
