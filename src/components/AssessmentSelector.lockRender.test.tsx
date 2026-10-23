@@ -66,13 +66,14 @@ describe('assessment lock, as rendered', () => {
     expect(screen.getByText(LOCKED)).toBeTruthy();
   });
 
-  it('opens a deep link the trial does cover', () => {
+  it('opens a deep link the trial does cover', async () => {
     window.history.pushState({}, '', '/assessment/triage');
     setSub({ tier: 'trial' });
     render(<AssessmentSelector />);
 
     // The other half of the branch: the lock must not swallow what a trial holds.
-    expect(screen.getByTestId('triage')).toBeTruthy();
+    // Assessments are lazy-loaded, so wait for Suspense to resolve.
+    expect(await screen.findByTestId('triage')).toBeTruthy();
     expect(screen.queryByText(LOCKED)).toBeNull();
   });
 
@@ -91,7 +92,7 @@ describe('assessment lock, as rendered', () => {
     expect(tile('Lobar Functions').textContent).toContain('Pro');
   });
 
-  it('sends a locked tile to the paywall, and opens a covered one', () => {
+  it('sends a locked tile to the paywall, and opens a covered one', async () => {
     const setShowPaywall = vi.fn();
     setSub({ tier: 'trial', setShowPaywall });
     render(<AssessmentSelector />);
@@ -102,10 +103,11 @@ describe('assessment lock, as rendered', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /^CCSA/ }));
     expect(setShowPaywall).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId('ccsa')).toBeTruthy();
+    expect(await screen.findByTestId('ccsa')).toBeTruthy();
+    expect(setShowPaywall).toHaveBeenCalledTimes(1);
   });
 
-  it('leaves anyone the guard admitted able to open an assessment', () => {
+  it('leaves anyone the guard admitted able to open an assessment', async () => {
     // Every source here satisfies AuthGuard's `hasAccess`, so the lock must not
     // refuse what the guard let through. `tier` is 'none' for all of them: a paid
     // web buyer, a store purchase and the device-local demo each carry no
@@ -124,13 +126,13 @@ describe('assessment lock, as rendered', () => {
       setSub({ tier: 'none', ...access });
       const { unmount } = render(<AssessmentSelector />);
 
-      expect(screen.getByTestId('triage')).toBeTruthy();
+      expect(await screen.findByTestId('triage')).toBeTruthy();
       expect(screen.queryByText(LOCKED)).toBeNull();
       unmount();
     }
   });
 
-  it('still refuses a visitor with no access at all', () => {
+  it('still refuses a visitor with no access at all', async () => {
     // The control for the test above: with nothing granted, the same key is
     // locked, so that test is not passing because the lock never engages.
     window.history.pushState({}, '', '/assessment/triage');
@@ -138,6 +140,8 @@ describe('assessment lock, as rendered', () => {
     render(<AssessmentSelector />);
 
     expect(screen.getByText(LOCKED)).toBeTruthy();
+    // Give a lazy chunk time to resolve, so absence is not just "not loaded yet".
+    await new Promise((r) => setTimeout(r, 50));
     expect(screen.queryByTestId('triage')).toBeNull();
   });
 });
