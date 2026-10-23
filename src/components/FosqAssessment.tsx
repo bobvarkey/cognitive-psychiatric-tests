@@ -49,9 +49,12 @@ export const FosqAssessment = ({ onBack }: FosqAssessmentProps) => {
   };
 
   const getSubscaleMean = (subscaleId: number): number => {
-    const items = getSubscaleItems(subscaleId);
-    const sum = items.reduce((acc, item) => acc + (responses[item.id] || 0), 0);
-    return items.length > 0 ? sum / items.length : 0;
+    // Published FOSQ scoring: 0 = "I don't do this activity for other reasons"
+    // is answered but excluded from the subscale mean.
+    const scored = getSubscaleItems(subscaleId)
+      .map(item => responses[item.id])
+      .filter((v): v is number => v != null && v > 0);
+    return scored.length > 0 ? scored.reduce((a, b) => a + b, 0) / scored.length : NaN;
   };
 
   const subscaleMeans: Record<number, number> = {};
@@ -59,7 +62,11 @@ export const FosqAssessment = ({ onBack }: FosqAssessmentProps) => {
     subscaleMeans[s] = getSubscaleMean(s);
   }
 
-  const totalScore = Object.values(subscaleMeans).reduce((sum, m) => sum + m, 0) / 5 * 5;
+  const scorableMeans = Object.values(subscaleMeans).filter(m => !Number.isNaN(m));
+  // Total = mean of the scorable subscale means x 5 (range 5-20).
+  const totalScore = scorableMeans.length > 0
+    ? (scorableMeans.reduce((sum, m) => sum + m, 0) / scorableMeans.length) * 5
+    : 0;
   // totalScore = mean of subscale means × 5 (range 5-20)
   // More precisely: total = (sum of all subscale means / 5) × 5 = sum of all subscale means
 
@@ -96,7 +103,7 @@ export const FosqAssessment = ({ onBack }: FosqAssessmentProps) => {
             const name = FOSQ_SUBSCALE_NAMES[s];
             const mean = subscaleMeans[s];
             const itemCount = getSubscaleItems(s).length;
-            return `${name} (${itemCount} items): Mean = ${mean.toFixed(2)}/4`;
+            return `${name} (${itemCount} items): ${Number.isNaN(mean) ? 'Not scorable (all items not applicable)' : `Mean = ${mean.toFixed(2)}/4`}`;
           })
         },
         {
@@ -193,9 +200,9 @@ export const FosqAssessment = ({ onBack }: FosqAssessmentProps) => {
         <CardContent className="pt-6">
           <p className="text-sm text-blue-900 mb-3">
             <strong>Instructions:</strong> The following questions ask about how sleepiness affects your ability to function
-            in daily life. Rate each item using the 1-4 scale below. Consider your experiences over the past month.
+            in daily life. Rate each item using the 1-4 scale below, or 0 if you do not do the activity for other reasons. Consider your experiences over the past month.
           </p>
-          <div className="grid grid-cols-4 gap-2 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
             {Object.entries(FOSQ_SCORING_GUIDE).map(([score, label]) => (
               <div key={score} className="bg-white p-2 rounded border border-blue-200">
                 <div className="font-semibold text-center">{score}</div>
@@ -233,8 +240,8 @@ export const FosqAssessment = ({ onBack }: FosqAssessmentProps) => {
                     value={responses[item.id]?.toString() || ''}
                     onValueChange={(val) => handleResponseChange(item.id, parseInt(val))}
                   >
-                    <div className="grid grid-cols-4 gap-3">
-                      {[1, 2, 3, 4].map((score) => (
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                      {[1, 2, 3, 4, 0].map((score) => (
                         <div key={score} className="flex items-center space-x-2">
                           <RadioGroupItem value={score.toString()} id={`${item.id}-${score}`} />
                           <Label htmlFor={`${item.id}-${score}`} className="cursor-pointer">
@@ -316,7 +323,7 @@ export const FosqAssessment = ({ onBack }: FosqAssessmentProps) => {
                               <span className="text-sm text-gray-700">{name}</span>
                             </div>
                             <span className={`text-sm font-semibold ${subColor === 'red' ? 'text-red-600' : subColor === 'yellow' ? 'text-yellow-600' : 'text-green-600'}`}>
-                              {mean.toFixed(2)}/4
+                              {Number.isNaN(mean) ? "N/A" : `${mean.toFixed(2)}/4`}
                             </span>
                           </div>
                         );

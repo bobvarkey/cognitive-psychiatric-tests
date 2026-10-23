@@ -169,7 +169,8 @@ export const FOSQ_SCORING_GUIDE: Record<number, string> = {
   1: 'Extreme difficulty',
   2: 'Moderate difficulty',
   3: 'Little difficulty',
-  4: 'No difficulty'
+  4: 'No difficulty',
+  0: "I don't do this activity for other reasons"
 };
 
 export const FOSQ_SUBSCALE_NAMES: Record<number, string> = {

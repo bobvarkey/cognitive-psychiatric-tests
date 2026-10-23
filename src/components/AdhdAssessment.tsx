@@ -245,7 +245,7 @@ export const AdhdAssessment = ({ onBack }: AdhdAssessmentProps) => {
               <AdhdCriterionCard
                 key={criterion.id}
                 criterion={criterion}
-                met={criterionResponses.get(criterion.id) || false}
+                met={criterionResponses.get(criterion.id)}
                 onChange={(met) => handleCriterionChange(criterion.id, met)}
               />
             ))}
