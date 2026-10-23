@@ -81,6 +81,7 @@ const AuditAssessment = lazy(() => import('@/components/AuditAssessment').then((
 const AuditCAssessment = lazy(() => import('@/components/AuditCAssessment').then((m) => ({ default: m.AuditCAssessment })));
 const AlcoholSymptomChecklist = lazy(() => import('@/components/AlcoholSymptomChecklist').then((m) => ({ default: m.AlcoholSymptomChecklist })));
 const AlcoholUseScreeningApproach = lazy(() => import('@/components/AlcoholUseScreeningApproach').then((m) => ({ default: m.AlcoholUseScreeningApproach })));
+const AcbAssessment = lazy(() => import('@/components/AcbAssessment').then((m) => ({ default: m.AcbAssessment })));
 const AlcoholUnitsCalculator = lazy(() => import('@/components/AlcoholUnitsCalculator').then((m) => ({ default: m.AlcoholUnitsCalculator })));
 const BrainFogAssessment = lazy(() => import('@/components/BrainFogAssessment').then((m) => ({ default: m.BrainFogAssessment })));
 const LateOnsetPsychosisAssessment = lazy(() => import('@/components/LateOnsetPsychosisAssessment').then((m) => ({ default: m.LateOnsetPsychosisAssessment })));
@@ -141,7 +142,7 @@ export type AssessmentKey =
   | 'daphne6' | 'minicog' | 'hare' | 'adhd' | 'tulia' | 'msibpd' | 'triage'
   | 'hamd' | 'hama' | 'delusions' | 'fab' | 'dpdr' | 'pcl5' | 'pss'
   | 'dementia' | 'catatonia' | 'stressScreening' | 'fallRisk' | 'miniace'
-  | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'lobarFunctions' | 'occipitalTesting' | 'foodNoiseScale' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode'
+  | 'nms' | 'mmpi' | 'adam' | 'hunter' | 'smarts' | 'adverseEffects' | 'lobarFunctions' | 'occipitalTesting' | 'foodNoiseScale' | 'cognitiveSyndromes' | 'callosal' | 'mse' | 'moca' | 'consciousness' | 'substance' | 'iqcode' | 'acb'
   | 'bprs' | 'sapsSans' | 'crdpss' | 'sops' | 'psyrats' | 'vagus'
   | 'asrs6' | 'asrs18' | 'vanderbilt' | 'adhdScreener'
   | 'bdi' | 'ybocs' | 'ipde' | 'cage' | 'cows' | 'simpsonAngus' | 'eprs' | 'panss'
@@ -274,6 +275,7 @@ export const assessments: AssessmentInfo[] = [
   // ─── Adverse Reactions ───
   { key: 'nms', name: 'NMS', subtitle: 'Malignant Syndrome', icon: ThermometerSun, gradient: 'from-red-600 to-rose-700', category: ['adverse'], description: 'NMS — Neuroleptic Malignant Syndrome assessment (rigidity, hyperthermia, autonomic instability, altered mental state).' },
   { key: 'lobarFunctions', name: 'Lobar Functions', subtitle: 'Cortical Localization', icon: Brain, gradient: 'from-indigo-500 to-violet-600', category: ['cognitive'], description: 'Bedside testing and localization of cerebral lobar functions: frontal, parietal, temporal, and occipital lobes.' },
+  { key: 'acb', name: 'ACB Scale', subtitle: 'Anticholinergic Burden', icon: Pill, gradient: 'from-violet-500 to-indigo-600', category: ['cognitive'], description: 'Anticholinergic Burden calculator — add regular medicines (generic or brand) to total their anticholinergic scores (0–3 each). A total of 3 or more is linked to higher risk of cognitive impairment, falls and mortality in older adults.' },
   { key: 'hunter', name: 'Hunter Criteria', subtitle: 'Serotonin Syndrome', icon: FlaskConical, gradient: 'from-rose-500 to-pink-600', category: ['adverse'], description: 'Hunter Serotonin Toxicity Criteria — diagnostic decision rule for serotonin syndrome.' },
   { key: 'smarts', name: 'SMARTS', subtitle: 'Treatment Side Effects', icon: ClipboardList, gradient: 'from-orange-500 to-amber-500', category: ['adverse'], description: 'SMARTS — Systematic Monitoring of Adverse events Related to TreatmentS; patient-reported side-effect checklist.' },
   { key: 'adverseEffects', name: 'Adverse Effects', subtitle: 'Drug-Class Checklist', icon: Pill, gradient: 'from-fuchsia-500 to-purple-600', category: ['adverse'], description: 'Drug-class adverse-effect checklist for psychotropic medications.' },
@@ -615,6 +617,7 @@ export const AssessmentSelector = () => {
       consciousness: true,
       substance: true,
       iqcode: true,
+      acb: true,
       bdi: true, ybocs: true, ipde: true, cage: true, cows: true,
       simpsonAngus: true, eprs: true, panss: true,
       'mds-updrs': true, 'hoehn-yahr': true, aims: true, 'schooler-kane': true, twstrs: true,
@@ -680,6 +683,7 @@ export const AssessmentSelector = () => {
         consciousness: ConsciousnessAssessment,
         substance: SubstanceAssessment,
         iqcode: IqcodeAssessment,
+        acb: AcbAssessment,
         bdi: BdiAssessment,
         ybocs: YbocsAssessment,
         ipde: IpdeAssessment,

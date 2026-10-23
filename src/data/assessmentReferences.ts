@@ -171,6 +171,12 @@ export const ASSESSMENT_REFERENCES: Record<string, AssessmentReference> = {
       'Gossop M, Darke S, Griffiths P, Hando J, Powis B, Hall W, Strang J. The Severity of Dependence Scale (SDS): psychometric properties of the SDS in English and Australian samples of heroin, cocaine and amphetamine users. Addiction. 1995;90(5):607–614.',
     url: 'https://doi.org/10.1046/j.1360-0443.1995.9056072.x',
   },
+  acb: {
+    citation:
+      'Boustani M, Campbell N, Munger S, Maidment I, Fox C. Impact of anticholinergics on the aging brain: a review and practical application. Aging Health. 2008;4(3):311–320. Updated ACB scale list: Aging Brain Care, 2012. Drug scores combined with Kiesel EK, Hopf YM, Drey M. BMC Geriatr. 2018;18:239 (German Anticholinergic Burden score), via the ACB Calculator medicines scorecard (acbcalc.com, July 2024).',
+    url: 'https://doi.org/10.2217/1745509X.4.3.311',
+    note: 'Each medicine scores 0–3 (1 possible, 2–3 definite anticholinergic activity); scores are summed. A total of 3 or more is clinically relevant: each 1-point increase has been associated with poorer cognition, and higher totals with falls and mortality (Fox 2011, doi:10.1111/j.1532-5415.2011.03491.x).',
+  },
   iqcode: {
     citation:
       'Jorm AF. A short form of the Informant Questionnaire on Cognitive Decline in the Elderly (IQCODE): development and cross-validation. Psychol Med. 1994;24(1):145–153.',
