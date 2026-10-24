@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { toast } from 'sonner';
 import { Check, Copy, KeyRound, Loader2, LogOut, ShieldQuestion } from 'lucide-react';
 import {
@@ -117,6 +118,7 @@ ON CONFLICT (user_id) DO UPDATE
           </p>
         ) : user === null ? (
           <div className="space-y-4">
+            <GoogleSignInButton />
             <p className="text-sm text-muted-foreground">
               Sign in to sync your access across devices, or to restore a purchase.
             </p>
