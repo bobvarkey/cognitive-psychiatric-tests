@@ -36,6 +36,14 @@ describe('currentEntitlement', () => {
     expect(sb.rpc).toHaveBeenCalledWith('current_entitlement');
   });
 
+  it('preserves the client receiver when reading developer access', async () => {
+    sb.rpc.mockImplementation(function (this: unknown) {
+      if (!this) throw new Error('Missing client receiver');
+      return Promise.resolve({ data: [row()], error: null });
+    });
+    expect((await currentEntitlement())?.plan).toBe('developer');
+  });
+
   it('is null when the RPC errors', async () => {
     sb.rpc.mockResolvedValue({ data: null, error: { message: 'permission denied' } });
     expect(await currentEntitlement()).toBeNull();

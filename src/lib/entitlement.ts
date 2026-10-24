@@ -115,7 +115,7 @@ export async function currentAuthUser(): Promise<AuthUser | null> {
  * `supabase gen types typescript`. The cast is confined to this one call so the
  * rest of the module stays typed; delete it once the types catch up.
  */
-const callRpc = supabase.rpc as unknown as (
+const callRpc = supabase.rpc.bind(supabase) as unknown as (
   fn: string,
 ) => Promise<{ data: unknown; error: { message: string } | null }>;
 
