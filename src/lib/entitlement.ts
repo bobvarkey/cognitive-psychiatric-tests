@@ -12,7 +12,7 @@
  * key to. An email string on its own proves nothing and is never used as a key.
  */
 import { supabase } from '@/integrations/supabase/client';
-import { isNativeApp } from '@/lib/appbuild/revenuecat';
+import { isNativeShell, waitForWrapper } from '@/lib/appbuild/wrapper';
 import { clearLocalPatientData } from './db';
 
 export interface AuthResult {
@@ -196,7 +196,10 @@ export async function currentEntitlement(): Promise<Entitlement | null> {
 export async function serverEntitlement(): Promise<Entitlement | null> {
   const ent = await currentEntitlement();
   if (!ent) return null;
-  if (ent.source === 'admin' && (await isNativeApp())) return null;
+  if (ent.source === 'admin') {
+    await waitForWrapper();
+    if (isNativeShell()) return null;
+  }
   return ent;
 }
 

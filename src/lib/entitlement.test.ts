@@ -6,7 +6,10 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 const native = vi.hoisted(() => ({ isNativeApp: vi.fn() }));
-vi.mock('@/lib/appbuild/revenuecat', () => ({ isNativeApp: native.isNativeApp }));
+vi.mock('@/lib/appbuild/wrapper', () => ({
+  waitForWrapper: vi.fn().mockResolvedValue(null),
+  isNativeShell: () => native.isNativeApp(),
+}));
 
 import { currentEntitlement, entitlementTier, serverEntitlement, serverPremium, startTrial } from './entitlement';
 
@@ -22,7 +25,7 @@ describe('currentEntitlement', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useRealTimers();
-    native.isNativeApp.mockResolvedValue(false);
+    native.isNativeApp.mockReturnValue(false);
   });
 
   it('maps a returned row to camelCase', async () => {
