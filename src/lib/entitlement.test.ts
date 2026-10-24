@@ -83,19 +83,19 @@ describe('serverPremium', () => {
   });
 
   it('honours an admin grant in a browser', async () => {
-    native.isNativeApp.mockResolvedValue(false);
+    native.isNativeApp.mockReturnValue(false);
     sb.rpc.mockResolvedValue({ data: [row()], error: null });
     expect(await serverPremium()).toBe(true);
   });
 
   it('suppresses an admin grant inside the native app', async () => {
-    native.isNativeApp.mockResolvedValue(true);
+    native.isNativeApp.mockReturnValue(true);
     sb.rpc.mockResolvedValue({ data: [row()], error: null });
     expect(await serverPremium()).toBe(false);
   });
 
   it('does not suppress a paid grant inside the native app', async () => {
-    native.isNativeApp.mockResolvedValue(true);
+    native.isNativeApp.mockReturnValue(true);
     sb.rpc.mockResolvedValue({
       data: [row({ plan: 'yearly', source: 'razorpay', permanent: false })],
       error: null,
@@ -104,7 +104,7 @@ describe('serverPremium', () => {
   });
 
   it('does not consult native-ness when there is no grant', async () => {
-    native.isNativeApp.mockResolvedValue(true);
+    native.isNativeApp.mockReturnValue(true);
     sb.rpc.mockResolvedValue({ data: [], error: null });
     expect(await serverPremium()).toBe(false);
     expect(native.isNativeApp).not.toHaveBeenCalled();
@@ -118,7 +118,7 @@ describe('serverEntitlement', () => {
   });
 
   it('keeps the source visible, so a trial can be told from a paid plan', async () => {
-    native.isNativeApp.mockResolvedValue(false);
+    native.isNativeApp.mockReturnValue(false);
     sb.rpc.mockResolvedValue({
       data: [row({ plan: 'demo', source: 'trial', permanent: false, expires_at: '2026-10-11T00:00:00Z' })],
       error: null,
@@ -130,7 +130,7 @@ describe('serverEntitlement', () => {
   });
 
   it('is null, not merely falsy, when an admin grant is suppressed on native', async () => {
-    native.isNativeApp.mockResolvedValue(true);
+    native.isNativeApp.mockReturnValue(true);
     sb.rpc.mockResolvedValue({ data: [row()], error: null });
     expect(await serverEntitlement()).toBeNull();
   });
@@ -143,13 +143,13 @@ describe('entitlementTier', () => {
   });
 
   it('is none with no grant', async () => {
-    native.isNativeApp.mockResolvedValue(false);
+    native.isNativeApp.mockReturnValue(false);
     sb.rpc.mockResolvedValue({ data: [], error: null });
     expect(await entitlementTier()).toBe('none');
   });
 
   it('is full for a paid grant', async () => {
-    native.isNativeApp.mockResolvedValue(false);
+    native.isNativeApp.mockReturnValue(false);
     sb.rpc.mockResolvedValue({
       data: [row({ plan: 'yearly', source: 'razorpay', permanent: false })],
       error: null,
@@ -158,7 +158,7 @@ describe('entitlementTier', () => {
   });
 
   it('is trial for a trial grant', async () => {
-    native.isNativeApp.mockResolvedValue(false);
+    native.isNativeApp.mockReturnValue(false);
     sb.rpc.mockResolvedValue({
       data: [row({ plan: 'demo', source: 'trial', permanent: false })],
       error: null,
@@ -169,7 +169,7 @@ describe('entitlementTier', () => {
   it('is none for an admin grant inside the native app', async () => {
     // The whole reason the tier is derived rather than asked for. Asking
     // `entitlement_tier()` directly would answer 'full' here.
-    native.isNativeApp.mockResolvedValue(true);
+    native.isNativeApp.mockReturnValue(true);
     sb.rpc.mockResolvedValue({ data: [row()], error: null });
     expect(await entitlementTier()).toBe('none');
   });
@@ -180,7 +180,7 @@ describe('entitlementTier', () => {
     // old `asTier` collapsed to 'none' anyway. So the backend's real answer is
     // routed here instead — 'full' for an admin comp, because the SQL collapses
     // `source` and cannot see the comp it is honouring.
-    native.isNativeApp.mockResolvedValue(true);
+    native.isNativeApp.mockReturnValue(true);
     sb.rpc.mockImplementation((fn: string) =>
       Promise.resolve(
         fn === 'entitlement_tier'
@@ -196,7 +196,7 @@ describe('startTrial', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useRealTimers();
-    native.isNativeApp.mockResolvedValue(false);
+    native.isNativeApp.mockReturnValue(false);
   });
 
   it('re-reads the grant rather than trusting the returned string', async () => {
