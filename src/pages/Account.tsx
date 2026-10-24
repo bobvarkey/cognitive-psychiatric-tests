@@ -4,6 +4,7 @@ import { Check, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { cancelSubscription, fallbackBillingPlans, fetchBillingPlans, type BillingPlan } from '@/lib/billing';
 import { getWebCurrency } from '@/lib/webBilling';
 import {
@@ -197,10 +198,10 @@ export const Account = () => {
       <Shell>
         <h1 className="text-2xl font-bold text-foreground">Your account</h1>
         <p className="text-sm text-muted-foreground">
-          Sign in with your email. There is no password — we send you a code. Signing in for the
-          first time creates the account.
+          Sign in with Google or use a code sent to your email.
         </p>
         <Card>
+          <GoogleSignInButton />
           <form
             className="space-y-3"
             onSubmit={(e) => {

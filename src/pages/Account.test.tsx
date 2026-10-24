@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 
 import type { BillingPlan } from '@/lib/billing';
+vi.mock('@/integrations/lovable', () => ({ lovable: { auth: { signInWithOAuth: vi.fn() } } }));
 
 const requestEmailCode = vi.hoisted(() => vi.fn());
 const verifyEmailCode = vi.hoisted(() => vi.fn());
@@ -103,10 +104,10 @@ describe('Account', () => {
     expect(await screen.findByText('5ba70276-0000-0000-0000-000000000000')).toBeTruthy();
   });
 
-  it('shows no manage-billing controls for a developer grant', async () => {
+  it.each(['bobvarkey@gmail.com', 'bobvarkey1@gmail.com'])('shows permanent developer access without billing for %s', async (email) => {
     // A cancel button on an admin grant would be a lie: there is no
     // subscription behind it to cancel.
-    currentAuthUser.mockResolvedValue({ id: 'u1', email: 'owner@example.com' });
+    currentAuthUser.mockResolvedValue({ id: 'u1', email });
     serverEntitlement.mockResolvedValue({
       plan: 'developer', source: 'admin', expiresAt: null, permanent: true,
     });
