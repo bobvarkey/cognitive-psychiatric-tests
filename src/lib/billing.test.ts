@@ -5,8 +5,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const functionsInvoke = vi.hoisted(() => vi.fn());
 const currentEntitlement = vi.hoisted(() => vi.fn());
 
+// `rpc` is stubbed because entitlement.ts binds it at module load; a mock
+// without it makes that import throw before any test in this file can run.
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { functions: { invoke: functionsInvoke } },
+  supabase: { functions: { invoke: functionsInvoke }, rpc: vi.fn() },
 }));
 vi.mock('@/lib/entitlement', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/entitlement')>()),

@@ -7,8 +7,13 @@ import {
   clearLocalPatientData, LEGACY_DRAFT_KEYS,
 } from './db';
 
+// `rpc` is stubbed because entitlement.ts binds it at module load; a mock
+// without it makes that import throw before any test in this file can run.
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { auth: { signOut: vi.fn(() => Promise.resolve({ error: null })) } },
+  supabase: {
+    auth: { signOut: vi.fn(() => Promise.resolve({ error: null })) },
+    rpc: vi.fn(),
+  },
 }));
 
 const rawRows = async () => {
